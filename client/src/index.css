@@ -1,0 +1,46 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.nexus_gradient {
+    background: linear-gradient(
+        90deg,
+        #3662eb 3.55%,
+        #2863f6 21.23%,
+        #6bf0a3 34.29%,
+        #81ebc0 45.2%,
+        #ddc044 65.19%,
+        #fa7f29 81.51%,
+        #f17933 100%
+    );
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-family: Inter;
+    font-size: 5.25rem;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    letter-spacing: -0.09375rem;
+    width: 21.125rem;
+    height: 5.25rem;
+    flex-shrink: 0;
+}
+
+.bg-screen-gradient {
+    border-radius: 1.25rem;
+    background: linear-gradient(
+        90deg,
+        #413b36 0%,
+        rgba(68, 75, 61, 0.67) 40.68%,
+        rgba(76, 82, 90, 0.073) 104.15%
+    );
+    width: 44rem;
+    height: 24rem;
+    flex-shrink: 0;
+}
