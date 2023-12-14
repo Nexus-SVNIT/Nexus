@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
             <main className='w-full mx-auto overflow-hidden'>
                 <div className='absolute top-[40rem] left-0 h-60 w-60  bg-green-600/50 blur-3xl ' />
 
-                {/* <div className='absolute top-[60rem] left-[40rem] h-60 w-60  bg-green-600/50 blur-3xl ' /> */}
+                <div className='absolute bottom-0 right-0 h-60 w-60  bg-green-600/40 blur-3xl -z-0' />
 
                 {/* <div className='absolute top-[40rem] left-[60rem] h-60 w-60  bg-green-600/50 blur-3xl ' /> */}
 

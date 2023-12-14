@@ -4,7 +4,7 @@ import { Link, useLocation } from 'react-router-dom'
 
 const Navbar = () => {
     const { pathname } = useLocation()
-    return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[5rem]'>
+    return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[4rem]'>
         <div className='flex items-center'>
             <Link to={'/'}>
                 <img src='./assets/nexus_logo.png' alt='Nexus_Official' className='w-20 h-20' />

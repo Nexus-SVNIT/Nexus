@@ -7,3 +7,5 @@ export { default as Events } from "./Events/Events.jsx";
 export { default as About } from "./About/About.jsx";
 export { default as Button } from "./Button/Button.jsx";
 export { default as Title } from "./Title/Title.jsx";
+export { default as Terminal } from "./Terminal/Terminal.jsx";
+export { default as FAQs } from "./FAQs/FAQs.jsx";

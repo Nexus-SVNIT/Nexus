@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button } from '../index'
+import { Button, FAQs, Terminal } from '../index'
 
 const Home = () => {
     return (
@@ -14,7 +14,9 @@ const Home = () => {
                     <p className='text-gray-400 md:w-[28rem] text-[1.25rem]'>
                         We foster engagement with students from all years to create a connected and inclusive learning community.
                     </p>
-                    <Button>Explore More</Button>
+                    <Button>
+                        Explore More
+                    </Button>
                 </div>
                 <div className='hidden md:flex relative flex-1 z-0'>
                     <div className='bg-screen-gradient my-12'>
@@ -23,20 +25,13 @@ const Home = () => {
                         <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -bottom-4' src='/assets/play.png' alt='' />
                     </div>
                 </div>
-
             </div>
-
-
-            <div className='relative my-40 w-full'>
-                {/* <img src="/assets/wave.svg" alt="" className='absolute left-0 top-0 -z-10 ' /> */}
-
-                <div className='flex flex-col items-center justify-center gap-4 max-w-7xl mx-auto '>
-                    <h3 className='text-lg font-semibold'>$ Nexus Terminal</h3>
-                    <p className='text-[1.25rem]'>Interact to know more about Nexus</p>
-                    <div className="h-12 bg-red-500 w-full"></div>
-                </div>
+            <div className='my-48 w-full'>
+                <Terminal />
             </div>
-
+            <div className='my-48 w-full'>
+                <FAQs />
+            </div>
         </div>
     )
 }
