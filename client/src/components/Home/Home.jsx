@@ -14,7 +14,7 @@ const Home = () => {
                     <p className='text-gray-400 md:w-[28rem] text-[1.25rem]'>
                         We foster engagement with students from all years to create a connected and inclusive learning community.
                     </p>
-                    <Button>
+                    <Button href={'/#terminal'}>
                         Explore More
                     </Button>
                 </div>
@@ -26,7 +26,7 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <div className='my-48 w-full'>
+            <div className='my-48 w-full' id='terminal'>
                 <Terminal />
             </div>
             <div className='my-48 w-full'>

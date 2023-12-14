@@ -1,5 +1,5 @@
 import './App.css'
-import { About, Events, Home, Layout, Teams } from './components'
+import { About, Events, Home, Layout, Teams, Forms } from './components'
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom'
 
 function App() {
@@ -10,6 +10,7 @@ function App() {
                     <Route path='/' element={<Home />} />
                     <Route path='/team' element={<Teams />} />
                     <Route path='/events' element={<Events />} />
+                    <Route path='/forms' element={<Forms />} />
                     <Route path='/about' element={<About />} />
                     <Route path='*' element={<Home />} />
                 </Routes>

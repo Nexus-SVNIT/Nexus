@@ -9,3 +9,5 @@ export { default as Button } from "./Button/Button.jsx";
 export { default as Title } from "./Title/Title.jsx";
 export { default as Terminal } from "./Terminal/Terminal.jsx";
 export { default as FAQs } from "./FAQs/FAQs.jsx";
+export { default as Forms } from "./Forms/Forms.jsx";
+export { default as Footer } from "./Footer/Footer.jsx";
