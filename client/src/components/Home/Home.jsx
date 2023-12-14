@@ -3,7 +3,7 @@ import { Button, FAQs, Terminal } from '../index'
 
 const Home = () => {
     return (
-        <div className='mx-auto overflow-x-hidden'>
+        <div className='mx-auto overflow-x-hidden transition-all delay-300'>
             <div className='flex justify-between max-w-7xl my-8 px-6 md:px-4 mx-auto '>
                 <div className='flex flex-col  justify-center  flex-1 text-white gap-6'>
                     <h1 className='nexus_gradient'>NEXUS</h1>
