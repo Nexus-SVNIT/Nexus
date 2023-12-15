@@ -18,9 +18,9 @@ const Home = () => {
                         Explore More
                     </Button>
                 </div>
-                <div className='hidden md:flex relative flex-1 z-0'>
-                    <div className='bg-screen-gradient my-12'>
-                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -top-4' src='/assets/learning.png' alt='' />
+                <div className='hidden md:flex relative flex-1 z-0 '>
+                    <div className='bg-screen-gradient my-12 '>
+                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -top-4 ' src='/assets/learning.png' alt='' />
                         <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.45)] absolute left-[10rem] top-[10rem]' src='/assets/coding.png' alt='' />
                         <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -bottom-4' src='/assets/play.png' alt='' />
                     </div>

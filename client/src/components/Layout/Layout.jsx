@@ -10,11 +10,11 @@ const Layout = ({ children }) => {
             </header>
             <main className='relative w-full mx-auto overflow-hidden'>
 
-                <div className='absolute top-[40rem] left-0 h-60 w-60  bg-green-600/50 blur-3xl ' />
+                <div className='absolute top-[70vh] left-0 h-60 w-60  bg-green-600/50 filter blur-3xl ' />
 
-                <div className='absolute top-[60rem] left-[80rem] h-60 w-60  bg-green-600/50 blur-3xl  ' />
+                <div className='absolute top-[80vh] left-[80vw] h-60 w-60  bg-green-600/40 filter blur-3xl  ' />
 
-                <div className='absolute bottom-0 right-0 h-60 w-60  bg-green-600/40 blur-3xl -z-0' />
+                <div className='absolute bottom-0 right-0 h-60 w-60  bg-green-600 filter blur-3xl -z-0' />
 
                 {children}
             </main>
