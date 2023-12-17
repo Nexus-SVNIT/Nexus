@@ -6,6 +6,7 @@ const {
     logRequest,
     errorHandler,
     getAllMember,
+    addMember,
     getUniqueMember,
     updateMemberDetails,
     deleteMember
@@ -14,6 +15,7 @@ const {
 router.use(logRequest); // Log request details
 
 router.get('/', getAllMember);
+router.post('/add',addMember);
 router.get('/:id', getUniqueMember);
 router.put('/:id', updateMemberDetails);
 router.delete('/:id', deleteMember);

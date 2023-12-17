@@ -17,7 +17,7 @@ const getAllMember = async (req, res, next) => {
         const getAllMemberDetails = await member.find();
         res.json(getAllMemberDetails);
     } catch (err) {
-        next(err); // Pass the error to the error handler middleware
+        next(err); 
     }
 };
 
@@ -30,8 +30,27 @@ const getUniqueMember = async (req, res, next) => {
         }
         res.json(singleMember);
     } catch (err) {
-        next(err); // Pass the error to the error handler middleware
+        next(err); 
     }
+};
+
+const addMember = async (req, res, next) => {
+  const { name, email } = req.body;
+  console.log(name,email);
+
+  try {
+    if (!name || !email) {
+      return res.status(400).json({ error: "Name and email are required" });
+    }
+    const newMember = await member.create({ name, email });
+    if (!newMember) {
+      return res.status(500).json({ error: "Failed to create a new member" });
+    }
+    res.json(newMember);
+  } catch (err) {
+    console.error("Error adding member:", err);
+    res.status(500).json({ error: "Failed to add member" });
+  }
 };
 
 const deleteMember = async (req, res, next) => {
@@ -43,7 +62,7 @@ const deleteMember = async (req, res, next) => {
         }
         res.json(singleMemberToDelete);
     } catch (err) {
-        next(err); // Pass the error to the error handler middleware
+        next(err); 
     }
 };
 
@@ -56,7 +75,7 @@ const updateMemberDetails = async (req, res, next) => {
         }
         res.status(200).json(updatedMember);
     } catch (err) {
-        next(err); // Pass the error to the error handler middleware
+        next(err); 
     }
 };
 
@@ -66,5 +85,6 @@ module.exports = {
     getAllMember,
     getUniqueMember,
     updateMemberDetails,
+    addMember,
     deleteMember
 };
