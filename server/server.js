@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const eventRoutes = require('./routes/eventRoutes.js');
+const memberRoutes=require("./routes/memberRoutes.js");
 
 const app = express();
 const PORT = process.env.PORT;
@@ -12,6 +13,7 @@ app.get('/', (req, res) => {
     res.send("Welcome to the official website of Nexus")
 });
 app.use('/event', eventRoutes);
+app.use('/member',memberRoutes);
 
 mongoose.connect(MONGO_URL)
     .then(() => {

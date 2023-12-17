@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
-const Joi = require("joi");
+// const Joi = require("joi");
 
-const { string } = Joi;
+// const { string } = Joi;
 
 const Schema = mongoose.Schema;
 
