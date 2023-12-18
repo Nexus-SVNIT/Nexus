@@ -1,4 +1,5 @@
 const Event = require('../models/eventModel.js');
+const mongoose = require('mongoose');
 
 const getAllEvents = async (req, res) => {
     try {
@@ -12,8 +13,12 @@ const getAllEvents = async (req, res) => {
 }
 const getSingleEvent = async (req, res) => {
     const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id))
+        return res.status(300).json({ 'err': 'invalid id' });
     try {
         const singleEvent = await Event.findById(id);
+        if (!singleEvent)
+            return res.status(404).json({ 'err': 'event not found' });
         res.json(singleEvent);
     }
     catch (err) {
@@ -31,8 +36,12 @@ const addEvent = async (req, res) => {
 }
 const updateEvent = async (req, res) => {
     const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id))
+        return res.status(300).json({ 'err': 'invalid id' });
     try {
-        const updatedEvent = await Event.findOneAndUpdate({_id: id}, {...req.body}, {new: true}); // in earlier versions default value of new was true, but now we must mention explicitly.
+        const updatedEvent = await Event.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true }); // in earlier versions default value of new was true, but now we must mention explicitly.
+        if (!updatedEvent)
+            return res.status(404).json({ 'err': 'event not found' });
         res.status(200).json(updatedEvent);
     }
     catch (err) {
@@ -41,8 +50,12 @@ const updateEvent = async (req, res) => {
 }
 const deleteEvent = async (req, res) => {
     const id = req.params.id;
+    if (!mongoose.Types.ObjectId.isValid(id))
+        return res.status(300).json({ 'err': 'invalid id' });
     try {
         const deletedEvent = await Event.findByIdAndDelete(id);
+        if (!deletedEvent)
+            return res.status(404).json({ 'err': 'event not found' });
         res.json(deletedEvent);
     }
     catch (err) {
@@ -50,4 +63,4 @@ const deleteEvent = async (req, res) => {
     }
 }
 
-module.exports = {getAllEvents, getSingleEvent, addEvent, updateEvent, deleteEvent};
+module.exports = { getAllEvents, getSingleEvent, addEvent, updateEvent, deleteEvent };
