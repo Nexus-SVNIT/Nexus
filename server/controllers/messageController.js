@@ -22,7 +22,7 @@ const addMessage = async (req, res) => {
 }
 const getSingleMessage = async (req, res) => {
   const id = req.params.id;
-  if (!mongoose.Type.ObjectId.isValid(id))
+  if (!mongoose.Types.ObjectId.isValid(id))
     return res.status(300).json({ 'err': 'invalid id' });
 
   try {

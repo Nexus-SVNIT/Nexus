@@ -1,5 +1,6 @@
 const Event = require('../models/eventModel.js');
 const mongoose = require('mongoose');
+const {logRequest}=require("../middleware.js");
 
 const getAllEvents = async (req, res) => {
     try {
