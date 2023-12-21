@@ -1,7 +1,7 @@
 const member = require("../models/memberModel.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
-const { logRequest} = require("../middleware.js");
+
 
 const getAllMember = wrapAsync(async (req, res, next) => {
   const getAllMemberDetails = await member.find();
@@ -45,7 +45,7 @@ const updateMemberDetails = wrapAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  logRequest, // Middleware for logging
+  
   
   getAllMember,
   getUniqueMember,
