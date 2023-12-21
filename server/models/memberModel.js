@@ -13,6 +13,13 @@ const MemberInfoSchema = new mongoose.Schema({
     email: {
         type: String,
         required: true,
+    },
+    image: {
+        
+        url:String,
+        filename:String,
+        
+        
     }
 });
 
