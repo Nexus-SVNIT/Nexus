@@ -1,90 +1,55 @@
 const member = require("../models/memberModel.js");
+const wrapAsync = require("../utils/wrapAsync.js");
+const ExpressError = require("../utils/ExpressError.js");
+const { logRequest} = require("../middleware.js");
 
-// Middleware for logging request details
-const logRequest = (req, res, next) => {
-    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
-    next(); // Move to the next middleware/route handler
-};
+const getAllMember = wrapAsync(async (req, res, next) => {
+  const getAllMemberDetails = await member.find();
+  res.json(getAllMemberDetails);
+});
 
-// Error handling middleware
-const errorHandler = (err, req, res, next) => {
-    console.error(err.stack);
-    res.status(500).json({ error: 'Internal Server Error' });
-};
-
-const getAllMember = async (req, res, next) => {
-    try {
-        const getAllMemberDetails = await member.find();
-        res.json(getAllMemberDetails);
-    } catch (err) {
-        next(err); 
-    }
-};
-
-const getUniqueMember = async (req, res, next) => {
-    const id = req.params.id;
-    try {
-        const singleMember = await member.findById(id);
-        if (!singleMember) {
-            return res.status(404).json({ error: "Member not found" });
-        }
-        res.json(singleMember);
-    } catch (err) {
-        next(err); 
-    }
-};
-
-const addMember = async (req, res, next) => {
-  const { name, email } = req.body;
-  console.log(name,email);
-
-  try {
-    if (!name || !email) {
-      return res.status(400).json({ error: "Name and email are required" });
-    }
-    const newMember = await member.create({ name, email });
-    if (!newMember) {
-      return res.status(500).json({ error: "Failed to create a new member" });
-    }
-    res.json(newMember);
-  } catch (err) {
-    console.error("Error adding member:", err);
-    res.status(500).json({ error: "Failed to add member" });
+const getUniqueMember = wrapAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const singleMember = await member.findById(id);
+  if (!singleMember) {
+    throw new ExpressError("Member not found", 404);
   }
-};
+  res.json(singleMember);
+});
 
-const deleteMember = async (req, res, next) => {
-    const id = req.params.id;
-    try {
-        const singleMemberToDelete = await member.findByIdAndDelete(id);
-        if (!singleMemberToDelete) {
-            return res.status(404).json({ error: "Member not found" });
-        }
-        res.json(singleMemberToDelete);
-    } catch (err) {
-        next(err); 
-    }
-};
+const addMember = wrapAsync(async (req, res, next) => {
+  const { name, email } = req.body;
+  if (!name || !email) {
+    throw new ExpressError("Name and email are required", 400);
+  }
+  const newMember = await member.create({ name, email });
+  res.json(newMember);
+});
 
-const updateMemberDetails = async (req, res, next) => {
-    const id = req.params.id;
-    try {
-        const updatedMember = await member.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updatedMember) {
-            return res.status(404).json({ error: "Member not found" });
-        }
-        res.status(200).json(updatedMember);
-    } catch (err) {
-        next(err); 
-    }
-};
+const deleteMember = wrapAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const singleMemberToDelete = await member.findByIdAndDelete(id);
+  if (!singleMemberToDelete) {
+    throw new ExpressError("Member not found", 404);
+  }
+  res.json(singleMemberToDelete);
+});
+
+const updateMemberDetails = wrapAsync(async (req, res, next) => {
+  const id = req.params.id;
+  const updatedMember = await member.findByIdAndUpdate(id, req.body, { new: true });
+  if (!updatedMember) {
+    throw new ExpressError("Member not found", 404);
+  }
+  res.json(updatedMember);
+});
 
 module.exports = {
-    logRequest, // Middleware for logging
-    errorHandler, // Error handling middleware
-    getAllMember,
-    getUniqueMember,
-    updateMemberDetails,
-    addMember,
-    deleteMember
+  logRequest, // Middleware for logging
+  
+  getAllMember,
+  getUniqueMember,
+  updateMemberDetails,
+  addMember,
+  deleteMember,
 };

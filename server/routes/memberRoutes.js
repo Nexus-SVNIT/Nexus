@@ -4,7 +4,7 @@ const express = require('express');
 const router = express.Router();
 const {
     logRequest,
-    errorHandler,
+    
     getAllMember,
     addMember,
     getUniqueMember,
@@ -20,6 +20,6 @@ router.get('/:id', getUniqueMember);
 router.put('/:id', updateMemberDetails);
 router.delete('/:id', deleteMember);
 
-router.use(errorHandler); // Error handling middleware
+
 
 module.exports = router;
