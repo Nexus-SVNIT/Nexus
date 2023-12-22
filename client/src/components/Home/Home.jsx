@@ -14,15 +14,15 @@ const Home = () => {
                     <p className='text-gray-400 md:w-[28rem] text-[1.25rem]'>
                         We foster engagement with students from all years to create a connected and inclusive learning community.
                     </p>
-                    <Button href={'/#terminal'}>
+                    <Button href={'#terminal'}>
                         Explore More
                     </Button>
                 </div>
                 <div className='hidden md:flex relative flex-1 z-0 '>
                     <div className='bg-screen-gradient my-12 '>
-                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -top-4 ' src='/assets/learning.png' alt='' />
-                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.45)] absolute left-[10rem] top-[10rem]' src='/assets/coding.png' alt='' />
-                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] absolute left-[20rem] -bottom-4' src='/assets/play.png' alt='' />
+                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] brightness-75 absolute left-[20rem] -top-4 ' src='/assets/learning.png' alt='' />
+                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.45)] brightness-75 absolute left-[10rem] top-[10rem]' src='/assets/coding.png' alt='' />
+                        <img className='w-80 h-40 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] brightness-75 absolute left-[20rem] -bottom-4' src='/assets/play.png' alt='' />
                     </div>
                 </div>
             </div>
