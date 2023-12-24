@@ -5,7 +5,7 @@ import { CgClose, CgMenuLeftAlt } from "react-icons/cg";
 const Navbar = () => {
     const { pathname } = useLocation()
     const [mobileMenu, setMobileMenu] = useState(false)
-    return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[4rem] '>
+    return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[4rem] z-[999]'>
         <div className='flex items-center'>
             <Link to={'/'}>
                 <img src='./assets/nexus_logo.png' alt='Nexus_Official' className='w-20 h-20' />

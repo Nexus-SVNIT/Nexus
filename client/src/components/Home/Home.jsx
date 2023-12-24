@@ -3,18 +3,18 @@ import { Button, FAQs, Terminal } from '../index'
 
 const Home = () => {
     return (
-        <div className='mx-auto overflow-x-hidden transition-all delay-300'>
+        <div className='mx-auto overflow-x-hidden transition-all delay-300 bg-[#111]'>
             <div className='flex justify-between max-w-7xl my-8 px-6 md:px-4 mx-auto '>
-                <div className='flex flex-col  justify-center  flex-1 text-white gap-6'>
-                    <h1 className='nexus_gradient'>NEXUS</h1>
-                    <p className='md:w-[24rem] text-[1.5rem]'>
+                <div className='flex flex-col  justify-center items-center md:items-start  flex-1 text-white gap-12 md:gap-10 '>
+                    <h1 className='nexus_gradient '>NEXUS</h1>
+                    <p className='md:w-[24rem] text-[1.25rem] w-[90%] sm:w-3/4'>
                         A community for the students of Computer Science and Engineering
                         <br />NIT Surat.
                     </p>
-                    <p className='text-gray-400 md:w-[28rem] text-[1.25rem]'>
+                    <p className='text-gray-400 w-[90%] sm:w-10/12 md:w-[28rem] text-[1.25rem] '>
                         We foster engagement with students from all years to create a connected and inclusive learning community.
                     </p>
-                    <Button href={'#terminal'}>
+                    <Button href={'#terminal'} >
                         Explore More
                     </Button>
                 </div>
@@ -29,7 +29,7 @@ const Home = () => {
             <div className='my-48 w-full' id='terminal'>
                 <Terminal />
             </div>
-            <div className='my-48 w-full'>
+            <div className='my-48 w-full relative '>
                 <FAQs />
             </div>
         </div>

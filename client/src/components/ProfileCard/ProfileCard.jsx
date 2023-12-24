@@ -3,7 +3,7 @@ import React from 'react'
 const ProfileCard = ({ profile }) => {
     return (
         <div className='bg-white text-black flex 
-        md:w-[20rem] lg:w-[20.5rem] xl:w-[22rem] h-[11rem] rounded-2xl items-center justify-center'>
+        md:w-[16rem] lg:w-[18rem] xl:w-[20rem] h-[25rem] rounded-2xl items-center justify-center'>
             <div className='flex-1'>
                 <img src="/assets/person.jpg" alt="sneh" className='rounded-lg mx-3' />
             </div>

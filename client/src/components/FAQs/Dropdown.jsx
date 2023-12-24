@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 const Dropdown = ({ question, answer }) => {
     const [isShowAns, setIsShowAns] = useState(false)
     return (
-        <div className={`p-4 bg-black/50 w-[90%] max-h-[30rem] md:w-3/4  transition-all duration-300 rounded-md  text-lg `} >
+        <div className={`p-4 bg-gray-400/25 w-[90%] max-h-[50rem] md:w-3/4  transition-all duration-300 rounded-md  text-lg `} >
             <div className='px-2 font-semibold flex justify-between items-center cursor-pointer ' onClick={e => setIsShowAns(!isShowAns)}>
                 <h2 className='w-3/4'>{question ?? "Your Question?"}</h2>
                 <img src="/assets/down_arrow.svg" alt="DownArrow" className={`h-4 w-4 transition duration-300 ${isShowAns && "rotate-180"}`} />
