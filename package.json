@@ -4,7 +4,8 @@
   "version": "1.0.0",
   "main": "./server/server.js",
   "scripts": {
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "dev-all": "cd ./client && npm start && cd .. && nodemon start"
   },
   "dependencies": {
     "dotenv": "^16.3.1",

@@ -15,12 +15,9 @@ const MemberInfoSchema = new mongoose.Schema({
         required: true,
     },
     image: {
-        
-        url:String,
-        filename:String,
-        
-        
-    }
+        e: String,
+        filename: String,
+    },
 });
 
 const MemberDetailsModel = mongoose.model("MemberDetail", MemberInfoSchema);

@@ -4,7 +4,7 @@ import FormCard from './FormCard'
 
 const Forms = () => {
     return (
-        <div className='relative mx-auto h-screen max-w-7xl space-y-8 '>
+        <div className='relative mx-auto mb-20 max-w-7xl space-y-8 '>
             <Title>
                 Forms
             </Title>
