@@ -1,11 +1,25 @@
 import React, { useState } from 'react';
+import { useRef, useEffect } from 'react';
 
 const Terminal = () => {
     const [input, setInput] = useState('');
     const [prevCommands, setTerminalCommands] = useState([]);
+    const [count, setCount] = useState(0);
 
-    const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit"];
+    const incrementCount = () => {
+        setCount(count + 1);
+    };
+
+    const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit","register"];
     const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
+    const nexusCommands = ["--help","about"]
+    const scrollContainerRef = useRef();
+
+    useEffect(() => {
+        // Scroll to the bottom when the component mounts or when new content is added
+        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
+
 
     const handleInputChange = (e) => {
         setInput(e.target.value);
@@ -14,6 +28,7 @@ const Terminal = () => {
     const handleTerminalSubmit = (e) => {
         e.preventDefault();
         const output = terminalFunction(input);
+        incrementCount();
         if (output == 0) {
             setTerminalCommands([]);
         } else {
@@ -41,8 +56,34 @@ const Terminal = () => {
                     return <div className='mt-0.5 text-red-900'><p>Wrong Command ask nexus help for commands</p></div>;
                 }
                 break;
-            case commandsOfTerminal[1]: // case for the nexus
-                return <div className='mt-0.5'><p>Nexus command</p></div>;
+            case commandsOfTerminal[1]: // case for the nexus commands
+                switch (arrayOfInputWords[1]){
+                    case nexusCommands[0]: // nexus --help
+                        return <div className='mt-0.5 flex gap-8'>
+                            <div className="">
+                                <div className='text-teal-300'>cd home</div>
+                                <div className='text-teal-300'>cd team</div>
+                                <div className='text-teal-300'>cd events</div>
+                                <div className='text-teal-300'>cd about</div>
+                                <div className='text-teal-300'>cd forms</div>
+                                <div className='text-teal-300'>cd contactus</div>
+                                <div className='text-teal-300'>ls</div>
+                            </div>
+                            <div className="">
+                                <div>Redirect to Home Page</div>
+                                <div>Redirect to Team Page</div>
+                                <div>Redirect to Events Page</div>
+                                <div>Redirect to About Page</div>
+                                <div>Redirect to Forms Page</div>
+                                <div>Redirect to ContactUs Page</div>
+                                <div>List all the pages available</div>
+                            </div>
+                        </div>;
+                        break;
+                    case nexusCommands[1]: // nexus about
+                        return <div className='mt-0.5'><p>Nexus About</p></div>;
+                        break;
+                }
                 break;
             case commandsOfTerminal[2]: // case for the ls
                 // check if the command has more words other than ls
@@ -69,6 +110,17 @@ const Terminal = () => {
                     return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
                 }
                 break;
+            case commandsOfTerminal[5]: // case for the register
+                // check if the command is correct 
+                if (arrayOfInputWords.length == 2){
+                    // check if the event name exists in the database or not
+                    // else if the event is there but not accepting registrations
+                    return <div className='mt-0.5 text-red-900'><p>Event ${arrayOfInputWords[1]} is not accepting</p></div>;
+                    // else if the event is not found
+                    return <div className='mt-0.5 text-red-900'><p>Event ${arrayOfInputWords[1]} is not found</p></div>;
+                } else{
+                    return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
+                }
             default:
                 return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
 
@@ -79,34 +131,37 @@ const Terminal = () => {
         <div className='flex flex-col items-center justify-center gap-4 max-w-7xl mx-auto '>
             <h2 className='text-2xl font-semibold'>$ Nexus Terminal</h2>
             <p className='text-[1.25rem] text-gray-400'>Interact to know more about Nexus...</p>
-            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white rounded-2xl overflow-hidden text-black">
+            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white rounded-2xl overflow-y-auto text-black flex flex-col h-screen">
                 <div className='bg-gray-300 h-10 flex items-center pl-6 list-none gap-2'>
-                    <li className='bg-red-800 h-4 w-4 rounded-full'></li>
-                    <li className='bg-yellow-400 h-4 w-4 rounded-full'></li>
-                    <li className='bg-green-800 h-4 w-4 rounded-full'></li>
+                    <li className='bg-red-600 h-4 w-4 rounded-full'></li>
+                    <li className='bg-yellow-300 h-4 w-4 rounded-full'></li>
+                    <li className='bg-green-600 h-4 w-4 rounded-full'></li>
                 </div>
-                {/* Existing terminal outputs */}
-                {prevCommands.map((command, index) => (
-                    <div key={index} className="px-4 py-2 text-orange-500 font-semibold">
-                        <div className='mb-0.5'><p>SVNIT/CSE/Nexus/User:~${command.input}</p></div>
-                        {/* <div className='mt-0.5'><p>{command.output}</p></div> */}
-                        {command.output}
-                    </div>
-                ))}
 
-                {/* Form for new input */}
-                <form onSubmit={handleTerminalSubmit}>
-                    <div className='px-4 py-2 text-orange-500 font-semibold flex '>
-                        <p>SVNIT/CSE/Nexus/User:~$</p>
-                        <input
-                            type="text"
-                            placeholder='info'
-                            value={input}
-                            onChange={handleInputChange}
-                            className='outline-none border-none ml-1'
-                        />
-                    </div>
-                </form>
+                <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
+                    {/* Existing terminal outputs */}
+                    {prevCommands.map((command, index) => (
+                        <div key={index} className="px-4 py-2 text-orange-500 font-semibold">
+                            <div className='mb-0.5'><p className='text-orange-500'>SVNIT/CSE/Nexus/User:~${command.input}</p></div>
+                            {/* <div className='mt-0.5'><p>{command.output}</p></div> */}
+                            {command.output}
+                        </div>
+                    ))}
+
+                    {/* Form for new input */}
+                    <form onSubmit={handleTerminalSubmit}>
+                        <div className='px-4 py-2 text-orange-500 font-semibold flex '>
+                            <p className='text-orange-500'>SVNIT/CSE/Nexus/User:~$</p>
+                            <input
+                                type="text"
+                                placeholder={count === 0 ? 'nexus --help to see all commands' : null}
+                                value={input}
+                                onChange={handleInputChange}
+                                className='outline-none border-none ml-1 basis-1/2'
+                            />
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );
