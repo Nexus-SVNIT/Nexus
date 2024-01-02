@@ -8,11 +8,11 @@ const methodOverrride=require("method-override");
 const eventRoutes = require('./routes/eventRoutes.js');
 const memberRoutes=require('./routes/memberRoutes.js');
 const messageRoutes = require('./routes/messageRoutes.js');
+const userRoutes = require('./routes/userRoutes.js');
 
 const app = express();
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
-
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -30,6 +30,7 @@ app.get('/', (req, res) => {
 app.use('/event', eventRoutes);
 app.use('/member',memberRoutes);
 app.use('/messages', messageRoutes);
+app.use('/api/user',userRoutes);
 
 mongoose.connect(MONGO_URL)
     .then(() => {
