@@ -5,7 +5,7 @@ import Footer from '../Footer/Footer'
 const Layout = ({ children }) => {
 
     return (
-        <div className=' bg-gradient-to-b text-white from-black via-slate-800 to-dark_primary/80 h-full scroll-smooth'>
+        <div className=' bg-gradient-to-b text-white from-black via-slate-800 to-dark_primary/80 h-full scroll-smooth w-fit md:w-full'>
             <header className='bg-black sticky top-0 left-0 backdrop-filter backdrop-blur-sm bg-opacity-75 z-50'>
                 <Navbar />
             </header>

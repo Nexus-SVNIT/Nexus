@@ -9,6 +9,27 @@
     box-sizing: border-box;
     /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
 }
+
+/* Target the scrollbar itself */
+::-webkit-scrollbar {
+    width: 6px; /* Adjust the width of the scrollbar */
+}
+
+/* Handle the scrollbar's thumb (the draggable element) */
+::-webkit-scrollbar-thumb {
+    background: orange; /* Color of the scrollbar thumb */
+    border-radius: 4px; /* Optional: Round the corners */
+}
+
+/* Handle the scrollbar's track (the background) */
+::-webkit-scrollbar-track {
+    background: #f1f1f1; /* Color of the scrollbar track */
+}
+
+/* Optional: Handle the hover state */
+::-webkit-scrollbar-thumb:hover {
+    background: #555; /* Color of the scrollbar thumb on hover */
+}
 .nexus_gradient {
     background: linear-gradient(
         90deg,
