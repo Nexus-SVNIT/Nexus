@@ -31,7 +31,7 @@ const Footer = () => {
                     <div className="flex flex-col mt-4 gap-4 px-8 md:px-0" >
                         <h4 className="text-xl">Social Media</h4>
                         <ul className="flex flex-col gap-2">
-                            <Link>Instagram</Link>
+                            <Link to={'/nexus'}>Instagram</Link>
                             <Link>LinkedIn</Link>
                             <Link>nexus@gmail.com</Link>
                         </ul>

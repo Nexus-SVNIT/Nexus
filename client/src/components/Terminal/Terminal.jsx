@@ -10,9 +10,9 @@ const Terminal = () => {
         setCount(count + 1);
     };
 
-    const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit","register"];
+    const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit", "register"];
     const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
-    const nexusCommands = ["--help","about"]
+    const nexusCommands = ["--help", "about"]
     const scrollContainerRef = useRef();
 
     useEffect(() => {
@@ -29,7 +29,7 @@ const Terminal = () => {
         e.preventDefault();
         const output = terminalFunction(input);
         incrementCount();
-        if (output == 0) {
+        if (output === 0) {
             setTerminalCommands([]);
         } else {
             setTerminalCommands((prevCommands) => [...prevCommands, { input, output }]);
@@ -55,12 +55,12 @@ const Terminal = () => {
                 } else {
                     return <div className='mt-0.5 text-red-900'><p>Wrong Command ask nexus help for commands</p></div>;
                 }
-                break;
+
             case commandsOfTerminal[1]: // case for the nexus commands
-                switch (arrayOfInputWords[1]){
+                switch (arrayOfInputWords[1]) {
                     case nexusCommands[0]: // nexus --help
                         return <div className='mt-0.5 flex gap-8'>
-                            <div className="">
+                            <div >
                                 <div className='text-teal-300'>cd home</div>
                                 <div className='text-teal-300'>cd team</div>
                                 <div className='text-teal-300'>cd events</div>
@@ -69,7 +69,7 @@ const Terminal = () => {
                                 <div className='text-teal-300'>cd contactus</div>
                                 <div className='text-teal-300'>ls</div>
                             </div>
-                            <div className="">
+                            <div>
                                 <div>Redirect to Home Page</div>
                                 <div>Redirect to Team Page</div>
                                 <div>Redirect to Events Page</div>
@@ -112,13 +112,13 @@ const Terminal = () => {
                 break;
             case commandsOfTerminal[5]: // case for the register
                 // check if the command is correct 
-                if (arrayOfInputWords.length == 2){
+                if (arrayOfInputWords.length == 2) {
                     // check if the event name exists in the database or not
                     // else if the event is there but not accepting registrations
                     return <div className='mt-0.5 text-red-900'><p>Event ${arrayOfInputWords[1]} is not accepting</p></div>;
                     // else if the event is not found
                     return <div className='mt-0.5 text-red-900'><p>Event ${arrayOfInputWords[1]} is not found</p></div>;
-                } else{
+                } else {
                     return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
                 }
             default:
@@ -131,7 +131,7 @@ const Terminal = () => {
         <div className='flex flex-col items-center justify-center gap-4 max-w-7xl mx-auto '>
             <h2 className='text-2xl font-semibold'>$ Nexus Terminal</h2>
             <p className='text-[1.25rem] text-gray-400'>Interact to know more about Nexus...</p>
-            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white rounded-2xl overflow-y-auto text-black flex flex-col h-screen">
+            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white rounded-2xl overflow-y-auto text-black flex flex-col ">
                 <div className='bg-gray-300 h-10 flex items-center pl-6 list-none gap-2'>
                     <li className='bg-red-600 h-4 w-4 rounded-full'></li>
                     <li className='bg-yellow-300 h-4 w-4 rounded-full'></li>
@@ -154,7 +154,7 @@ const Terminal = () => {
                             <p className='text-orange-500'>SVNIT/CSE/Nexus/User:~$</p>
                             <input
                                 type="text"
-                                placeholder={count === 0 ? 'nexus --help to see all commands' : null}
+                                placeholder={count === 0 ? 'nexus --help ' : null}
                                 value={input}
                                 onChange={handleInputChange}
                                 className='outline-none border-none ml-1 basis-1/2'

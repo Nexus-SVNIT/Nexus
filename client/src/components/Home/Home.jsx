@@ -3,7 +3,7 @@ import { Button, FAQs, Terminal } from '../index'
 
 const Home = () => {
     return (
-        <div className='mx-auto overflow-x-hidden transition-all delay-300 bg-[#111]'>
+        <div className='mx-auto overflow-x-hidden transition-all delay-300 bg-[#111] '>
             <div className='flex justify-between max-w-7xl my-8 px-6 md:px-4 mx-auto '>
                 <div className='flex flex-col  justify-center items-center md:items-start  flex-1 text-white gap-12 md:gap-10 '>
                     <h1 className='nexus_gradient '>NEXUS</h1>
@@ -26,7 +26,8 @@ const Home = () => {
                     </div>
                 </div>
             </div>
-            <div className='my-48 w-full' id='terminal'>
+            <label id='terminal' />
+            <div className='my-48 w-full' >
                 <Terminal />
             </div>
             <div className='my-48 w-full relative '>
