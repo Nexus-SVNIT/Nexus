@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 
 const ModernProfile = ({ profile }) => {
     return (
-        <div className="bg-white text-black flex-wrap w-[20rem] md:w-[16rem] h-[26rem] md:h-[22rem] rounded-lg overflow-hidden relative shadow-lg">
+        <div className="bg-white hover:bg-blue-50 text-black flex-wrap w-[20rem] md:w-[16rem] h-[26rem] md:h-[22rem] rounded-lg overflow-hidden relative shadow-lg">
             <div className="h-[18rem] md:h-[16rem]  w-[22rem] md:w-[18rem] bg-red-500/20 rounded-b-[50%] absolute top-0 -left-[5%] overflow-hidden  border-b-8 border-red-400 ">
                 <img src="https://i.pravatar.cc/300" alt="Person" className="-z-10 w-full h-full flex items-center  transition-all duration-300 hover:scale-110 cursor-pointer" />
             </div>

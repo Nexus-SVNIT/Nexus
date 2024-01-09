@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, FAQs, Terminal } from '../index'
+import { Button, FAQs, Terminal, WhatPeopleThinkAboutUS } from '../index'
 
 const Home = () => {
     return (
@@ -14,7 +14,7 @@ const Home = () => {
                     <p className='text-gray-400 w-[90%] sm:w-10/12 md:w-[28rem] text-[1.25rem] '>
                         We foster engagement with students from all years to create a connected and inclusive learning community.
                     </p>
-                    <Button href={'#terminal'} >
+                    <Button href={'#terminal'}>
                         Explore More
                     </Button>
                 </div>
@@ -27,11 +27,17 @@ const Home = () => {
                 </div>
             </div>
             <label id='terminal' />
-            <div className='my-48 w-full' >
+            <div className='my-48 w-full'>
                 <Terminal />
             </div>
-            <div className='my-48 w-full relative '>
+
+            <div className='faq-section my-48 w-full relative '>
                 <FAQs />
+            </div>
+
+
+            <div className='my-48 w-full relative '>
+                <WhatPeopleThinkAboutUS />
             </div>
         </div>
     )
