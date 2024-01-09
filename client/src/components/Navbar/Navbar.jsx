@@ -16,8 +16,8 @@ const Navbar = () => {
             <ul className='hidden md:flex items-center gap-12 mr-5'>
                 {NavList.map(item => {
                     return (
-                        <Link to={item.path} >
-                            <li key={item.path} className={`${item.path === pathname ? "text-orange underline underline-offset-8" : "text-white"} transition-colors`}>
+                        <Link to={item.path} key={item.path} >
+                            <li key={item.path} className={`${item.path === pathname ? "text-[#3586ff] underline underline-offset-8" : "text-white"} transition-colors`}>
                                 {item.label}
                             </li>
                         </Link>

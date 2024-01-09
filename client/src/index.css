@@ -55,6 +55,17 @@
     flex-shrink: 0;
 }
 
+.faq-section::before {
+    content: ""; /* :before will only appear if this content is declared */
+    position: absolute;
+    top: -5%;
+    left: -10rem;
+    background-color: rgba(22, 152, 227, 0.08);
+    width: 150vw;
+    height: 140%;
+    transform: rotate(5deg);
+}
+
 .bg-screen-gradient {
     border-radius: 1.25rem;
     background: linear-gradient(
@@ -66,4 +77,10 @@
     width: 44rem;
     height: 24rem;
     flex-shrink: 0;
+}
+.bg-testimonials {
+    background: url("data/bg-testimonials.jpg");
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center;
 }

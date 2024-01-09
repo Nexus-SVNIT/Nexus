@@ -1,12 +1,12 @@
 import React from 'react'
 import ModernProfile from '../ProfileCard/ModernProfile'
 
-const TeamCard = ({ data }) => {
+const TeamCard = ({ data, title }) => {
     return (
-        <div className='my-10 mb-20 w-full flex flex-col items-center justify-center mx-auto'>
-            <h2 className='mb-4 font-semibold text-orange text-xl'>{"< Our_Core_Team />"}</h2>
-            <div className='grid mx-auto gap-8 sm:gap-20 lg:gap-22 md:grid-cols-2    xl:grid-cols-4 xl:gap-8 place-content-center'>
-                {data.map(item => <ModernProfile profile={item} />)}
+        <div className='my-10 mb-20 w-full flex flex-col items-center justify-center '>
+            <h2 className='mb-4 font-semibold text-orange text-2xl'>{title}</h2>
+            <div className='w-full flex flex-wrap items-center justify-center  gap-8 md:gap-10 lg:gap-12 '>
+                {data.map(item => <ModernProfile key={item.email} profile={item} />)}
             </div>
         </div>
     )
