@@ -1,3 +1,4 @@
+const { string } = require('joi');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -5,6 +6,10 @@ const eventSchema = new Schema({
     eventName: {
         type: String,
         required: true
+    },
+    concatEventName:{
+        type:String,
+        required:true
     },
     eventDate: {
         type: String,
