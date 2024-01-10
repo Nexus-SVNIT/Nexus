@@ -1,10 +1,11 @@
 export const NavList = [
     { label: "Home", path: "/" },
     { label: "Team", path: "/team" },
+    { label: "Achievements", path: "/achievements" },
     { label: "Events", path: "/events" },
-    { label: "About", path: "/about" },
     { label: "Forms", path: "/forms" },
     { label: "Connect", path: "/connect" },
+    { label: "About", path: "/about" },
 ];
 export const FAQsList = [
     {
@@ -36,7 +37,8 @@ export const FAQsList = [
 export const faculty_advisors = [
     {
         name: "Dr. Sankita J. Patel",
-        role: "Assistant Professor",
+        role: "Associate Professor",
+        img: "https://www.svnit.ac.in/sjp/assets/images/propic.png",
         socialLinks: {
             facebook: "https://www.facebook.com/bharath.bhammar",
             linkedin: "https://www.linkedin.com/in/bharath-bhammar",
@@ -44,8 +46,9 @@ export const faculty_advisors = [
         },
     },
     {
-        name: "Dr. Deepti Rana",
-        role: "Assistant Professor",
+        name: "Dr. Dipti P. Rana",
+        role: "Associate Professor",
+        img: "https://www.svnit.ac.in/web/department/computer/images/dpr.jpg",
         socialLinks: {
             facebook: "https://www.facebook.com/cb.praveen",
             linkedin: "https://www.linkedin.com/in/cb-praveen",
@@ -54,7 +57,8 @@ export const faculty_advisors = [
     },
     {
         name: "Dr. Bhavesh N Gohil",
-        role: "Assistant Professor",
+        role: "Associate Professor",
+        img: "https://www.svnit.ac.in/web/department/computer/images/bng.jpg",
         socialLinks: {
             facebook: "https://www.facebook.com/pranav.dhobi",
             linkedin: "https://www.linkedin.com/in/pranav-dhobi",

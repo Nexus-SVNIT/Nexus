@@ -11,15 +11,15 @@ const FormCard = () => {
                 </div>
 
                 <div>
-                    <Button className='border-none outline-none bg-blue-700 px-4 py-2 rounded-md text-white text-sm' isButton={true}><FaShareSquare /></Button>
+                    <button className='border-none outline-none  text-blue-700 px-4 py-2 rounded-md text-sm' isButton={true} title='Share This Form'><FaShareSquare size={20} /></button>
                 </div>
             </div>
             <div className='font-semibold flex justify-between my-2'>
                 <div className='font-bold'>Deadline : 30/12/23</div>
-                <div className='text-gray-800 font-mono '>Status: ACCEPTING</div>
+                <div className='text-gray-800 font-mono '>Status: NOT ACCEPTING</div>
             </div>
             <div className='font-semibold flex flex-col gap-6 md:flex-row justify-between my-4'>
-                <div className='bg-gray-400 rounded-full py-2 px-4 text-white font-bold w-[50%] '>Starts 01/01/24</div>
+                <div className='bg-gray-400 rounded-full py-2 px-4 text-white font-bold w-fit '>Starts 01/01/24</div>
                 <div className='text-green-800 font-mono text-lg'>{Math.floor(Math.random() * 100)}+ Participating</div>
             </div>
             <div className='flex flex-col md:flex-row justify-between gap-6'>

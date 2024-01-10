@@ -11,20 +11,14 @@ const Teams = () => {
                 Faculty Advisors
             </Title>
             <TeamCard data={faculty_advisors} />
-
             <Title>
                 Our Team
             </Title>
             <TeamCard data={team_core} />
-
             <TeamCard data={team_devs} />
-
             <TeamCard data={team_treasurer} />
-
             <TeamCard data={team_social_med} />
-
             <TeamCard data={team_designer} />
-
         </div>
     )
 }

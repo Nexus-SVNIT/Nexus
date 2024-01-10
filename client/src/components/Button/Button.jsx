@@ -4,8 +4,6 @@ import { Link } from 'react-router-dom'
 const Button = ({ isButton = false, href, children, variant = "primary" }) => {
     const classNames = ['font-semibold border border-blue-700 px-4 py-2 w-full transition-all duration-300', variant === "primary" ?
         ' outline-none bg-blue-700 rounded-md text-white hover:bg-transparent hover:text-blue-700' : ' bg-transparent rounded-md text-blue-700 hover:bg-blue-700 hover:text-white'].join("");
-
-    console.log(href);
     return (
         isButton ?
             <button className={classNames}>{children}</button>
