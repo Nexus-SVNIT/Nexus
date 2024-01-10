@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+
 const Schema = mongoose.Schema;
 
 const eventSchema = new Schema({
@@ -8,6 +9,10 @@ const eventSchema = new Schema({
     },
     eventType: {
         type: String,
+    },
+    concatEventName:{
+        type:String,
+        required:true
     },
     eventDate: {
         type: String,

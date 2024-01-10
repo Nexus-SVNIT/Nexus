@@ -35,9 +35,17 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 
 const addEvent = wrapAsync(async (req, res) => {
     const { eventName, eventDate, formFields } = req.body;
+    const concatenatedEventName = eventName.split('').map(char => char.toLowerCase()).join('');
     const formSchema = createFormSchema(formFields);
     const collectionName = makeCollectionName(eventName);
-    const createdEvent = await Event.create({ eventName, eventDate, formFields, responseCollectionName: collectionName, responseSchema: formSchema});
+    const createdEvent = await Event.create({
+        eventName,
+        eventDate,
+        formFields,
+        concatenatedEventName, 
+        responseCollectionName: collectionName,
+        responseSchema: formSchema
+    });
     res.status(200).json(createdEvent);
 });
 
@@ -45,8 +53,15 @@ const updateEvent = wrapAsync(async (req, res) => {
     const id = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(id))
         throw new ExpressError('Invalid id', 400);
-
-    const updatedEvent = await Event.findOneAndUpdate({ _id: id }, { ...req.body }, { new: true }); // in earlier versions default value of new was true, but now we must mention explicitly.
+    const concatenatedEventName = req.body.eventName.split('').map(char => char.toLowerCase()).join('');
+    const updatedEvent = await Event.findOneAndUpdate(
+        { _id: id },
+        { 
+            ...req.body,
+            concatenatedEventName // Include concatenatedEventName in the update
+        },
+        { new: true }
+    ); // in earlier versions default value of new was true, but now we must mention explicitly.
     if (!updatedEvent)
         throw new ExpressError('Event not found', 404);
 
