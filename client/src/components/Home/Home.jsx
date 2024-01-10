@@ -29,12 +29,9 @@ const Home = () => {
             <div className='my-48 w-full'>
                 <Terminal />
             </div>
-
             <div className='faq-section my-48 w-full relative '>
                 <FAQs />
             </div>
-
-
             <div className='my-48 w-full relative '>
                 <WhatPeopleThinkAboutUS />
             </div>
