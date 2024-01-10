@@ -5,18 +5,18 @@ import './events.css'
 
 const Events = () => {
     return (
-        <div className='mx-auto overflow-hidden bg-[#111] pb-20'>
+        <div className='mx-auto overflow-hidden bg-[#111] pb-20 md:pb-48'>
             <Title >
                 Events
             </Title>
             <div className="container">
                 <div class="timeline">
-                    <ul className='transition-all pt-10'>
+                    <ul className='transition-all py-10 '>
                         <li >
-                            <div className="timeline-content">
+                            <div className="timeline-content ">
                                 <div className="date">
                                     <p>20th September, 2023</p>
-                                    <span className=' btn upcoming'>Upcoming</span>
+                                    <span className=' btn upcoming text-xs'>Upcoming</span>
                                 </div>
                                 <h1>CodeSprint</h1>
                                 <p >
@@ -28,7 +28,7 @@ const Events = () => {
                             <div className="timeline-content">
                                 <div className="date">
                                     <p>20th September, 2023</p>
-                                    <span className=' btn active'>On Going</span>
+                                    <span className=' btn bg-yellow-600 text-xs'>On Going</span>
                                 </div>
                                 <h1>CodeSprint</h1>
                                 <p >

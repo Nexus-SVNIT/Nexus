@@ -131,7 +131,7 @@ const Terminal = () => {
         <div className='flex flex-col items-center justify-center gap-4 max-w-7xl mx-auto '>
             <h2 className='text-2xl font-semibold'>$ Nexus Terminal</h2>
             <p className='text-[1.25rem] text-gray-400'>Interact to know more about Nexus...</p>
-            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white rounded-2xl overflow-y-auto text-black flex flex-col ">
+            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white/95 rounded-2xl overflow-y-auto text-black flex flex-col ">
                 <div className='bg-gray-300 h-10 flex items-center pl-6 list-none gap-2'>
                     <li className='bg-red-600 h-4 w-4 rounded-full'></li>
                     <li className='bg-yellow-300 h-4 w-4 rounded-full'></li>
@@ -157,7 +157,7 @@ const Terminal = () => {
                                 placeholder={count === 0 ? 'nexus --help ' : null}
                                 value={input}
                                 onChange={handleInputChange}
-                                className='outline-none border-none ml-1 basis-1/2'
+                                className='outline-none border-none ml-1 basis-1/2 bg-transparent w-full'
                             />
                         </div>
                     </form>
