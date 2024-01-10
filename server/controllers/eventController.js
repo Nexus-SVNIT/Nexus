@@ -34,6 +34,10 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 
 const addEvent = wrapAsync(async (req, res) => {
     const { eventName, eventDate, formFields } = req.body;
+    const concatenatedEventName = eventName
+        .split("")
+        .map((char) => char.toLowerCase())
+        .join("");
     const formSchema = createFormSchema(formFields);
     const collectionName = makeCollectionName(eventName);
     const createdEvent = await Event.create({
@@ -83,10 +87,8 @@ const submitResponse = async (req, res) => {
     const responseSchema = mongoose.Schema(singleEvent.responseSchema);
     let ResponseCollection;
     if (!mongoose.models[collectionName])
-        ResponseCollection = mongoose.model(
-            collectionName,
-            responseSchema
-        ); // it should be mongoose.models[] and not mongoose.model[]
+        ResponseCollection = mongoose.model(collectionName, responseSchema);
+    // it should be mongoose.models[] and not mongoose.model[]
     else ResponseCollection = mongoose.models[collectionName];
     const savedResponse = await ResponseCollection.create(req.body);
     res.status(200).json(savedResponse);
@@ -103,10 +105,8 @@ const getResponses = async (req, res) => {
     const responseSchema = mongoose.Schema(singleEvent.responseSchema);
     let ResponseCollection;
     if (!mongoose.models[collectionName])
-        ResponseCollection = mongoose.model(
-            collectionName,
-            responseSchema
-        ); // it should be mongoose.models[] and not mongoose.model[]
+        ResponseCollection = mongoose.model(collectionName, responseSchema);
+    // it should be mongoose.models[] and not mongoose.model[]
     else ResponseCollection = mongoose.models[collectionName];
     const allResponses = await ResponseCollection.find();
     res.status(200).json(allResponses);
