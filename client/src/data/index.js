@@ -4,7 +4,7 @@ export const NavList = [
     { label: "Events", path: "/events" },
     { label: "About", path: "/about" },
     { label: "Forms", path: "/forms" },
-    { label: "Contacts", path: "/contactus" },
+    { label: "Connect", path: "/connect" },
 ];
 export const FAQsList = [
     {
@@ -31,6 +31,35 @@ export const FAQsList = [
         id: 5,
         question: "Are there leadership opportunities within the club?",
         answer: "Yes, Club Nexus, the official club of SVNIT Surat's Computer Science and Engineering department, encourages leadership development. There are various opportunities for members to take on leadership roles, such as project leads, event coordinators, and executive board members. We regularly accept applications for these positions. Keep an eye on our announcements for leadership opportunities or inquire during club meetings.",
+    },
+];
+export const faculty_advisors = [
+    {
+        name: "Rupa G Mehta",
+        role: "Assistant Professor",
+        socialLinks: {
+            facebook: "https://www.facebook.com/bharath.bhammar",
+            linkedin: "https://www.linkedin.com/in/bharath-bhammar",
+            instagram: "https://www.instagram.com/bharathbhammar",
+        },
+    },
+    {
+        name: "Deepti Rana",
+        role: "Assistant Professor",
+        socialLinks: {
+            facebook: "https://www.facebook.com/cb.praveen",
+            linkedin: "https://www.linkedin.com/in/cb-praveen",
+            instagram: "https://www.instagram.com/cbpraveen",
+        },
+    },
+    {
+        name: "Bhavesh N Gohil",
+        role: "Assistant Professor",
+        socialLinks: {
+            facebook: "https://www.facebook.com/pranav.dhobi",
+            linkedin: "https://www.linkedin.com/in/pranav-dhobi",
+            instagram: "https://www.instagram.com/pranavdhobi",
+        },
     },
 ];
 export const team_core = [

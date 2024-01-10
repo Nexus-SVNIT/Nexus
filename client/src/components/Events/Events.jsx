@@ -5,7 +5,7 @@ import './events.css'
 
 const Events = () => {
     return (
-        <div className='mx-auto overflow-hidden bg-[#111] pb-20'>
+        <div className='mx-auto overflow-hidden bg-[#111] pb-32'>
             <Title >
                 Events
             </Title>
