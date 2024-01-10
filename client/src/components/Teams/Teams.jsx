@@ -1,8 +1,6 @@
 import React from 'react'
+import { faculty_advisors, team_core, team_designer, team_devs, team_social_med, team_treasurer } from '../../data'
 import { Title } from '../index'
-import ProfileCard from '../ProfileCard/ProfileCard'
-import { team_cordinators,faculty_advisors,team_core, team_designer, team_devs, team_social_med, team_treasurer } from '../../data'
-import ModernProfile from '../ProfileCard/ModernProfile'
 import TeamCard from './TeamCard'
 
 const Teams = () => {
@@ -12,29 +10,21 @@ const Teams = () => {
             <Title>
                 Faculty Advisors
             </Title>
-            <TeamCard data={faculty_advisors} title={''} />
-            
+            <TeamCard data={faculty_advisors} />
+
             <Title>
                 Our Team
             </Title>
-            <TeamCard data={team_core} title={''} />
+            <TeamCard data={team_core} />
 
-            <TeamCard data={team_devs} title={''} />
+            <TeamCard data={team_devs} />
 
-            <TeamCard data={team_treasurer} title={''} />
+            <TeamCard data={team_treasurer} />
 
-            <TeamCard data={team_social_med} title={''} />
+            <TeamCard data={team_social_med} />
 
-            <TeamCard data={team_designer} title={''} />
-            {/* <div className=' flex items-center justify-center flex-wrap gap-x-4 xl:gap-x-20 gap-y-6 xl:gap-y-20 mx-auto pt-10'>
-                {team_devs.map(item => <ProfileCard profile={item} />)}
-            </div>
-            <div className='w-3/4 flex items-center justify-center flex-wrap gap-x-10 xl:gap-x-40  gap-y-6 xl:gap-y-20 mx-auto pt-10'>
-                {team_cordinators.map(item => <ProfileCard profile={item} />)}
-            </div>
-            <div className=' flex items-center justify-center flex-wrap gap-x-4 xl:gap-x-20 gap-y-10 xl:gap-y-20 mx-auto pt-10'>
-                {team_designer.map(item => <ProfileCard profile={item} />)}
-            </div> */}
+            <TeamCard data={team_designer} />
+
         </div>
     )
 }

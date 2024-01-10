@@ -5,10 +5,11 @@
   "main": "./server/server.js",
   "scripts": {
     "start": "node server/server.js",
-    "dev-all": "cd ./client && npm start && cd .. && nodemon start"
+    "dev": "nodemon server/server.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs-mate": "^4.0.0",
     "env": "^0.0.2",
@@ -30,5 +31,8 @@
     "CST"
   ],
   "author": "Bharat0509",
-  "license": "ISC"
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
 }

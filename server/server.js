@@ -1,10 +1,8 @@
 require("dotenv").config();
 const express = require("express");
+const cors = require("cors");
 const mongoose = require("mongoose");
 const ExpressError = require("./utils/ExpressError.js");
-const path = require("path");
-const ejsMate = require("ejs-mate");
-const methodOverride = require("method-override");
 const eventRoutes = require("./routes/eventRoutes.js");
 const memberRoutes = require("./routes/memberRoutes.js");
 const messageRoutes = require("./routes/messageRoutes.js");
@@ -14,20 +12,13 @@ const app = express();
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGO_URL;
 
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-
-app.engine("ejs", ejsMate);
-
-app.use(methodOverride("_method"));
+app.use(cors());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "/public")));
-
 app.use(express.json());
-app.get("/", (req, res) => {
-    res.send("Welcome to the official website of Nexus");
+app.get("/health-check", (req, res) => {
+    return res.send("EveryThing is Fine");
 });
-app.use("/event", eventRoutes);
+app.use("/events", eventRoutes);
 app.use("/member", memberRoutes);
 app.use("/messages", messageRoutes);
 app.use("/api/user", userRoutes);

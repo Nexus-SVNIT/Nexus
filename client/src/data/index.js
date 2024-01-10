@@ -35,7 +35,7 @@ export const FAQsList = [
 ];
 export const faculty_advisors = [
     {
-        name: "Rupa G Mehta",
+        name: "Dr. Sankita J. Patel",
         role: "Assistant Professor",
         socialLinks: {
             facebook: "https://www.facebook.com/bharath.bhammar",
@@ -44,7 +44,7 @@ export const faculty_advisors = [
         },
     },
     {
-        name: "Deepti Rana",
+        name: "Dr. Deepti Rana",
         role: "Assistant Professor",
         socialLinks: {
             facebook: "https://www.facebook.com/cb.praveen",
@@ -53,7 +53,7 @@ export const faculty_advisors = [
         },
     },
     {
-        name: "Bhavesh N Gohil",
+        name: "Dr. Bhavesh N Gohil",
         role: "Assistant Professor",
         socialLinks: {
             facebook: "https://www.facebook.com/pranav.dhobi",
