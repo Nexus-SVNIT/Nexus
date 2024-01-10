@@ -1,7 +1,7 @@
 import React from 'react'
 import ModernProfile from '../ProfileCard/ModernProfile'
 
-const TeamCard = ({ data, title }) => {
+const TeamCard = ({ data }) => {
     return (
         <div className='my-10 mb-20 w-full flex flex-col items-center justify-center '>
 
