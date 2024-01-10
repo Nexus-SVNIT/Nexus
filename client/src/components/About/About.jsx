@@ -1,5 +1,7 @@
 import React from 'react'
+import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { GoGoal } from "react-icons/go";
+import { Link } from 'react-router-dom';
 
 const About = () => {
     return (
@@ -15,9 +17,24 @@ const About = () => {
                     </div>
                 </div>
                 <div className=' flex flex-col items-center justify-center  md:w-1/3 '>
-                    <img src="/assets/nexus_logo.png" alt="" className=' h-[10rem] w-[10rem] md:h-[20rem] md:w-[20rem]  object-cover ' />
-                    <h3 className='text-2xl font-bold mb-4 font-mono text-white'>NEXUS NIT Surat</h3>
+                    <img src="/assets/nexus_e.png" alt="" className='w-[15rem] h-[15rem] md:h-[18rem] md:w-[18rem]  object-cover ' />
+                    <h3 className='text-3xl font-bold my-8  md:my-4 font-mono text-white'>NEXUS NIT Surat</h3>
                     <p className='text-sm w-[50%] md:w-[75%] text-center '>Departmental Cell of Computer Science And Engineering Department </p>
+
+                    <div className="flex gap-4 my-4 ">
+                        <Link to={"#"} target="_blank">
+                            <FaLinkedinIn className="transition-all duration-400 bg-[#0077b5] border  hover:bg-transparent hover:text-[#0077b5]  
+                        hover:border-[#0077b5] h-10 w-10 p-2 text-white rounded-full" size={24} />
+                        </Link>
+                        <Link to={"#"} target="_blank">
+                            <FaInstagram className="transition-all duration-400 bg-[#cd486b] border hover:bg-transparent hover:text-[#cd486b]  
+                        hover:border-[#cd486b] h-10 w-10 p-2 text-white rounded-full" size={24} />
+                        </Link>
+                        <Link to={"#"} target="_blank">
+                            <FaFacebookF className="transition-all duration-400 bg-[#316FF6] border hover:bg-transparent hover:text-[#316FF6]  
+                        hover:border-[#316FF6] h-10 w-10 p-2 text-white rounded-full" size={24} />
+                        </Link>
+                    </div>
                 </div>
             </div>
 

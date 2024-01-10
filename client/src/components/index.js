@@ -12,3 +12,4 @@ export { default as FAQs } from "./FAQs/FAQs.jsx";
 export { default as Forms } from "./Forms/Forms.jsx";
 export { default as Footer } from "./Footer/Footer.jsx";
 export { default as WhatPeopleThinkAboutUS } from "./WhatPeopleThinkAboutUs/WhatPeopleThinkAboutUS.jsx";
+export { default as NotFound } from "./NotFound/NotFound.jsx";
