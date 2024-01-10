@@ -45,7 +45,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     font-family: Inter;
-    font-size: 5.25rem;
+    /* font-size: 5.25rem; */
     font-style: normal;
     font-weight: 400;
     line-height: normal;
@@ -55,7 +55,7 @@
     flex-shrink: 0;
 }
 
-.faq-section::before {
+.faq-section::after {
     content: ""; /* :before will only appear if this content is declared */
     position: absolute;
     top: -5%;
@@ -64,6 +64,10 @@
     width: 150vw;
     height: 140%;
     transform: rotate(5deg);
+    z-index: -1;
+}
+.faq-section {
+    z-index: 10;
 }
 
 .bg-screen-gradient {
@@ -83,4 +87,12 @@
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;
+}
+@media screen and (max-width: 420px) {
+    .faq-section::after {
+        width: 150rem;
+        height: 140%;
+        transform: rotate(5deg);
+        z-index: -1;
+    }
 }
