@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Terminal = () => {
     const [input, setInput] = useState('');
@@ -14,6 +15,7 @@ const Terminal = () => {
     const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
     const nexusCommands = ["--help", "about"]
     const scrollContainerRef = useRef();
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Scroll to the bottom when the component mounts or when new content is added
@@ -48,12 +50,13 @@ const Terminal = () => {
             case commandsOfTerminal[0]: // case for the cd
                 // check if the command has less or more words
                 if (arrayOfInputWords.length === 2 && pagesOfNexus.includes(arrayOfInputWords[1])) {
-                    return <div className='mt-0.5'><p className='text-red-900'>cd command to  {arrayOfInputWords[1]}</p></div>;
+                    navigate('/'+arrayOfInputWords[1])
+                    return <div className='mt-0.5'></div>;
                     // redirect to the arrayOfInputWords[1] page
                 } else if (arrayOfInputWords.length === 2) {
-                    return <div className='mt-0.5 text-red-900'><p>{arrayOfInputWords[1]} Doesn't exists</p></div>;
+                    return <div className='mt-0.5 text-red-900'><p>Page {arrayOfInputWords[1]} Doesn't exists</p></div>;
                 } else {
-                    return <div className='mt-0.5 text-red-900'><p>Wrong Command ask nexus help for commands</p></div>;
+                    return <div className='mt-0.5 text-red-900'><p>Wrong Command ask "nexus --help" for commands</p></div>;
                 }
 
             case commandsOfTerminal[1]: // case for the nexus commands
@@ -83,6 +86,9 @@ const Terminal = () => {
                     case nexusCommands[1]: // nexus about
                         return <div className='mt-0.5'><p>Nexus About</p></div>;
                         break;
+                    default:
+                        return <div className='mt-0.5 text-red-900'><p>Wrong Command ask "nexus --help" for commands</p></div>;
+                        break;
                 }
                 break;
             case commandsOfTerminal[2]: // case for the ls
@@ -91,7 +97,7 @@ const Terminal = () => {
                     return <div className='mt-0.5'><p>List of Pages Soon....</p></div>;;
                     // list all the pages of nexus 
                 } else {
-                    return <div className='mt-0.5 text-red-900'>Wrong Command</div>;
+                    return <div className='mt-0.5 text-red-900'>Wrong Command ask "nexus --help" for commands</div>;
                 }
                 break;
             case commandsOfTerminal[3]: // case for the cls
@@ -99,15 +105,7 @@ const Terminal = () => {
                 if (arrayOfInputWords.length === 1) {
                     return 0;
                 } else {
-                    return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
-                }
-                break;
-            case commandsOfTerminal[4]: // case for the exit
-                // check if the command has more words than required for exit
-                if (arrayOfInputWords.length === 1) {
-                    window.close();
-                } else {
-                    return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
+                    return <div className='mt-0.5 text-red-900'><p>Wrong Command ask "nexus --help" for commands</p></div>;
                 }
                 break;
             case commandsOfTerminal[5]: // case for the register
@@ -119,10 +117,10 @@ const Terminal = () => {
                     // else if the event is not found
                     return <div className='mt-0.5 text-red-900'><p>Event ${arrayOfInputWords[1]} is not found</p></div>;
                 } else {
-                    return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
+                    return <div className='mt-0.5 text-red-900'><p>Wrong Command ask "nexus --help" for commands</p></div>;
                 }
             default:
-                return <div className='mt-0.5 text-red-900'><p>Wrong Command</p></div>;
+                return <div className='mt-0.5 text-red-900'><p>Wrong Command ask "nexus --help" for commands</p></div>;
 
         }
     };
