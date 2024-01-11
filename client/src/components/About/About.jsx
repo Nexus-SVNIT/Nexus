@@ -6,10 +6,10 @@ import { Link } from 'react-router-dom';
 const About = () => {
     return (
         <div className='mt-10 mb-20 flex flex-col gap-2 max-w-7xl mx-auto sm:px-10 md:p-0 text-white/75'>
-            <div className='flex items-center flex-col-reverse md:flex-row gap-20 mb-20'>
+            <div className='flex flex-col-reverse md:flex-row gap-20 mb-20'>
 
                 <div className='p-6 md:w-2/3 '>
-                    <h2 className='text-4xl font-semibold mb-4 w-3/4 '>About Nexus</h2>
+                    <h2 className='text-4xl  font-semibold mb-4 w-3/4 '>About Nexus</h2>
                     Welcome to Nexus, the dynamic hub of computer science enthusiasts at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. At Nexus, we envision a vibrant community where students passionate about computer science come together to thrive and excel. Our mission is to create a conducive environment that goes beyond academic boundaries, fostering holistic growth and learning.
                     <div className='mt-10'>
                         <h2 className='text-4xl font-semibold mb-4 '>Our Vision & Mission</h2>
@@ -17,7 +17,7 @@ const About = () => {
                     </div>
                 </div>
                 <div className=' flex flex-col items-center justify-center  md:w-1/3 '>
-                    <img src="/assets/nexus_e.png" alt="" className='w-[15rem] h-[15rem] md:h-[18rem] md:w-[18rem]  object-cover ' />
+                    <img src="/assets/nexus_e.png" alt="" className='w-[15rem] h-[15rem] md:h-[16rem] md:w-[16rem]  object-cover ' />
                     <h3 className='text-3xl font-bold my-8  md:my-4 font-mono text-white'>NEXUS NIT Surat</h3>
                     <p className='text-sm w-[50%] md:w-[75%] text-center '>Departmental Cell of Computer Science And Engineering Department </p>
 
