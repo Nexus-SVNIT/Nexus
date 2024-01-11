@@ -6,7 +6,7 @@ const Navbar = () => {
     const { pathname } = useLocation()
     const [mobileMenu, setMobileMenu] = useState(false)
     return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[5rem] z-[999]'>
-        <div className='flex items-center'>
+        <div className='flex items-center ml-4'>
             <Link to={'/'}>
                 <img src='./assets/nexus_e.png' alt='Nexus_Official' className='w-8 h-8' />
             </Link>
