@@ -10,7 +10,7 @@ const Teams = () => {
             <Title>
                 Faculty Advisors
             </Title>
-            <TeamCard data={faculty_advisors} />
+            <TeamCard data={faculty_advisors} isFaculty={true} />
             <Title>
                 Our Team
             </Title>

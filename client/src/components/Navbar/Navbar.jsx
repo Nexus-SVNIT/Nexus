@@ -8,9 +8,9 @@ const Navbar = () => {
     return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[5rem] z-[999]'>
         <div className='flex items-center'>
             <Link to={'/'}>
-                <img src='./assets/nexus_logo.png' alt='Nexus_Official' className='w-20 h-20' />
+                <img src='./assets/nexus_e.png' alt='Nexus_Official' className='w-8 h-8' />
             </Link>
-            <span className='uppercase text-white/80 text-2xl'>Nexus</span>
+            <span className='uppercase text-white/80 text-2xl mx-2'>Nexus</span>
         </div>
         <div className='flex items-center relative'>
             <ul className='hidden md:flex items-center gap-12 mr-5'>
