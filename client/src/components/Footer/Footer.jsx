@@ -39,6 +39,10 @@ const Footer = () => {
                 </div>
             </div>
             <div className='text-center border-t-2 border-blue-800 pt-4 font-mono'>Made with <span className='animate-pulse'>❤️</span> by NEXUS NIT Surat • © 2024</div>
+
+            {
+                // Just for commit
+            }
         </div >
     )
 }
