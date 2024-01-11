@@ -1,11 +1,14 @@
 {
   "name": "nexus_official_backend",
-  "description": "Welcome to the Nexus website repository! Nexus is the vibrant Computer Science and Engineering club at NIT Surat, and this project showcases our commitment to innovation. The frontend is built with React and Tailwind CSS, while the backend leverages Node.js.",
+  "description": " Nexus is the vibrant Computer Science and Engineering club at NIT Surat, and this project showcases our commitment to innovation. The frontend is built with React and Tailwind CSS, while the backend leverages Node.js.",
+  "homepage": "https://Bharat0509.github.io/Nexus",
   "version": "1.0.0",
   "main": "./server/server.js",
   "scripts": {
-    "start": "node server/server.js",
-    "dev": "nodemon server/server.js"
+    "start-server": "node server/server.js",
+    "dev": "nodemon server/server.js",
+    "predeploy": "cd client && npm predeploy",
+    "deploy": "cd client && npm deploy"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -34,6 +37,7 @@
   "author": "Bharat0509",
   "license": "ISC",
   "devDependencies": {
+    "gh-pages": "^6.1.1",
     "nodemon": "^3.0.2"
   }
 }
