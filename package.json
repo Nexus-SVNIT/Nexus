@@ -7,8 +7,8 @@
   "scripts": {
     "start-server": "node server/server.js",
     "dev": "nodemon server/server.js",
-    "predeploy": "cd client && npm predeploy",
-    "deploy": "cd client && npm deploy"
+    "predeploy": "cd client && npm run predeploy",
+    "deploy": "cd client && npm run deploy"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
