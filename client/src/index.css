@@ -83,7 +83,7 @@
     flex-shrink: 0;
 }
 .bg-testimonials {
-    background: url("data/bg-testimonials.jpg");
+    background: url("data/images/bg-testimonials.jpg");
     background-size: cover;
     background-repeat: no-repeat;
     background-position: center;

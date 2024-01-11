@@ -2,7 +2,7 @@ import React from 'react'
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from 'react-icons/fa';
 import { GoGoal } from "react-icons/go";
 import { Link } from 'react-router-dom';
-
+import Logo from '../../data/images/nexus.png'
 const About = () => {
     return (
         <div className='mt-10 mb-20 flex flex-col gap-2 max-w-7xl mx-auto sm:px-10 md:p-0 text-white/75'>
@@ -17,7 +17,7 @@ const About = () => {
                     </div>
                 </div>
                 <div className=' flex flex-col items-center justify-center  md:w-1/3 '>
-                    <img src="/assets/nexus_e.png" alt="" className='w-[15rem] h-[15rem] md:h-[16rem] md:w-[16rem]  object-cover ' />
+                    <img src={Logo} alt="" className='w-[15rem] h-[15rem] md:h-[16rem] md:w-[16rem]  object-cover ' />
                     <h3 className='text-3xl font-bold my-8  md:my-4 font-mono text-white'>NEXUS NIT Surat</h3>
                     <p className='text-sm w-[50%] md:w-[75%] text-center '>Departmental Cell of Computer Science And Engineering Department </p>
 
@@ -42,15 +42,15 @@ const About = () => {
                 <h2 className='text-4xl font-semibold mb-4'>Our Mission</h2>
                 <div className='flex flex-col items-center md:flex-row flex-wrap md:justify-around '>
 
-                    <p className=' text-xs md:text-sm md:w-[40vw]  flex gap-4 items-center'><GoGoal className='h-44 w-44' />Fostering Academic Excellence: Empower students with the knowledge, skills, and resources to excel in computer science, both academically and professionally.
+                    <p className=' text-xs md:text-sm md:w-[35vw]  flex gap-4 items-center'><GoGoal className='h-44 w-44' />Fostering Academic Excellence: Empower students with the knowledge, skills, and resources to excel in computer science, both academically and professionally.
                     </p>
-                    <p className='text-xs md:text-sm md:w-[40vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Promoting Collaboration: Facilitate a collaborative platform where students, regardless of their academic year, can exchange ideas, share knowledge, and work together on innovative projects.
+                    <p className='text-xs md:text-sm md:w-[35vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Promoting Collaboration: Facilitate a collaborative platform where students, regardless of their academic year, can exchange ideas, share knowledge, and work together on innovative projects.
                     </p>
-                    <p className='text-xs md:text-sm md:w-[40vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Organizing Impactful Events: Conduct coding competitions, workshops, and seminars to provide hands-on experience and exposure to the latest trends and technologies in the field.
+                    <p className='text-xs md:text-sm md:w-[35vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Organizing Impactful Events: Conduct coding competitions, workshops, and seminars to provide hands-on experience and exposure to the latest trends and technologies in the field.
                     </p>
-                    <p className='text-xs md:text-sm md:w-[40vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Building a Supportive Network: Establish a strong support system within the CSE community, creating mentorship programs to bridge the gap between seniors and juniors.
+                    <p className='text-xs md:text-sm md:w-[35vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Building a Supportive Network: Establish a strong support system within the CSE community, creating mentorship programs to bridge the gap between seniors and juniors.
                     </p>
-                    <p className='text-xs md:text-sm md:w-[40vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Encouraging Holistic Development: Emphasize the importance of extracurricular activities and soft skills, ensuring that students graduate not only as proficient coders but also as well-rounded individuals.</p>
+                    <p className='text-xs md:text-sm md:w-[35vw] flex gap-4 items-center'><GoGoal className='h-44 w-44' />Encouraging Holistic Development: Emphasize the importance of extracurricular activities and soft skills, ensuring that students graduate not only as proficient coders but also as well-rounded individuals.</p>
                 </div>
             </div>
         </div>
