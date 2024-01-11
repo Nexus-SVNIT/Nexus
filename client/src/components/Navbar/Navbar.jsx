@@ -2,13 +2,14 @@ import React, { useState } from 'react'
 import { NavList } from '../../data'
 import { Link, useLocation } from 'react-router-dom'
 import { CgClose, CgMenuLeftAlt } from "react-icons/cg";
+import Logo from '../../data/images/nexus.png'
 const Navbar = () => {
     const { pathname } = useLocation()
     const [mobileMenu, setMobileMenu] = useState(false)
     return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[5rem] z-[999]'>
         <div className='flex items-center ml-4'>
             <Link to={'/'}>
-                <img src='./assets/nexus_e.png' alt='Nexus_Official' className='w-8 h-8' />
+                <img src={Logo} alt='Nexus_Official' className='w-8 h-8' />
             </Link>
             <span className='uppercase text-white/80 text-2xl mx-2'>Nexus</span>
         </div>

@@ -6,7 +6,7 @@ import TeamCard from './TeamCard'
 const Teams = () => {
 
     return (
-        <div className='mx-auto h-full max-w-7xl md:my-10 mb-20 flex flex-col items-center justify-center '>
+        <div className='mx-auto h-full max-w-7xl md:my-10 mb-20 flex flex-col items-center justify-center  '>
             <Title>
                 Faculty Advisors
             </Title>
