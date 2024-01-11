@@ -5,7 +5,7 @@ const ExpressError = require("../utils/ExpressError.js");
 
 const getAllMember = wrapAsync(async (req, res, next) => {
   const getAllMemberDetails = await member.find();
-  res.json(getAllMemberDetails);
+  res.status(200).json(getAllMemberDetails);
 });
 
 const getUniqueMember = wrapAsync(async (req, res, next) => {
@@ -14,17 +14,17 @@ const getUniqueMember = wrapAsync(async (req, res, next) => {
   if (!singleMember) {
     throw new ExpressError("Member not found", 404);
   }
-  res.json(singleMember);
+  res.status(200).json(singleMember);
 });
 
 
 const addMember = wrapAsync(async (req, res, next) => {
-  const { name, email,role,socialLinks} = req.body;
-  if (!name || !email || role || socialLinks) {
+  const { name, email,role,image,year,socialLinks} = req.body;
+  if (!name || !email || !role || !socialLinks||!image||!year) {
     throw new ExpressError("Every field is mandatory", 400);
   }
-  const newMember = await member.create({ name, email,role,socialLinks});
-  res.json(newMember);
+  const newMember = await member.create({ name, email,role,socialLinks,image,year});
+  res.status(200).json(newMember);
 });
 
 const deleteMember = wrapAsync(async (req, res, next) => {
@@ -33,7 +33,7 @@ const deleteMember = wrapAsync(async (req, res, next) => {
   if (!singleMemberToDelete) {
     throw new ExpressError("Member not found", 404);
   }
-  res.json(singleMemberToDelete);
+  res.status(200).json(singleMemberToDelete);
 });
 
 const updateMemberDetails = wrapAsync(async (req, res, next) => {
@@ -42,7 +42,7 @@ const updateMemberDetails = wrapAsync(async (req, res, next) => {
   if (!updatedMember) {
     throw new ExpressError("Member not found", 404);
   }
-  res.json(updatedMember);
+  res.status(200).json(updatedMember);
 });
 
 module.exports = {
