@@ -36,6 +36,16 @@ export const FAQsList = [
 ];
 export const faculty_advisors = [
     {
+        name: "Dr. Bhavesh N Gohil",
+        role: "Associate Professor",
+        img: "https://www.svnit.ac.in/web/department/computer/images/bng.jpg",
+        socialLinks: {
+            facebook: "https://www.facebook.com/pranav.dhobi",
+            linkedin: "https://www.linkedin.com/in/pranav-dhobi",
+            instagram: "https://www.instagram.com/pranavdhobi",
+        },
+    },
+    {
         name: "Dr. Sankita J. Patel",
         role: "Associate Professor",
         img: "https://www.svnit.ac.in/sjp/assets/images/propic.png",
@@ -53,16 +63,6 @@ export const faculty_advisors = [
             facebook: "https://www.facebook.com/cb.praveen",
             linkedin: "https://www.linkedin.com/in/cb-praveen",
             instagram: "https://www.instagram.com/cbpraveen",
-        },
-    },
-    {
-        name: "Dr. Bhavesh N Gohil",
-        role: "Associate Professor",
-        img: "https://www.svnit.ac.in/web/department/computer/images/bng.jpg",
-        socialLinks: {
-            facebook: "https://www.facebook.com/pranav.dhobi",
-            linkedin: "https://www.linkedin.com/in/pranav-dhobi",
-            instagram: "https://www.instagram.com/pranavdhobi",
         },
     },
 ];

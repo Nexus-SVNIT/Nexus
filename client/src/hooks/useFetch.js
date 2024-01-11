@@ -6,6 +6,7 @@ const useFetch = (path, deps = []) => {
     const [error, setError] = useState(null);
     const fetchData = () => {
         setLoading(true);
+
         try {
             fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}${path}`)
                 .then((res) => res.json())
