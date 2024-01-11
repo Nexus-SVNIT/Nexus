@@ -4,7 +4,7 @@ import Testimonial from './Testimonial'
 
 const WhatPeopleThinkAboutUS = () => {
   return (
-    <div className='mx-auto h-full max-w-7xl my-10 mb-20 flex flex-col items-center justify-center '>
+    <div className='mx-auto h-full max-w-7xl my-10 mb-20 flex flex-col items-center justify-center  '>
       <Title>
         What People Think About Us
       </Title>

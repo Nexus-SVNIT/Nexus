@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom'
 import './footer.css'
 const Footer = () => {
     return (
-        <div className='bg-[#3586ff] py-10 px-4  md:px-32 flex flex-col justify-between flex-wrap gap-y-10 relative'>
+        <div className='container-footer  bg-gradient-to-b from-[#122137] via-[#020b1a] to-[#1a2f4d] py-10 px-4  md:px-32 flex flex-col justify-between flex-wrap gap-y-10 relative '>
             <div className='z-10'>
                 <div className='wave absolute -top-16 left-0 h-[4rem] w-full z-50 ' id='wave1' />
                 <div className='wave absolute -top-16 left-0 h-[4rem] w-full z-50 ' id='wave2' />

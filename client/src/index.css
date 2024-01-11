@@ -88,6 +88,15 @@
     background-repeat: no-repeat;
     background-position: center;
 }
+.bg-testimonials::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(58, 53, 53, 0.5);
+    z-index: -1;
+}
+
 @media screen and (max-width: 420px) {
     .faq-section::after {
         width: 150rem;
