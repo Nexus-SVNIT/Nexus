@@ -22,11 +22,8 @@ const getAllEvents = wrapAsync(async (req, res) => {
 });
 
 const getSingleEvent = wrapAsync(async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id))
-        throw new ExpressError("Invalid id", 400);
-
-    const singleEvent = await Event.findById(id);
+    const concatEventName = req.params.id;
+    const singleEvent = await Event.findOne({ concatEventName: concatEventName });
     if (!singleEvent) throw new ExpressError("Event not found", 404);
 
     res.status(200).json(singleEvent);
@@ -34,16 +31,14 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 
 const addEvent = wrapAsync(async (req, res) => {
     const { eventName, eventDate, formFields } = req.body;
-    const concatenatedEventName = eventName
-        .split("")
-        .map((char) => char.toLowerCase())
-        .join("");
+    const concatEventName = eventName.toLowerCase().split(" ").join("")
     const formSchema = createFormSchema(formFields);
     const collectionName = makeCollectionName(eventName);
     const createdEvent = await Event.create({
         eventName,
         eventDate,
         formFields,
+        concatEventName,
         responseCollectionName: collectionName,
         responseSchema: formSchema,
     });
@@ -51,12 +46,9 @@ const addEvent = wrapAsync(async (req, res) => {
 });
 
 const updateEvent = wrapAsync(async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id))
-        throw new ExpressError("Invalid id", 400);
-
+    const concatEventName = req.params.id;
     const updatedEvent = await Event.findOneAndUpdate(
-        { _id: id },
+        { concatEventName: concatEventName },
         { ...req.body },
         { new: true }
     ); // in earlier versions default value of new was true, but now we must mention explicitly.
@@ -66,22 +58,18 @@ const updateEvent = wrapAsync(async (req, res) => {
 });
 
 const deleteEvent = wrapAsync(async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id))
-        throw new ExpressError("Invalid id", 400);
+    const concatEventName = req.params.id;
+    const deletedEvent = await Event.findOneAndDelete({ concatEventName: concatEventName });
 
-    const deletedEvent = await Event.findByIdAndDelete(id);
     if (!deletedEvent) throw new ExpressError("Event not found", 404);
 
     res.status(200).json(deletedEvent);
 });
 
 const submitResponse = async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id))
-        throw new ExpressError("Invalid id", 400);
+    const concatEventName = req.params.id;
+    const singleEvent = await Event.findOne({ concatEventName: concatEventName });
 
-    const singleEvent = await Event.findById(id);
     if (!singleEvent) throw new ExpressError("Event not found", 404);
     const collectionName = singleEvent.responseCollectionName;
     const responseSchema = mongoose.Schema(singleEvent.responseSchema);
@@ -95,11 +83,8 @@ const submitResponse = async (req, res) => {
 };
 
 const getResponses = async (req, res) => {
-    const id = req.params.id;
-    if (!mongoose.Types.ObjectId.isValid(id))
-        throw new ExpressError("Invalid id", 400);
-
-    const singleEvent = await Event.findById(id);
+    const concatEventName = req.params.id;
+    const singleEvent = await Event.findOne({ concatEventName: concatEventName });
     if (!singleEvent) throw new ExpressError("Event not found", 404);
     const collectionName = singleEvent.responseCollectionName;
     const responseSchema = mongoose.Schema(singleEvent.responseSchema);
@@ -112,6 +97,14 @@ const getResponses = async (req, res) => {
     res.status(200).json(allResponses);
 };
 
+const getFormFields = async (req, res) =>{
+    const concatEventName = req.params.id;
+    const singleEvent = await Event.findOne({concatEventName: concatEventName});
+    if (!singleEvent) throw new ExpressError("Event not found", 404);
+    const formFields = singleEvent.formFields;
+    res.status(200).json(formFields);
+}
+
 module.exports = {
     getAllEvents,
     getSingleEvent,
@@ -120,4 +113,5 @@ module.exports = {
     deleteEvent,
     submitResponse,
     getResponses,
+    getFormFields
 };
