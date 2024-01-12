@@ -3,9 +3,9 @@ import { Button, FAQs, Terminal, WhatPeopleThinkAboutUS } from '../index'
 
 const Home = () => {
     return (
-        <div className='mx-auto overflow-x-hidden transition-all delay-300 bg-[#111] '>
-            <div className='flex justify-between max-w-7xl my-8 px-6 md:px-4 mx-auto mt-8'>
-                <div className='flex flex-col  justify-center md:justify-start items-center md:items-start  flex-1 text-white gap-12 md:gap-10 px-10 md:px-5 mt-4'>
+        <div className='mx-auto overflow-x-hidden transition-all delay-300 bg-[#111]'>
+            <div className='flex justify-between max-w-7xl my-8  md:px-4 mx-auto mt-8'>
+                <div className='flex flex-col  justify-center md:justify-start items-center md:items-start  flex-1 text-white gap-12 md:gap-10 md:px-5 mt-4 w-screen'>
                     <h1 className='nexus_gradient flex justify-center items-center md:justify-start text-[6rem] '>NEXUS</h1>
                     <p className='md:w-[24rem] text-[1.25rem] w-[90%] sm:w-3/4 text-center md:text-start'>
                         A community for the students of Computer Science and Engineering NIT Surat.
@@ -26,7 +26,7 @@ const Home = () => {
                 </div>
             </div>
             <label id='terminal' />
-            <div className='my-48 w-full'>
+            <div className='my-48 w-full mx-auto'>
                 <Terminal />
             </div>
             <div className='faq-section my-48 w-full relative '>

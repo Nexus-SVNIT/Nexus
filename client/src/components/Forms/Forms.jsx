@@ -8,7 +8,7 @@ const Forms = () => {
             <Title>
                 Forms
             </Title>
-            <div className='flex items-center justify-center flex-wrap gap-x-12 gap-y-12'>
+            <div className='flex items-center justify-center flex-wrap gap-x-12 gap-y-12 px-20 '>
                 <FormCard />
                 <FormCard />
                 <FormCard />

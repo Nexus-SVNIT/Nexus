@@ -16,21 +16,21 @@ const Footer = () => {
                         <img src={Logo} alt="Nexus" className='h-12 w-12 mx-8 my-4 ' />
                         NEXUS <br />Departmental Cell of Computer Science & Engineering </h2>
 
-                    <p className="text-xs pl-6 font-mono">Empowering CSE students at SVNIT, Nexus is a community that cultivates coding excellence, fosters diverse extracurricular interests, and champions holistic growth, shaping educational journeys with passion and purpose.</p>
+                    <p className="text-xs md:pl-6 mt-8 md:mt-0 font-mono">Empowering CSE students at SVNIT, Nexus is a community that cultivates coding excellence, fosters diverse extracurricular interests, and champions holistic growth, shaping educational journeys with passion and purpose.</p>
                 </div>
                 <div className='flex justify-between md:justify-center md:gap-[25%] w-full'>
-                    <div className="flex flex-col mt-4 gap-4 px-8 md:px-0">
-                        <h4 className="text-xl">Quick Links</h4>
-                        <ul className="flex flex-col gap-2">
+                    <div className="flex flex-col mt-4 gap-4 px-1 md:px-8 ">
+                        <h4 className="md:text-xl whitespace-nowrap ">Quick Links</h4>
+                        <ul className="flex flex-col gap-2 text-sm">
                             <Link to={'/events'}>Events</Link>
                             <Link to={'/forms'}>Forms</Link>
-                            <Link to={'/connect'}>Nexus Connect</Link>
+                            <Link to={'/connect'}>Connect</Link>
                             <Link to={'/aboutUs'}>About Us</Link>
 
                         </ul>
                     </div>
                     <div className="flex flex-col mt-4 gap-4 px-8 md:px-0" >
-                        <h4 className="text-xl">Social Media</h4>
+                        <h4 className="md:text-xl">Social Media</h4>
                         <ul className="flex flex-col gap-2">
                             <Link to={'/nexus'}>Instagram</Link>
                             <Link>LinkedIn</Link>

@@ -6,11 +6,11 @@ import { Link } from "react-router-dom";
 
 const ModernProfile = ({ profile, isFaculty }) => {
     return (
-        <div className="bg-white hover:bg-blue-50 text-black flex-wrap w-[20rem] md:w-[16rem] h-[26rem] md:h-[22rem] rounded-lg overflow-hidden relative shadow-lg">
-            <div className="h-[18rem] md:h-[16rem]  w-[22rem] md:w-[18rem] bg-red-500/20 rounded-b-[50%] absolute top-0 -left-[5%] overflow-hidden  border-b-8 border-red-400 ">
+        <div className="bg-white hover:bg-blue-50 text-black flex-wrap w-[18rem] md:w-[16rem] h-[23rem] rounded-lg overflow-hidden relative shadow-lg">
+            <div className="h-[16rem] md:h-[16rem]  w-[20rem] md:w-[18rem] bg-red-500/20 rounded-b-[50%] absolute top-0 -left-[5%] overflow-hidden  border-b-8 border-red-400 ">
                 <img src={profile.img ?? "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"} alt="Person" className="-z-10 w-full h-full flex items-center  transition-all duration-300 hover:scale-110 cursor-pointer" />
             </div>
-            <div className=" mt-[18rem] md:mt-[15rem] px-5 py-4 ">
+            <div className=" mt-[15.5rem] px-5 py-4 ">
                 <div className="flex gap-2 mb-2 ">
                     {isFaculty ?
                         <>
