@@ -50,7 +50,7 @@ const Terminal = () => {
             case commandsOfTerminal[0]: // case for the cd
                 // check if the command has less or more words
                 if (arrayOfInputWords.length === 2 && pagesOfNexus.includes(arrayOfInputWords[1])) {
-                    navigate('/'+arrayOfInputWords[1])
+                    navigate('/' + arrayOfInputWords[1])
                     return <div className='mt-0.5'></div>;
                     // redirect to the arrayOfInputWords[1] page
                 } else if (arrayOfInputWords.length === 2) {
@@ -128,8 +128,8 @@ const Terminal = () => {
     return (
         <div className='flex flex-col items-center justify-center gap-4 max-w-7xl mx-auto '>
             <h2 className='text-2xl font-semibold'>$ Nexus Terminal</h2>
-            <p className='text-[1.25rem] text-gray-400'>Interact to know more about Nexus...</p>
-            <div className="h-[70vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white/95 rounded-2xl overflow-y-auto text-black flex flex-col ">
+            <p className='text-base md:text-[1.25rem] text-gray-400'>Interact to know more about Nexus...</p>
+            <div className="h-[50vh] md:h-[75vh] w-[90%] md:w-[70vw] bg-white/95 rounded-2xl overflow-y-auto text-black flex flex-col ">
                 <div className='bg-gray-300 h-10 flex items-center pl-6 list-none gap-2'>
                     <li className='bg-red-600 h-4 w-4 rounded-full'></li>
                     <li className='bg-yellow-300 h-4 w-4 rounded-full'></li>
@@ -140,7 +140,7 @@ const Terminal = () => {
                     {/* Existing terminal outputs */}
                     {prevCommands.map((command, index) => (
                         <div key={index} className="px-4 py-2 text-orange-500 font-semibold">
-                            <div className='mb-0.5'><p className='text-orange-500'>SVNIT/CSE/Nexus/User:~${command.input}</p></div>
+                            <div className='mb-0.5'><p className='text-sm md:text-base text-orange-500'>SVNIT/CSE/Nexus/User:~${command.input}</p></div>
                             {/* <div className='mt-0.5'><p>{command.output}</p></div> */}
                             {command.output}
                         </div>
@@ -149,13 +149,13 @@ const Terminal = () => {
                     {/* Form for new input */}
                     <form onSubmit={handleTerminalSubmit}>
                         <div className='px-4 py-2 text-orange-500 font-semibold flex '>
-                            <p className='text-orange-500'>SVNIT/CSE/Nexus/User:~$</p>
+                            <p className='text-sm md:text-base text-orange-500'>SVNIT/CSE/Nexus/User:~$</p>
                             <input
                                 type="text"
                                 placeholder={count === 0 ? 'nexus --help ' : null}
                                 value={input}
                                 onChange={handleInputChange}
-                                className='outline-none border-none ml-1 basis-1/2 bg-transparent w-full'
+                                className='outline-none border-none ml-1 basis-1/2 bg-transparent w-full text-sm md:text-base'
                             />
                         </div>
                     </form>

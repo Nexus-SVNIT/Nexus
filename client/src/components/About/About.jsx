@@ -9,7 +9,7 @@ const About = () => {
             <div className='flex flex-col-reverse md:flex-row gap-20 mb-4'>
 
                 <div className='p-6 md:w-2/3 '>
-                    <h2 className='text-4xl  font-semibold mb-4 w-3/4 '>About Nexus</h2>
+                    <h2 className='text-3xl md:text-4xl  font-semibold mb-4 w-3/4 '>About Nexus</h2>
                     Welcome to Nexus, the dynamic hub of computer science enthusiasts at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. At Nexus, we envision a vibrant community where students passionate about computer science come together to thrive and excel. Our mission is to create a conducive environment that goes beyond academic boundaries, fostering holistic growth and learning.
                     <div className='mt-10'>
                         <h2 className='text-4xl font-semibold mb-4 '>Our Vision </h2>
@@ -38,7 +38,7 @@ const About = () => {
                 </div>
             </div>
 
-            <div className='mt-10 flex flex-col md:gap-4 mb-10 p-6'>
+            <div className='mt-10 flex flex-col gap-0 md:gap-4 mb-10 p-6'>
                 <h2 className='text-4xl font-semibold mb-4'>Our Mission</h2>
                 <div className='flex flex-col items-center md:flex-row flex-wrap md:justify-around '>
 
