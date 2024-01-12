@@ -17,12 +17,13 @@ const getUniqueMember = wrapAsync(async (req, res, next) => {
   res.json(singleMember);
 });
 
+
 const addMember = wrapAsync(async (req, res, next) => {
-  const { name, email } = req.body;
-  if (!name || !email) {
-    throw new ExpressError("Name and email are required", 400);
+  const { name, email,role,socialLinks} = req.body;
+  if (!name || !email || role || socialLinks) {
+    throw new ExpressError("Every field is mandatory", 400);
   }
-  const newMember = await member.create({ name, email });
+  const newMember = await member.create({ name, email,role,socialLinks});
   res.json(newMember);
 });
 

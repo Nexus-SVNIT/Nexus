@@ -18,7 +18,7 @@ app.use(express.json());
 app.get("/health-check", (req, res) => {
     return res.send("EveryThing is Fine");
 });
-app.use("/events", eventRoutes);
+app.use("/event", eventRoutes);
 app.use("/member", memberRoutes);
 app.use("/messages", messageRoutes);
 app.use("/api/user", userRoutes);

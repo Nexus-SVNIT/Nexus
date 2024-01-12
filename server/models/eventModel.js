@@ -10,26 +10,26 @@ const eventSchema = new Schema({
     eventType: {
         type: String,
     },
-    concatEventName:{
-        type:String,
-        required:true
+    concatEventName: {
+        type: String,
+        required: true
     },
     eventDate: {
         type: String,
         required: true,
     },
     eventDescription: {
-        type: String,
-        required: true,
+        type: String
     },
     eventPoster: {
-        type: String,
-        required: true,
+        type: String
     },
     eventStatus: {
-        type: String,
-        required: true,
+        type: String
     },
+    formFields: [Object],
+    responseCollectionName: String,
+    responseSchema: Object
 });
 
 module.exports = mongoose.model("event", eventSchema);
