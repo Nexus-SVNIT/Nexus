@@ -1,44 +1,44 @@
 .wave {
-    background: url("./wave.png");
-    filter: brightness(0.4);
-    background-size: var(--position-x) var(--position-y);
+  background: url("./wave.png");
+  filter: brightness(0.4);
+  background-size: var(--position-x) var(--position-y);
 }
 #wave1 {
-    --position-x: 1000px;
-    --position-y: 100px;
-    z-index: 1000;
-    opacity: 1;
-    animation: animateWave 4s linear infinite;
+  --position-x: 1000px;
+  --position-y: 100px;
+  z-index: 1000;
+  opacity: 1;
+  animation: animateWave 4s linear infinite;
 }
 #wave2 {
-    --position-x: 900px;
-    --position-y: 100px;
-    z-index: 1000;
-    opacity: 0.5;
-    animation: animateWave 5s linear infinite alternate-reverse;
-    bottom: 10rem;
+  --position-x: 900px;
+  --position-y: 100px;
+  z-index: 1000;
+  opacity: 0.5;
+  animation: animateWave 5s linear infinite alternate-reverse;
+  bottom: 10rem;
 }
 
 #wave3 {
-    --position-x: 950px;
-    --position-y: 100px;
-    z-index: 1000;
-    opacity: 0.5;
-    bottom: 0;
-    animation: animateWave 4s linear infinite reverse;
+  --position-x: 950px;
+  --position-y: 100px;
+  z-index: 1000;
+  opacity: 0.5;
+  bottom: 0;
+  animation: animateWave 4s linear infinite reverse;
 }
 
 #wave4 {
-    --position-x: 920px;
-    --position-y: 100px;
-    opacity: 0.6;
-    animation: animateWave 4s linear infinite;
+  --position-x: 920px;
+  --position-y: 100px;
+  opacity: 0.6;
+  animation: animateWave 4s linear infinite;
 }
 @keyframes animateWave {
-    0% {
-        background-position-x: var(--position-x);
-    }
-    1000% {
-        background-position-x: 0px;
-    }
+  0% {
+    background-position-x: var(--position-x);
+  }
+  1000% {
+    background-position-x: 0px;
+  }
 }

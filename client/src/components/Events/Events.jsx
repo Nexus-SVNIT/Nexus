@@ -3,9 +3,20 @@ import useFetch from "../../hooks/useFetch";
 import Error from "../Error/Error";
 import Title from "../Title/Title";
 import "./events.css";
+import { useQuery } from "@tanstack/react-query";
 
 const Events = () => {
-  const { data, loading, error } = useFetch("/event", []);
+  const {
+    isPending: loading,
+    error,
+    data,
+  } = useQuery({
+    queryKey: ["eventData"],
+    queryFn: () =>
+      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/event`).then((res) =>
+        res.json(),
+      ),
+  });
 
   if (error) return <Error />;
   return (
