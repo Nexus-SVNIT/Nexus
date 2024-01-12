@@ -51,9 +51,7 @@ const Footer = () => {
             <h4 className="md:text-xl">Social Media</h4>
             <ul className="flex flex-col gap-2">
               <Link
-                to={
-                  "https://www.instagram.com/nexus_svnit/?igshid=MzRlODBiNWFlZA%3D%3D"
-                }
+                to={"https://www.instagram.com/nexus_svnit"}
                 target="_blank"
               >
                 Instagram
