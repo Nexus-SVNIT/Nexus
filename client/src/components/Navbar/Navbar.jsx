@@ -6,7 +6,7 @@ import Logo from '../../data/images/nexus.png'
 const Navbar = () => {
     const { pathname } = useLocation()
     const [mobileMenu, setMobileMenu] = useState(false)
-    return <nav className='flex justify-between text-base max-w-7xl w-full mx-auto h-[5rem] z-[999]'>
+    return <nav className='flex justify-between text-base max-w-7xl w-[100vw] md:w-full mx-auto h-[5rem] z-[999]'>
         <div className='flex items-center ml-4'>
             <Link to={'/'}>
                 <img src={Logo} alt='Nexus_Official' className='w-8 h-8' />
@@ -14,7 +14,7 @@ const Navbar = () => {
             <span className='uppercase text-white/80 text-2xl mx-2'>Nexus</span>
         </div>
         <div className='flex items-center relative'>
-            <ul className='hidden md:flex items-center gap-12 mr-5'>
+            <ul className='hidden text-sm lg:text-base md:flex items-center gap-[3vw] lg:gap-12 mr-5'>
                 {NavList.map(item => {
                     return (
                         <Link to={item.path} key={item.path} >
@@ -30,7 +30,7 @@ const Navbar = () => {
                 {NavList.map(item => {
                     return (
                         <Link key={item.path} to={item.path} onClick={e => setMobileMenu(false)}>
-                            <li key={item.path} className={`${item.path === pathname ? "text-orange underline underline-offset-8" : "text-white"} transition-colors hover:text-orange`}>
+                            <li key={item.path} className={`${item.path === pathname ? "text-[#3586ff] underline underline-offset-8" : "text-white"} transition-colors hover:text-[#3586ff]`}>
                                 {item.label}
                             </li>
                         </Link>
