@@ -1,16 +1,34 @@
 import React from "react";
-import {
-  faculty_advisors,
-  team_core,
-  team_designer,
-  team_devs,
-  team_social_med,
-  team_treasurer,
-} from "../../data";
+import { faculty_advisors } from "../../data";
 import { Title } from "../index";
 import TeamCard from "./TeamCard";
+import Error from "../Error/Error";
+import { useQuery } from "@tanstack/react-query";
 
 const Teams = () => {
+  const {
+    isPending: loading,
+    error,
+    data,
+  } = useQuery({
+    queryKey: ["eventData"],
+    queryFn: () =>
+      fetch("https://nexus-backend.up.railway.app/member").then((res) =>
+        res.json(),
+      ),
+  });
+
+  if (error) return <Error />;
+  if (loading) return <div>Loading...</div>;
+  // const faculty_advisors = data.filter((member) => member.role === 'Faculty Advisor');
+  const certainRolesList = ["Chairperson","Vice Chairperson","Event Manager"]
+  const team_core = data.filter((member) => certainRolesList.includes(member.role));
+  const team_devs = data.filter((member) => member.role === 'Developer');
+  const team_treasurer = data.filter((member) => member.role === 'Treasurer');
+  const team_social_med = data.filter((member) => member.role === 'Social Media Manager');
+  const team_designer = data.filter((member) => member.role === 'Designer');
+  const team_coordinators = data.filter((member) => member.role === 'Coordinator');
+  
   return (
     <div className="mx-auto mb-20 flex h-full max-w-7xl flex-col items-center justify-center md:my-10  ">
       <Title>Faculty Advisors</Title>
@@ -21,6 +39,7 @@ const Teams = () => {
       <TeamCard data={team_treasurer} />
       <TeamCard data={team_social_med} />
       <TeamCard data={team_designer} />
+      <TeamCard data={team_coordinators} />
     </div>
   );
 };
