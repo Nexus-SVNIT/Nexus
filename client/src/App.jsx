@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import {
   About,
+  Connect,
   CreateForm,
   Events,
   Forms,
@@ -26,6 +27,7 @@ function App() {
             <Route path="/forms" element={<Forms />} />
             <Route path="/about" element={<About />} />
             <Route path="/admin" element={<CreateForm />} />
+            <Route path="/connect" element={<Connect />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
