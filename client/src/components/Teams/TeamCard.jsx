@@ -7,7 +7,7 @@ const TeamCard = ({ data, isFaculty = false }) => {
       <div className="flex w-full flex-wrap items-center justify-center  gap-8 md:gap-10 lg:gap-12 ">
         {data.map((item) => (
           <ModernProfile
-            key={item.email}
+            key={item.image}
             profile={item}
             isFaculty={isFaculty}
           />

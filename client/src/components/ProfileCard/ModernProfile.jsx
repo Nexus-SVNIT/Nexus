@@ -10,11 +10,12 @@ const ModernProfile = ({ profile, isFaculty }) => {
       <div className="absolute -left-[5%]  top-0 h-[16rem] w-[20rem] overflow-hidden rounded-b-[50%] border-b-8 border-red-400 bg-red-500/20  md:h-[16rem] md:w-[18rem] ">
         <img
           src={
-            profile.img ??
-            "https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg"
+            isFaculty
+              ? profile.image
+              : `https://lh3.googleusercontent.com/d/${profile.image}`
           }
           alt="Person"
-          className="-z-10 flex h-full w-full cursor-pointer  items-center transition-all duration-300 hover:scale-110"
+          className="-z-10 flex h-full w-full cursor-pointer object-cover object-top transition-all duration-300 hover:scale-110"
         />
       </div>
       <div className=" mt-[15.5rem] px-5 py-4 ">
