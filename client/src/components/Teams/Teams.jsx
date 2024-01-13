@@ -13,22 +13,32 @@ const Teams = () => {
   } = useQuery({
     queryKey: ["eventData"],
     queryFn: () =>
-      fetch("https://nexus-backend.up.railway.app/member").then((res) =>
+      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/member`).then((res) =>
         res.json(),
       ),
   });
 
   if (error) return <Error />;
-  if (loading) return <div>Loading...</div>;
-  // const faculty_advisors = data.filter((member) => member.role === 'Faculty Advisor');
-  const certainRolesList = ["Chairperson","Vice Chairperson","Event Manager"]
-  const team_core = data.filter((member) => certainRolesList.includes(member.role));
-  const team_devs = data.filter((member) => member.role === 'Developer');
-  const team_treasurer = data.filter((member) => member.role === 'Treasurer');
-  const team_social_med = data.filter((member) => member.role === 'Social Media Manager');
-  const team_designer = data.filter((member) => member.role === 'Designer');
-  const team_coordinators = data.filter((member) => member.role === 'Coordinator');
-  
+  if (loading)
+    return (
+      <div className="flex h-[50vh] w-full items-center justify-center">
+        Loading...
+      </div>
+    );
+  const certainRolesList = ["Chairperson", "Vice Chairperson", "Event Manager"];
+  const team_core = data.filter((member) =>
+    certainRolesList.includes(member.role),
+  );
+  const team_devs = data.filter((member) => member.role === "Developer");
+  const team_treasurer = data.filter((member) => member.role === "Treasurer");
+  const team_social_med = data.filter(
+    (member) => member.role === "Social Media Manager",
+  );
+  const team_designer = data.filter((member) => member.role === "Designer");
+  const team_coordinators = data.filter(
+    (member) => member.role === "Coordinator",
+  );
+
   return (
     <div className="mx-auto mb-20 flex h-full max-w-7xl flex-col items-center justify-center md:my-10  ">
       <Title>Faculty Advisors</Title>
