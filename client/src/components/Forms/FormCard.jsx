@@ -25,7 +25,7 @@ const FormCard = () => {
             <div className='flex flex-col md:flex-row justify-between gap-4 md:gap-6'>
 
                 <Button className='border border-blue-700 font-semibold bg-transparent  px-4 py-2 w-full rounded-md text-blue-700 text-sm' isButton={true} variant='secondary'>More Details</Button>
-                <Button className='border border-blue-700 font-semibold outline-none bg-blue-700 px-4 py-2 w-full rounded-md text-white text-sm' isButton={true} variant='primary'>Register Now</Button>
+                <Button className='border border-blue-700 font-semibold outline-none bg-blue-700 px-4 py-2 w-full rounded-md text-white text-sm' isButton={true} variant='primary' to={'/register/2'}>Register Now</Button>
             </div>
         </div>
     )
