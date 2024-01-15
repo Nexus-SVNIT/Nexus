@@ -197,7 +197,7 @@ const Terminal = () => {
               className="px-4 py-2 font-semibold text-orange-500"
             >
               <div className="mb-0.5">
-                <p className="text-sm text-orange-500 md:text-base">
+                <p className="text-xs text-orange-500 md:text-base">
                   SVNIT/CSE/Nexus/User:~${command.input}
                 </p>
               </div>
@@ -209,7 +209,7 @@ const Terminal = () => {
           {/* Form for new input */}
           <form onSubmit={handleTerminalSubmit}>
             <div className="flex px-4 py-2 font-semibold text-orange-500 ">
-              <p className="text-sm text-orange-500 md:text-base">
+              <p className="text-xs text-orange-500 md:text-base">
                 SVNIT/CSE/Nexus/User:~$
               </p>
               <input
@@ -217,7 +217,7 @@ const Terminal = () => {
                 placeholder={count === 0 ? "nexus --help " : null}
                 value={input}
                 onChange={handleInputChange}
-                className="ml-1 w-full basis-1/2 border-none bg-transparent text-sm outline-none md:text-base"
+                className="ml-1 w-full basis-1/2 border-none bg-transparent text-xs outline-none md:text-base"
               />
             </div>
           </form>

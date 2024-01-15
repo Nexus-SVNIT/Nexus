@@ -15,22 +15,24 @@ const Home = () => {
   }, []);
   return (
     <div className="z-10 mx-auto overflow-x-hidden bg-[#111] transition-all delay-300">
-      <div className="">
+      <div className="mt-10 flex items-center justify-center">
         <Three />
-        <div className="relative z-10 w-fit my-8 mt-8 flex max-w-7xl justify-between md:px-4">
-          <div className="mt-4 flex  w-fit flex-1 flex-col gap-12 text-white md:items-start md:justify-start md:gap-10 md:px-5">
-            <h1 className="nexus_gradient flex items-center justify-center text-[6rem] md:justify-start ">
+        <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
+          <div className="flex w-fit flex-col  items-center justify-center gap-8">
+            <h1 className="nexus_gradient flex items-center justify-center text-center text-[6rem] md:text-[8rem] ">
               NEXUS
             </h1>
-            <p className="w-[90%] text-center text-[1.25rem] sm:w-3/4 md:w-[24rem] md:text-start">
+            <p className="w-[75%] text-center text-[1.25rem] sm:w-3/4 md:w-[28rem] md:text-[1.5rem] ">
               A community for the students of Computer Science and Engineering
               NIT Surat.
             </p>
-            <p className="w-[90%] text-center text-[1.25rem] text-gray-400 sm:w-10/12 md:w-[28rem] md:text-start">
+            <p className="w-[80%] text-center text-[1rem] text-gray-400 sm:w-10/12 md:w-[24rem] ">
               We foster engagement with students from all years to create a
               connected and inclusive learning community.
             </p>
-            <Button href={"#terminal"}>Explore More</Button>
+            <Button to={"#terminal"} isButton={false}>
+              Explore More
+            </Button>
           </div>
           {/* <div className="relative z-0 hidden pt-6 md:flex lg:flex-1">
             <div className="bg-screen-gradient my-12 ">
