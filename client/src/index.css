@@ -7,6 +7,8 @@
   padding: 0;
   scroll-behavior: smooth;
   box-sizing: border-box;
+  left: 0;
+  right: 0;
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
 }
 
@@ -83,6 +85,6 @@
   }
   canvas {
     width: 100vw !important;
-    height: 80vh !important;
+    height: 100vh !important;
   }
 }
