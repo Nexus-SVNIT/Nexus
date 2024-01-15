@@ -56,7 +56,12 @@ const Footer = () => {
               >
                 Instagram
               </Link>
-              <Link>LinkedIn</Link>
+              <Link
+                to={"https://www.linkedin.com/company/nexus-svnit/"}
+                target="_blank"
+              >
+                LinkedIn
+              </Link>
               <Link>email: nexus@coed.svnit.ac.in</Link>
             </ul>
           </div>
