@@ -15,3 +15,4 @@ export { default as WhatPeopleThinkAboutUS } from "./WhatPeopleThinkAboutUs/What
 export { default as NotFound } from "./NotFound/NotFound.jsx";
 export { default as CreateForm } from "./CreateForm/CreateForm.jsx";
 export { default as Connect } from "./Connect/Connect.jsx";
+export { default as Three} from "./ThreeJS/Three.jsx"

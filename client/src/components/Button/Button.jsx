@@ -24,7 +24,7 @@ const Button = ({
     </button>
   ) : (
     <a
-      className="my-4 w-fit rounded-md border border-white/10 bg-white/20 px-8 py-3 transition-colors  hover:border-white/100 hover:bg-transparent active:scale-95 "
+      className="my-4 w-fit rounded-md border border-blue-700/10 bg-blue-700/75 px-8 py-3 transition-colors  hover:border-white/100 hover:bg-transparent active:scale-95 "
       href={to}
     >
       {children}

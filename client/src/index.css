@@ -7,6 +7,8 @@
   padding: 0;
   scroll-behavior: smooth;
   box-sizing: border-box;
+  left: 0;
+  right: 0;
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
 }
 
@@ -34,8 +36,8 @@
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.09375rem;
-  width: 21.125rem;
-  height: 5.25rem;
+  width: 26rem;
+  height: 6rem;
   flex-shrink: 0;
 }
 
@@ -80,5 +82,9 @@
     height: fit-content;
     transform: rotate(5deg);
     z-index: -1;
+  }
+  canvas {
+    width: 100vw !important;
+    height: 100vh !important;
   }
 }
