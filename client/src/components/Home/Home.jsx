@@ -17,7 +17,7 @@ const Home = () => {
     <div className="z-10 mx-auto overflow-x-hidden bg-[#111] transition-all delay-300">
       <div className="">
         <Three />
-        <div className="relative z-10 w-fit mx-auto my-8 mt-8 flex max-w-7xl justify-between md:px-4">
+        <div className="relative z-10 w-fit my-8 mt-8 flex max-w-7xl justify-between md:px-4">
           <div className="mt-4 flex  w-fit flex-1 flex-col gap-12 text-white md:items-start md:justify-start md:gap-10 md:px-5">
             <h1 className="nexus_gradient flex items-center justify-center text-[6rem] md:justify-start ">
               NEXUS
