@@ -3,89 +3,82 @@
 @tailwind utilities;
 
 * {
-    margin: 0;
-    padding: 0;
-    scroll-behavior: smooth;
-    box-sizing: border-box;
-    /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+  box-sizing: border-box;
+  /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
 }
 
 ::-webkit-scrollbar {
-    display: none;
+  display: none;
 }
 
 .nexus_gradient {
-    background: linear-gradient(
-        90deg,
-        #3662eb 3.55%,
-        #2863f6 21.23%,
-        #6bf0a3 34.29%,
-        #81ebc0 45.2%,
-        #ddc044 65.19%,
-        #fa7f29 81.51%,
-        #f17933 100%
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-family: Inter;
-    /* font-size: 5.25rem; */
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
-    letter-spacing: -0.09375rem;
-    width: 21.125rem;
-    height: 5.25rem;
-    flex-shrink: 0;
+  background: linear-gradient(
+    90deg,
+    #3662eb 3.55%,
+    #2863f6 21.23%,
+    #6bf0a3 34.29%,
+    #81ebc0 45.2%,
+    #ddc044 65.19%,
+    #fa7f29 81.51%,
+    #f17933 100%
+  );
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: Inter;
+  /* font-size: 5.25rem; */
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.09375rem;
+  width: 21.125rem;
+  height: 5.25rem;
+  flex-shrink: 0;
 }
 
 .faq-section::after {
-    content: ""; /* :before will only appear if this content is declared */
-    position: absolute;
-    top: -5%;
-    left: -10rem;
-    background-color: rgba(22, 152, 227, 0.08);
-    width: 150vw;
-    height: 140%;
-    transform: rotate(5deg);
-    z-index: -1;
+  content: ""; /* :before will only appear if this content is declared */
+  position: absolute;
+  top: -5%;
+  left: -10rem;
+  background-color: rgba(22, 152, 227, 0.08);
+  width: 150vw;
+  height: 140%;
+  transform: rotate(5deg);
+  z-index: -1;
 }
 .faq-section {
-    z-index: 10;
+  z-index: 10;
 }
 
 .bg-screen-gradient {
-    border-radius: 1.25rem;
-    background: linear-gradient(
-        200deg,
-        #413b36 0%,
-        rgba(39, 47, 58, 0.67) 40.68%,
-        rgba(76, 82, 90, 0.073) 104.15%
-    );
-    width: 44rem;
-    height: 24rem;
-    flex-shrink: 0;
+  border-radius: 1.25rem;
+  background: linear-gradient(
+    200deg,
+    #413b36 0%,
+    rgba(39, 47, 58, 0.67) 40.68%,
+    rgba(76, 82, 90, 0.073) 104.15%
+  );
+  width: 44rem;
+  height: 24rem;
+  flex-shrink: 0;
 }
 .bg-testimonials {
-    background: url("data/images/bg-testimonials.jpg");
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
-}
-.bg-testimonials::before {
-    content: "";
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(58, 53, 53, 0.5);
-    z-index: -1;
+  background: url("data/images/bg-testimonials.jpg");
+  filter: brightness(0.66);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
 }
 
 @media screen and (max-width: 420px) {
-    .faq-section::after {
-        width: 150rem;
-        height: fit-content;
-        transform: rotate(5deg);
-        z-index: -1;
-    }
+  .faq-section::after {
+    width: 150rem;
+    height: fit-content;
+    transform: rotate(5deg);
+    z-index: -1;
+  }
 }
