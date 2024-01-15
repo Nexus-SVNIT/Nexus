@@ -81,4 +81,8 @@
     transform: rotate(5deg);
     z-index: -1;
   }
+  canvas {
+    width: 100vw !important;
+    height: 80vh !important;
+  }
 }
