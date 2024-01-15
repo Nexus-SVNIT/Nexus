@@ -17,8 +17,8 @@ const Home = () => {
     <div className="z-10 mx-auto overflow-x-hidden bg-[#111] transition-all delay-300">
       <div className="">
         <Three />
-        <div className="relative z-10 mx-auto my-8 mt-8 flex max-w-7xl justify-between md:px-4">
-          <div className="mt-4 flex  w-screen flex-1 flex-col items-center  justify-center gap-12 text-white md:items-start md:justify-start md:gap-10 md:px-5">
+        <div className="relative z-10 w-fit mx-auto my-8 mt-8 flex max-w-7xl justify-between md:px-4">
+          <div className="mt-4 flex  w-fit flex-1 flex-col gap-12 text-white md:items-start md:justify-start md:gap-10 md:px-5">
             <h1 className="nexus_gradient flex items-center justify-center text-[6rem] md:justify-start ">
               NEXUS
             </h1>
@@ -32,7 +32,7 @@ const Home = () => {
             </p>
             <Button href={"#terminal"}>Explore More</Button>
           </div>
-          <div className="relative z-0 hidden pt-6 md:flex lg:flex-1">
+          {/* <div className="relative z-0 hidden pt-6 md:flex lg:flex-1">
             <div className="bg-screen-gradient my-12 ">
               <img
                 className="absolute left-[20rem] top-2 h-40 w-80 brightness-75 drop-shadow-[0_35px_35px_rgba(0,0,0,0.25)] "
@@ -50,7 +50,7 @@ const Home = () => {
                 alt=""
               />
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
       <label id="terminal" />
