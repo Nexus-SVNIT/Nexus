@@ -24,8 +24,12 @@ const Footer = () => {
       </div>
       <div className="mx-auto flex w-full  flex-col gap-4 md:flex-row md:gap-0 ">
         <div className="w-[100%] md:w-[32rem] lg:w-[40rem]">
-          <h2 className="flex items-center text-sm">
-            <img src={Logo} alt="Nexus" className="mx-8 my-4 h-12 w-12 " />
+          <h2 className="flex items-center text-xs md:text-sm">
+            <img
+              src={Logo}
+              alt="Nexus"
+              className="mx-8 my-4 h-10 w-10 md:h-12 md:w-12 "
+            />
             NEXUS <br />
             Departmental Cell of Computer Science & Engineering{" "}
           </h2>
@@ -37,19 +41,19 @@ const Footer = () => {
             journeys with passion and purpose.
           </p>
         </div>
-        <div className="flex w-full justify-between md:justify-center md:gap-[25%]">
-          <div className="mt-4 flex flex-col gap-4 px-1 md:px-8 ">
-            <h4 className="whitespace-nowrap md:text-xl ">Quick Links</h4>
-            <ul className="flex flex-col gap-2 text-sm">
+        <div className="flex w-full flex-col items-center justify-between gap-10 sm:flex-row sm:items-start sm:gap-0 md:justify-center md:gap-[25%]">
+          <div className="mt-4 flex flex-col gap-4 px-1 text-center md:px-8">
+            <h4 className="whitespace-nowrap text-xl ">Quick Links</h4>
+            <ul className="flex flex-col gap-2 text-blue-400">
               <Link to={"/events"}>Events</Link>
               <Link to={"/forms"}>Forms</Link>
               <Link to={"/connect"}>Connect</Link>
               <Link to={"/aboutUs"}>About Us</Link>
             </ul>
           </div>
-          <div className="mt-4 flex flex-col gap-4 px-8 md:px-0">
-            <h4 className="md:text-xl">Social Media</h4>
-            <ul className="flex flex-col gap-2">
+          <div className="mt-4 flex flex-col gap-4 px-8 text-center md:px-0">
+            <h4 className="text-xl">Social Media</h4>
+            <ul className="flex flex-col gap-2 text-blue-400">
               <Link
                 to={"https://www.instagram.com/nexus_svnit"}
                 target="_blank"
@@ -62,12 +66,14 @@ const Footer = () => {
               >
                 LinkedIn
               </Link>
-              <Link>email: nexus@coed.svnit.ac.in</Link>
+              <Link to={"mailto:nexus@coed.svnit.ac.in"}>
+                nexus@coed.svnit.ac.in
+              </Link>
             </ul>
           </div>
         </div>
       </div>
-      <div className="border-t-2 border-blue-800 pt-4 text-center font-mono">
+      <div className="border-t-2 border-blue-800 pt-4 text-center font-mono text-xs md:text-base">
         Made with <span className="animate-pulse">❤️</span> by NEXUS NIT Surat •
         © 2024
       </div>

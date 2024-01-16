@@ -18,7 +18,7 @@ const Home = () => {
       <div className=" flex h-screen flex-col items-center">
         <Three />
         <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
-          <div className="flex w-fit flex-col items-center justify-center gap-8">
+          <div className="mt-10 flex w-fit flex-col items-center justify-center gap-8 md:mt-4">
             <h1 className="nexus_gradient max-auto flex items-center justify-center text-[6rem] md:text-[8rem] ">
               NEXUS
             </h1>
@@ -36,8 +36,11 @@ const Home = () => {
           </div>
         </div>
       </div>
-      <label id="terminal" />
-      <div className="z-100 mx-auto mt-24 w-full sm:mt-60 md:mt-24">
+
+      <div
+        className="z-100 mx-auto mt-12 w-full sm:mt-52 md:mt-24"
+        id="terminal"
+      >
         <Terminal />
       </div>
       <div className="faq-section relative my-48 w-full ">
