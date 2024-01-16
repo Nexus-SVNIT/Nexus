@@ -75,7 +75,10 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-
+canvas {
+  width: 100vw !important;
+  height: 100vh !important;
+}
 @media screen and (max-width: 420px) {
   .faq-section::after {
     width: 150rem;
