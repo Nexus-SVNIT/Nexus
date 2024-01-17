@@ -1,4 +1,5 @@
 const Event = require("../models/eventModel.js");
+const Forms = require("../models/formModel.js");
 const mongoose = require("mongoose");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
@@ -30,17 +31,14 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 });
 
 const addEvent = wrapAsync(async (req, res) => {
-    const { eventName, eventDate, formFields } = req.body;
-    const concatEventName = eventName.toLowerCase().split(" ").join("")
-    const formSchema = createFormSchema(formFields);
-    const collectionName = makeCollectionName(eventName);
+    const { eventName, eventDate, name, desc, deadline, formFields } = req.body;
+    const concatEventName = eventName.toLowerCase().split(" ").join("");
+    const _event = concatEventName;
+    await Forms.create({ name, desc, deadline, formFields, _event });
     const createdEvent = await Event.create({
         eventName,
         eventDate,
-        formFields,
         concatEventName,
-        responseCollectionName: collectionName,
-        responseSchema: formSchema,
     });
     res.status(200).json(createdEvent);
 });
@@ -68,40 +66,25 @@ const deleteEvent = wrapAsync(async (req, res) => {
 
 const submitResponse = async (req, res) => {
     const concatEventName = req.params.id;
-    const singleEvent = await Event.findOne({ concatEventName: concatEventName });
-
-    if (!singleEvent) throw new ExpressError("Event not found", 404);
-    const collectionName = singleEvent.responseCollectionName;
-    const responseSchema = mongoose.Schema(singleEvent.responseSchema);
-    let ResponseCollection;
-    if (!mongoose.models[collectionName])
-        ResponseCollection = mongoose.model(collectionName, responseSchema);
-    // it should be mongoose.models[] and not mongoose.model[]
-    else ResponseCollection = mongoose.models[collectionName];
-    const savedResponse = await ResponseCollection.create(req.body);
-    res.status(200).json(savedResponse);
+    await Forms.findOneAndUpdate({
+        query: { _event: concatEventName },
+        update: { $push: { responses: req.body } },
+        options: { new: true } 
+    });
+res.status(200).json("Response Saved Successfully");
 };
 
 const getResponses = async (req, res) => {
     const concatEventName = req.params.id;
-    const singleEvent = await Event.findOne({ concatEventName: concatEventName });
-    if (!singleEvent) throw new ExpressError("Event not found", 404);
-    const collectionName = singleEvent.responseCollectionName;
-    const responseSchema = mongoose.Schema(singleEvent.responseSchema);
-    let ResponseCollection;
-    if (!mongoose.models[collectionName])
-        ResponseCollection = mongoose.model(collectionName, responseSchema);
-    // it should be mongoose.models[] and not mongoose.model[]
-    else ResponseCollection = mongoose.models[collectionName];
-    const allResponses = await ResponseCollection.find();
-    res.status(200).json(allResponses);
+    const responses = await Forms.findOne({ _event: concatEventName }).select({responses: true});
+    if (!responses) throw new ExpressError("Event not found", 404);
+    res.status(200).json(responses);
 };
 
-const getFormFields = async (req, res) =>{
+const getFormFields = async (req, res) => {
     const concatEventName = req.params.id;
-    const singleEvent = await Event.findOne({concatEventName: concatEventName});
-    if (!singleEvent) throw new ExpressError("Event not found", 404);
-    const formFields = singleEvent.formFields;
+    const formFields = await Forms.findOne({ _event: concatEventName }).select({formFields: true});
+    if (!formFields) throw new ExpressError("Event not found", 404);
     res.status(200).json(formFields);
 }
 
