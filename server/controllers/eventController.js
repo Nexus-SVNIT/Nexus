@@ -18,7 +18,7 @@ const makeCollectionName = (eventName) => {
 };
 
 const getAllEvents = wrapAsync(async (req, res) => {
-    const allEvents = await Event.find();
+    const allEvents = await Event.find().select({formFields: false, responses: false, name: false, desc: false});
     return res.status(200).json(allEvents);
 });
 
