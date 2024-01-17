@@ -39,11 +39,7 @@ const MemberInfoSchema = new mongoose.Schema({
       type: String,
       required: true
     }
-<<<<<<< HEAD
   }
-=======
-});
->>>>>>> 374e3e4fc1f6d09a9f6bffd289def1ee59240d7f
 
 })
 
