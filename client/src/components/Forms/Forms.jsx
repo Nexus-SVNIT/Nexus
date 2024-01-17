@@ -3,6 +3,26 @@ import Title from "../Title/Title";
 import FormCard from "./FormCard";
 
 const Forms = () => {
+  // const {
+  //   isPending: loading,
+  //   error,
+  //   forms,
+  // } = useQuery({
+  //   queryKey: ["formsData"],
+  //   queryFn: () =>
+  //     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/member`).then((res) =>
+  //       res.json(),
+  //     ),
+  // });
+  
+  // console.log(forms);
+  // if (error) return <Error />;
+  // if (loading)
+  //   return (
+  //     <div className="flex h-[70vh] w-full items-center justify-center">
+  //       <CircularProgress color="primary" />
+  //     </div>
+  //   );
   const [forms, setForms] = useState([
     {
       _id: 2,
