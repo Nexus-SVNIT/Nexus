@@ -26,10 +26,7 @@ const eventSchema = new Schema({
     },
     eventStatus: {
         type: String
-    },
-    formFields: [Object],
-    responseCollectionName: String,
-    responseSchema: Object
+    }
 });
 
 module.exports = mongoose.model("event", eventSchema);
