@@ -32,7 +32,6 @@ const MemberInfoSchema = new mongoose.Schema({
             required:true,
         }
     }
-    
 });
 
 const MemberDetailsModel = mongoose.model("MemberDetail", MemberInfoSchema);
