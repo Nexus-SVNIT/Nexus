@@ -4,6 +4,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const ExpressError = require("./utils/ExpressError.js");
 const eventRoutes = require("./routes/eventRoutes.js");
+const formRoutes = require("./routes/formRoutes.js");
 const memberRoutes = require("./routes/memberRoutes.js");
 const messageRoutes = require("./routes/messageRoutes.js");
 const userRoutes = require("./routes/userRoutes.js");
@@ -19,6 +20,7 @@ app.get("/health-check", (req, res) => {
     return res.send("EveryThing is Fine");
 });
 app.use("/event", eventRoutes);
+app.use("/forms", formRoutes);
 app.use("/member", memberRoutes);
 app.use("/messages", messageRoutes);
 app.use("/api/user", userRoutes);
