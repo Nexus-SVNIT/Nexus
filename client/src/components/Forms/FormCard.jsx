@@ -6,7 +6,7 @@ const FormCard = ({ form }) => {
     <div className="flex w-2/5 min-w-[20rem] flex-col gap-2 rounded-md bg-white/90 p-6 text-black">
       <div className="flex justify-between font-semibold">
         <div>
-          <h2 className="text-xl font-bold md:text-2xl">{form.title}</h2>
+          <h2 className="text-xl font-bold md:text-2xl">{form.name}</h2>
           <p className="font-mono text-xs font-medium  text-gray-400 md:text-sm">
             {form.type}
           </p>
@@ -39,10 +39,11 @@ const FormCard = ({ form }) => {
       </div>
       <div className="flex items-center  justify-between font-semibold md:my-2 md:flex-row md:gap-6">
         <div className="w-fit rounded-full bg-gray-400 px-2 py-2 text-xs font-bold text-white md:px-4 md:text-base">
-          Starts {form.startsFrom}
+          Starts 
+          {/* {form.startsFrom} */}
         </div>
         <div className="font-mono text-xs text-green-800 md:text-lg">
-          {form.participants}+ Participating
+          {form.responseCount}+ Participating
         </div>
       </div>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-6">
