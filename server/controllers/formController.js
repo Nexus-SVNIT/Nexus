@@ -24,7 +24,7 @@ const submitResponse = async (req, res) => {
     const formName = req.params.id;
     await Forms.findOneAndUpdate({
         query: { name: formName },
-        update: { $push: { responses: req.body } },
+        update: { $push: { responses: req.body }, $inc: {responseCount: 1} },
         options: { new: true } 
     });
 res.status(200).json("Response Saved Successfully");

@@ -15,6 +15,10 @@ const formSchema = new Schema({
         type: [Object],
         default: []
     },
+    responseCount:{
+        type: Number,
+        default: 0
+    },
     _event: {
         type: String,
         ref: 'event'
