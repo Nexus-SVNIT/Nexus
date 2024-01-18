@@ -39,7 +39,7 @@ const FormCard = ({ form }) => {
       </div>
       <div className="flex items-center  justify-between font-semibold md:my-2 md:flex-row md:gap-6">
         <div className="w-fit rounded-full bg-gray-400 px-2 py-2 text-xs font-bold text-white md:px-4 md:text-base">
-          Starts 
+          Started
           {/* {form.startsFrom} */}
         </div>
         <div className="font-mono text-xs text-green-800 md:text-lg">
