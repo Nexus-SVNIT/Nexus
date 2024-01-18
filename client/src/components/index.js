@@ -17,3 +17,5 @@ export { default as CreateForm } from "./Form/CreateForm.jsx";
 export { default as RegisterForm } from "./Form/RegisterForm.jsx";
 export { default as Connect } from "./Connect/Connect.jsx";
 export { default as Three } from "./ThreeJS/Three.jsx";
+
+export { default as Achievements } from "./Achievements/Achievements.jsx";

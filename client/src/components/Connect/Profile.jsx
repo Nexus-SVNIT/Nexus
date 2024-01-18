@@ -15,7 +15,7 @@ const Profile = () => {
           className="h-full w-full object-cover object-center"
         />
         <p
-          className="absolute -right-[50%] top-1/2 z-10  cursor-pointer  rounded-sm bg-blue-500 p-2.5 transition-all active:bg-blue-600 group-hover:right-[25%]"
+          className="absolute -left-1/2 bottom-1/3 z-10 w-fit cursor-pointer  rounded-sm bg-blue-500/75 p-2.5 transition-all active:bg-blue-600 group-hover:left-1/3"
           onClick={toggleOpen}
         >
           View Profile

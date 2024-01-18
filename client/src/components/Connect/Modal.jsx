@@ -14,17 +14,17 @@ const Modal = ({ children, isOpen, toggleOpen, data }) => {
       {children}
       {isOpen && (
         <div
-          className="fixed left-0 top-0 z-[2000] flex h-[100vh] w-[100vw] items-center justify-center overflow-hidden bg-slate-600/50"
+          className="fixed left-0 top-0 z-[2000] flex h-full w-[100vw]  justify-center overflow-hidden bg-slate-600/50"
           onClick={toggleOpen}
         >
-          <div className="flex h-[20rem] w-[20rem] flex-col items-center justify-center gap-2 rounded-md bg-white  p-10 text-blue-800 md:h-auto md:w-[25rem] ">
+          <div className="mt-[25vh] flex h-[24rem] w-[24rem] flex-col items-center justify-center gap-2 rounded-md bg-white  p-10 text-blue-800 md:h-[26rem] md:w-[26rem] ">
             <img
               src="https://xsgames.co/randomusers/avatar.php?g=male"
               alt="alumnus"
               className="h-40 w-40 rounded-full object-scale-down"
             />
             <p className="text-lg font-bold">Sneh Chaudary</p>
-            <div className="flex w-[75%] justify-between">
+            <div className="flex w-[80%] justify-between px-2  md:w-[75%]">
               <p className="font-mono">U21CS134</p>
               <p>Batch : 2021-2025</p>
             </div>

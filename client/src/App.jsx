@@ -2,6 +2,7 @@ import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import {
   About,
+  Achievements,
   Connect,
   CreateForm,
   Events,
@@ -24,11 +25,13 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/team" element={<Teams />} />
+            <Route path="/achievements" element={<Achievements />} />
             <Route path="/events" element={<Events />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/about" element={<About />} />
             <Route path="/register/:formId" element={<RegisterForm />} />
             <Route path="/connect" element={<Connect />} />
+            <Route path="/connect/alumni" element={<Connect />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
