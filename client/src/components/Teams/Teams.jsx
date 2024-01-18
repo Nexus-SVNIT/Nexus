@@ -4,7 +4,8 @@ import { Title } from "../index";
 import TeamCard from "./TeamCard";
 import Error from "../Error/Error";
 import { useQuery } from "@tanstack/react-query";
-import CircularProgress from '@mui/joy/CircularProgress';
+import CircularProgress from "@mui/joy/CircularProgress";
+import Loader from "../Loader/Loader";
 
 const Teams = () => {
   const {
@@ -23,7 +24,7 @@ const Teams = () => {
   if (loading)
     return (
       <div className="flex h-[70vh] w-full items-center justify-center">
-        <CircularProgress color="primary" />
+        <Loader />
       </div>
     );
   const certainRolesList = ["Chairperson", "Vice Chairperson", "Event Manager"];

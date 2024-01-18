@@ -1,10 +1,11 @@
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "react-hot-toast";
 import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import {
   About,
   Achievements,
   Connect,
-  CreateForm,
   Events,
   Forms,
   Home,
@@ -13,8 +14,6 @@ import {
   RegisterForm,
   Teams,
 } from "./components";
-
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();
 function App() {
@@ -35,6 +34,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>
+        <Toaster />
       </Router>
     </QueryClientProvider>
   );
