@@ -35,8 +35,19 @@ const CreateForm = () => {
     setInputValues(newInputValues);
   };
 
-  const handleSubmit = () => {
-    console.log("Input Values:", inputValues);
+  const handleSubmit = async () => {
+    // const resultObject = {};
+    // questions.forEach((question, index) => {
+    //   resultObject[question.questionText] = inputValues[index];
+    // });
+    // console.log(resultObject);
+    // const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/:id`,{
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    //   body:JSON.stringify(resultObject)
+    // });
     const newInputValues = Array(questions.length).fill("");
     setInputValues(newInputValues);
   };
