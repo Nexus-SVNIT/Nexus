@@ -39,7 +39,7 @@ const getResponses = async (req, res) => {
 
 const getFormFields = async (req, res) => {
     const id = req.params.id;
-    const formFields = await Forms.findById(id).select({formFields: true, _id: false});
+    const formFields = await Forms.findById(id).select({_id: false, responses: false, __v: false, responseCount: false, _event: false});
     if (!formFields) throw new ExpressError("Event not found", 404);
     res.status(200).json(formFields);
 }
