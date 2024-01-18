@@ -4,7 +4,7 @@ const ExpressError = require("../utils/ExpressError.js");
 
 
 const getAllMember = wrapAsync(async (req, res, next) => {
-  const getAllMemberDetails = await member.find();
+  const getAllMemberDetails = await member.find().sort({ _id: 1 });
   res.status(200).json(getAllMemberDetails);
 });
 
@@ -19,11 +19,11 @@ const getUniqueMember = wrapAsync(async (req, res, next) => {
 
 
 const addMember = wrapAsync(async (req, res, next) => {
-  const { name, email,role,image,year,socialLinks} = req.body;
-  if (!name || !email || !role || !socialLinks||!image||!year) {
+  const { name, email, role, image, year, socialLinks } = req.body;
+  if (!name || !email || !role || !socialLinks || !image || !year) {
     throw new ExpressError("Every field is mandatory", 400);
   }
-  const newMember = await member.create({ name, email,role,socialLinks,image,year});
+  const newMember = await member.create({ name, email, role, socialLinks, image, year });
   res.status(200).json(newMember);
 });
 
@@ -46,8 +46,8 @@ const updateMemberDetails = wrapAsync(async (req, res, next) => {
 });
 
 module.exports = {
-  
-  
+
+
   getAllMember,
   getUniqueMember,
   updateMemberDetails,
