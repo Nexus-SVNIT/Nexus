@@ -48,7 +48,7 @@ const RegisterForm = () => {
     )
       .then((res) => {
         if (res.ok) {
-          setFormResponse({});
+          setFormResponse(null);
         }
       })
       .catch(() => alert("Something Went Wrong.Please Try Again."));
@@ -73,11 +73,15 @@ const RegisterForm = () => {
 
   return (
     <div className="relative flex  w-screen flex-col justify-center">
-      <h3 className="mb-4 mt-10 text-center text-3xl">Register For Event</h3>
-      <div className="mx-auto mb-48 h-full min-h-screen  w-[80%] rounded-xl md:w-[60%]">
-        <div className="flex flex-col gap-2 rounded-lg border  border-t-[.5rem] border-blue-800 bg-white p-6 px-10">
-          <p className="px-4 py-2 text-4xl text-black">{formData.name}</p>
-          <p className="text-md px-4 py-2 text-slate-500">{formData.desc}</p>
+      <h3 className=" mb-4 mt-10 text-center text-2xl md:text-3xl">
+        Register For Event
+      </h3>
+      <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
+        <div className="flex flex-col gap-2 rounded-lg  border border-t-[.5rem] border-blue-800 bg-white p-4 md:p-6">
+          <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
+            {formData.name}
+          </p>
+          <p className="text-md px-4 text-slate-500 md:py-2">{formData.desc}</p>
         </div>
 
         {formData.formFields.map((ques, i) => (
@@ -91,7 +95,7 @@ const RegisterForm = () => {
         <div className="flex justify-center">
           <button
             onClick={handleSubmit}
-            className="my-4 cursor-pointer rounded-md bg-blue-500 p-2 text-white"
+            className="my-4 w-full cursor-pointer rounded-md bg-blue-500 p-4 px-6 text-white hover:bg-blue-800"
           >
             Submit
           </button>
