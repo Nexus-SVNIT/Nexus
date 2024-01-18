@@ -6,7 +6,4 @@ router.post('/login', (req,res)=>{
     loginUser(req,res);
 });
 
-router.post('/signup',(req,res)=>{
-    signupUser(req,res);
-});
 module.exports = router;
