@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import QuestionBox from "./QuestionBox";
 import Loader from "../Loader/Loader";
 import { toast } from "react-hot-toast";
+import ScrollToTop from "../ScrollToTop/ScrollToTop";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -73,7 +74,9 @@ const RegisterForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (loading)
-    return (
+  return (
+    <div>
+      <ScrollToTop />
       <div className="flex h-[75vh] w-full flex-col items-center justify-center gap-4 text-lg">
         <Loader />
         <h4>
@@ -83,7 +86,8 @@ const RegisterForm = () => {
         </h4>
         <h3>Please Wait ...</h3>
       </div>
-    );
+    </div>
+  );
   return (
     <div className="relative flex  w-screen flex-col justify-center">
       <h3 className=" mb-4 mt-10 text-center text-2xl md:text-3xl">
