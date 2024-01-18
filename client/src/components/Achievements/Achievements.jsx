@@ -42,6 +42,7 @@ const Achievements = () => {
               />
             </div>
             <div className="flex flex-1 flex-col items-center justify-around px-4 py-2">
+              <p>{el.email}</p>
               <p>{el.name}</p>
               <p className="w-3/4">{el.achievement}</p>
             </div>
