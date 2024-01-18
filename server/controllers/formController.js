@@ -22,8 +22,12 @@ const createForm = async (req, res) => {
 
 const submitResponse = async (req, res) => {
     const formName = req.params.id;
-    console.log(formName,req.body);
-    return res.status(200).json("Response Saved Successfully");
+    await Forms.findOneAndUpdate(
+        { name: formName },
+        { $push: { responses: req.body }, $inc: {responseCount: 1} },
+        { new: true } 
+    );
+res.status(200).json("Response Saved Successfully");
 };
 
 const getResponses = async (req, res) => {
@@ -34,15 +38,10 @@ const getResponses = async (req, res) => {
 };
 
 const getFormFields = async (req, res) => {
-    
-    try {
-        const formData = await Forms.findById(req.params.id).select("-__v -_event -responses");
-       
-        if (!formData) throw new ExpressError("Event not found", 404);
-        return res.status(200).json(formData);
-    } catch (error) {
-        return res.status(500).json("Something went wrong")
-    }
+    const formName = req.params.id;
+    const formFields = await Forms.findOne({ name: formName }).select({formFields: true});
+    if (!formFields) throw new ExpressError("Event not found", 404);
+    res.status(200).json(formFields);
 }
 
 module.exports = {getAllForms, createForm, submitResponse, getResponses, getFormFields};
