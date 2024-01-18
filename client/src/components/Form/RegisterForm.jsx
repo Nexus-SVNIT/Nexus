@@ -43,6 +43,9 @@ const RegisterForm = () => {
       `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${params.formId}`,
       {
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(formResponse),
       },
     )

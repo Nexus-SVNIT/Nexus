@@ -36,8 +36,7 @@ const Navbar = () => {
 
         {mobileMenu && (
           <ul
-            className={`fixed top-0 float-right flex h-[200vh] w-full flex-col items-center gap-6 bg-black bg-opacity-80 py-14 pt-20 text-xl`}
-            style={{ marginLeft: "50%" }}
+            className={`fixed top-0 float-right flex h-[200vh] flex-col items-center gap-6 bg-black bg-opacity-80 py-14 pt-20 text-xl`}
             onClick={(e) => setMobileMenu(false)}
           >
             {NavList.map((item) => {
