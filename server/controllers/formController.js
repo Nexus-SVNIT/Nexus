@@ -21,9 +21,9 @@ const createForm = async (req, res) => {
 };
 
 const submitResponse = async (req, res) => {
-    const formName = req.params.id;
-    await Forms.findOneAndUpdate(
-        { name: formName },
+    const id = req.params.id;
+    await Forms.findByIdAndUpdate(
+        id,
         { $push: { responses: req.body }, $inc: {responseCount: 1} },
         { new: true } 
     );
@@ -31,15 +31,15 @@ res.status(200).json("Response Saved Successfully");
 };
 
 const getResponses = async (req, res) => {
-    const formName = req.params.id;
-    const responses = await Forms.findOne({ name: formName }).select({responses: true});
+    const id = req.params.id;
+    const responses = await Forms.findById(id).select({responses: true, _id: false});
     if (!responses) throw new ExpressError("Event not found", 404);
     res.status(200).json(responses);
 };
 
 const getFormFields = async (req, res) => {
-    const formName = req.params.id;
-    const formFields = await Forms.findOne({ name: formName }).select({formFields: true});
+    const id = req.params.id;
+    const formFields = await Forms.findById(id).select({formFields: true, _id: false});
     if (!formFields) throw new ExpressError("Event not found", 404);
     res.status(200).json(formFields);
 }
