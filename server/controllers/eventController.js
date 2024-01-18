@@ -83,7 +83,7 @@ const getResponses = async (req, res) => {
 
 const getFormFields = async (req, res) => {
     const concatEventName = req.params.id;
-    const formFields = await Forms.findOne({ _event: concatEventName }).select({formFields: true});
+    const formFields = await Forms.findOne({ _event: concatEventName }).select({responses: false, _id: false, __v: false});
     if (!formFields) throw new ExpressError("Event not found", 404);
     res.status(200).json(formFields);
 }
