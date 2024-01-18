@@ -42,7 +42,7 @@ export const FAQsList = [
 export const faculty_advisors = [
   {
     name: "Dr. Rupa G. Mehta",
-    role: "Associate Professor",
+    role: "Professor",
     image:
       "https://www.svnit.ac.in/web/department/computer/images/rgm_SVNIT.png",
     socialLinks: {
@@ -52,8 +52,8 @@ export const faculty_advisors = [
     },
   },
   {
-    name: "Dr. Bhavesh N Gohil",
-    role: "Professor",
+    name: "Dr. Bhavesh N. Gohil",
+    role: "Associate Professor",
     image: "https://www.svnit.ac.in/web/department/computer/images/bng.jpg",
     socialLinks: {
       facebook: "https://www.facebook.com/pranav.dhobi",
