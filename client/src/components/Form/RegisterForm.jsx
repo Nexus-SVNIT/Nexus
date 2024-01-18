@@ -47,9 +47,9 @@ const RegisterForm = () => {
       },
     )
       .then((res) => {
-        if (res.ok) {
-          setFormResponse(null);
-        }
+        // if (res.ok) {
+        // setFormResponse({});
+        // }
       })
       .catch(() => alert("Something Went Wrong.Please Try Again."));
   };
@@ -88,7 +88,7 @@ const RegisterForm = () => {
           <QuestionBox
             key={i}
             ques={ques}
-            inputValue={formResponse[ques.name] ?? "adf"}
+            inputValue={formResponse[ques.name] ?? ""}
             onInputChange={handleInputChange}
           />
         ))}
