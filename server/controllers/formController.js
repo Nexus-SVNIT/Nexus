@@ -27,7 +27,7 @@ const submitResponse = async (req, res) => {
         { $push: { responses: req.body }, $inc: {responseCount: 1} },
         { new: true } 
     );
-res.status(200).json("Response Saved Successfully");
+res.status(200).json(req.body);
 };
 
 const getResponses = async (req, res) => {
