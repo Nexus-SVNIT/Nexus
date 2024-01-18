@@ -9,6 +9,7 @@ import {
   Home,
   Layout,
   NotFound,
+  RegisterForm,
   Teams,
 } from "./components";
 
@@ -26,7 +27,7 @@ function App() {
             <Route path="/events" element={<Events />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/about" element={<About />} />
-            <Route path="/register/:id" element={<CreateForm />} />
+            <Route path="/register/:formId" element={<RegisterForm />} />
             <Route path="/connect" element={<Connect />} />
             <Route path="*" element={<NotFound />} />
           </Routes>

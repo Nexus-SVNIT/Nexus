@@ -14,7 +14,7 @@ const Home = () => {
     document.body.appendChild(script);
   }, []);
   return (
-    <div className=" mx-auto overflow-x-hidden bg-[#111] transition-all delay-300">
+    <div className=" overflow-x-hiddenf mx-auto transition-all delay-300">
       <div className=" flex h-screen flex-col items-center ">
         <Three />
         <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
