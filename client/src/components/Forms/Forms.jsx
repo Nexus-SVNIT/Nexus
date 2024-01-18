@@ -41,7 +41,6 @@ const Forms = () => {
       return form;
     });
   }
-  console.log(forms);
   // const [forms, setForms] = useState([
   //   {
   //     _id: 2,
