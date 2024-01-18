@@ -48,7 +48,7 @@ const FormCard = ({ form }) => {
           {/* {form.startsFrom} */}
         </div>
         <div className="font-mono text-xs text-green-800 md:text-lg">
-          {form.responseCount}+ Participating
+          {form.responseCount}+ Registered
         </div>
       </div>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-6">
