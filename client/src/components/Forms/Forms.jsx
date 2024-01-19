@@ -4,6 +4,7 @@ import FormCard from "./FormCard";
 import { useQuery } from "@tanstack/react-query";
 import Error from "../Error/Error";
 import CircularProgress from "@mui/joy/CircularProgress";
+import Loader from "../Loader/Loader";
 
 const Forms = () => {
   const {
@@ -21,7 +22,7 @@ const Forms = () => {
   if (loading)
     return (
       <div className="flex h-[70vh] w-full items-center justify-center">
-        <CircularProgress color="primary" />
+        <Loader />
       </div>
     );
   if (!forms || forms.length === 0) {
