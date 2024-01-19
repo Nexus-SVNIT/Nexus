@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Modal from "./Modal";
+import { GrFormView } from "react-icons/gr";
 
 const Profile = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -8,26 +9,24 @@ const Profile = () => {
   };
   return (
     <Modal isOpen={isOpen} toggleOpen={toggleOpen}>
-      <div className="group relative flex h-80 w-72 cursor-text flex-col items-center justify-center overflow-hidden rounded-lg">
+      <div className=" group relative flex w-72 cursor-pointer flex-col items-center justify-center rounded-lg bg-blue-50/10 p-6 py-8 transition-all duration-300 hover:scale-105">
+        <span
+          className="absolute left-0 top-0 w-fit rounded-b-2xl rounded-r-2xl bg-blue-600 opacity-0 transition-all duration-300 group-hover:opacity-100"
+          title="View Profile"
+          onClick={(e) => setIsOpen(true)}
+        >
+          <GrFormView size={48} />
+        </span>
         <img
           src={"https://xsgames.co/randomusers/avatar.php?g=male"}
           alt="profile"
-          className="h-full w-full object-cover object-center"
+          className="h-52 w-52 rounded-full object-cover object-center"
         />
-        <p
-          className="absolute -left-1/2 bottom-1/3 z-10 w-fit cursor-pointer  rounded-sm bg-blue-500/75 p-2.5 transition-all active:bg-blue-600 group-hover:left-1/3"
-          onClick={toggleOpen}
-        >
-          View Profile
-        </p>
-
-        <div className="absolute h-full w-full bg-gradient-to-b from-transparent via-black/25 to-black">
-          <div className="absolute bottom-2 left-4">
-            <p className="text-lg text-blue-300"> Sneh Chaudary</p>
-            <p className="line-clamp-1 text-blue-300">
-              Software Engineer @Google
-            </p>
-          </div>
+        <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-2">
+          <p className="text-lg text-blue-400"> Sneh Chaudary</p>
+          <p className="line-clamp-1 text-blue-200">
+            Software Engineer @Google
+          </p>
         </div>
       </div>
     </Modal>

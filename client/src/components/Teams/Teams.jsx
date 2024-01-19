@@ -6,6 +6,7 @@ import Error from "../Error/Error";
 import { useQuery } from "@tanstack/react-query";
 import CircularProgress from "@mui/joy/CircularProgress";
 import Loader from "../Loader/Loader";
+import HeadTags from "../HeadTags/HeadTags";
 
 const Teams = () => {
   const {
@@ -43,6 +44,7 @@ const Teams = () => {
 
   return (
     <div className="mx-auto mb-20 flex h-full max-w-7xl flex-col items-center justify-center md:my-10  ">
+      <HeadTags title={"Team - Nexus NIT Surat"} />
       <Title>Faculty Advisors</Title>
       <TeamCard data={faculty_advisors} isFaculty={true} />
       <Title>Our Team</Title>
