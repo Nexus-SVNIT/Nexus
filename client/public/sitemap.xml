@@ -5,10 +5,45 @@
       xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
-
 <url>
-  <loc>https://www.nexus-svnit.tech/</loc>
-  <lastmod>2024-01-18T13:39:52+00:00</lastmod>
-</url>
+    <loc>https://www.nexus-svnit.tech/</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/team</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/achievements</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/events</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/forms</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/about</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/register/:formId</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/connect</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/connect/alumni</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://www.nexus-svnit.tech/404-not-found</loc>
+    <changefreq>weekly</changefreq>
+  </url>
 
 </urlset>

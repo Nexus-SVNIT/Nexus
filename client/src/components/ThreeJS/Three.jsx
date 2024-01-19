@@ -3,7 +3,7 @@ import React from "react";
 const Three = () => {
   return (
     <div
-      class="l-page l-page--white"
+      className="l-page l-page--white"
       data-id="hyper_space"
       style={{
         position: "absolute",
