@@ -4,6 +4,7 @@ import QuestionBox from "./QuestionBox";
 import Loader from "../Loader/Loader";
 import { toast } from "react-hot-toast";
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
+import HeadTags from "../HeadTags/HeadTags";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
@@ -74,22 +75,28 @@ const RegisterForm = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   if (loading)
-  return (
-    <div>
-      <ScrollToTop />
-      <div className="flex h-[75vh] w-full flex-col items-center justify-center gap-4 text-lg">
-        <Loader />
-        <h4>
-          {Object.keys(formResponse).length
-            ? "Submitting Your Form Response . "
-            : "Loading Form Details"}
-        </h4>
-        <h3>Please Wait ...</h3>
+    return (
+      <div>
+        <ScrollToTop />
+        <div className="flex h-[75vh] w-full flex-col items-center justify-center gap-4 text-lg">
+          <Loader />
+          <h4>
+            {Object.keys(formResponse).length
+              ? "Submitting Your Form Response . "
+              : "Loading Form Details"}
+          </h4>
+          <h3>Please Wait ...</h3>
+        </div>
       </div>
-    </div>
-  );
+    );
   return (
     <div className="relative flex  w-screen flex-col justify-center">
+      {!loading && (
+        <HeadTags
+          title={`Register for ${formData.name}`}
+          metaDescription={formData.desc}
+        />
+      )}
       <h3 className=" mb-4 mt-10 text-center text-2xl md:text-3xl">
         Register For Event
       </h3>

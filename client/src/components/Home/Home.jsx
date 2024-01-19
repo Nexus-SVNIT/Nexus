@@ -6,6 +6,7 @@ import {
   WhatPeopleThinkAboutUS,
   Three,
 } from "../index";
+import HeadTags from "../HeadTags/HeadTags";
 
 const Home = () => {
   useEffect(() => {

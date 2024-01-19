@@ -1,5 +1,6 @@
 import React from "react";
 import Title from "../Title/Title";
+import HeadTags from "../HeadTags/HeadTags";
 const achievements = [
   {
     timestamp: "1/13/2024 11:46:46",
@@ -35,14 +36,15 @@ const achievements = [
 const Achievements = () => {
   return (
     <div className="mx-auto mb-48 max-w-7xl">
+      <HeadTags title={"Achievements - Nexus NIT Surat"} />
       <Title>Departmental Achievements</Title>
       <div className="mt-10 flex flex-wrap items-center justify-center gap-10">
         {achievements.map((el, ind) => (
           <div
             key={el.timestamp}
-            className={`flex w-[90%] flex-col rounded-lg shadow-md shadow-blue-800/75  sm:w-3/4 md:h-4/5 ${
+            className={`flex w-[90%] flex-col rounded-lg shadow-md hover:shadow-sm hover:shadow-blue-500  sm:w-3/4 md:h-4/5 ${
               ind % 2 ? "md:flex-row-reverse" : "md:flex-row"
-            } md:gap-4 `}
+            } bg-blue-100/5 md:gap-4`}
           >
             <div>
               <img
@@ -51,7 +53,7 @@ const Achievements = () => {
                   "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
                 }
                 alt="Banner"
-                className="max-h-60  w-full rounded-t-lg object-cover object-center sm:max-h-[20rem] md:max-h-[18rem] md:w-[30rem]"
+                className="max-h-60  w-full rounded-t-lg object-cover object-center sm:max-h-[20rem] md:max-h-[26rem] md:w-[30rem]"
               />
             </div>
 

@@ -14,6 +14,7 @@ import {
   RegisterForm,
   Teams,
 } from "./components";
+import AlumniDetail from "./components/AlumniDetail/AlumniDetail";
 
 const queryClient = new QueryClient();
 function App() {
@@ -30,7 +31,7 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/register/:formId" element={<RegisterForm />} />
             <Route path="/connect" element={<Connect />} />
-            <Route path="/connect/alumni" element={<Connect />} />
+            <Route path="/connect/alumni" element={<AlumniDetail />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Layout>

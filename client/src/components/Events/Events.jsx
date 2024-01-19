@@ -4,6 +4,7 @@ import Error from "../Error/Error";
 import Title from "../Title/Title";
 import "./events.css";
 import { useQuery } from "@tanstack/react-query";
+import HeadTags from "../HeadTags/HeadTags";
 
 const Events = () => {
   const {
@@ -21,6 +22,7 @@ const Events = () => {
   if (error) return <Error />;
   return (
     <div className="mx-auto overflow-hidden bg-[#111] pb-20 md:pb-48">
+      <HeadTags title={"Events - Nexus NIT Surat"} />
       <Title>Events</Title>
       <div className="container">
         <div class="timeline">

@@ -73,7 +73,7 @@ const Footer = () => {
           </div>
         </div>
       </div>
-      <div className="border-t-2 border-blue-800 pt-4 text-center font-mono text-xs md:text-base">
+      <div className="border-t-2 border-blue-800 pt-2 text-center font-mono text-xs md:text-base">
         Made with <span className="animate-pulse">❤️</span> by NEXUS NIT Surat •
         © 2024
       </div>
