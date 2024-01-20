@@ -3,28 +3,26 @@ import { IoPerson, IoLockClosed, IoNotifications } from "react-icons/io5";
 
 const AlumniMenu = () => {
   return (
-    <section className="mx-auto mb-48 mt-10 flex h-auto max-w-7xl items-center overflow-hidden rounded-md bg-blue-100/10">
-      <div className="mb-10 flex w-full max-w-7xl flex-col items-center justify-center px-10 py-6">
+    <section className="mx-auto mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10">
+      <div className="mb-10 flex w-full max-w-5xl flex-col items-center justify-center px-10 py-6">
         <h4 className="mb-6 text-xl font-bold">Alumni Information</h4>
-        <div className="flex flex-col items-center justify-center p-4 md:flex-row">
-          <div className="md:w-1/3">
+        <div className="flex flex-col items-center justify-center p-2">
+          <div className="flex w-full items-center justify-center">
             <img
               src={"https://xsgames.co/randomusers/avatar.php?g=male"}
               alt="profile"
-              className="h-52 w-52 rounded-full object-cover object-center lg:h-72 lg:w-72"
+              className="h-48 w-48 rounded-full object-cover object-center lg:h-52 lg:w-52"
             />
           </div>
-          <div className="mt-10 flex  flex-wrap gap-8 md:mt-0 md:w-2/3 md:gap-0">
+          <div className="mx-auto mt-8  flex flex-wrap items-center justify-center gap-8">
             {[
               "Name",
               "E-Mail",
-              "Admission Number",
               "Current Role",
               "Mobile Number",
-              "Year",
+              "Passing Year",
               "LinkedIn",
               "Instagram",
-              "Facebook",
               "Twitter",
             ].map((field) => (
               <div

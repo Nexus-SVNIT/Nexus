@@ -1,12 +1,11 @@
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { faculty_advisors } from "../../data";
+import Error from "../Error/Error";
+import HeadTags from "../HeadTags/HeadTags";
+import Loader from "../Loader/Loader";
 import { Title } from "../index";
 import TeamCard from "./TeamCard";
-import Error from "../Error/Error";
-import { useQuery } from "@tanstack/react-query";
-import CircularProgress from "@mui/joy/CircularProgress";
-import Loader from "../Loader/Loader";
-import HeadTags from "../HeadTags/HeadTags";
 
 const Teams = () => {
   const {

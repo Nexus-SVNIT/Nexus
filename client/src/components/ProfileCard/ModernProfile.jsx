@@ -1,8 +1,10 @@
-import { FaGithub, FaLinkedinIn } from "react-icons/fa";
+import { FaLinkedinIn } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdOutgoingMail } from "react-icons/md";
 import { SiGooglescholar } from "react-icons/si";
+
 import { Link } from "react-router-dom";
+import { SocialIcon } from "react-social-icons";
 
 const ModernProfile = ({ profile, isFaculty }) => {
   return (
@@ -22,21 +24,14 @@ const ModernProfile = ({ profile, isFaculty }) => {
         <div className="mb-2 flex gap-2 ">
           {isFaculty ? (
             <>
-              <Link to={"#"} target="_blank">
-                <FaLinkedinIn
-                  className="duration-400 rounded-sm border bg-[#0077b5]  p-1 text-white  
-                        transition-all hover:border-[#0077b5] hover:bg-transparent hover:text-[#0077b5]"
-                  size={24}
-                />
-              </Link>
-              <Link to={"#"} target="_blank">
+              <Link to={profile.socialLinks.googleScholar} target="_blank">
                 <SiGooglescholar
                   className="duration-400 rounded-sm border bg-[#3865c5] p-1 text-white  
                         transition-all hover:border-[#3865c5] hover:bg-transparent hover:text-[#3865c5]"
                   size={24}
                 />
               </Link>
-              <Link to={"#"} target="_blank">
+              <Link to={profile.socialLinks.googleSite} target="_blank">
                 <FaXTwitter
                   className="duration-400 rounded-sm border bg-[#75787B] p-1 text-white  
                         transition-all hover:border-[#75787B] hover:bg-transparent hover:text-[#75787B]"
@@ -46,27 +41,15 @@ const ModernProfile = ({ profile, isFaculty }) => {
             </>
           ) : (
             <>
-              <Link to={"#"} target="_blank">
-                <FaLinkedinIn
-                  className="duration-400 rounded-sm border bg-[#0077b5]  p-1 text-white  
-                        transition-all hover:border-[#0077b5] hover:bg-transparent hover:text-[#0077b5]"
-                  size={24}
-                />
-              </Link>
-              <Link to={"#"} target="_blank">
-                <FaGithub
-                  className="duration-400 rounded-sm border bg-[#24292e] p-1 text-white  
-                        transition-all hover:border-[#24292e] hover:bg-transparent hover:text-[#24292e]"
-                  size={24}
-                />
-              </Link>
-              <Link to={"#"} target="_blank">
-                <FaXTwitter
-                  className="duration-400 rounded-sm border bg-[#75787B] p-1 text-white  
-                        transition-all hover:border-[#75787B] hover:bg-transparent hover:text-[#75787B]"
-                  size={24}
-                />
-              </Link>
+              {Object.keys(profile.socialLinks).map((key) => {
+                if (!profile.socialLinks[key].length) return null;
+                return (
+                  <SocialIcon
+                    url={profile.socialLinks[key]}
+                    style={{ height: "1.8rem", width: "1.8rem" }}
+                  />
+                );
+              })}
             </>
           )}
         </div>

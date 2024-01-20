@@ -42,14 +42,22 @@ const Footer = () => {
           </p>
         </div>
         <div className="flex w-full flex-col items-center justify-between gap-10 sm:flex-row sm:items-start sm:gap-0 md:justify-center md:gap-[25%]">
-          <div className="mt-4 flex flex-col gap-4 px-1 text-center md:px-8">
-            <h4 className="whitespace-nowrap text-xl ">Quick Links</h4>
-            <ul className="flex flex-col gap-2 text-blue-400">
-              <Link to={"/events"}>Events</Link>
-              <Link to={"/forms"}>Forms</Link>
-              <Link to={"/connect"}>Connect</Link>
-              <Link to={"/aboutUs"}>About Us</Link>
-            </ul>
+          <div className="mt-4 flex flex-col gap-4 px-1 text-center md:px-8 md:text-left">
+            <h4 className="whitespace-nowrap text-center text-xl">
+              Quick Links
+            </h4>
+            <div className="flex gap-10 md:gap-8">
+              <ul className="flex flex-col gap-2 text-left text-blue-400">
+                <Link to={"/events"}>Events</Link>
+                <Link to={"/achievements"}>Achievements</Link>
+                <Link to={"/connect"}>Connect</Link>
+              </ul>
+              <ul className="flex flex-col gap-2 text-blue-400">
+                <Link to={"/team"}>Team</Link>
+                <Link to={"/forms"}>Forms</Link>
+                <Link to={"/about"}>About</Link>
+              </ul>
+            </div>
           </div>
           <div className="mt-4 flex flex-col gap-4 px-8 text-center md:px-0">
             <h4 className="text-xl">Social Media</h4>

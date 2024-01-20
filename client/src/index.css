@@ -70,7 +70,7 @@
 }
 .bg-testimonials {
   background: url("data/images/bg-testimonials.jpg");
-  filter: brightness(0.66);
+  filter: brightness(0.9);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;

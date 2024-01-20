@@ -18,7 +18,7 @@ const makeCollectionName = (eventName) => {
 };
 
 const getAllEvents = wrapAsync(async (req, res) => {
-    const allEvents = await Event.find().select({formFields: false, responses: false, name: false, desc: false});
+    const allEvents = await Event.find();
     return res.status(200).json(allEvents);
 });
 
@@ -69,21 +69,21 @@ const submitResponse = async (req, res) => {
     await Forms.findOneAndUpdate({
         query: { _event: concatEventName },
         update: { $push: { responses: req.body } },
-        options: { new: true } 
+        options: { new: true }
     });
-res.status(200).json("Response Saved Successfully");
+    res.status(200).json("Response Saved Successfully");
 };
 
 const getResponses = async (req, res) => {
     const concatEventName = req.params.id;
-    const responses = await Forms.findOne({ _event: concatEventName }).select({responses: true});
+    const responses = await Forms.findOne({ _event: concatEventName }).select({ responses: true });
     if (!responses) throw new ExpressError("Event not found", 404);
     res.status(200).json(responses);
 };
 
 const getFormFields = async (req, res) => {
     const concatEventName = req.params.id;
-    const formFields = await Forms.findOne({ _event: concatEventName }).select({responses: false, _id: false, __v: false});
+    const formFields = await Forms.findOne({ _event: concatEventName }).select({ responses: false, _id: false, __v: false });
     if (!formFields) throw new ExpressError("Event not found", 404);
     res.status(200).json(formFields);
 }
