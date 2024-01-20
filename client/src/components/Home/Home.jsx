@@ -3,10 +3,9 @@ import {
   Button,
   FAQs,
   Terminal,
-  WhatPeopleThinkAboutUS,
   Three,
+  WhatPeopleThinkAboutUS,
 } from "../index";
-import HeadTags from "../HeadTags/HeadTags";
 
 const Home = () => {
   useEffect(() => {
