@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const getAllForms = async (req, res) => {
     try {
-        const allForms = await Forms.find().select({ formFields: false, responses: false });
+        const allForms = await Forms.find({}, {
+            "responseCount": { $size: "$responses" },
+            name: true,
+            desc: true,
+            deadline: true,
+            formFields: true,
+            _event: true
+        });
         res.status(200).json(allForms);
     }
     catch (err) {
