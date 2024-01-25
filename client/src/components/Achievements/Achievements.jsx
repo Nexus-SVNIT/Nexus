@@ -1,7 +1,30 @@
-import React from "react";
+import React, { useState } from "react";
 import Title from "../Title/Title";
 import HeadTags from "../HeadTags/HeadTags";
+import { Link } from "react-router-dom";
+import { FaInfoCircle } from "react-icons/fa";
+
+import AchievementCard from "./AchievementCard";
 const achievements = [
+  {
+    timestamp: "1/19/2024 17:05:58",
+    email: "u22cs059@coed.svnit.ac.in",
+    name: "Neem Sheth",
+    achievement:
+      "Featured in Times Of India and represented SVNIT at Public Speaking Contest organised by Times of India. Achieved during my summer break after the first year - the 1st prize in the ACM Summer Challenge 2023 organized by ACM, NIT Surat!",
+    imageLink: "1evM6A6uH3cTbyxrBS8bBCEcSs_pJ1LrH",
+    additionalLink:
+      "Explore the achievement: [View Details](https://drive.google.com/open?id=1x7DvnH7h-SfF8ln4wlOvSogQhrSaRrlP)",
+  },
+  {
+    timestamp: "1/20/2024 18:33:17",
+    email: "u22cs116@coed.svnit.ac.in",
+    name: "Harsh Trada, Vatsal Koisa, Jay Kikani",
+    achievement: "Web wonders 2nd prize",
+    imageLink: "19WdRUokrhh12NLW141X5c-fSo_PfZviP",
+    additionalLink:
+      "Explore the achievement: [View Details](https://drive.google.com/open?id=1nZ0LxliS52iKQ6_8udS-_Clc4cj7t3az)",
+  },
   {
     timestamp: "1/13/2024 11:46:46",
     email: "u22cs018@coed.svnit.ac.in",
@@ -34,38 +57,34 @@ const achievements = [
 ];
 
 const Achievements = () => {
+  const [open, setOpen] = useState(false);
   return (
     <div className="mx-auto mb-48 max-w-7xl">
       <HeadTags title={"Achievements - Nexus NIT Surat"} />
-      <Title>Departmental Achievements</Title>
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-10">
-        {achievements.map((el, ind) => (
-          <div
-            key={el.timestamp}
-            className={`flex w-[90%] flex-col rounded-lg shadow-md hover:shadow-sm hover:shadow-blue-500  sm:w-3/4 md:h-4/5 ${
-              ind % 2 ? "md:flex-row-reverse" : "md:flex-row"
-            } bg-blue-100/5 md:gap-4`}
+      <div className="mx-auto mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4">
+        <FaInfoCircle size={42} className="h-auto text-yellow-500" />
+        <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
+          Shine a Spotlight on Your Success !!
+          <Link
+            to="/achievements/add-new"
+            className="mx-1 font-bold text-blue-500  underline underline-offset-4"
           >
-            <div>
-              <img
-                src={
-                  `https://lh3.googleusercontent.com/d/${el.imageLink}` ??
-                  "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
-                }
-                alt="Banner"
-                className="max-h-60  w-full rounded-t-lg object-cover object-center sm:max-h-[20rem] md:max-h-[26rem] md:w-[30rem]"
-              />
-            </div>
+            Share Us
+          </Link>
+          Your Departmental Achievements and Inspire Others to Reach New
+          Heights!
+        </p>
+      </div>
+      <Title>Departmental Achievements</Title>
 
-            <div className="mb-4 mt-4 flex flex-1 flex-col items-center justify-evenly gap-4 overflow-hidden px-4 py-2">
-              <p className="line-clamp-3 w-4/5 text-center font-mono text-sm font-semibold text-green-600 sm:text-base md:line-clamp-none md:text-lg">
-                {el.achievement}
-              </p>
-              <p className="w-3/4 text-center text-xs sm:text-base">
-                -{el.name}
-              </p>
-            </div>
-          </div>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-10 transition-all delay-300">
+        {achievements.map((el) => (
+          <AchievementCard
+            key={el.email}
+            el={el}
+            open={open}
+            setOpen={setOpen}
+          />
         ))}
       </div>
     </div>

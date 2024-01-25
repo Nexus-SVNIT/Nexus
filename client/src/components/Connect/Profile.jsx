@@ -1,19 +1,39 @@
 import React, { useState } from "react";
-import Modal from "./Modal";
 import { GrFormView } from "react-icons/gr";
 
+import Button from "@mui/joy/Button";
+import Modal from "@mui/joy/Modal";
+import ModalClose from "@mui/joy/ModalClose";
+import Typography from "@mui/joy/Typography";
+import Sheet from "@mui/joy/Sheet";
+import ProfileDetail from "./ProfileDetail";
+
 const Profile = () => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
   const toggleOpen = () => {
-    setIsOpen((state) => !state);
+    setOpen((state) => !state);
   };
   return (
-    <Modal isOpen={isOpen} toggleOpen={toggleOpen}>
-      <div className=" group relative flex w-72 cursor-pointer flex-col items-center justify-center rounded-lg bg-blue-50/10 p-6 py-8 transition-all duration-300 hover:scale-105">
+    <>
+      <React.Fragment>
+        <Modal
+          aria-describedby="modal-desc"
+          open={open}
+          onClose={() => setOpen(false)}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <ProfileDetail />
+        </Modal>
+      </React.Fragment>
+      <div className="group relative flex w-72 cursor-pointer flex-col items-center justify-center rounded-lg bg-blue-50/10 p-6 py-8 transition-all duration-300 hover:scale-105">
         <span
           className="absolute left-0 top-0 w-fit rounded-b-2xl rounded-r-2xl bg-blue-600 opacity-0 transition-all duration-300 group-hover:opacity-100"
           title="View Profile"
-          onClick={(e) => setIsOpen(true)}
+          onClick={(e) => setOpen(true)}
         >
           <GrFormView size={48} />
         </span>
@@ -29,7 +49,7 @@ const Profile = () => {
           </p>
         </div>
       </div>
-    </Modal>
+    </>
   );
 };
 
