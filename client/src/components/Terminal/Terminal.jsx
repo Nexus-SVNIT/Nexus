@@ -77,8 +77,8 @@ const Terminal = () => {
         switch (arrayOfInputWords[1]) {
           case nexusCommands[0]: // nexus --help
             return (
-              <div className="mt-0.5 flex gap-8">
-                <div>
+              <div className="mt-0.5 flex w-full flex-col gap-2 text-xs md:text-sm">
+                {/* <div className="text-xs md:text-sm">
                   <div className="text-teal-300">cd home</div>
                   <div className="text-teal-300">cd team</div>
                   <div className="text-teal-300">cd events</div>
@@ -87,7 +87,7 @@ const Terminal = () => {
                   <div className="text-teal-300">cd contactus</div>
                   <div className="text-teal-300">ls</div>
                 </div>
-                <div>
+                <div className="text-xs md:text-sm">
                   <div>Redirect to Home Page</div>
                   <div>Redirect to Team Page</div>
                   <div>Redirect to Events Page</div>
@@ -95,7 +95,18 @@ const Terminal = () => {
                   <div>Redirect to Forms Page</div>
                   <div>Redirect to ContactUs Page</div>
                   <div>List all the pages available</div>
+                </div> */}
+
+                <div className="flex w-full gap-4 text-xs md:gap-6 lg:ga md:text-sm">
+                  <span className="text-teal-300">cd home</span>
+                  <span>Redirect to Home Page</span>
                 </div>
+                <div>cd team</div>
+                <div>cd events</div>
+                <div>cd about</div>
+                <div>cd forms</div>
+                <div>cd contactus</div>
+                <div>ls</div>
               </div>
             );
             break;
