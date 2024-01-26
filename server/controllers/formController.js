@@ -2,7 +2,14 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const getAllForms = async (req, res) => {
     try {
-        const allForms = await Forms.find().select({ formFields: false, responses: false });
+        const allForms = await Forms.find({}, {
+            "responseCount": { $size: "$responses" },
+            name: true,
+            desc: true,
+            deadline: true,
+            formFields: true,
+            _event: true
+        });
         res.status(200).json(allForms);
     }
     catch (err) {
@@ -22,9 +29,12 @@ const createForm = async (req, res) => {
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
+    const formDetails = await Forms.findById(id).select({ deadline: true }); // formDetails will be an object containing _id and deadline property
+    if(new Date().toLocaleDateString('en-GB')>formDetails.deadline)
+        return res.json("you are late");
     await Forms.findByIdAndUpdate(
         id,
-        { $push: { responses: req.body }, $inc: { responseCount: 1 } },
+        { $push: { responses: req.body } },
         { new: true }
     );
     res.status(200).json(req.body);

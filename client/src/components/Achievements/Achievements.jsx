@@ -1,71 +1,62 @@
-import React from "react";
-import Title from "../Title/Title";
+import { useQuery } from "@tanstack/react-query";
+import React, { useState } from "react";
+import { FaInfoCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import Error from "../Error/Error";
 import HeadTags from "../HeadTags/HeadTags";
-const achievements = [
-  {
-    timestamp: "1/13/2024 11:46:46",
-    email: "u22cs018@coed.svnit.ac.in",
-    name: "Suchi Desai, Preesha Sheth, Shambhavi Shinde",
-    achievement:
-      "Demonstrated exceptional prowess in Table Tennis by securing the first position in the Sports Mania Inter-Year tournament. The team's outstanding performance showcased not only skill but also great sportsmanship.",
-    imageLink: "1MxfOFpwu4w-w43hLRWT3MfkcC-30OZMB",
-    additionalLink:
-      "Explore the achievement: [View Details](https://drive.google.com/open?id=1r6O93TXMCE-yVQiJiPrBNl44L3YMSbQ1)",
-  },
-  {
-    timestamp: "1/11/2024 19:23:11",
-    email: "u22cs109@coed.svnit.ac.in",
-    name: "Aasutosh Baraiya",
-    achievement:
-      "Earned the top spot in the Art and Reel Making Competition - ARTFLIX by presenting a creative masterpiece. The winning submission depicted a dog enjoying music on a uniquely designed t-shirt, showcasing artistic flair and innovation.",
-    imageLink: "1o8Wr4QDKThfmo25ZnceA_2fPuNhlGJwP",
-    additionalLink:
-      "Explore the achievement: [View Details](https://drive.google.com/open?id=1XyInsFEpnCZVq09nZERPS60bH7QADOtO)",
-  },
-  {
-    timestamp: "1/18/2024 22:14:26",
-    email: "u22cs015@coed.svnit.ac.in",
-    name: "Nasir Mansuri",
-    achievement:
-      "Contributed significantly to the Mindbend Design Committee, showcasing dedication and expertise in design. Nasir's valuable contributions have played a pivotal role in the committee's success. Looking forward to achieving more milestones with NEXUS.",
-    imageLink: "1f23by41XicpzlxlAQPsHZ4c6BiQE-lAw",
-    additionalLink: "",
-  },
-];
+import Loader from "../Loader/Loader";
+import Title from "../Title/Title";
+import AchievementCard from "./AchievementCard";
 
 const Achievements = () => {
+  const [open, setOpen] = useState(false);
+  const {
+    isPending: loading,
+    error,
+    data: achievements,
+  } = useQuery({
+    queryKey: ["achievementsData"],
+    queryFn: () =>
+      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/`).then(
+        (res) => res.json(),
+      ),
+  });
+  if (error) return <Error />;
+  if (loading)
+    return (
+      <div className="flex h-[70vh] w-full items-center justify-center">
+        <HeadTags title={"Loading Forms - Nexus NIT Surat"} />
+        <Loader />
+      </div>
+    );
+
   return (
     <div className="mx-auto mb-48 max-w-7xl">
       <HeadTags title={"Achievements - Nexus NIT Surat"} />
-      <Title>Departmental Achievements</Title>
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-10">
-        {achievements.map((el, ind) => (
-          <div
-            key={el.timestamp}
-            className={`flex w-[90%] flex-col rounded-lg shadow-md hover:shadow-sm hover:shadow-blue-500  sm:w-3/4 md:h-4/5 ${
-              ind % 2 ? "md:flex-row-reverse" : "md:flex-row"
-            } bg-blue-100/5 md:gap-4`}
+      <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
+        <FaInfoCircle size={42} className="h-auto text-yellow-500" />
+        <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
+          Shine a Spotlight on Your Success !!
+          <Link
+            to="/achievements/add-new"
+            className="mx-1 font-bold text-blue-500  underline underline-offset-4"
           >
-            <div>
-              <img
-                src={
-                  `https://lh3.googleusercontent.com/d/${el.imageLink}` ??
-                  "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
-                }
-                alt="Banner"
-                className="max-h-60  w-full rounded-t-lg object-cover object-center sm:max-h-[20rem] md:max-h-[26rem] md:w-[30rem]"
-              />
-            </div>
+            Share Us
+          </Link>
+          Your Departmental Achievements and Inspire Others to Reach New
+          Heights!
+        </p>
+      </div>
+      <Title>Departmental Achievements</Title>
 
-            <div className="mb-4 mt-4 flex flex-1 flex-col items-center justify-evenly gap-4 overflow-hidden px-4 py-2">
-              <p className="line-clamp-3 w-4/5 text-center font-mono text-sm font-semibold text-green-600 sm:text-base md:line-clamp-none md:text-lg">
-                {el.achievement}
-              </p>
-              <p className="w-3/4 text-center text-xs sm:text-base">
-                -{el.name}
-              </p>
-            </div>
-          </div>
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-10 transition-all delay-300">
+        {achievements.map((el) => (
+          <AchievementCard
+            key={el.email}
+            el={el}
+            open={open}
+            setOpen={setOpen}
+          />
         ))}
       </div>
     </div>

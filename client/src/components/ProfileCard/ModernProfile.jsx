@@ -2,6 +2,7 @@ import { FaLinkedinIn } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { MdOutgoingMail } from "react-icons/md";
 import { SiGooglescholar } from "react-icons/si";
+import { ImProfile } from "react-icons/im";
 
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
@@ -32,9 +33,9 @@ const ModernProfile = ({ profile, isFaculty }) => {
                 />
               </Link>
               <Link to={profile.socialLinks.googleSite} target="_blank">
-                <FaXTwitter
-                  className="duration-400 rounded-sm border bg-[#75787B] p-1 text-white  
-                        transition-all hover:border-[#75787B] hover:bg-transparent hover:text-[#75787B]"
+                <ImProfile
+                  className="duration-400 rounded-sm border bg-[#22272c] p-1 text-white  
+                        transition-all hover:border-[#75787B] hover:bg-transparent hover:text-[#22272c]"
                   size={24}
                 />
               </Link>
@@ -45,6 +46,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
                 if (!profile.socialLinks[key].length) return null;
                 return (
                   <SocialIcon
+                    key={key}
                     url={profile.socialLinks[key]}
                     style={{ height: "1.8rem", width: "1.8rem" }}
                   />

@@ -4,7 +4,7 @@ const user = require('../models/userModel.js');
 const requireAuth = async (req, res, next) => {
     const { authorization } = req.headers;
     if (!authorization)
-        res.status(401).json({ error: 'Authorization token required' });
+        return res.status(401).json({ error: 'Authorization token required' });
     // get the second string from authorization
     const token = authorization.split(' ')[1];
     try {

@@ -5,6 +5,8 @@ import "./App.css";
 import {
   About,
   Achievements,
+  AchievementsForm,
+  AlumniMenu,
   Connect,
   Events,
   Forms,
@@ -14,7 +16,6 @@ import {
   RegisterForm,
   Teams,
 } from "./components";
-import AlumniMenu from "./components/AlumniDetail/AlumniMenu";
 
 const queryClient = new QueryClient();
 function App() {
@@ -26,6 +27,10 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/team" element={<Teams />} />
             <Route path="/achievements" element={<Achievements />} />
+            <Route
+              path="/achievements/add-new"
+              element={<AchievementsForm />}
+            />
             <Route path="/events" element={<Events />} />
             <Route path="/forms" element={<Forms />} />
             <Route path="/about" element={<About />} />

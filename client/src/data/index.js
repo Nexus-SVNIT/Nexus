@@ -63,9 +63,9 @@ export const faculty_advisors = [
     role: 'Associate Professor',
     image: 'https://www.svnit.ac.in/sjp/assets/images/propic.png',
     socialLinks: {
-      facebook: 'https://www.facebook.com/bharath.bhammar',
-      linkedin: 'https://www.linkedin.com/in/bharath-bhammar',
-      instagram: 'https://www.instagram.com/bharathbhammar'
+      googleScholar: 'https://scholar.google.co.in/citations?user=uhsQTk0AAAAJ&hl=en',
+      googleSite: 'https://sites.google.com/coed.svnit.ac.in/bhavesh-gohil'
+
     }
   },
   {
@@ -73,9 +73,8 @@ export const faculty_advisors = [
     role: 'Associate Professor',
     image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
     socialLinks: {
-      facebook: 'https://www.facebook.com/cb.praveen',
-      linkedin: 'https://www.linkedin.com/in/cb-praveen',
-      instagram: 'https://www.instagram.com/cbpraveen'
+      googleScholar: 'https://scholar.google.com/citations?user=p2he2osAAAAJ&hl=en',
+      googleSite: 'https://sites.google.com/view/dipti-p-rana/dr-dipti-prakashkumar-rana'
     }
   }
 ]
