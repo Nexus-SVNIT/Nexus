@@ -6,7 +6,7 @@ import Title from "../Title/Title";
 import Profile from "./Profile";
 
 const Connect = () => {
-  const AlumniDetails = [..."..."];
+  const AlumniDetails = [];
   return (
     <div className="mx-auto mb-20 flex max-w-7xl flex-col items-center justify-center">
       <HeadTags title={"Alumni Network - Nexus NIT Surat"} />
