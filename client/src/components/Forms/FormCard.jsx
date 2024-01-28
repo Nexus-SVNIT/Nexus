@@ -1,11 +1,7 @@
 import React from "react";
-import {
-  InstapaperIcon,
-  InstapaperShareButton,
-  WhatsappIcon,
-} from "react-share";
-import { Button } from "../index";
 import { Link } from "react-router-dom";
+import { WhatsappIcon } from "react-share";
+import { Button } from "../index";
 const FormCard = ({ form }) => {
   return (
     <div className="flex w-2/5 min-w-[20rem] flex-col gap-2 rounded-md bg-white/90 p-6 text-black">
@@ -19,7 +15,7 @@ const FormCard = ({ form }) => {
 
         <div>
           <Link
-            to="https://wa.me/whatsappphonenumber?text= Please Visit https://nexus-svnit.tech/forms to register in events."
+            to="https://wa.me/whatsappphonenumber?text=Please Visit https://nexus-svnit.tech/forms to register in events."
             rel="nofollow noopener"
             target="_blank"
           >
