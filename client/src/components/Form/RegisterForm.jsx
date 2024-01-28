@@ -10,6 +10,7 @@ const RegisterForm = () => {
   const navigate = useNavigate();
   const params = useParams();
   const [loading, setLoading] = useState(true);
+  const [whLink, setWhLink] = useState("");
   const [formData, setFormData] = useState({
     _id: "",
     name: "",
@@ -37,11 +38,13 @@ const RegisterForm = () => {
           body: JSON.stringify(formResponse),
         },
       )
+        .then((res) => res.json())
         .then((res) => {
-          if (res.ok) {
+          if (res.success) {
             setFormResponse({});
             toast.success("Your Response Collected Successfully!");
-            navigate("/forms");
+            setWhLink(res.WALink);
+            window.localStorage.setItem(formData._id, 1);
           } else {
             toast.error("Please Try Again.");
           }
@@ -74,6 +77,7 @@ const RegisterForm = () => {
     fetchFormData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
   if (loading)
     return (
       <div>
@@ -89,6 +93,13 @@ const RegisterForm = () => {
         </div>
       </div>
     );
+  if (window.localStorage.getItem(formData._id)) {
+    <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
+      You have submitted Response.For More Details Please Join Whatsapp Group
+      Below:
+      <Link>{whLink}</Link>
+    </div>;
+  }
   return (
     <div className="relative flex  w-screen flex-col justify-center">
       {!loading && (
