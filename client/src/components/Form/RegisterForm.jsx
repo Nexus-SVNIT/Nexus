@@ -25,7 +25,8 @@ const RegisterForm = () => {
     setFormResponse({ ...formResponse, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault();
     setLoading(true);
     try {
       fetch(
@@ -46,7 +47,7 @@ const RegisterForm = () => {
             setWhLink(res.WALink);
             window.localStorage.setItem(params.formId, 1);
           } else {
-            toast.error("Please Try Again.");
+            toast.error(res.error);
           }
         })
         .catch((e) => toast.error("Something Went Wrong.Please Try Again"))
@@ -110,7 +111,7 @@ const RegisterForm = () => {
 
           <Link
             className="rounded-sm p-2 text-blue-800 hover:bg-blue-300/50"
-            to={`/${whLink}`}
+            to={`${whLink}`}
           >
             {"https://wa.me/?text=Thank You For visiting Nexus."}
           </Link>
@@ -129,7 +130,10 @@ const RegisterForm = () => {
       <h3 className=" mb-4 mt-10 text-center text-2xl md:text-3xl">
         Register For Event
       </h3>
-      <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
+      <form
+        className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]"
+        onSubmit={handleSubmit}
+      >
         <div className="flex flex-col gap-2 rounded-lg  border border-t-[.5rem] border-blue-800 bg-white p-4 md:p-6">
           <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
             {formData.name}
@@ -147,14 +151,14 @@ const RegisterForm = () => {
         ))}
         <div className="flex justify-center">
           <button
-            onClick={handleSubmit}
+            type="submit"
             className="my-4 w-full cursor-pointer rounded-md bg-blue-500 p-4 px-6 text-white hover:bg-blue-600 active:bg-transparent active:text-blue-800"
             disabled={loading}
           >
             Submit
           </button>
         </div>
-      </div>
+      </form>
     </div>
   );
 };
