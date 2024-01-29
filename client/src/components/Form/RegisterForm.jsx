@@ -43,7 +43,7 @@ const RegisterForm = () => {
           if (res.success) {
             setFormResponse({});
             toast.success("Your Response Collected Successfully!");
-            setWhLink(res.WALink);
+            setWhLink(res.WaLink);
             window.localStorage.setItem(params.formId, 1);
           } else {
             toast.error(res.error);
