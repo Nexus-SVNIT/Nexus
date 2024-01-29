@@ -30,6 +30,20 @@ const Forms = () => {
   if (!forms || forms.length === 0) {
     return <div className="text-center">No forms available</div>;
   }
+  if (forms && !loading) {
+    const currentDate = new Date();
+    forms.map((form) => {
+      const [day, month, year] = form.deadline.split("-").map(Number);
+
+      const deadlineDate = new Date(year, month - 1, day);
+      if (deadlineDate >= currentDate) {
+        form.status = "Active";
+      } else {
+        form.status = "InActive";
+      }
+      return form;
+    });
+  }
 
   return (
     <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
