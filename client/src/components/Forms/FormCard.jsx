@@ -62,8 +62,7 @@ const FormCard = ({ form }) => {
           isButton={true}
           variant="primary"
           to={`/register/${form._id}`}
-          // isDisabled={form.status === "InActive"}
-          isDisabled={false}
+          isDisabled={form.status === "InActive"}
         >
           Register Now
         </Button>

@@ -30,8 +30,8 @@ const createForm = async (req, res) => {
 const submitResponse = async (req, res) => {
     const id = req.params.id;
     const formDetails = await Forms.findById(id).select({ deadline: true }); // formDetails will be an object containing _id and deadline property
-    if(new Date().toLocaleDateString('en-GB')>formDetails.deadline)
-        return res.json("you are late");
+    if (new Date().toLocaleDateString('en-GB') > formDetails.deadline)
+        return res.json({ success: false, error: "We are not Accepting new Responses at present." });
     await Forms.findByIdAndUpdate(
         id,
         { $push: { responses: req.body } },
