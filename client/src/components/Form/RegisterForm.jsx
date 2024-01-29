@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import QuestionBox from "./QuestionBox";
-import Loader from "../Loader/Loader";
 import { toast } from "react-hot-toast";
-import ScrollToTop from "../ScrollToTop/ScrollToTop";
+import { Link, useParams } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
+import Loader from "../Loader/Loader";
+import ScrollToTop from "../ScrollToTop/ScrollToTop";
+import QuestionBox from "./QuestionBox";
 
 const RegisterForm = () => {
-  const navigate = useNavigate();
   const params = useParams();
   const [loading, setLoading] = useState(true);
   const [whLink, setWhLink] = useState("");
@@ -102,18 +101,20 @@ const RegisterForm = () => {
           title={`Register for ${formData.name ?? "Event"}`}
           description={formData.desc}
         />
-        <div className="mx-auto mb-24 flex h-full min-h-[70vh] w-[90%] flex-col items-center justify-center gap-2 rounded-xl bg-white text-black md:w-[60%]">
+        <div className="mx-auto mb-24 flex h-full min-h-[70vh] w-[90%] flex-col items-center justify-center gap-2 overflow-hidden rounded-xl bg-white text-black md:w-[60%]">
           <img src="/success.gif" alt="Successful" className="h-40" />
-          <h2 className="text-2xl font-semibold text-green-800">
+          <h2 className="text-center text-2xl font-semibold text-green-800">
             You have submitted Response.
           </h2>
-          <p>For More Details Please Join Whatsapp Group Below:</p>
+          <p className="w-full text-center">
+            For More Details Please Join Whatsapp Group Below:
+          </p>
 
           <Link
-            className="rounded-sm p-2 text-blue-800 hover:bg-blue-300/50"
-            to={`${whLink}`}
+            to={whLink ?? "https://chat.whatsapp.com/url"}
+            className="rounded-md bg-blue-400 px-4 py-2"
           >
-            {"https://wa.me/?text=Thank You For visiting Nexus."}
+            Join Whatsapp Group
           </Link>
         </div>
       </>
