@@ -96,19 +96,34 @@ const RegisterForm = () => {
 
   if (parseInt(window.localStorage.getItem(params.formId)) === 1) {
     return (
-      <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
-        You have submitted Response.For More Details Please Join Whatsapp Group
-        Below:
-        <Link>{whLink}</Link>
-      </div>
+      <>
+        <HeadTags
+          title={`Register for ${formData.name ?? "Event"}`}
+          description={formData.desc}
+        />
+        <div className="mx-auto mb-24 flex h-full min-h-[70vh] w-[90%] flex-col items-center justify-center gap-2 rounded-xl bg-white text-black md:w-[60%]">
+          <img src="/success.gif" alt="Successful" className="h-40" />
+          <h2 className="text-2xl font-semibold text-green-800">
+            You have submitted Response.
+          </h2>
+          <p>For More Details Please Join Whatsapp Group Below:</p>
+
+          <Link
+            className="rounded-sm p-2 text-blue-800 hover:bg-blue-300/50"
+            to={`/${whLink}`}
+          >
+            {"https://wa.me/?text=Thank You For visiting Nexus."}
+          </Link>
+        </div>
+      </>
     );
   }
   return (
     <div className="relative flex  w-screen flex-col justify-center">
       {!loading && (
         <HeadTags
-          title={`Register for ${formData.name}`}
-          metaDescription={formData.desc}
+          title={`Register for ${formData.name ?? "Event"}`}
+          description={formData.desc}
         />
       )}
       <h3 className=" mb-4 mt-10 text-center text-2xl md:text-3xl">

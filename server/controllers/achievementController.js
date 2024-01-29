@@ -3,7 +3,7 @@ const { google } = require('googleapis');
 const Achievement = require('../models/achievementModel');
 const { error } = require('console');
 const allAchievements = async (req, res) => {
-  const achievements = await Achievement.find().sort({ createdAt: 1 }).select('-isVerified');
+  const achievements = await Achievement.find({ isVerified: true }).sort({ createdAt: 1 }).select('-isVerified');
   return res.status(200).json(achievements)
 }
 const addAchievement = async (req, res) => {
