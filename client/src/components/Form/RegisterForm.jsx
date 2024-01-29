@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import QuestionBox from "./QuestionBox";
 import Loader from "../Loader/Loader";
 import { toast } from "react-hot-toast";
@@ -12,7 +12,7 @@ const RegisterForm = () => {
   const [loading, setLoading] = useState(true);
   const [whLink, setWhLink] = useState("");
   const [formData, setFormData] = useState({
-    _id: "",
+    _id: params.formId,
     name: "",
     desc: "",
     deadline: "",
@@ -44,7 +44,7 @@ const RegisterForm = () => {
             setFormResponse({});
             toast.success("Your Response Collected Successfully!");
             setWhLink(res.WALink);
-            window.localStorage.setItem(formData._id, 1);
+            window.localStorage.setItem(params.formId, 1);
           } else {
             toast.error("Please Try Again.");
           }
@@ -93,12 +93,15 @@ const RegisterForm = () => {
         </div>
       </div>
     );
-  if (window.localStorage.getItem(formData._id)) {
-    <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
-      You have submitted Response.For More Details Please Join Whatsapp Group
-      Below:
-      <Link>{whLink}</Link>
-    </div>;
+
+  if (parseInt(window.localStorage.getItem(params.formId)) === 1) {
+    return (
+      <div className="mx-auto mb-48 h-full min-h-screen w-[90%] rounded-xl md:w-[60%]">
+        You have submitted Response.For More Details Please Join Whatsapp Group
+        Below:
+        <Link>{whLink}</Link>
+      </div>
+    );
   }
   return (
     <div className="relative flex  w-screen flex-col justify-center">
