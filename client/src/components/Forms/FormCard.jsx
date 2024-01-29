@@ -4,10 +4,12 @@ import { WhatsappIcon } from "react-share";
 import { Button } from "../index";
 const FormCard = ({ form }) => {
   return (
-    <div className="flex w-2/5 min-w-[20rem] flex-col gap-2 rounded-md bg-white/90 p-6 text-black">
+    <div className="flex  w-2/5 min-w-[20rem] flex-col gap-2 rounded-md bg-white/90 p-6 text-black">
       <div className="flex justify-between font-semibold">
         <div>
-          <h2 className="text-xl font-bold md:text-2xl">{form.name}</h2>
+          <h2 className="line-clamp-2 w-4/5 text-xl font-bold md:text-2xl">
+            {form.name}
+          </h2>
           <p className="font-mono text-xs font-medium  text-gray-400 md:text-sm">
             {form.type}
           </p>
@@ -15,7 +17,7 @@ const FormCard = ({ form }) => {
 
         <div>
           <Link
-            to="https://wa.me/whatsappphonenumber?text=Please Visit https://nexus-svnit.tech/forms to register in events."
+            to="https://wa.me/?text=Please Visit https://nexus-svnit.tech/forms to register in events."
             rel="nofollow noopener"
             target="_blank"
           >

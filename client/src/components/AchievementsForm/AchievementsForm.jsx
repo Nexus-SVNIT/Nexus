@@ -55,7 +55,7 @@ const AchievementsForm = () => {
   };
   if (mutation.isError) return <p>ERROR</p>;
   return (
-    <section className=" mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10 md:mx-auto">
+    <section className="mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10 md:mx-auto">
       <Modal
         aria-describedby="modal-desc"
         open={open}
@@ -89,7 +89,7 @@ const AchievementsForm = () => {
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 text-white">
-              <p className="w-3/4 text-center text-sm text-white">
+              <p className="text-center text-sm text-white md:w-3/4">
                 Something went wrong!!
               </p>
               <button
@@ -102,10 +102,12 @@ const AchievementsForm = () => {
           )}
         </div>
       </Modal>
-      <div className="mb-10 flex w-full max-w-5xl flex-col items-center justify-center px-10 py-6">
-        <h4 className="text-2xl font-bold">Achievement Information</h4>
-        <div className="mt-2 flex flex-col items-center justify-center gap-10 p-2 md:flex-row">
-          <div className="flex w-3/4 flex-col items-center justify-center">
+      <div className="px-0sc mb-10 flex w-full max-w-5xl flex-col items-center justify-center py-6 md:px-10">
+        <h4 className="text-lg font-bold md:text-2xl ">
+          Achievement Information
+        </h4>
+        <div className="mt-2 flex flex-col items-center justify-center gap-10 md:flex-row md:p-2">
+          <div className="flex flex-col items-center justify-center md:w-3/4">
             <label
               htmlFor="image"
               className="cursor-pointer"

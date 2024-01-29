@@ -1,6 +1,6 @@
 import Helmet from "react-helmet";
 
-const HeadTags = ({ title, metaDescription, imageLink }) => {
+const HeadTags = ({ title, description, imageLink }) => {
   return (
     <Helmet>
       <title>{title}</title>
@@ -10,7 +10,7 @@ const HeadTags = ({ title, metaDescription, imageLink }) => {
         name="description"
         key="description"
         content={
-          metaDescription ??
+          description ??
           "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
         }
       />
@@ -27,14 +27,16 @@ const HeadTags = ({ title, metaDescription, imageLink }) => {
         property="og:description"
         key="og:description"
         content={
-          metaDescription ??
+          description ??
           "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
         }
       />
       <meta
         property="og:image"
         key="og:image"
-        content={imageLink ?? `${process.env.BASE_URL}/images/frontend.jpeg`}
+        content={
+          imageLink ?? `${process.env.BASE_URL}/public/assets/NEXUStext.png`
+        }
       />
     </Helmet>
   );
