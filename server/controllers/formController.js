@@ -39,7 +39,7 @@ const submitResponse = async (req, res) => {
         { $push: { responses: req.body } },
         { new: true }
     );
-    return res.status(200).json({ success: true, message: "You're response has been successfully saved.", WaLink: form?.WaLink ?? "https://chat.whatsapp.com/BAAy9gbDdym417GXZ6HbV5" });
+    return res.status(200).json({ success: true, message: "You're response has been successfully saved.", WaLink: form?.WaLink ?? "https://chat.whatsapp.com/GYGe2OaR0JHIRU8Kmpm5Hb" });
 };
 
 const getResponses = async (req, res) => {
