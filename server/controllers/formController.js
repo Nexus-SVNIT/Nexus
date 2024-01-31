@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
+
+
 const getAllForms = async (req, res) => {
     try {
-        const allForms = await Forms.find({}, {
+        const allForms = await Forms.find({ publish: true }, {
             "responseCount": { $size: "$responses" },
             name: true,
             desc: true,
@@ -16,6 +18,7 @@ const getAllForms = async (req, res) => {
         res.status(500).json(err);
     }
 }
+
 const createForm = async (req, res) => {
     const { name, desc, deadline, formFields } = req.body;
     const _event = "none";
@@ -29,15 +32,14 @@ const createForm = async (req, res) => {
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
-    const formDetails = await Forms.findById(id).select({ deadline: true }); // formDetails will be an object containing _id and deadline property
-    if (new Date().toLocaleDateString('en-GB') > formDetails.deadline)
-        return res.json({ success: false, error: "We are not Accepting new Responses at present." });
-    await Forms.findByIdAndUpdate(
+    const formDetails = await Forms.findById(id).select({ deadline: true }); // formDetails will be an object 
+
+    const form = await Forms.findByIdAndUpdate(
         id,
         { $push: { responses: req.body } },
         { new: true }
     );
-    res.status(200).json({ success: true, message: "You're response has been successfully saved.", WaLink: "https://chat.whatsapp.com/BAAy9gbDdym417GXZ6HbV5" });
+    return res.status(200).json({ success: true, message: "You're response has been successfully saved.", WaLink: form?.WaLink ?? "https://chat.whatsapp.com/BAAy9gbDdym417GXZ6HbV5" });
 };
 
 const getResponses = async (req, res) => {

@@ -1,12 +1,13 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose')
 
-const Schema = mongoose.Schema;
+const Schema = mongoose.Schema
 
 const formSchema = new Schema({
     name: String,
     desc: String,
     deadline: String,
     created_date: String,
+    publish: Boolean,
     formFields: {
         type: [Object],
         default: []
@@ -19,6 +20,6 @@ const formSchema = new Schema({
         type: String,
         ref: 'event'
     }
-});
+})
 
-module.exports = mongoose.model("form", formSchema);
+module.exports = mongoose.model('form', formSchema)

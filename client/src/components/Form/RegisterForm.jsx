@@ -52,6 +52,7 @@ const RegisterForm = () => {
         .catch((e) => toast.error("Something Went Wrong.Please Try Again"))
         .finally((e) => setLoading(false));
     } catch (error) {
+      console.log(error);
       toast.error("Something Went Wrong.Please Try Again");
     }
   };

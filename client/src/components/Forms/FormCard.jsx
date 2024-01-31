@@ -41,7 +41,7 @@ const FormCard = ({ form }) => {
         </div>
       </div>
       <div className="flex items-center  justify-between font-semibold md:my-2 md:flex-row md:gap-6">
-        <div className="w-fit rounded-full bg-gray-400 px-2 py-2 text-xs font-bold text-white md:px-4 md:text-base">
+        <div className="w-fit rounded-full bg-black/25 px-2 py-2 text-xs font-bold text-white md:px-4 md:text-base">
           Started
           {/* {form.startsFrom} */}
         </div>
@@ -50,13 +50,6 @@ const FormCard = ({ form }) => {
         </div>
       </div>
       <div className="flex flex-col justify-between gap-4 md:flex-row md:gap-6">
-        {/* <Button
-          className="w-full rounded-md border border-blue-700  bg-transparent px-4 py-2 text-sm font-semibold text-blue-700"
-          isButton={true}
-          variant="secondary"
-        >
-          More Details
-        </Button> */}
         <Button
           className="w-full rounded-md border border-blue-700 bg-blue-700 px-4 py-2 text-sm font-semibold text-white outline-none"
           isButton={true}
