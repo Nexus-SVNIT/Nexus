@@ -97,7 +97,7 @@ const Terminal = () => {
                   <div>List all the pages available</div>
                 </div> */}
 
-                <div className="flex w-full gap-4 text-xs md:gap-6 lg:ga md:text-sm">
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
                   <span className="text-teal-300">cd home</span>
                   <span>Redirect to Home Page</span>
                 </div>
@@ -194,7 +194,7 @@ const Terminal = () => {
         Interact to know more about Nexus...
       </p>
       <div className="flex h-[50vh] w-[90%] flex-col overflow-y-auto rounded-2xl bg-white/95 text-black md:h-[75vh] md:w-[70vw] ">
-        <div className="flex h-10 list-none items-center gap-2 bg-gray-300 pl-6">
+        <div className="flex h-10 list-none items-center gap-2 bg-black/25 pl-6">
           <li className="h-4 w-4 rounded-full bg-red-600"></li>
           <li className="h-4 w-4 rounded-full bg-yellow-300"></li>
           <li className="h-4 w-4 rounded-full bg-green-600"></li>

@@ -21,7 +21,11 @@ const RegisterForm = () => {
   const [formResponse, setFormResponse] = useState({});
 
   const handleInputChange = (e) => {
-    setFormResponse({ ...formResponse, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormResponse({
+      ...formResponse,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e) => {
@@ -52,6 +56,7 @@ const RegisterForm = () => {
         .catch((e) => toast.error("Something Went Wrong.Please Try Again"))
         .finally((e) => setLoading(false));
     } catch (error) {
+      console.log(error);
       toast.error("Something Went Wrong.Please Try Again");
     }
   };
@@ -62,6 +67,7 @@ const RegisterForm = () => {
         .then((res) => res.json())
         .then((form) => {
           setFormData(form);
+          setWhLink(form.WaLink);
           form.formFields.map((field) => {
             formResponse[field.name] = "";
             setFormResponse({ ...formResponse });
