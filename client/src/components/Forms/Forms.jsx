@@ -36,11 +36,13 @@ const Forms = () => {
       const [day, month, year] = form.deadline.split("-").map(Number);
 
       const deadlineDate = new Date(year, month - 1, day);
-      if (deadlineDate >= currentDate) {
-        form.status = "Active";
-      } else {
-        form.status = "InActive";
-      }
+      // console.log(deadlineDate, currentDate);
+      // if (deadlineDate + 1 > currentDate) {
+      //   form.status = "Active";
+      // } else {
+      //   form.status = "InActive";
+      // }
+      form.status = "Active";
       return form;
     });
   }
