@@ -1,50 +1,58 @@
-import React, { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+import React, { useEffect } from "react";
+import Error from "../Error/Error";
+import HeadTags from "../HeadTags/HeadTags";
+import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import FormCard from "./FormCard";
-import { useQuery } from "@tanstack/react-query";
-import Error from "../Error/Error";
-import CircularProgress from "@mui/joy/CircularProgress";
-import Loader from "../Loader/Loader";
-import HeadTags from "../HeadTags/HeadTags";
 
 const Forms = () => {
   const {
-    isPending: loading,
-    error,
+    isLoading,
+    isError,
     data: forms,
   } = useQuery({
-    queryKey: ["formData"],
-    queryFn: () =>
-      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`).then((res) =>
-        res.json(),
-      ),
+    queryKey: ["forms"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch forms");
+        }
+        return response.json();
+      } catch (error) {
+        throw new Error("Failed to fetch forms");
+      }
+    },
   });
-  if (error) return <Error />;
-  if (loading)
+
+  if (forms && !isLoading) {
+    const currentDate = new Date();
+
+    forms.forEach((form) => {
+      const [day, month, year] = form.deadline.split("-").map(Number);
+      const deadlineDate = new Date(year, month - 1, day, 22, 30, 0);
+      form.status = deadlineDate >= currentDate ? "Active" : "Inactive";
+    });
+  }
+
+  if (isLoading) {
     return (
       <div className="flex h-[70vh] w-full items-center justify-center">
         <HeadTags title={"Loading Forms - Nexus NIT Surat"} />
         <Loader />
       </div>
     );
-  if (!forms || forms.length === 0) {
-    return <div className="text-center">No forms available</div>;
   }
-  if (forms && !loading) {
-    const currentDate = new Date();
-    forms.map((form) => {
-      const [day, month, year] = form.deadline.split("-").map(Number);
 
-      const deadlineDate = new Date(year, month - 1, day);
-      // console.log(deadlineDate, currentDate);
-      // if (deadlineDate + 1 > currentDate) {
-      //   form.status = "Active";
-      // } else {
-      //   form.status = "InActive";
-      // }
-      form.status = "Active";
-      return form;
-    });
+  if (isError || !forms || forms.length === 0) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center text-center">
+        {isError ? <Error /> : "No forms available"}
+      </div>
+    );
   }
 
   return (

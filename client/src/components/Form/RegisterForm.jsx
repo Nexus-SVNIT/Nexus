@@ -21,7 +21,11 @@ const RegisterForm = () => {
   const [formResponse, setFormResponse] = useState({});
 
   const handleInputChange = (e) => {
-    setFormResponse({ ...formResponse, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setFormResponse({
+      ...formResponse,
+      [name]: value,
+    });
   };
 
   const handleSubmit = (e) => {

@@ -37,7 +37,7 @@ const AchievementCard = ({ el }) => {
               <p className="line-clamp-none w-4/5 text-center text-sm text-[#FFD700]">
                 - {el.name}
               </p>
-              <p className="line-clamp-none text-sm text-gray-400 ">
+              <p className="text-whiter line-clamp-none text-sm ">
                 {el.achievement}
               </p>
             </div>
