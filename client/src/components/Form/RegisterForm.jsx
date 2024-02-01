@@ -63,6 +63,7 @@ const RegisterForm = () => {
         .then((res) => res.json())
         .then((form) => {
           setFormData(form);
+          setWhLink(form.WaLink);
           form.formFields.map((field) => {
             formResponse[field.name] = "";
             setFormResponse({ ...formResponse });

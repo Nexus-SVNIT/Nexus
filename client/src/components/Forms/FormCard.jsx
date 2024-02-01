@@ -3,6 +3,14 @@ import { Link } from "react-router-dom";
 import { WhatsappIcon } from "react-share";
 import { Button } from "../index";
 const FormCard = ({ form }) => {
+  const registrationLink = window.location;
+
+  const message = `Hey there!\n\n Exciting news! Registration for ${form.name} is now open. 
+                  Be part of this incredible event by registering at: ${registrationLink}
+                  Don't miss out on the opportunity - secure your spot today!`;
+
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappLink = `https://wa.me/?text=${encodedMessage}`;
   return (
     <div className="flex  w-2/5 min-w-[20rem] flex-col gap-2 rounded-md bg-white/90 p-6 text-black">
       <div className="flex justify-between font-semibold">
@@ -16,11 +24,7 @@ const FormCard = ({ form }) => {
         </div>
 
         <div>
-          <Link
-            to="https://wa.me/?text=Please Visit https://nexus-svnit.tech/forms to register in events."
-            rel="nofollow noopener"
-            target="_blank"
-          >
+          <Link to={whatsappLink} rel="nofollow noopener" target="_blank">
             <WhatsappIcon size={24} round={true} />
           </Link>
         </div>
