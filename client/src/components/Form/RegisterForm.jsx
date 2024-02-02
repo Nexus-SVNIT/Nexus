@@ -50,7 +50,7 @@ const RegisterForm = () => {
             setWhLink(res.WaLink);
             window.localStorage.setItem(params.formId, 1);
           } else {
-            toast.error(res.error);
+            toast.error(res.message);
           }
         })
         .catch((e) => toast.error("Something Went Wrong.Please Try Again"))
