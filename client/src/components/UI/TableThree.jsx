@@ -21,7 +21,6 @@ const TableThree = () => {
         <Loader />
       </div>
     );
-  console.log(data);
 
   const responses = data?.responses || [{}];
   const keys = responses && Object.keys(responses[0]);

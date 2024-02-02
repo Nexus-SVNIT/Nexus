@@ -1,9 +1,11 @@
-import Breadcrumb from "../components/UI/Breadcrumb";
-import userThree from "../images/user/user-03.png";
-import fireToast from "../hooks/fireToast";
+// import Breadcrumb from "../../../components/UI/Breadcrumb";
+import userThree from "../../images/user/user-03.png";
+import fireToast from "../../hooks/fireToast";
 // import { Table } from "../components/UI/TableSettings";
 // import { Modal } from "../components/UI/ModalSettings";
+
 import { useState, useEffect } from "react";
+import Breadcrumb from "../../components/UI/Breadcrumb";
 const Settings = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [rows, setRows] = useState(
