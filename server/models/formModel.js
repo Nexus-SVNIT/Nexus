@@ -5,7 +5,7 @@ const Schema = mongoose.Schema
 const formSchema = new Schema({
     name: String,
     desc: String,
-    deadline: String,
+    deadline: Date,
     created_date: String,
     publish: Boolean,
     formFields: {
