@@ -36,7 +36,7 @@ const Login = () => {
 
         <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
           <div className="border-stroke px-6.5 dark:border-strokedark border-b py-4">
-            <h3 className="font-medium text-black dark:text-white">
+            <h3 className="font-medium text-white dark:text-white">
               Welcome Admin,
             </h3>
           </div>
@@ -49,7 +49,7 @@ const Login = () => {
                 <input
                   type="email"
                   placeholder="Enter your email address"
-                  className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium !text-white outline-none transition disabled:cursor-default"
+                  className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium  outline-none transition disabled:cursor-default"
                   onChange={(e) =>
                     setLoginInfo({ ...loginInfo, email: e.target.value })
                   }
@@ -63,7 +63,7 @@ const Login = () => {
                 <input
                   type="password"
                   placeholder="Enter password"
-                  className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium !text-white outline-none transition disabled:cursor-default"
+                  className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium  outline-none transition disabled:cursor-default"
                   onChange={(e) =>
                     setLoginInfo({ ...loginInfo, password: e.target.value })
                   }
@@ -79,7 +79,7 @@ const Login = () => {
                       className="taskCheckbox sr-only"
                     />
                     <div className="box border-stroke dark:border-strokedark mr-3 flex h-5 w-5 items-center justify-center rounded border">
-                      <span className="text-white opacity-0">
+                      <span className="opacity-0">
                         <svg
                           className="fill-current"
                           width="10"
