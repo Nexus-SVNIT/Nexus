@@ -1,10 +1,11 @@
 const express = require('express')
 const requireAuth = require('../middlewares/requireAuth.js')
-const { allAlumniDetails, addAlumniDetails } = require('../controllers/alumniController.js')
+const { allAlumniDetails, addAlumniDetails, allVerifiedAlumniDetails } = require('../controllers/alumniController.js')
 
 const router = express.Router()
 // router.use(logRequest)
-router.get('/', allAlumniDetails)
+router.get('/', allVerifiedAlumniDetails)
 router.post('/add', addAlumniDetails)
+router.post('/all', allAlumniDetails)
 
 module.exports = router

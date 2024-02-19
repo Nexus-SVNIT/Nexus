@@ -66,9 +66,9 @@ const Connect = () => {
         </p>
       </div>
       <Title>Alumni Network</Title>{" "}
-      {AlumniDetails.length ? (
+      {AlumniDetails?.length ? (
         <div className="my-10 flex flex-wrap items-center justify-center gap-10">
-          {AlumniDetails.map((item) => (
+          {AlumniDetails?.map((item) => (
             <Profile key={item._id} profile={item}
             />
           ))}

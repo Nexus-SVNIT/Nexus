@@ -29,19 +29,20 @@ const AlumniMenu = () => {
       'placeholder': 'Enter your email'
     },
     {
-      'label': 'Expertise',
-      'value': '',
-      'placeholder': 'Enter your expertise'
-    },
-    {
       'label': 'Admission No',
       'value': '',
-      'placeholder': 'Enter your Admission no. '
+      'placeholder': 'U2XCSXXX'
     },
+    {
+      'label': 'Expertise',
+      'value': '',
+      'placeholder': 'React,AWS,MicroServices'
+    },
+
     {
       'label': 'Current Role',
       'value': '',
-      'placeholder': 'Enter your current role'
+      'placeholder': 'SOftware Developer Engineer @ xyz'
     },
     {
       'label': 'Mobile Number',

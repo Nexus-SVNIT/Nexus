@@ -24,8 +24,12 @@ const uploadImage = async (image) => {
     console.error("ERR", error);
   }
 };
-
 const allAlumniDetails = async (req, res) => {
+  const alumniDetails = await AlumniDetails.find({}).sort({ createdAt: 1 }).select('-isVerified');
+  return res.status(200).json(alumniDetails)
+
+}
+const allVerifiedAlumniDetails = async (req, res) => {
   const alumniDetails = await AlumniDetails.find({ isVerified: true }).sort({ createdAt: 1 }).select('-isVerified');
   return res.status(200).json(alumniDetails)
 
@@ -47,7 +51,7 @@ const addAlumniDetails = async (req, res) => {
   }
 }
 
-module.exports = { allAlumniDetails, addAlumniDetails }
+module.exports = { allAlumniDetails, addAlumniDetails, allVerifiedAlumniDetails }
 
 // Call the function to upload the file to the "nexus" folder
 
