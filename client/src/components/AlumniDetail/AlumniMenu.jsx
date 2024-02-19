@@ -9,11 +9,12 @@ const AlumniMenu = () => {
   const [AlumniDetails, setAlumniDetails] = useState({
     'Name': '',
     'E-Mail': '',
+    'Admission No': '',
     'Expertise': '',
     'Current Role': '',
     'Mobile Number': '',
     'Passing Year': '',
-    'LinkedIn': ''
+    'LinkedIn': '',
   })
   const [image, setImage] = useState(null);
   const formFields = [
@@ -31,6 +32,11 @@ const AlumniMenu = () => {
       'label': 'Expertise',
       'value': '',
       'placeholder': 'Enter your expertise'
+    },
+    {
+      'label': 'Admission No',
+      'value': '',
+      'placeholder': 'Enter your Admission no. '
     },
     {
       'label': 'Current Role',

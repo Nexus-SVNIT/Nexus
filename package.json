@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
+    "cloudinary": "^2.0.1",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
     "ejs-mate": "^4.0.0",

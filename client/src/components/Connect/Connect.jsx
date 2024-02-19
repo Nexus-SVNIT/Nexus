@@ -41,7 +41,7 @@ const Connect = () => {
     );
   }
 
-  if (isError || !AlumniDetails || AlumniDetails?.length === 0) {
+  if (isError) {
     return (
       <div className="flex h-screen w-screen items-center justify-center text-center">
         {isError ? <Error /> : "No Details available"}

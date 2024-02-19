@@ -39,11 +39,11 @@ const Profile = ({ profile }) => {
         </span>
         <img
           src={
-            `https://lh3.googleusercontent.com/d/${profile.ImageLink}` ??
-            "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
+            profile.ImageLink
+
           }
           alt="profile"
-          className="h-52 w-52 rounded-full object-cover object-center"
+          className="h-48 w-48 rounded-full object-cover object-center"
         />
         <div className="mt-4 flex h-full w-full flex-col items-center justify-center gap-2">
           <p className="text-lg text-blue-400"> {profile['Name']}</p>
