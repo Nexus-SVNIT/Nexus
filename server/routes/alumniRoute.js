@@ -6,6 +6,6 @@ const router = express.Router()
 // router.use(logRequest)
 router.get('/', allVerifiedAlumniDetails)
 router.post('/add', addAlumniDetails)
-router.post('/all', allAlumniDetails)
+router.get('/all', allAlumniDetails)
 
 module.exports = router
