@@ -4,9 +4,50 @@ import { Link } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
 import Title from "../Title/Title";
 import Profile from "./Profile";
+import Loader from "../Loader/Loader";
+import Error from "../Error/Error";
+import { useQuery } from "@tanstack/react-query";
 
 const Connect = () => {
-  const AlumniDetails = [];
+  const {
+    isLoading,
+    isError,
+    data: AlumniDetails,
+  } = useQuery({
+    queryKey: ["alumniDetails"],
+    queryFn: async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/`,
+        );
+        if (!response.ok) {
+          throw new Error("Failed to fetch Alumni Details");
+        }
+        return response.json();
+      } catch (error) {
+        throw new Error("Failed to fetch Alumni Details");
+      }
+    },
+  });
+
+
+
+  if (isLoading) {
+    return (
+      <div className="flex h-[70vh] w-full items-center justify-center">
+        <HeadTags title={"Loading Alumni Details - Nexus NIT Surat"} />
+        <Loader />
+      </div>
+    );
+  }
+
+  if (isError || !AlumniDetails || AlumniDetails?.length === 0) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center text-center">
+        {isError ? <Error /> : "No Details available"}
+      </div>
+    );
+  }
   return (
     <div className="mx-auto mb-20 flex max-w-7xl flex-col items-center justify-center">
       <HeadTags title={"Alumni Network - Nexus NIT Surat"} />
@@ -27,8 +68,9 @@ const Connect = () => {
       <Title>Alumni Network</Title>{" "}
       {AlumniDetails.length ? (
         <div className="my-10 flex flex-wrap items-center justify-center gap-10">
-          {AlumniDetails.map((item, idx) => (
-            <Profile key={idx} />
+          {AlumniDetails.map((item) => (
+            <Profile key={item._id} profile={item}
+            />
           ))}
         </div>
       ) : (
