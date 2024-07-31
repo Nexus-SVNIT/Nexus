@@ -1,13 +1,30 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const Schema = mongoose.Schema
+const Schema = mongoose.Schema;
 
 const formSchema = new Schema({
-    name: String,
-    desc: String,
-    deadline: String,
-    created_date: String,
-    publish: Boolean,
+    name: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    desc: {
+        type: String,
+        required: true,
+        trim: true
+    },
+    deadline: {
+        type: String,
+        required: true
+    },
+    created_date: {
+        type: String,
+        default: new Date().toISOString()
+    },
+    publish: {
+        type: Boolean,
+        default: false
+    },
     formFields: {
         type: [Object],
         default: []
@@ -18,8 +35,14 @@ const formSchema = new Schema({
     },
     _event: {
         type: String,
-        ref: 'event'
+        ref: 'Event',
+        default: 'none'
+    },
+    WaLink:{
+        type:String,
+        
     }
-})
+    
+});
 
-module.exports = mongoose.model('form', formSchema)
+module.exports = mongoose.model('form', formSchema);

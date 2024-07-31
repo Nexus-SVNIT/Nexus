@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useEffect } from "react";
+import React from "react";
 import Error from "../Error/Error";
 import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
@@ -7,16 +7,12 @@ import Title from "../Title/Title";
 import FormCard from "./FormCard";
 
 const Forms = () => {
-  const {
-    isLoading,
-    isError,
-    data: forms,
-  } = useQuery({
+  const { isLoading, isError, data: forms } = useQuery({
     queryKey: ["forms"],
     queryFn: async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch forms");
@@ -27,16 +23,6 @@ const Forms = () => {
       }
     },
   });
-
-  if (forms && !isLoading) {
-    const currentDate = new Date();
-
-    forms.forEach((form) => {
-      const [day, month, year] = form.deadline.split("-").map(Number);
-      const deadlineDate = new Date(year, month - 1, day, 22, 30, 0);
-      form.status = deadlineDate >= currentDate ? "Active" : "Inactive";
-    });
-  }
 
   if (isLoading) {
     return (
@@ -55,14 +41,34 @@ const Forms = () => {
     );
   }
 
+  // Assign status based on the publish field
+  forms.forEach((form) => {
+    form.status = form.publish ? "Active" : "Inactive";
+  });
+
   return (
     <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
       <HeadTags title={"Forms - Nexus NIT Surat"} />
       <Title>Forms</Title>
-      <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20 ">
-        {forms.map((form) => (
-          <FormCard key={form._id} form={form} />
-        ))}
+
+      {/* Display active forms */}
+      <h2 className="text-2xl font-semibold">Active Forms</h2>
+      <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
+        {forms
+          .filter((form) => form.status === "Active")
+          .map((form) => (
+            <FormCard key={form._id} form={form} />
+          ))}
+      </div>
+
+      {/* Display inactive forms */}
+      <h2 className="text-2xl font-semibold">Inactive Forms</h2>
+      <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
+        {forms
+          .filter((form) => form.status === "Inactive")
+          .map((form) => (
+            <FormCard key={form._id} form={form} />
+          ))}
       </div>
     </div>
   );

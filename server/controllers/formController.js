@@ -30,23 +30,109 @@ const getAllForms = async (req, res) => {
                 name: true,
                 deadline: true,
                 publish: true
-            });;
+            })
+            .sort({ created_date: -1 }); // Sort by creation date, descending
         res.status(200).json(allForms);
     } catch (err) {
         handleError(res, err);
     }
 };
 
-const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields } = req.body;
-    const _event = "none";
+const updateFormStatus = async (req, res) => {
     try {
-        const createdForm = await Forms.create({ name, desc, deadline, formFields, _event });
+      const { id } = req.params;
+      const { publish } = req.body;
+  
+      // Validate input
+      if (typeof publish !== 'boolean') {
+        return res.status(400).json({ success: false, message: 'Invalid input' });
+      }
+  
+      // Find the form and update its status
+      const form = await Forms.findById(id);
+      if (!form) {
+        return res.status(404).json({ success: false, message: 'Form not found' });
+      }
+  
+      form.publish = publish;
+      await form.save();
+  
+      res.json({ success: true, message: 'Form status updated successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  };
+
+  const updateFormDeadline = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const { deadline } = req.body;
+
+      
+  
+      // Validate input
+      if (!deadline || !/^\d{2}-\d{2}-\d{4}$/.test(deadline)) {
+        return res.status(400).json({ success: false, message: 'Invalid deadline format. Expected format: DD-MM-YYYY' });
+      }
+  
+      // Find the form and update its deadline
+      const form = await Forms.findById(id);
+      if (!form) {
+        return res.status(404).json({ success: false, message: 'Form not found' });
+      }
+  
+      form.deadline = deadline;
+      await form.save();
+  
+      res.json({ success: true, message: 'Form deadline updated successfully' });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  };
+  
+ 
+  
+  
+
+
+  const createForm = async (req, res) => {
+    const { name, desc, deadline, formFields, WaLink } = req.body;
+    
+    const _event = "none";  // Set a default value for _event if it's not provided
+
+    // Convert deadline to dd-mm-yy format
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        const day = String(date.getDate()).padStart(2, '0');
+        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
+        const year = String(date.getFullYear()); 
+        return `${day}-${month}-${year}`;
+    };
+
+    const formattedDeadline = formatDate(deadline);
+    const created_date = new Date().toISOString();
+    const publish = false;  
+
+    try {
+        const createdForm = await Forms.create({
+            name,
+            desc,
+            deadline: formattedDeadline,
+            created_date,
+            publish,
+            formFields,
+            WaLink,
+            _event
+        });
         res.status(200).json(createdForm);
     } catch (err) {
         handleError(res, err);
     }
 };
+
+
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
@@ -83,7 +169,7 @@ const submitResponse = async (req, res) => {
         const responseMessage = {
             success: true,
             message: "Your response has been successfully saved.",
-            WaLink: form?.WaLink || "https://chat.whatsapp.com/GYGe2OaR0JHIRU8Kmpm5Hb",
+            WaLink: form?.WaLink,
         };
 
         res.status(200).json(responseMessage);
@@ -116,4 +202,4 @@ const getFormFields = async (req, res) => {
     }
 };
 
-module.exports = { getAllForms, getPublicForms, createForm, submitResponse, getResponses, getFormFields };
+module.exports = { getAllForms, getPublicForms, createForm, submitResponse, getResponses, getFormFields ,updateFormStatus,updateFormDeadline};

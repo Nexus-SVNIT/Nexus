@@ -2,7 +2,7 @@ import Profile from '../pages/Profile/Profile'
 import Settings from '../pages/Settings/Settings'
 import Tables from '../pages/Tables/Tables'
 import AdminPanel from '../pages/Dashboard/AdminPanel.jsx'
-import { About, Achievements, AchievementsForm, AlumniMenu, Connect, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
+import { About, Achievements, AchievementsForm, AlumniMenu, Connect, CreateForm, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
 import AllForms from '../pages/Forms/AllForms'
 
 export const DefaultRoutes = [
@@ -83,7 +83,7 @@ export const AdminRoutes = [
   {
     path: 'forms/create',
     title: 'Create a Form',
-    component: Profile
+    component: CreateForm
   },
   {
     path: 'tables',
@@ -96,5 +96,4 @@ export const AdminRoutes = [
     title: 'Settings',
     component: Settings
   }
-
 ]

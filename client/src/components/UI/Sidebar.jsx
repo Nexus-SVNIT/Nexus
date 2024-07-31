@@ -208,7 +208,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Tables --> */}
               <li>
                 <NavLink
-                  to="/tables"
+                  to="/admin/tables"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("tables") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -246,7 +246,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Profile --> */}
               <li>
                 <NavLink
-                  to="/profile"
+                  to="/admin/profile"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("profile") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -276,7 +276,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Settings --> */}
               <li>
                 <NavLink
-                  to="/settings"
+                  to="/admin/settings"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("settings") &&
                     "bg-graydark dark:bg-meta-4"
@@ -314,7 +314,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   Settings
                 </NavLink>
               </li>
-              {/* <!-- Menu Item Settings --> */}
+              
             </ul>
           </div>
         </nav>

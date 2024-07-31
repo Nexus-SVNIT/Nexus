@@ -6,16 +6,25 @@ import FormIntroAdmin from "./FormIntroAdmin";
 
 const AllForms = () => {
   const {
-    isPending: loading,
+    isLoading: loading,  // Correctly use isLoading instead of isPending
     error,
-    data,
+    data = [],  // Default data to an empty array if undefined
   } = useQuery({
-    queryKey: ["responses"],
-    queryFn: () =>
-      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`).then((res) =>
-        res.json(),
-      ),
+    queryKey: ["forms"],  // Update queryKey to match our API endpoint
+    queryFn: async () => {
+      try {
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`);
+        if (!response.ok) {
+          throw new Error("Failed to fetch forms");
+        }
+        return response.json();  // Directly return the JSON data
+      } catch (error) {
+        console.error(error);
+        throw error;  // Rethrow error to be caught by react-query
+      }
+    },
   });
+
   if (error) return <Error />;
   if (loading)
     return (
@@ -26,7 +35,7 @@ const AllForms = () => {
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-8">
-      {data?.map((form) => (
+      {data.map((form) => (
         <FormIntroAdmin key={form._id} form={form} />
       ))}
     </div>
