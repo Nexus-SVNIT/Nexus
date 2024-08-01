@@ -135,8 +135,10 @@ const updateFormStatus = async (req, res) => {
 
 
 const submitResponse = async (req, res) => {
+    
     const id = req.params.id;
-    const { email } = req.body;
+    
+    const { Email } = req.body;
 
     try {
         // Check if the deadline has not been missed
@@ -152,7 +154,7 @@ const submitResponse = async (req, res) => {
         }
 
         // Check if the email already exists in the specific form's responses
-        const existingResponse = await Forms.findOne({ _id: id, "responses.email": email });
+        const existingResponse = await Forms.findOne({ _id: id, "responses.Email": Email });
 
         if (existingResponse) {
             // If email already exists in this form's responses, send an error response
@@ -180,6 +182,10 @@ const submitResponse = async (req, res) => {
         handleError(res, err);
     }
 };
+
+
+
+
 
 
 
