@@ -140,8 +140,8 @@ const submitResponse = async (req, res) => {
 
     try {
         // Check if the deadline has not been missed
-        const formDetails = await Forms.findById(id).select({ deadline: true });
-        deadlineDate = formDetails.deadline;
+        const formDetails = await Forms.findById(id).select({ deadline: true, WaLink: true });
+        const deadlineDate = formDetails.deadline;
         const currentDate = Date.now();
         if (deadlineDate < currentDate) {
             // If the deadline has been missed, send an error response
@@ -150,11 +150,12 @@ const submitResponse = async (req, res) => {
                 message: "The deadline has passed. Your response was not saved.",
             });
         }
-        // Check if the email already exists in the responses array
-        const existingResponse = await Forms.findOne({ "responses.email": email });
+
+        // Check if the email already exists in the specific form's responses
+        const existingResponse = await Forms.findOne({ _id: id, "responses.email": email });
 
         if (existingResponse) {
-            // If email already exists, send an error response
+            // If email already exists in this form's responses, send an error response
             return res.status(400).json({
                 success: false,
                 message: "Email already exists. Your response was not saved.",
@@ -179,6 +180,7 @@ const submitResponse = async (req, res) => {
         handleError(res, err);
     }
 };
+
 
 
 
