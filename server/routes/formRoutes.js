@@ -18,15 +18,15 @@ const router = express.Router();
 // Routes
 router.get('/', getPublicForms);
 router.get('/all', getAllForms);
-router.post('/create',requireAuth, createForm);
+router.post('/create', createForm);
 router.post('/submit/:id', submitResponse);
 router.get('/get-responses/:id', getResponses);
 router.get('/:id', getFormFields);
 
 // New route for updating form status
-router.patch('/update-status/:id',requireAuth, updateFormStatus);
+router.patch('/update-status/:id', updateFormStatus);
 
 // Route to update form deadline
-router.patch('/update-deadline/:id',requireAuth,updateFormDeadline);
+router.patch('/update-deadline/:id',updateFormDeadline);
 
 module.exports = router;
