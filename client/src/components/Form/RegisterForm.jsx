@@ -10,7 +10,7 @@ const RegisterForm = () => {
   const { formId } = useParams();
   const [loading, setLoading] = useState(true);
   const [flag, setFlag] = useState(false);
-  const [link, setLink] = useState("");  
+  const [link, setLink] = useState("");
   const [formData, setFormData] = useState({
     _id: formId,
     name: "",
@@ -32,8 +32,14 @@ const RegisterForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (Object.values(formResponse).some(value => value.trim() === "")) {
-      toast.error("Please fill in all the fields.");
+    // Validate only required fields
+    const requiredFields = formData.formFields.filter(field => field.required);
+    const missingRequiredFields = requiredFields.some(field => 
+      !formResponse[field.questionText]?.trim()
+    );
+
+    if (missingRequiredFields) {
+      toast.error("Please fill in all the required fields.");
       return;
     }
 
@@ -67,7 +73,7 @@ const RegisterForm = () => {
       .then((form) => {
         setFormData(form);
         const initialResponse = form.formFields.reduce((acc, field) => {
-          acc[field.questionText] = ""; // Initialize formResponse with empty strings
+          acc[field.questionText] = ""; // Initialize with empty strings
           return acc;
         }, {});
         setFormResponse(initialResponse);
