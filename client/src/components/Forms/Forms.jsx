@@ -52,7 +52,7 @@ const Forms = () => {
       <Title>Forms</Title>
 
       {/* Display active forms */}
-      <h2 className="text-2xl font-semibold">Active Forms</h2>
+      <h2 className="text-2xl font-semibold text-center">Active Forms</h2>
       <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
         {forms
           .filter((form) => form.status === "Active")
@@ -62,7 +62,7 @@ const Forms = () => {
       </div>
 
       {/* Display inactive forms */}
-      <h2 className="text-2xl font-semibold">Inactive Forms</h2>
+      <h2 className="text-2xl font-semibold text-center">Inactive Forms</h2>
       <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
         {forms
           .filter((form) => form.status === "Inactive")

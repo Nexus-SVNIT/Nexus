@@ -4,6 +4,7 @@ import Tables from '../pages/Tables/Tables'
 import AdminPanel from '../pages/Dashboard/AdminPanel.jsx'
 import { About, Achievements, AchievementsForm, AlumniMenu, Connect, CreateForm, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
 import AllForms from '../pages/Forms/AllForms'
+import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 
 export const DefaultRoutes = [
   {
@@ -94,6 +95,8 @@ export const AdminRoutes = [
   {
     path: 'settings',
     title: 'Settings',
-    component: Settings
-  }
+    component: CreatePanelForm
+  },
+
+  
 ]
