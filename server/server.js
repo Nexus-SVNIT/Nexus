@@ -11,6 +11,7 @@ const messageRoutes = require('./routes/messageRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
 const achievementRoute = require('./routes/achievementRoute.js')
 const alumniRoute = require('./routes/alumniRoute.js')
+const panelRoutes=require('./routes/panelRoute.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -34,6 +35,7 @@ app.use('/messages', messageRoutes)
 app.use('/api/user', userRoutes)
 app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
+app.use('/Panel',panelRoutes);
 
 mongoose
     .connect(MONGO_URL)
