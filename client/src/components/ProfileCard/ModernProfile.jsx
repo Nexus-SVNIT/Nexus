@@ -7,18 +7,21 @@ import { ImProfile } from "react-icons/im";
 import { Link } from "react-router-dom";
 import { SocialIcon } from "react-social-icons";
 
-const ModernProfile = ({ profile, isFaculty }) => {
+const ModernProfile = ({ profile, isFaculty,img}) => {
+  // console.log(img)
   return (
     <div className="relative h-[23rem] w-[18rem] flex-wrap overflow-hidden rounded-lg bg-white text-black shadow-lg hover:bg-blue-50 md:w-[16rem]">
       <div className="absolute -left-[5%]  top-0 h-[16rem] w-[20rem] overflow-hidden rounded-b-[50%] border-b-8 border-red-400 bg-red-500/20  md:h-[16rem] md:w-[18rem] ">
         <img
           src={
-            isFaculty
-              ? profile.image
-              : `https://lh3.googleusercontent.com/d/${profile.image}`
+            // isFaculty
+            //   ? profile.image
+            //   // : `https://lh3.googleusercontent.com/d/1wuOKZh_DO8tEPCLZfHupGiziwr2BYJGQ`
+              profile.image
+            // img
           }
           alt="Person"
-          className="-z-10 flex h-full w-full cursor-pointer object-cover object-top transition-all duration-300 hover:scale-110"
+          // className="-z-10 flex h-full w-full cursor-pointer object-cover object-top transition-all duration-300 hover:scale-110"
         />
       </div>
       <div className=" mt-[15.5rem] px-5 py-4 ">
@@ -72,3 +75,5 @@ const ModernProfile = ({ profile, isFaculty }) => {
 };
 
 export default ModernProfile;
+
+
