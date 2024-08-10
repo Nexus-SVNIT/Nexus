@@ -11,6 +11,7 @@ exports.createPanels = async (req, res) => {
 
     try {
         const form = await Forms.findById(formId);
+        console.log(form);
         
         if (!form) {
             return res.status(404).json({ error: 'Form not found' });
@@ -63,7 +64,7 @@ exports.createPanels = async (req, res) => {
                         text: `Dear ${interviewer.name},\n\nYou have been assigned to Panel ${panelNumber}. The interview panel link is ${panelLink}. Please find your schedule below:\n\n${interviewTimes.map((time, index) => {
                             const formattedTime = moment(time).format('YYYY-MM-DD HH:mm:ss');
                             return `Candidate ${index + 1}: ${formattedTime}`;
-                        }).join('\n')}\n\nBest Regards,\nThe Team`
+                        }).join('\n')}\n\nBest Regards,\nThe Team Nexus`
                     });
 
                     existingPanel.emailsSent.interviewers.push(interviewer.email);
@@ -83,7 +84,7 @@ exports.createPanels = async (req, res) => {
                     await sendEmail({
                         to: candidateEmail,
                         subject: `Interview Scheduled for Panel ${panelNumber}`,
-                        text: `Dear ${candidatesForPanel[i].FullName},\n\nYour interview has been scheduled with Panel ${panelNumber}. The interview panel link is ${panelLink}. Your interview time is ${moment(interviewTimes[i]).format('YYYY-MM-DD HH:mm:ss')}.\n\nBest Regards,\nThe Team`
+                        text: `Dear ${candidatesForPanel[i].FullName},\n\nYour interview has been scheduled with Panel ${panelNumber}. The interview panel link is ${panelLink}. Your interview time is ${moment(interviewTimes[i]).format('YYYY-MM-DD HH:mm:ss')}.\n\nBest Regards,\nThe Team Nexus`
                     });
 
                     existingPanel.emailsSent.candidates.push(candidateEmail);

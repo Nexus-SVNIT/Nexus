@@ -14,8 +14,9 @@ function CreatePanelForm() {
     ]);
 
     const handlePanelChange = (index, event) => {
+        const { name, value } = event.target;
         const newPanels = [...panels];
-        newPanels[index][event.target.name] = event.target.value;
+        newPanels[index][name] = value;
         setPanels(newPanels);
     };
 
@@ -46,6 +47,12 @@ function CreatePanelForm() {
     const handleSubmit = async (event) => {
         event.preventDefault();
         
+        // Validate fields
+        if (!formId || panels.some(panel => !panel.panelNumber || !panel.startTime || !panel.interviewDuration || !panel.panelLink)) {
+            alert('Please fill in all required fields.');
+            return;
+        }
+
         // Prepare panels data for submission
         const formattedPanels = panels.map(panel => {
             const interviewTimes = calculateInterviewTimes(panel.startTime, panel.interviewDuration, panel.candidatesPerPanel);
@@ -53,29 +60,35 @@ function CreatePanelForm() {
                 panelNumber: panel.panelNumber,
                 interviewers: panel.interviewers.split(';').map(i => {
                     const [name, email] = i.split(',');
+                    if (!name || !email) {
+                        throw new Error('Invalid interviewers format');
+                    }
                     return { name, email };
                 }),
-                candidatesPerPanel: panel.candidatesPerPanel,
+                candidatesPerPanel: parseInt(panel.candidatesPerPanel, 10),
                 startTime: panel.startTime,
-                interviewDuration: panel.interviewDuration,
+                interviewDuration: parseInt(panel.interviewDuration, 10),
                 panelLink: panel.panelLink,
                 interviewTimes,
             };
         });
 
-        // Send the data to the backend
-        await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/Panel/create-panels`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                formId,
-                panels: formattedPanels,
-            }),
-        });
-
-        alert('Panels created and emails sent successfully!');
+        try {
+            await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/Panel/create-panels`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    formId,
+                    panels: formattedPanels,
+                }),
+            });
+            alert('Panels created and emails sent successfully!');
+        } catch (error) {
+            console.error('Error creating panels:', error);
+            alert('Failed to create panels.');
+        }
     };
 
     return (
