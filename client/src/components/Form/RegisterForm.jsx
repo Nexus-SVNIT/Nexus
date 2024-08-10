@@ -16,10 +16,13 @@ const RegisterForm = () => {
     name: "",
     desc: "",
     deadline: "",
-    formFields: [],
+    formFields: [
+      
+    ],
     responseCount: 0,
   });
-  const [formResponse, setFormResponse] = useState({});
+  const [formResponse, setFormResponse] = useState({
+  });
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -44,7 +47,8 @@ const RegisterForm = () => {
     }
 
     setLoading(true);
-
+    
+    // console.log(formResponse)
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, {
       method: "POST",
       headers: {

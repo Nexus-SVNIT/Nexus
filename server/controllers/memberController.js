@@ -1,10 +1,27 @@
 const member = require("../models/memberModel.js");
 const wrapAsync = require("../utils/wrapAsync.js");
 const ExpressError = require("../utils/ExpressError.js");
+const newmember = require("../models/newmemberModel.js");
+
+const addnewMember = wrapAsync(async (req, res, next) => {
+  const { name, email, role, image, year, socialLinks } = req.body;
+
+  if (!name || !email || !role || !socialLinks || !image || !year) {
+    throw new ExpressError("Every field is mandatory", 400);
+  }
+
+  const existingMember = await newmember.findOne({ email });
+  if (existingMember) {
+    throw new ExpressError("Entry already exists", 400);
+  }
+
+  const newMember = await newmember.create({ name, email, role, socialLinks, image, year });
+  res.status(200).json(newMember);
+});
 
 
 const getAllMember = wrapAsync(async (req, res, next) => {
-  const getAllMemberDetails = await member.find().sort({ _id: 1 });
+  const getAllMemberDetails = await newmember.find().sort({ _id: 1 });
   res.status(200).json(getAllMemberDetails);
 });
 
@@ -27,6 +44,7 @@ const addMember = wrapAsync(async (req, res, next) => {
   res.status(200).json(newMember);
 });
 
+
 const deleteMember = wrapAsync(async (req, res, next) => {
   const id = req.params.id;
   const singleMemberToDelete = await member.findByIdAndDelete(id);
@@ -46,8 +64,7 @@ const updateMemberDetails = wrapAsync(async (req, res, next) => {
 });
 
 module.exports = {
-
-
+  addnewMember,
   getAllMember,
   getUniqueMember,
   updateMemberDetails,
