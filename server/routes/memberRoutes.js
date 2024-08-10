@@ -4,6 +4,7 @@ const requireAuth = require('../middlewares/requireAuth.js');
 const { logRequest, validateMemberData } = require("../middleware.js");
 const router = express.Router();
 const {
+    addnewMember,
     getAllMember,
     addMember,
     getUniqueMember,
@@ -15,6 +16,7 @@ router.use(logRequest); // Log request details
 
 router.get('/', getAllMember);
 router.post('/add', requireAuth, validateMemberData, addMember);
+router.post('/addnew', addnewMember);
 router.get('/:id', getUniqueMember);
 router.put('/:id', requireAuth, validateMemberData, updateMemberDetails);
 router.delete('/:id', requireAuth, deleteMember);
