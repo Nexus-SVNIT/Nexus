@@ -37,8 +37,17 @@ const Teams = () => {
     (member) => member.role === "Social Media Manager",
   );
   const team_designer = data.filter((member) => member.role === "Designer");
-  const team_coordinators = data.filter(
-    (member) => member.role === "Coordinator",
+  const team_AI = data.filter(
+    (member) => member.role === "AI/ML Head",
+  );
+  const team_Alma = data.filter(
+    (member) => member.role === "Alma Relation Head ",
+  );
+  const team_Think_Tank = data.filter(
+    (member) => member.role === "Think Tank Head",
+  );
+  const team_Documentation = data.filter(
+    (member) => member.role === "Documentation Head",
   );
 
   return (
@@ -52,7 +61,11 @@ const Teams = () => {
       <TeamCard data={team_treasurer} />
       <TeamCard data={team_social_med} />
       <TeamCard data={team_designer} />
-      <TeamCard data={team_coordinators} />
+      <TeamCard data={team_AI} />
+      <TeamCard data={team_Alma} />
+      <TeamCard data={team_Think_Tank} />
+      <TeamCard data={team_Documentation} />
+    
     </div>
   );
 };
