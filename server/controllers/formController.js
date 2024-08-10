@@ -160,10 +160,10 @@ const submitResponse = async (req, res) => {
         const existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
         console.log(existingResponse)
         if (formDetails.name == "Core member registration") {
-            const { name, email, role, year,admNo,Linkedin ,Github } = req.body;
+            const { name, email, role, image, year,admNo,Linkedin ,Github } = req.body;
             console.log("Hi")
 
-            if (!name || !email || !role  || !year) {
+            if (!name || !email || !role || !image || !year) {
                 throw new ExpressError("Every field is mandatory", 400);
             }
 
@@ -172,11 +172,12 @@ const submitResponse = async (req, res) => {
             if (existingMember) {
                 throw new ExpressError("Entry already exists", 400);
             }
-            
+
             const newMember = await newmember.create({
                 name,
                 email,
                 role,
+                image,
                 year,
                 admNo,
                 socialLinks: {
