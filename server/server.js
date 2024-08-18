@@ -1,5 +1,6 @@
 require('dotenv').config()
 const express = require('express')
+const bodyParser = require('body-parser');
 const cors = require('cors')
 const cloudinary = require('cloudinary').v2
 const mongoose = require('mongoose')
@@ -17,6 +18,8 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
+// console.log(MONGO_URL,PORT)
+app.use(bodyParser.json());
 app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
