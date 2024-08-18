@@ -68,13 +68,25 @@ export const faculty_advisors = [
 
     }
   },
+  // {
+  //   name: 'Dr. Dipti P. Rana',
+  //   role: 'Associate Professor',
+  //   image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
+  //   socialLinks: {
+  //     googleScholar: 'https://scholar.google.com/citations?user=p2he2osAAAAJ&hl=en',
+  //     googleSite: 'https://sites.google.com/view/dipti-p-rana/dr-dipti-prakashkumar-rana'
+  //   }
+  // }
   {
     name: 'Dr. Tanmoy Hazra',
     role: 'Assistant Professor',
+
     image: 'https://www.svnit.ac.in/web/department/ai/images/TanmoyHazra.jpg',
     socialLinks: {
       googleScholar: 'https://scholar.google.com/citations?user=86mYpqgAAAAJ&hl=en',
-      googleSite: ''
+      
+      googleSite: 'https://svnit.ac.in/facup/tanmoyhazracv_latestest.pdf'
+
     }
   }
 ]

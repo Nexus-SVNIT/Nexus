@@ -14,7 +14,7 @@ const {
 
 router.use(logRequest); // Log request details
 
-router.get('/', getAllMember);
+router.get('/all/:year', getAllMember);
 router.post('/add', requireAuth, validateMemberData, addMember);
 router.post('/addnew', addnewMember);
 router.get('/:id', getUniqueMember);
