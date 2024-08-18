@@ -68,13 +68,22 @@ export const faculty_advisors = [
 
     }
   },
+  // {
+  //   name: 'Dr. Dipti P. Rana',
+  //   role: 'Associate Professor',
+  //   image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
+  //   socialLinks: {
+  //     googleScholar: 'https://scholar.google.com/citations?user=p2he2osAAAAJ&hl=en',
+  //     googleSite: 'https://sites.google.com/view/dipti-p-rana/dr-dipti-prakashkumar-rana'
+  //   }
+  // }
   {
-    name: 'Dr. Dipti P. Rana',
-    role: 'Associate Professor',
-    image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
+    name: 'Dr. Tanmoy Hazra',
+    role: 'Assistant Professor',
+    image: 'https://media.licdn.com/dms/image/C4D03AQG5FDBgAAjzRA/profile-displayphoto-shrink_800_800/0/1654438963186?e=1729728000&v=beta&t=AuH35g3qnpxkk4MjeBgKvBoXQz8mATpdVe13OInnvYw',
     socialLinks: {
-      googleScholar: 'https://scholar.google.com/citations?user=p2he2osAAAAJ&hl=en',
-      googleSite: 'https://sites.google.com/view/dipti-p-rana/dr-dipti-prakashkumar-rana'
+      googleScholar: '',
+      googleSite: 'https://svnit.ac.in/facup/tanmoyhazracv_latestest.pdf'
     }
   }
 ]
