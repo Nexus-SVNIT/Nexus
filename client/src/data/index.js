@@ -64,17 +64,17 @@ export const faculty_advisors = [
     image: 'https://www.svnit.ac.in/sjp/assets/images/propic.png',
     socialLinks: {
       googleScholar: 'https://scholar.google.co.in/citations?user=uhsQTk0AAAAJ&hl=en',
-      googleSite: 'https://sites.google.com/coed.svnit.ac.in/bhavesh-gohil'
+      googleSite: ''
 
     }
   },
   {
-    name: 'Dr. Dipti P. Rana',
-    role: 'Associate Professor',
-    image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
+    name: 'Dr. Tanmoy Hazra',
+    role: 'Assistant Professor',
+    image: 'https://www.svnit.ac.in/web/department/ai/images/TanmoyHazra.jpg',
     socialLinks: {
-      googleScholar: 'https://scholar.google.com/citations?user=p2he2osAAAAJ&hl=en',
-      googleSite: 'https://sites.google.com/view/dipti-p-rana/dr-dipti-prakashkumar-rana'
+      googleScholar: 'https://scholar.google.com/citations?user=86mYpqgAAAAJ&hl=en',
+      googleSite: ''
     }
   }
 ]
