@@ -21,7 +21,15 @@ const addnewMember = wrapAsync(async (req, res, next) => {
 
 
 const getAllMember = wrapAsync(async (req, res, next) => {
-  const getAllMemberDetails = await newmember.find().sort({ _id: 1 });
+  const year = req.params.year;
+  let getAllMemberDetails;
+  if(year == "2024"){
+    getAllMemberDetails = await newmember.find().sort({ _id: 1 });
+  }
+  else if(year == "2023"){
+    getAllMemberDetails = await member.find().sort({ _id: 1 });
+  }
+  // console.log(getAllMemberDetails)
   res.status(200).json(getAllMemberDetails);
 });
 
