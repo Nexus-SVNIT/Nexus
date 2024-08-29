@@ -135,69 +135,56 @@ const createForm = async (req, res) => {
 };
 
 const submitResponse = async (req, res) => {
-    // console.log("Hi")
     const id = req.params.id;
-    // console.log(id)
-    const { email } = req.body;
-    console.log(req.body)
-    console.log(email)
-    
+
     try {
-        // Check if the deadline has not been missed
+        // Retrieve form details
         const formDetails = await Forms.findById(id).select();
         const deadlineDate = formDetails.deadline;
         const currentDate = Date.now();
-        console.log(formDetails )
+
+        // Check if the deadline has been missed
         if (deadlineDate < currentDate) {
-            // If the deadline has been missed, send an error response
             return res.status(400).json({
                 success: false,
                 message: "The deadline has passed. Your response was not saved.",
             });
         }
 
-        // Check if the email already exists in the specific form's responses
-        const existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
-        console.log(existingResponse)
-        if (formDetails.name == "Core member registration") {
-            const { name, email, role, image, year,admNo,Linkedin ,Github } = req.body;
-            console.log("Hi")
+        // Check if the form contains an email field
+        const hasEmailField = formDetails.formFields.some(field =>
+            field.questionText.toLowerCase().includes('email')
+        );
 
-            if (!name || !email || !role || !image || !year) {
-                throw new ExpressError("Every field is mandatory", 400);
+        let existingResponse = null;
+
+        // If the form has an email field, extract and validate the email
+        if (hasEmailField) {
+            const emailField = formDetails.formFields.find(field =>
+                field.questionText.toLowerCase().includes('email')
+            );
+
+            // Extract email from req.body
+            const email = req.body[emailField.questionText];
+            
+            if (!email) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email field is required.",
+                });
             }
 
-           
-            const existingMember = await newmember.findOne({ email });
-            if (existingMember) {
-                throw new ExpressError("Entry already exists", 400);
+            // Check if the email already exists in the form responses
+            existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
+            if (existingResponse) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Email already exists. Your response was not saved.",
+                });
             }
-
-            const newMember = await newmember.create({
-                name,
-                email,
-                role,
-                image,
-                year,
-                admNo,
-                socialLinks: {
-                    linkedinLink: Linkedin, // Ensure variable `Linkedin` contains the LinkedIn URL
-                    githubLink: Github // Ensure variable `Facebook` contains the Facebook URL
-                  }
-            });
-    
         }
 
-
-        if (existingResponse) {
-            // If email already exists in this form's responses, send an error response
-            return res.status(400).json({
-                success: false,
-                message: "Email already exists. Your response was not saved.",
-            });
-        }
-
-        // If email doesn't exist and the deadline has not been missed, proceed with updating the form
+        // Update the form with the new response
         const form = await Forms.findByIdAndUpdate(
             id,
             { $push: { responses: req.body } },
@@ -215,6 +202,9 @@ const submitResponse = async (req, res) => {
         handleError(res, err);
     }
 };
+
+
+
 
 
 
