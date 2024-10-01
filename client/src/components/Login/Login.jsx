@@ -1,24 +1,55 @@
 import React, { useEffect, useLayoutEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast";
+import axios from "axios";
+import Cookies from "js-cookie";
+
 const Login = () => {
   const navigate = useNavigate();
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
   });
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   if (
+  //     loginInfo.email === "u21cs047@coed.svnit.ac.in" &&
+  //     loginInfo.password === "u21cs047"
+  //   ) {
+  //     localStorage.setItem("token", "you are permitted");
+  //     navigate("/admin");
+  //   } else {
+  //     toast.error("Please provide correct credentials.");
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (
-      loginInfo.email === "u21cs047@coed.svnit.ac.in" &&
-      loginInfo.password === "u21cs047"
-    ) {
-      localStorage.setItem("token", "you are permitted");
-      navigate("/admin");
-    } else {
-      toast.error("Please provide correct credentials.");
+  
+    try {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/core/login`, {
+        email: loginInfo.email,
+        password: loginInfo.password,
+      });
+  
+      // If login is successful, store the token in cookies
+      const token = response.data.token;
+      
+      // Store the token in a cookie that expires in 1 hour
+      Cookies.set("token", token, { expires: 1 / 24 });
+      window.localStorage.setItem('core-token', token);
+  
+      // Navigate to the admin page
+      navigate("/core/admin");
+    } catch (error) {
+      if (error.response && error.response.status === 400) {
+        toast.error("Please provide correct credentials.");
+      } else {
+        toast.error("An error occurred. Please try again.");
+      }
     }
   };
+
   useLayoutEffect(() => {
     if (localStorage?.getItem("token")?.length) {
       navigate("/admin", { replace: true });
@@ -37,7 +68,7 @@ const Login = () => {
         <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
           <div className="border-stroke px-6.5 dark:border-strokedark border-b py-4">
             <h3 className="font-medium text-white dark:text-white">
-              Welcome Admin,
+              Welcome Core Member,
             </h3>
           </div>
           <form onSubmit={handleSubmit}>

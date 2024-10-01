@@ -5,8 +5,8 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const token = localStorage.getItem("token");
-  if (!token) return <Navigate to={"/login"} replace />;
+  const token = localStorage.getItem("core-token");
+  if (!token) return <Navigate to={"/core/admin/login"} replace/>;
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       <div className="flex h-screen overflow-hidden">

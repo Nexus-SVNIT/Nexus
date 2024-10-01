@@ -1,23 +1,44 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy } from "react";
 import { Toaster } from "react-hot-toast";
-import { Route, BrowserRouter as Router, Routes } from "react-router-dom";
+import { Navigate, Route, BrowserRouter as Router, Routes } from "react-router-dom";
 import "./App.css";
 import Login from "./components/Login/Login";
 import AdminLayout from "./layout/AdminLayout";
 import { AdminRoutes, DefaultRoutes } from "./routes";
+import LoginForm from "./components/LogInForm/LogInForm";
+import SignUpForm from "./components/SignUpForm/SignUpForm";
+import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
+import Profile from "./components/Profile/Profile";
+import CoreLoginPage from "./components/Login/CoreLoginPage";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
+const token = localStorage.getItem('token');
 
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <Router>
         <Routes>
-          <Route path="/login" element={<Login />} />
+          {
+            token ?
+              <>
+                <Route path="/login" element={<Navigate to={'/'}></Navigate>} />
+                <Route path="/signup" element={<Navigate to={'/'}></Navigate>} />
+                <Route path="/auth/verify/:token" element={<Navigate to={'/'}></Navigate>} />
+              </> :
+              <>
+                <Route path="/login" element={<LoginForm />} />
+              <Route path="/profile" element={<Navigate to={'/login'}></Navigate>} />
+                <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/auth/verify/:token" element={<VerifyEmail />} />
+              </>
 
-          <Route path="/admin" element={<AdminLayout />}>
+          }
+
+          <Route path="/core/admin/login" element={<CoreLoginPage />} />
+          <Route path="/core/admin" element={<AdminLayout />}>
             {AdminRoutes.map(({ title, path, component: Component }) => (
               <Route key={title} path={path} element={<Component />} />
             ))}

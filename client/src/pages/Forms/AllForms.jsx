@@ -13,7 +13,12 @@ const AllForms = () => {
     queryKey: ["forms"],  // Update queryKey to match our API endpoint
     queryFn: async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`,{
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
         if (!response.ok) {
           throw new Error("Failed to fetch forms");
         }

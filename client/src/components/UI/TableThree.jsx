@@ -3,6 +3,7 @@ import Error from "../Error/Error";
 import Loader from "../Loader/Loader";
 
 const TableThree = () => {
+  const token = localStorage.getItem('token')
   const {
     isPending: loading,
     error,
@@ -10,9 +11,22 @@ const TableThree = () => {
   } = useQuery({
     queryKey: ["responses"],
     queryFn: () =>
-      fetch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/get-responses/65b3b26107c28e11c75973d9`,
-      ).then((res) => res.json()),
+      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/get-responses/65b3b26107c28e11c75973d9`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`, // Attach token to Authorization header
+        },
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          // Handle the response data here
+          console.log(data);
+        })
+        .catch((error) => {
+          // Handle errors
+          console.error("Error fetching data:", error);
+        }),
   });
   if (error) return <Error />;
   if (loading)

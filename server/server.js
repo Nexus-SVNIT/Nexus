@@ -13,10 +13,14 @@ const userRoutes = require('./routes/userRoutes.js')
 const achievementRoute = require('./routes/achievementRoute.js')
 const alumniRoute = require('./routes/alumniRoute.js')
 const panelRoutes=require('./routes/panelRoute.js')
+const authRoutes=require('./routes/authRoutes.js')
+const coreRoutes=require('./routes/coreRoutes.js')
+
 
 const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
+console.log(MONGO_URL, PORT)
 
 // console.log(MONGO_URL,PORT)
 app.use(bodyParser.json());
@@ -31,11 +35,13 @@ cloudinary.config({
     secure: true
 })
 
+app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
 app.use('/forms', formRoutes)
 app.use('/member', memberRoutes)
 app.use('/messages', messageRoutes)
 app.use('/api/user', userRoutes)
+app.use('/api/core', coreRoutes)
 app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
 app.use('/Panel',panelRoutes);

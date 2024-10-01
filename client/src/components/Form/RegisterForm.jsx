@@ -53,6 +53,7 @@ const RegisterForm = () => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
       },
       body: JSON.stringify(formResponse),
     })
@@ -64,7 +65,15 @@ const RegisterForm = () => {
           setFlag(true);
           setLink(res.WaLink);
         } else {
-          toast.error(res.message);
+          if(res.message === 'Token is not valid'){
+            toast.error('First login to register! Redirecting...');
+            setTimeout(()=>{
+              window.location.href = '/login'
+            }, 1500)
+          } else {
+            toast.error('Unexpected error! Try again later.');
+
+          }
         }
       })
       .catch((e) => toast.error("Something Went Wrong. Please Try Again"))

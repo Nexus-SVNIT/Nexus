@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 
 const CreateForm = () => {
+  const token = localStorage.getItem('core-token')
   const [formData, setFormData] = useState({
     name: "",
     desc: "",
@@ -60,6 +61,7 @@ const CreateForm = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify(formObject),
       });

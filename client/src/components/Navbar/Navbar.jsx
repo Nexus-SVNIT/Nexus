@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import { NavList } from "../../data";
-import { Link, useLocation } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { CgClose, CgMenuLeftAlt } from "react-icons/cg";
 import Logo from "../../data/images/nexus.png";
+import { Button } from "@mui/joy";
 const Navbar = () => {
   const { pathname } = useLocation();
   const [mobileMenu, setMobileMenu] = useState(false);
+  const token = localStorage.getItem('token');
   return (
     <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full">
       <div className="ml-4 flex items-center">
@@ -21,17 +23,35 @@ const Navbar = () => {
               <Link to={item.path} key={item.path}>
                 <li
                   key={item.path}
-                  className={`${
-                    item.path === pathname
-                      ? "text-[#3586ff] underline underline-offset-8"
-                      : "text-white"
-                  } transition-colors`}
+                  className={`${item.path === pathname
+                    ? "text-[#3586ff] underline underline-offset-8"
+                    : "text-white"
+                    } transition-colors`}
                 >
                   {item.label}
                 </li>
               </Link>
             );
+
           })}
+          {
+            token && <Link to={'profile'} key={'profile'}>
+              <li
+                key={'profile'}
+                className={`${'profile' === pathname
+                  ? "text-[#3586ff] underline underline-offset-8"
+                  : "text-white"
+                  } transition-colors`}
+              >
+                {'Profile'}
+              </li>
+            </Link>
+          }
+          {
+            token ?
+              <Button onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}>Logout</Button>
+              : <Button ><a href="/login">Login</a></Button>
+          }
         </ul>
 
         {mobileMenu && (
@@ -48,17 +68,38 @@ const Navbar = () => {
                 >
                   <li
                     key={item.path}
-                    className={`${
-                      item.path === pathname
-                        ? "text-[#3586ff] underline underline-offset-8"
-                        : "text-white"
-                    } transition-colors hover:text-[#3586ff]`}
+                    className={`${item.path === pathname
+                      ? "text-[#3586ff] underline underline-offset-8"
+                      : "text-white"
+                      } transition-colors hover:text-[#3586ff]`}
                   >
                     {item.label}
                   </li>
                 </Link>
               );
             })}
+            {
+              token && <Link
+                key={'profile'}
+                to={'profile'}
+                onClick={(e) => setMobileMenu(false)}
+              >
+                <li
+                  key={'profile'}
+                  className={`${'profile' === pathname
+                    ? "text-[#3586ff] underline underline-offset-8"
+                    : "text-white"
+                    } transition-colors hover:text-[#3586ff]`}
+                >
+                  {'Profile'}
+                </li>
+              </Link>
+            }
+            {
+              token ?
+                <Button onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}>Logout</Button>
+                : <Button ><a href="/login">Login</a></Button>
+            }
           </ul>
         )}
         <div

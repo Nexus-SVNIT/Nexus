@@ -3,8 +3,12 @@ import Settings from '../pages/Settings/Settings'
 import Tables from '../pages/Tables/Tables'
 import AdminPanel from '../pages/Dashboard/AdminPanel.jsx'
 import { About, Achievements, AchievementsForm, AlumniMenu, Connect, CreateForm, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
+import SignUpForm from '../components/SignUpForm/SignUpForm.jsx'
+import LogInForm from '../components/LogInForm/LogInForm.jsx'
+import UserProfile from '../components/Profile/Profile.jsx' 
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
+import LoginForm from '../components/LogInForm/LogInForm.jsx'
 
 export const DefaultRoutes = [
   {
@@ -56,6 +60,21 @@ export const DefaultRoutes = [
     path: 'connect/alumni',
     title: 'Alumni Menu',
     component: AlumniMenu
+  },
+  {
+    path: 'login',
+    title: 'Login',
+    component: LoginForm
+  },
+  {
+    path: 'signup',
+    title: 'Signup',
+    component: SignUpForm
+  },
+  {
+    path: 'profile',
+    title: 'Profile',
+    component: UserProfile
   },
   {
     path: '*',

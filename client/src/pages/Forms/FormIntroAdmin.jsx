@@ -1,15 +1,18 @@
 import { useState } from "react";
 
 function FormIntroAdmin(props) {
+  const token = localStorage.getItem('core-token')
+  
   const [publishState, setPublishState] = useState(props.form.publish);
   const [deadline, setDeadline] = useState(props.form.deadline);
 
   const handleStatusChange = async () => {
     try {
       const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/update-status/${props.form._id}`, {
-        method: "PATCH",
+        method: "PATCH",  
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ publish: !publishState }),
       });
@@ -35,6 +38,7 @@ function FormIntroAdmin(props) {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
         },
         body: JSON.stringify({ deadline }), // Send the updated deadline
       });
