@@ -5,6 +5,7 @@
   "version": "1.0.0",
   "main": "./server/server.js",
   "scripts": {
+    "start": "node server.js",
     "start-server": "node server/server.js",
     "dev": "nodemon server/server.js",
     "predeploy": "cd client && npm run predeploy",
