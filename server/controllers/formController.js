@@ -136,6 +136,8 @@ const createForm = async (req, res) => {
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
+    const admissionNumber = req.user?.admissionNumber;
+    const userId = req.user?.id;
 
     try {
         // Retrieve form details
@@ -151,43 +153,59 @@ const submitResponse = async (req, res) => {
             });
         }
 
-        // Check if the form contains an email field
-        const hasEmailField = formDetails.formFields.some(field =>
-            field.questionText.toLowerCase().includes('email')
-        );
+        try {
+            const form = await Forms.findOne({
+                'responses.admissionNumber': admissionNumber
+            });
 
-        let existingResponse = null;
-
-        // If the form has an email field, extract and validate the email
-        if (hasEmailField) {
-            const emailField = formDetails.formFields.find(field =>
-                field.questionText.toLowerCase().includes('email')
-            );
-
-            // Extract email from req.body
-            const email = req.body[emailField.questionText];
-            
-            if (!email) {
+            if (form) {
                 return res.status(400).json({
                     success: false,
-                    message: "Email field is required.",
-                });
-            }
+                    message: "Already Registered.",
+                }); // User has already submitted
+            } 
 
-            // Check if the email already exists in the form responses
-            existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
-            if (existingResponse) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Email already exists. Your response was not saved.",
-                });
-            }
+        } catch (error) {
+            handleError(res, err);
         }
+
+        // // Check if the form contains an email field
+        // const hasEmailField = formDetails.formFields.some(field =>
+        //     field.questionText.toLowerCase().includes('email')
+        // );
+
+        // let existingResponse = null;
+
+        // // If the form has an email field, extract and validate the email
+        // if (hasEmailField) {
+        //     const emailField = formDetails.formFields.find(field =>
+        //         field.questionText.toLowerCase().includes('email')
+        //     );
+
+        //     // Extract email from req.body
+        //     const email = req.body[emailField.questionText];
+
+        //     if (!email) {
+        //         return res.status(400).json({
+        //             success: false,
+        //             message: "Email field is required.",
+        //         });
+        //     }
+
+        //     // Check if the email already exists in the form responses
+        //     existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
+        //     if (existingResponse) {
+        //         return res.status(400).json({
+        //             success: false,
+        //             message: "Email already exists. Your response was not saved.",
+        //         });
+        //     }
+        // }
 
         // Update the form with the new response
         const form = await Forms.findByIdAndUpdate(
             id,
-            { $push: { responses: req.body } },
+            { $push: { responses: {...req.body, admissionNumber} } },
             { new: true }
         );
 

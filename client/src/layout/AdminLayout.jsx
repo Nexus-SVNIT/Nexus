@@ -5,6 +5,10 @@ import { Navigate, Outlet } from "react-router-dom";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  if(localStorage.getItem('core-token-exp') && localStorage.getItem('core-token-exp')<Date.now()){
+    localStorage.removeItem('core-token')
+    localStorage.removeItem('core-token-exp')
+  }
   const token = localStorage.getItem("core-token");
   if (!token) return <Navigate to={"/core/admin/login"} replace/>;
   return (

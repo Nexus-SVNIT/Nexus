@@ -20,6 +20,7 @@ const RegisterForm = () => {
       
     ],
     responseCount: 0,
+    toekn: localStorage.getItem('token')
   });
   const [formResponse, setFormResponse] = useState({
   });
@@ -69,8 +70,11 @@ const RegisterForm = () => {
             toast.error('First login to register! Redirecting...');
             setTimeout(()=>{
               window.location.href = '/login'
-            }, 1500)
-          } else {
+            }, 2000)
+          } else if(res.message === 'Already Registered.'){
+            toast.error('Already Registered!');
+            setFormResponse({})
+          } else  {
             toast.error('Unexpected error! Try again later.');
 
           }

@@ -176,7 +176,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                         <ul className="mb-5.5 mt-4 flex flex-col gap-2.5 pl-6">
                           <li>
                             <NavLink
-                              to="/admin/forms/all"
+                              to="/core/admin/forms/all"
                               className={({ isActive }) =>
                                 "text-bodydark2 group relative flex items-center gap-2.5 rounded-md px-4 font-medium duration-300 ease-in-out hover:text-white " +
                                 (isActive && "!text-white")
@@ -187,7 +187,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                           </li>
                           <li>
                             <NavLink
-                              to="/admin/forms/create"
+                              to="/core/admin/forms/create"
                               className={({ isActive }) =>
                                 "text-bodydark2 group relative flex items-center gap-2.5 rounded-md px-4 font-medium duration-300 ease-in-out hover:text-white " +
                                 (isActive && "!text-white")
@@ -208,7 +208,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Tables --> */}
               <li>
                 <NavLink
-                  to="/admin/tables"
+                  to="/core/admin/tables"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("tables") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -246,7 +246,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Profile --> */}
               <li>
                 <NavLink
-                  to="/admin/profile"
+                  to="/core/admin/profile"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("profile") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -276,7 +276,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Settings --> */}
               <li>
                 <NavLink
-                  to="/admin/settings"
+                  to="/core/admin/settings"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("settings") &&
                     "bg-graydark dark:bg-meta-4"
@@ -315,7 +315,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                 </NavLink>
               </li>
               <li>
-                <NavLink to="/admin/panel">panel</NavLink>
+                <NavLink to="/core/admin/panel">panel</NavLink>
               </li>
               
             </ul>

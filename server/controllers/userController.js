@@ -28,23 +28,23 @@ const createToken = (id) => {
 //       if (!foundUser) {
 //         return res.status(400).json({ message: 'User not found' });
 //       }
-  
+
 //       // Step 2: Compare the password
 //       const isMatch = await foundUser.comparePassword(password);
 //       if (!isMatch) {
 //         return res.status(400).json({ message: 'Invalid credentials' });
 //       }
-  
+
 //       // Step 3: Generate a JWT token
 //       const token = jwt.sign(
 //         { id: foundUser._id, admissionNumber: foundUser.admissionNumber },
 //         process.env.SECRET,  // Store your JWT secret securely
 //         { expiresIn: '1h' }
 //       );
-  
+
 //       // Step 4: Return the token to the frontend
 //       res.status(200).json({ message: 'Login successful', token });
-  
+
 //     } catch (error) {
 //       console.error(error);
 //       res.status(500).json({ message: 'Server error', error });
@@ -83,7 +83,7 @@ const loginUser = async (req, res) => {
     }
 };
 
-  
+
 
 
 // const signupUser = async (req, res) => {
@@ -97,7 +97,7 @@ const loginUser = async (req, res) => {
 //         }
 
 //         // Step 2: Hash the password
-        
+
 
 //         // Step 3: Create a new user
 //         const newUser = new user({
@@ -285,8 +285,33 @@ const updateUserProfile = async (req, res) => {
     }
 };
 
+const getAllUsers = async (req, res) => {
+    try {
+        const page = parseInt(req.query.page) || 1; // Current page
+        const limit = parseInt(req.query.limit) || 10; // Limit per page
+        const sortField = req.query.sortBy || 'fullName'; // Sort field
+        const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
+
+        const users = await user.find()
+            .sort({ [sortField]: sortOrder }) // Sorting by field and order
+            .skip((page - 1) * limit)
+            .limit(limit);
+
+        const totalUsers = await user.countDocuments();
+
+        res.status(200).json({
+            users,
+            totalUsers,
+            totalPages: Math.ceil(totalUsers / limit),
+            currentPage: page,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+}
+
 module.exports = {
     getUserProfile,
-    updateUserProfile,
+    updateUserProfile, getAllUsers,
     loginUser, signupUser, verifyEmail
 };

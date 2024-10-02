@@ -37,7 +37,8 @@ const Login = () => {
       
       // Store the token in a cookie that expires in 1 hour
       Cookies.set("token", token, { expires: 1 / 24 });
-      window.localStorage.setItem('core-token', token);
+      localStorage.setItem('core-token', token);
+      localStorage.setItem('core-token-exp', Date.now()+3600000);
   
       // Navigate to the admin page
       navigate("/core/admin");
@@ -50,11 +51,6 @@ const Login = () => {
     }
   };
 
-  useLayoutEffect(() => {
-    if (localStorage?.getItem("token")?.length) {
-      navigate("/admin", { replace: true });
-    }
-  });
   return (
     <div className="bg-boxdark-2 flex h-screen w-screen flex-col items-center justify-center gap-6">
       <img
