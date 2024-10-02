@@ -139,7 +139,7 @@ const signupUser = async (req, res) => {
 
     try {
         // Step 1: Check if the user already exists
-        const existingUser = await user.findOne({ personalEmail });
+        const existingUser = await user.findOne({ admissionNumber });
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
