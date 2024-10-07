@@ -31,11 +31,11 @@ const Footer = () => {
               className="mx-8 my-4 h-10 w-10 md:h-12 md:w-12 "
             />
             NEXUS <br />
-            Departmental Cell of Computer Science & Engineering{" "}
+            Departmental Cell of DoCSE and DoAI{" "}
           </h2>
 
           <p className="mt-8 font-mono text-xs md:mt-0 md:pl-6">
-            Empowering CSE students at SVNIT, Nexus is a community that
+            Empowering CSE & AI students at SVNIT, Nexus is a community that
             cultivates coding excellence, fosters diverse extracurricular
             interests, and champions holistic growth, shaping educational
             journeys with passion and purpose.

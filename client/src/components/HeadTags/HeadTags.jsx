@@ -11,7 +11,7 @@ const HeadTags = ({ title, description, imageLink }) => {
         key="description"
         content={
           description ??
-          "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
+          "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering and Artificial Intelligence at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
         }
       />
       <meta name="title" key="title" content={title ?? "Nexus NIT Surat"} />
@@ -28,7 +28,7 @@ const HeadTags = ({ title, description, imageLink }) => {
         key="og:description"
         content={
           description ??
-          "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
+          "Welcome to Nexus, the vibrant departmental cell of Computer Science and Engineering and Artificial Intelligence at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. Nexus serves as a dynamic hub for computer science enthusiasts, envisioning a community where students come together to thrive and excel. Our mission is to create an environment that goes beyond academic boundaries, fostering holistic growth and learning. As the official departmental cell, we aim to be the catalyst for innovation and excellence in the field of computer science at SVNIT. Join Nexus for academic excellence, collaboration, impactful events, and a supportive network that empowers students with knowledge, skills, and resources to succeed both academically and professionally."
         }
       />
       <meta

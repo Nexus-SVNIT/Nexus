@@ -54,7 +54,7 @@ const Connect = () => {
       <div className="mx-4 mt-10 flex w-fit items-center  gap-3 rounded-md bg-yellow-400/25 p-2 px-4">
         <FaInfoCircle size={42} className="h-auto text-yellow-500" />
         <p className="w-fit text-xs text-white/80 md:w-full md:text-base">
-          Enhance your CSE alumni journey! Join our vibrant community.
+          Enhance your CSE & AI alumni journey! Join our vibrant community.
           <Link
             to="/connect/alumni"
             className="mx-1 font-bold text-blue-500  underline underline-offset-4"

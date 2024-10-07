@@ -36,7 +36,7 @@ const About = () => {
             NEXUS NIT Surat
           </h3>
           <p className="w-[50%] text-center text-sm md:w-[75%] ">
-            Departmental Cell of Computer Science And Engineering Department{" "}
+            Departmental Cell of Computer Science And Engineering Department and Artificial Intelligence Department{" "}
           </p>
 
           <div className="my-4 flex gap-4 ">
@@ -89,7 +89,7 @@ const About = () => {
           <p className="flex items-center gap-4 text-xs md:w-[35vw] md:text-sm">
             <GoGoal className="h-44 w-44" />
             Building a Supportive Network: Establish a strong support system
-            within the CSE community, creating mentorship programs to bridge the
+            within the CSE & AI community, creating mentorship programs to bridge the
             gap between seniors and juniors.
           </p>
           <p className="flex items-center gap-4 text-xs md:w-[35vw] md:text-sm">

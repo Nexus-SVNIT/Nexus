@@ -23,7 +23,7 @@ const Home = () => {
               NEXUS
             </h1>
             <p className="w-[75%] text-center text-[1.25rem] sm:w-3/4 md:w-[28rem] md:text-[1.5rem] ">
-              A community for the students of Computer Science and Engineering
+              A community for the students of Computer Science and Engineering and Artificial Intelligence
               NIT Surat.
             </p>
             <p className="w-[80%] text-center text-[1rem] text-gray-400 sm:w-10/12 md:w-[24rem] ">

@@ -209,7 +209,7 @@ const Terminal = () => {
             >
               <div className="mb-0.5">
                 <p className="text-xs text-orange-500 md:text-base">
-                  SVNIT/CSE/Nexus/User:~${command.input}
+                  SVNIT/DoCSE \& DoAI/Nexus/User:~${command.input}
                 </p>
               </div>
               {/* <div className='mt-0.5'><p>{command.output}</p></div> */}
@@ -221,7 +221,7 @@ const Terminal = () => {
           <form onSubmit={handleTerminalSubmit}>
             <div className="flex px-4 py-2 font-semibold text-orange-500 ">
               <p className="text-xs text-orange-500 md:text-base">
-                SVNIT/CSE/Nexus/User:~$
+                SVNIT/DoCSE \& DoAI/Nexus/User:~$
               </p>
               <input
                 type="text"
