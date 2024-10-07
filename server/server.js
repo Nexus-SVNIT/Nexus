@@ -25,8 +25,7 @@ console.log(MONGO_URL, PORT)
 // console.log(MONGO_URL,PORT)
 app.use(bodyParser.json());
 app.use(cors({
-    origin:['https://www.nexus-svnit.tech/']
-}))
+    origin:["https://www.nexus-svnit.tech","https://www.nexus-svnit.tech/","https://www.nexus-svnit.vercel.app/"]}))
 app.use(express.json({ limit: '10mb' }))
 app.use(express.urlencoded({ extended: true }))
 app.get('/health-check', (req, res) => {
