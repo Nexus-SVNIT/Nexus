@@ -24,7 +24,7 @@ function SignUpForm() {
   };
 
   const validateForm = () => {
-    const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, password } = formData;
+    const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, password } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const instituteEmailPattern = /^u\d{2}(cs|ai)\d{3}@coed\.svnit\.ac\.in$/;
@@ -54,34 +54,6 @@ function SignUpForm() {
     return true;
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-
-  //   if (!validateForm()) return;
-
-  //   try {
-  //     const res = await fetch('http://localhost:8080/auth/signup', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       body: JSON.stringify(formData)
-  //     });
-
-  //     const result = await res.json();
-  //     if (res.ok) {
-  //       toast.success("Sign up successful! Redirecting to Login Page...");
-  //       setTimeout(() => {
-  //         window.location.href = '/login';  // Change this to your desired route
-  //       }, 2000);
-  //     } else {
-  //       toast.error(result.message || "Sign up failed");
-  //     }
-  //   } catch (error) {
-  //     toast.error("Error signing up");
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -107,11 +79,10 @@ function SignUpForm() {
         toast.error(result.message || 'Sign up failed', { id: toastId });
       }
     } catch (error) {
-      toast.remove()
+      toast.remove();
       toast.error('Error signing up');
     }
   };
-  
 
   return (
     <div className='bg-black-2 p-16'>
@@ -226,6 +197,7 @@ function SignUpForm() {
             </select>
           </div>
 
+          {/* Optional Fields */}
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="linkedInProfile">
               LinkedIn Profile
@@ -238,7 +210,6 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?([\w]+\.)?linkedin\.com\/.*$"
               value={formData.linkedInProfile}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -254,7 +225,6 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-z0-9_-]+\/?$"
               value={formData.githubProfile}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -270,7 +240,6 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?(www\.)?leetcode\.com\/[A-z0-9_-]+\/?$"
               value={formData.leetcodeProfile}
               onChange={handleChange}
-              required
             />
           </div>
 
@@ -289,30 +258,27 @@ function SignUpForm() {
             />
           </div>
 
-          <div className="mb-6">
+          <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="password">
               Password
             </label>
             <input
-              className="w-full p-2 bg-gray-2 text-black rounded"
+              className="w-full p-2 bg-gray-200 text-black rounded"
               type="password"
               id="password"
               name="password"
-              minLength="8"
               value={formData.password}
               onChange={handleChange}
               required
             />
           </div>
 
-          <div className="flex items-center justify-between">
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Sign Up
-            </button>
-          </div>
+          <button
+            className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
+            type="submit"
+          >
+            Sign Up
+          </button>
         </form>
       </div>
     </div>
