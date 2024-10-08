@@ -23,16 +23,8 @@ const MONGO_URL = process.env.MONGO_URL
 console.log(MONGO_URL, PORT)
 
 // console.log(MONGO_URL,PORT)
-const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app'];
-app.use(cors({
-    origin: (origin, callback) => {
-        if (!origin || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error('Not allowed by CORS'));
-        }
-    }
-}));
+// const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app', 'http://localhost:3001'];
+app.use(cors());
 
 app.use(bodyParser.json({ limit: '10mb' })); 
 app.use(bodyParser.urlencoded({ extended: true }));
