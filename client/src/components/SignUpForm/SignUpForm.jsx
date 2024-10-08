@@ -17,6 +17,9 @@ function SignUpForm() {
   });
 
   const handleChange = (e) => {
+    if(e.target.name === 'admissionNumber') {
+      e.target.value = e.target.value.toUpperCase();
+    }
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -124,9 +127,10 @@ function SignUpForm() {
               type="text"
               id="admissionNumber"
               name="admissionNumber"
-              pattern="U\d{2}(CS|AI)\d{3}"
+              pattern="(I|U)\d{2}(CS|AI)\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
+
               required
             />
           </div>
@@ -172,7 +176,7 @@ function SignUpForm() {
               type="email"
               id="instituteEmail"
               name="instituteEmail"
-              pattern="^u\d{2}(cs|ai)\d{3}@coed\.svnit\.ac\.in$"
+              pattern="^(u|i)\d{2}(cs|ai)\d{3}@(coed|aid)\.svnit\.ac\.in$"
               value={formData.instituteEmail}
               onChange={handleChange}
               required
