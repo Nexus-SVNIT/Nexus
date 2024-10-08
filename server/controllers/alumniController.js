@@ -4,6 +4,11 @@ const { log } = require('console');
 
 const cloudinary = require('cloudinary').v2;
 
+cloudinary.config({
+    cloud_name: 'dbhf7xh4q',
+    api_key: '887173712287675',
+    api_secret: 'T8bjOinQ4NWc7mphFRuVA9PDifY' 
+});
 
 const uploadImage = async (image) => {
 
