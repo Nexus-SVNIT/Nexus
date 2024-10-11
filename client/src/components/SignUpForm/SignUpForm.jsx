@@ -105,7 +105,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="fullName">
-              Full Name
+              Full Name*
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -114,13 +114,14 @@ function SignUpForm() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+              placeholder='Your Full Name'
               required
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="admissionNumber">
-              Admission Number
+              Admission Number*
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -130,14 +131,14 @@ function SignUpForm() {
               pattern="(I|U)\d{2}(CS|AI)\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
-
+              placeholder='IXXCSXXX or UXXAIXXX'
               required
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="mobileNumber">
-              Mobile Number
+              Mobile Number*
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -147,13 +148,14 @@ function SignUpForm() {
               pattern="^[0-9]{10}$"
               value={formData.mobileNumber}
               onChange={handleChange}
+              placeholder='10-digit Mobile Number'
               required
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="personalEmail">
-              Personal Email
+              Personal Email*
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -163,13 +165,14 @@ function SignUpForm() {
               pattern="^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$"
               value={formData.personalEmail}
               onChange={handleChange}
+              placeholder='Your Personal Email'
               required
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="instituteEmail">
-              Institute Email
+              Institute Email*
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -179,13 +182,14 @@ function SignUpForm() {
               pattern="^(u|i)\d{2}(cs|ai)\d{3}@(coed|aid)\.svnit\.ac\.in$"
               value={formData.instituteEmail}
               onChange={handleChange}
+              placeholder='(u|i)XX(cs|ai)XXX@(coed|aid).svnit.ac.in'
               required
             />
           </div>
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="branch">
-              Branch
+              Branch*
             </label>
             <select
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -214,6 +218,7 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?([\w]+\.)?linkedin\.com\/.*$"
               value={formData.linkedInProfile}
               onChange={handleChange}
+              placeholder='LinkedIn Profile URL'
             />
           </div>
 
@@ -229,6 +234,7 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-z0-9_-]+\/?$"
               value={formData.githubProfile}
               onChange={handleChange}
+              placeholder='GitHub Profile URL'
             />
           </div>
 
@@ -244,6 +250,7 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?(www\.)?leetcode\.com\/[A-z0-9_-]+\/?$"
               value={formData.leetcodeProfile}
               onChange={handleChange}
+              placeholder='LeetCode Profile URL'
             />
           </div>
 
@@ -259,6 +266,7 @@ function SignUpForm() {
               pattern="^(https?:\/\/)?(www\.)?codeforces\.com\/profile\/[A-z0-9_-]+\/?$"
               value={formData.codeforcesProfile}
               onChange={handleChange}
+              placeholder='Codeforces Profile URL'
             />
           </div>
 
@@ -273,6 +281,7 @@ function SignUpForm() {
               name="password"
               value={formData.password}
               onChange={handleChange}
+              placeholder='Password (min 8 characters)'
               required
             />
           </div>
