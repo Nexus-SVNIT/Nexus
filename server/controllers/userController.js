@@ -92,8 +92,8 @@ const signupUser = async (req, res) => {
             subject: 'Verify your Email',
             text: `Click the link to verify your email: ${verificationUrl}`,
             html: `
-            <div style=" background-color: black; color:white; font-size:20px; padding:20px;">
-            <div style="margin:10px; padding:10px; width:90%; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/></div>
+            <div style=" background-color: black; color:white; font-size:12px; padding:20px;">
+            <div style=" padding:10px; width:60%; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/></div>
             <div> Dear ${fullName},</div>
             <p style="">Thank you for registering on NEXUS portal. Please verify your email using following link.</p>
             <button style="background-color:skyblue; border-radius:15px; padding:10px;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
@@ -245,8 +245,8 @@ const forgotPassword = async (req, res) => {
             to: foundUser.instituteEmail,
             subject: 'Password Reset Request',
             html: `
-                <div style="background-color: black; color:white; font-size:20px; padding:20px;">
-                    <div style="margin:10px; padding:10px; width:90%; display:flex; justify-content: center;">
+                <div style="background-color: black; color:white; font-size:12px; padding:20px;">
+                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;">
                         <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
                     </div>
                     <div> Dear ${foundUser.fullName},</div>
@@ -340,8 +340,8 @@ const resetPassword = async (req, res) => {
             to: foundUser.instituteEmail,
             subject: 'Re-verify your Email',
             html: `
-                <div style="background-color: black; color:white; font-size:20px; padding:20px;">
-                    <div style="margin:10px; padding:10px; width:90%; display:flex; justify-content: center;">
+                <div style="background-color: black; color:white; font-size:12px; padding:20px;">
+                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;">
                         <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
                     </div>
                     <div> Dear ${foundUser.fullName},</div>
