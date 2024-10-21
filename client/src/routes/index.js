@@ -9,6 +9,7 @@ import UserProfile from '../components/Profile/Profile.jsx'
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
+import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
 
 export const DefaultRoutes = [
   {
@@ -75,6 +76,11 @@ export const DefaultRoutes = [
     path: 'profile',
     title: 'Profile',
     component: UserProfile
+  },
+  {
+    path: 'forgot-password',
+    title: 'Reset Password',
+    component: ForgotPasswordForm
   },
   {
     path: '*',

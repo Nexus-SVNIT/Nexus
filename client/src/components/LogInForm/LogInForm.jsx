@@ -93,6 +93,9 @@ const LoginForm = () => {
           <p className="text-center text-sm">
             Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up</a>
           </p>
+          <p className="text-center text-sm">
+            Don't remember the password? <a href="/forgot-password" className="text-blue-500 hover:underline">Reset Password</a>
+          </p>
         </form>
       </div>
     </div>

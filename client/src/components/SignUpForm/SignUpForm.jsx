@@ -105,7 +105,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="fullName">
-              Full Name*
+              Full Name <span className='text-red-500'>*</span>
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -121,7 +121,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="admissionNumber">
-              Admission Number*
+              Admission Number <span className='text-red-500'>*</span>
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -138,7 +138,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="mobileNumber">
-              Mobile Number*
+              Mobile Number <span className='text-red-500'>*</span>
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -155,7 +155,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="personalEmail">
-              Personal Email*
+              Personal Email <span className='text-red-500'>*</span>
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -172,7 +172,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="instituteEmail">
-              Institute Email*
+              Institute Email <span className='text-red-500'>*</span>
             </label>
             <input
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -189,7 +189,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="block text-white text-sm mb-2" htmlFor="branch">
-              Branch*
+              Branch <span className='text-red-500'>*</span>
             </label>
             <select
               className="w-full p-2 bg-gray-200 text-black rounded"
@@ -292,6 +292,8 @@ function SignUpForm() {
           >
             Sign Up
           </button>
+          <div className='mt-3 text-white'>Already registered? <a href='/login' className='text-blue-500 hover:underline'><i>Login here</i></a></div>
+          
         </form>
       </div>
     </div>

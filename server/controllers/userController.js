@@ -9,48 +9,13 @@ const createToken = (id) => {
     return jwt.sign({ id }, "jldsjlgjslgjl", { expiresIn: '3d' });
 }
 
-// const loginUser = async (req, res) => {
-//     const { email, password } = req.body;
-//     try {
-//         const currentUser = await user.login(email, password)
-//         const token = createToken(currentUser._id);
-//         res.status(200).json({ email, token });
-//     } catch (error) {
-//         res.status(400).json({ error: error.message });
-//     }
-// }
-
-// const loginUser = async (req, res) => {
-//     const { admissionNumber, password } = req.body;
-//     try {
-//       // Step 1: Find user by admission number
-//       const foundUser = await user.findOne({ admissionNumber });
-//       if (!foundUser) {
-//         return res.status(400).json({ message: 'User not found' });
-//       }
-
-//       // Step 2: Compare the password
-//       const isMatch = await foundUser.comparePassword(password);
-//       if (!isMatch) {
-//         return res.status(400).json({ message: 'Invalid credentials' });
-//       }
-
-//       // Step 3: Generate a JWT token
-//       const token = jwt.sign(
-//         { id: foundUser._id, admissionNumber: foundUser.admissionNumber },
-//         process.env.SECRET,  // Store your JWT secret securely
-//         { expiresIn: '1h' }
-//       );
-
-//       // Step 4: Return the token to the frontend
-//       res.status(200).json({ message: 'Login successful', token });
-
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).json({ message: 'Server error', error });
-//     }
-//   };
-
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: 'nexus@coed.svnit.ac.in',
+        pass: 'xzdy vuhr zdss jvpk'
+    }
+});
 
 const loginUser = async (req, res) => {
     const { admissionNumber, password } = req.body;
@@ -82,56 +47,6 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-
-
-
-
-// const signupUser = async (req, res) => {
-//     const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, password } = req.body;
-
-//     try {
-//         // Step 1: Check if the user already exists
-//         const existingUser = await user.findOne({ personalEmail });
-//         if (existingUser) {
-//             return res.status(400).json({ message: 'User already exists' });
-//         }
-
-//         // Step 2: Hash the password
-
-
-//         // Step 3: Create a new user
-//         const newUser = new user({
-//             fullName,
-//             admissionNumber,
-//             mobileNumber,
-//             personalEmail,
-//             instituteEmail,
-//             branch,
-//             linkedInProfile,
-//             githubProfile,
-//             leetcodeProfile,
-//             codeforcesProfile,
-//             password
-//         });
-
-//         // Step 4: Save the user to the database
-//         await newUser.save();
-
-//         // Step 5: Generate a JWT token
-//         const token = jwt.sign(
-//             { id: newUser._id, admissionNumber: newUser.admissionNumber },
-//             process.env.SECRET, // Ensure this is securely stored
-//             { expiresIn: '1h' }
-//         );
-
-//         // Step 6: Return success response
-//         res.status(201).json({ message: 'User registered successfully', token });
-
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).json({ message: 'Server error', error });
-//     }
-// }
 
 
 const signupUser = async (req, res) => {
@@ -167,13 +82,7 @@ const signupUser = async (req, res) => {
         await newUser.save();
 
         // Step 5: Send verification email
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: 'nexus@coed.svnit.ac.in',
-                pass: 'xzdy vuhr zdss jvpk'
-            }
-        });
+
 
         const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
 
@@ -222,6 +131,7 @@ const verifyEmail = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
 
 const getUserProfile = async (req, res) => {
     try {
@@ -310,8 +220,154 @@ const getAllUsers = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res) => {
+    const { admissionNumber } = req.body;
+
+    try {
+        const foundUser = await user.findOne({ admissionNumber });
+        if (!foundUser) {
+            return res.status(400).json({ message: 'User not found' });
+        }
+
+        // Step 1: Generate reset token
+        const resetToken = crypto.randomBytes(32).toString('hex');
+        const resetTokenExpire = Date.now() + 3600000; // Token expires in 1 hour
+
+        foundUser.resetPasswordToken = resetToken;
+        foundUser.resetPasswordExpires = resetTokenExpire;
+
+        await foundUser.save();
+
+        // Step 2: Send reset email
+        const resetUrl = `${req.headers.referer}auth/reset-password/${resetToken}`;
+        const mailOptions = {
+            from: 'nexus@coed.svnit.ac.in',
+            to: foundUser.instituteEmail,
+            subject: 'Password Reset Request',
+            html: `
+                <div style="background-color: black; color:white; font-size:20px; padding:20px;">
+                    <div style="margin:10px; padding:10px; width:90%; display:flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                    </div>
+                    <div> Dear ${foundUser.fullName},</div>
+                    <p>You requested a password reset. Click the link below to reset your password:</p>
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px;">
+                        <a href="${resetUrl}" style="color:black">Reset Password</a>
+                    </button>
+                    <p>If you did not request this, please ignore this email.</p>
+                    <p> Thanks,<br>Team NEXUS</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Password reset email sent' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+
+const verifyPasswordResetEmail = async (req, res) => {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+  
+    try {
+      // Step 1: Find user by token and check if token is still valid
+      const foundUser = await user.findOne({
+        resetPasswordToken: token,
+        resetPasswordExpires: { $gt: Date.now() }  // Ensure token hasn't expired
+      });
+      console.log(foundUser)
+      if (!foundUser) {
+        return res.status(400).json({ message: 'Invalid or expired verification token' });
+      }
+  
+      // Step 2: Verify the email
+      foundUser.emailVerified = true;
+      foundUser.password = newPassword;
+      foundUser.resetPasswordToken = undefined;
+      foundUser.resetPasswordExpires = undefined;
+  
+      await foundUser.save();
+  
+      res.status(200).json({ message: 'Password Reset Successfully' });
+  
+    } catch (error) {
+      console.error('Error reseting password:', error);
+      res.status(500).json({ message: 'Server error', error });
+    }
+  };
+
+const resetPassword = async (req, res) => {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    try {
+        // Step 1: Find user by reset token and check if it's expired
+        const foundUser = await user.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() } // Check if token is not expired
+        });
+
+        if (!foundUser) {
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+
+        // Step 2: Hash the new password and save it
+        const hashedPassword = await bcrypt.hash(password, 10);
+        foundUser.password = hashedPassword;
+
+        // Step 3: Invalidate the reset token and reset expiration time
+        foundUser.resetPasswordToken = undefined;
+        foundUser.resetPasswordExpires = undefined;
+
+        // Step 4: Mark the institute email as unverified
+        foundUser.emailVerified = false;
+
+        await foundUser.save();
+
+        // Step 5: Send re-verification email
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        foundUser.verificationToken = verificationToken;
+
+        const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
+        const mailOptions = {
+            from: 'nexus@coed.svnit.ac.in',
+            to: foundUser.instituteEmail,
+            subject: 'Re-verify your Email',
+            html: `
+                <div style="background-color: black; color:white; font-size:20px; padding:20px;">
+                    <div style="margin:10px; padding:10px; width:90%; display:flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                    </div>
+                    <div> Dear ${foundUser.fullName},</div>
+                    <p>Your password has been successfully reset. Please verify your email again using the link below:</p>
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px;">
+                        <a href="${verificationUrl}" style="color:black">Verify Your Email</a>
+                    </button>
+                    <p> Thanks,<br>Team NEXUS</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(200).json({ message: 'Password reset successfully. Verification email sent.' });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
 module.exports = {
     getUserProfile,
     updateUserProfile, getAllUsers,
-    loginUser, signupUser, verifyEmail
+    loginUser, signupUser, verifyEmail,
+    forgotPassword, verifyPasswordResetEmail,
+    resetPassword,
 };

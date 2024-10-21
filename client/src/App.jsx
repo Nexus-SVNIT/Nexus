@@ -11,6 +11,7 @@ import SignUpForm from "./components/SignUpForm/SignUpForm";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
 import Profile from "./components/Profile/Profile";
 import CoreLoginPage from "./components/Login/CoreLoginPage";
+import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEmail";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -27,12 +28,14 @@ function App() {
                 <Route path="/login" element={<Navigate to={'/'}></Navigate>} />
                 <Route path="/signup" element={<Navigate to={'/'}></Navigate>} />
                 <Route path="/auth/verify/:token" element={<Navigate to={'/'}></Navigate>} />
+                <Route path="/auth/reset-password/:token" element={<PasswordResetEmail />} />
               </> :
               <>
                 <Route path="/login" element={<LoginForm />} />
               <Route path="/profile" element={<Navigate to={'/login'}></Navigate>} />
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />
+                <Route path="/auth/reset-password/:token" element={<PasswordResetEmail />} />
               </>
 
           }
