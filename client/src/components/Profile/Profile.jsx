@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // For navigation
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -17,18 +18,18 @@ const ProfilePage = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate(); // To handle navigation
 
   useEffect(() => {
-    // Fetch user data from the backend
     const fetchProfile = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`, {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}` // Attach token in Authorization header
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
           }
         });
-        setProfile(response.data)
-        setLoading(false)
+        setProfile(response.data);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching profile:', error.response?.data?.message || error.message);
       }
@@ -46,8 +47,8 @@ const ProfilePage = () => {
     try {
       const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/profile`, profile, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,  // Attach token in Authorization header
-          'Content-Type': 'application/json'  // Set the content type
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json'
         }
       });
       console.log('Profile updated successfully:', response.data);
@@ -59,7 +60,11 @@ const ProfilePage = () => {
   if (loading) {
     return <div>Loading...</div>;
   }
-  console.log(profile)
+
+  const handleForgotPassword = () => {
+    navigate('/forgot-password'); // Redirect to Forgot Password page
+  };
+
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4 bg-zinc-900 shadow-lg rounded-lg mb-36">
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">Profile</h2>
@@ -211,6 +216,13 @@ const ProfilePage = () => {
               Edit Profile
             </button>
           )}
+          <button
+            type="button"
+            onClick={handleForgotPassword}
+            className="bg-red-500 text-white px-4 py-2 rounded-md"
+          >
+            Forgot Password
+          </button>
         </div>
       </form>
     </div>

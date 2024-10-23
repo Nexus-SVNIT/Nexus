@@ -30,7 +30,7 @@ const AlumniDetailsSchema = new mongoose.Schema({
   },
   isVerified: {
     type: Boolean,
-    default: false
+    default: true
   }
 }, { timestamps: true })
 

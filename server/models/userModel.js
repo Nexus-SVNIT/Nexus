@@ -14,7 +14,9 @@ const userSchema = new mongoose.Schema({
     codeforcesProfile: String,
     password: String,
     emailVerified: { type: Boolean, default: false },  // New field
-    verificationToken: String  // Token for email verification
+    verificationToken: String,  // Token for email verification
+    resetPasswordToken: String,  // Token for password reset
+    resetPasswordExpires: Date,  // Token
 });
 
 

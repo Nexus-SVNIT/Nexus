@@ -23,10 +23,11 @@ const MONGO_URL = process.env.MONGO_URL
 
 
 // console.log(MONGO_URL,PORT)
-app.use(bodyParser.json());
-app.use(cors())
-app.use(express.json({ limit: '10mb' }))
-app.use(express.urlencoded({ extended: true }))
+// const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app', 'http://localhost:3001'];
+app.use(cors());
+
+app.use(bodyParser.json({ limit: '10mb' })); 
+app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/health-check', (req, res) => {
     return res.send('EveryThing is Fine.')
 })

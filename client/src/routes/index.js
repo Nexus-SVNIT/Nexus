@@ -9,9 +9,13 @@ import UserProfile from '../components/Profile/Profile.jsx'
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
+<<<<<<< HEAD
 import ShowProject from '../components/Project/showProject.jsx'
 import { Component } from 'react'
 import AddProject from '../components/Project/AddProject.jsx'
+=======
+import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
+>>>>>>> 706f41fb89433f94caa427020bb50aaf0d775c40
 
 export const DefaultRoutes = [
   {
@@ -80,9 +84,16 @@ export const DefaultRoutes = [
     component: UserProfile
   },
   {
+
     path: 'projects',
     title: 'projects',
     component: ShowProject
+  },
+  {
+    path: 'forgot-password',
+    title: 'Reset Password',
+    component: ForgotPasswordForm
+
   },
   {
     path: '*',

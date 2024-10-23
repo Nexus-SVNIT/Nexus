@@ -68,7 +68,7 @@ const LoginForm = () => {
               className="text-black-2 mt-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900"
               placeholder="Enter your admission number"
               value={admissionNumber}
-              onChange={(e) => setAdmissionNumber(e.target.value)}
+              onChange={(e) => setAdmissionNumber(e.target.value.toUpperCase())}
               required
             />
           </div>
@@ -92,6 +92,9 @@ const LoginForm = () => {
           </button>
           <p className="text-center text-sm">
             Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign up</a>
+          </p>
+          <p className="text-center text-sm">
+            Don't remember the password? <a href="/forgot-password" className="text-blue-500 hover:underline">Reset Password</a>
           </p>
         </form>
       </div>
