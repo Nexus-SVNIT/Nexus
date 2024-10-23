@@ -11,6 +11,7 @@ import SignUpForm from "./components/SignUpForm/SignUpForm";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
 import Profile from "./components/Profile/Profile";
 import CoreLoginPage from "./components/Login/CoreLoginPage";
+import ShowProject from "./components/Project/showProject";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ function App() {
               </> :
               <>
                 <Route path="/login" element={<LoginForm />} />
+                <Route path="/projects" element={<ShowProject/>}/>
               <Route path="/profile" element={<Navigate to={'/login'}></Navigate>} />
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />

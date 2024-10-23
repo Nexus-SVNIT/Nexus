@@ -9,6 +9,9 @@ import UserProfile from '../components/Profile/Profile.jsx'
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
+import ShowProject from '../components/Project/showProject.jsx'
+import { Component } from 'react'
+import AddProject from '../components/Project/AddProject.jsx'
 
 export const DefaultRoutes = [
   {
@@ -77,6 +80,11 @@ export const DefaultRoutes = [
     component: UserProfile
   },
   {
+    path: 'projects',
+    title: 'projects',
+    component: ShowProject
+  },
+  {
     path: '*',
     title: 'Not Found',
     component: NotFound
@@ -93,7 +101,7 @@ export const AdminRoutes = [
   {
     path: 'profile',
     title: 'Profile',
-    component: Profile
+    component: AddProject
   },
   {
     path: 'forms/all',
@@ -111,9 +119,12 @@ export const AdminRoutes = [
     component: Tables
   },
 
+ 
+
+
   {
     path: 'settings',
-    title: 'Settings',
+    title: 'Create Panel',
     component: CreatePanelForm
   },
 
