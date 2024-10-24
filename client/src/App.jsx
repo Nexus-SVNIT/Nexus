@@ -12,10 +12,15 @@ import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
 import Profile from "./components/Profile/Profile";
 import CoreLoginPage from "./components/Login/CoreLoginPage";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEmail";
 =======
 import ShowProject from "./components/Project/showProject";
 >>>>>>> d1539c9267af701be5fe5d3de46e0a90bd511987
+=======
+import ShowProject from "./components/Project/showProject";
+import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEmail";
+>>>>>>> 4c6ff593d9b5945f9c58ed2f3c31153c3b19a88f
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
