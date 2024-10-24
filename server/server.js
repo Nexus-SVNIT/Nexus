@@ -15,12 +15,12 @@ const alumniRoute = require('./routes/alumniRoute.js')
 const panelRoutes=require('./routes/panelRoute.js')
 const authRoutes=require('./routes/authRoutes.js')
 const coreRoutes=require('./routes/coreRoutes.js')
-
+const projectRoutes=require('./routes/projectRoute.js')
 
 const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
-console.log(MONGO_URL, PORT)
+
 
 // console.log(MONGO_URL,PORT)
 // const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app', 'http://localhost:3001'];
@@ -46,6 +46,7 @@ app.use('/api/core', coreRoutes)
 app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
 app.use('/Panel',panelRoutes);
+app.use('/projects',projectRoutes);
 
 mongoose
     .connect(MONGO_URL)

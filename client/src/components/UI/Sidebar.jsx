@@ -314,9 +314,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   Settings
                 </NavLink>
               </li>
-              <li>
-                <NavLink to="/core/admin/panel">panel</NavLink>
-              </li>
+              
+            
               
             </ul>
           </div>
