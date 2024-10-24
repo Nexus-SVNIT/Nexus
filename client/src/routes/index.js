@@ -9,20 +9,10 @@ import UserProfile from '../components/Profile/Profile.jsx'
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
-<<<<<<< HEAD
-<<<<<<< HEAD
-import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
-=======
-=======
->>>>>>> 4c6ff593d9b5945f9c58ed2f3c31153c3b19a88f
 import ShowProject from '../components/Project/showProject.jsx'
 
 import AddProject from '../components/Project/AddProject.jsx'
-<<<<<<< HEAD
->>>>>>> d1539c9267af701be5fe5d3de46e0a90bd511987
-=======
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
->>>>>>> 4c6ff593d9b5945f9c58ed2f3c31153c3b19a88f
 
 export const DefaultRoutes = [
   {
@@ -91,17 +81,6 @@ export const DefaultRoutes = [
     component: UserProfile
   },
   {
-<<<<<<< HEAD
-<<<<<<< HEAD
-    path: 'forgot-password',
-    title: 'Reset Password',
-    component: ForgotPasswordForm
-=======
-    path: 'projects',
-    title: 'projects',
-    component: ShowProject
->>>>>>> d1539c9267af701be5fe5d3de46e0a90bd511987
-=======
 
     path: 'projects',
     title: 'projects',
@@ -112,7 +91,6 @@ export const DefaultRoutes = [
     title: 'Reset Password',
     component: ForgotPasswordForm
 
->>>>>>> 4c6ff593d9b5945f9c58ed2f3c31153c3b19a88f
   },
   {
     path: '*',

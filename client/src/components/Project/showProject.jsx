@@ -1,4 +1,3 @@
-// src/components/Project/ShowProject.jsx
 import React, { useState, useEffect } from 'react';
 
 const ShowProject = () => {
@@ -27,8 +26,26 @@ const ShowProject = () => {
         fetchProjects();
     }, []); // Empty dependency array to run only on component mount
 
+    // Skeleton for loading state
     if (isLoading) {
-        return <div className="text-white text-lg">Loading...</div>;
+        return (
+            <div className="bg-[#111111] min-h-screen py-6 px-4">
+                <div className="bg-gray-900 text-white p-6 rounded-md shadow-md max-w-4xl mx-auto">
+                    <h1 className="text-3xl font-bold mb-4 text-center">Ongoing Projects</h1>
+                    <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3">
+                        {[...Array(6)].map((_, index) => (
+                            <div key={index} className="bg-gray-800 border border-blue-500 p-5 rounded-lg shadow-lg animate-pulse">
+                                <div className="h-6 bg-gray-700 mb-4 rounded"></div>
+                                <div className="h-4 bg-gray-600 mb-2 rounded"></div>
+                                <div className="h-4 bg-gray-600 mb-2 rounded"></div>
+                                <div className="h-4 bg-gray-600 mb-2 rounded"></div>
+                                <div className="h-4 bg-gray-600 rounded"></div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+        );
     }
 
     if (isError) {
