@@ -45,25 +45,37 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/profile`, profile, {
+      const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`, profile, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'application/json'
         }
       });
-      console.log('Profile updated successfully:', response.data);
+      setIsEditing(false);
     } catch (error) {
       console.error('Error updating profile:', error.response?.data?.message || error.message);
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   const handleForgotPassword = () => {
     navigate('/forgot-password'); // Redirect to Forgot Password page
   };
+
+  const SkeletonLoader = () => (
+    <div className="space-y-4">
+      {Array(9).fill().map((_, index) => (
+        <div key={index} className="h-10 bg-gray-300 animate-pulse rounded-md"></div>
+      ))}
+    </div>
+  );
+
+  if (loading) {
+    return (
+      <div className="max-w-2xl mx-auto mt-10 p-4 bg-zinc-900 shadow-lg rounded-lg mb-36">
+        <SkeletonLoader />
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4 bg-zinc-900 shadow-lg rounded-lg mb-36">
@@ -209,9 +221,8 @@ const ProfilePage = () => {
           ) : (
             <button
               type="button"
-              disabled={true}
               onClick={() => setIsEditing(true)}
-              className="bg-blue-500 text-white px-4 py-2 rounded-md cursor-not-allowed"
+              className="bg-blue-500 text-white px-4 py-2 rounded-md"
             >
               Edit Profile
             </button>
