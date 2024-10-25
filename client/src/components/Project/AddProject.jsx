@@ -4,19 +4,31 @@ const AddProject = () => {
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [githubLink, setGithubLink] = useState('');
-    const [teamMembers, setTeamMembers] = useState([{ name: '', role: '' }]);
+    const [teamMembers, setTeamMembers] = useState([{ admissionNumber: '' }]);
+    const [mentors, setMentors] = useState([{ admissionNumber: '' }]); // For mentors
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
 
     const handleAddMember = () => {
-        setTeamMembers([...teamMembers, { name: '', role: '' }]);
+        setTeamMembers([...teamMembers, { admissionNumber: '' }]);
     };
 
-    const handleMemberChange = (index, field, value) => {
+    const handleAddMentor = () => {
+        setMentors([...mentors, { admissionNumber: '' }]);
+    };
+
+    const handleMemberChange = (index, value) => {
         const updatedMembers = teamMembers.map((member, i) =>
-            i === index ? { ...member, [field]: value } : member
+            i === index ? { ...member, admissionNumber: value } : member
         );
         setTeamMembers(updatedMembers);
+    };
+
+    const handleMentorChange = (index, value) => {
+        const updatedMentors = mentors.map((mentor, i) =>
+            i === index ? { ...mentor, admissionNumber: value } : mentor
+        );
+        setMentors(updatedMentors);
     };
 
     const handleSubmit = async (e) => {
@@ -29,6 +41,7 @@ const AddProject = () => {
             description,
             githubLink,
             teamMembers,
+            mentors,
         };
 
         try {
@@ -48,7 +61,8 @@ const AddProject = () => {
             setTitle('');
             setDescription('');
             setGithubLink('');
-            setTeamMembers([{ name: '', role: '' }]);
+            setTeamMembers([{ admissionNumber: '' }]);
+            setMentors([{ admissionNumber: '' }]);
             alert('Project added successfully!');
         } catch (err) {
             setError(err.message);
@@ -91,26 +105,17 @@ const AddProject = () => {
                         required
                     />
                 </div>
+                
                 <h3 className="text-xl font-semibold mt-6 mb-4">Team Members</h3>
                 {teamMembers.map((member, index) => (
-                    <div key={index} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div key={index} className="grid grid-cols-1 gap-4">
                         <div>
-                            <label className="block text-gray-700 font-medium mb-2">Name:</label>
+                            <label className="block text-gray-700 font-medium mb-2">Admission Number:</label>
                             <input
                                 type="text"
                                 className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                value={member.name}
-                                onChange={(e) => handleMemberChange(index, 'name', e.target.value)}
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label className="block text-gray-700 font-medium mb-2">Role:</label>
-                            <input
-                                type="text"
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
-                                value={member.role}
-                                onChange={(e) => handleMemberChange(index, 'role', e.target.value)}
+                                value={member.admissionNumber}
+                                onChange={(e) => handleMemberChange(index, e.target.value)}
                                 required
                             />
                         </div>
@@ -123,6 +128,30 @@ const AddProject = () => {
                 >
                     Add Team Member
                 </button>
+
+                <h3 className="text-xl font-semibold mt-6 mb-4">Mentors</h3>
+                {mentors.map((mentor, index) => (
+                    <div key={index} className="grid grid-cols-1 gap-4">
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-2">Admission Number:</label>
+                            <input
+                                type="text"
+                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                value={mentor.admissionNumber}
+                                onChange={(e) => handleMentorChange(index, e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                ))}
+                <button
+                    type="button"
+                    className="mt-4 text-blue-500 hover:underline"
+                    onClick={handleAddMentor}
+                >
+                    Add Mentor
+                </button>
+
                 <div>
                     <button
                         type="submit"

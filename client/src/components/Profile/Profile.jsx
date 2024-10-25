@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // For navigation
+import { useNavigate } from 'react-router-dom';
+import { Toaster, toast } from 'react-hot-toast'; // Import react-hot-toast
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -17,8 +18,8 @@ const ProfilePage = () => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState(null);
-  const navigate = useNavigate(); // To handle navigation
+  const [buttonLoading, setButtonLoading] = useState(false); // New state for button loading
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -44,6 +45,7 @@ const ProfilePage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setButtonLoading(true); // Show loading state in the button
     try {
       const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`, profile, {
         headers: {
@@ -52,8 +54,12 @@ const ProfilePage = () => {
         }
       });
       setIsEditing(false);
+      toast.success('Profile updated successfully!');
     } catch (error) {
       console.error('Error updating profile:', error.response?.data?.message || error.message);
+      toast.error('Failed to update profile. Please try again.');
+    } finally {
+      setButtonLoading(false); // Hide loading state in the button
     }
   };
 
@@ -79,8 +85,8 @@ const ProfilePage = () => {
 
   return (
     <div className="max-w-2xl mx-auto mt-10 p-4 bg-zinc-900 shadow-lg rounded-lg mb-36">
+      <Toaster position="top-right" reverseOrder={false} /> {/* Toast notification container */}
       <h2 className="text-2xl font-semibold text-gray-800 mb-6">Profile</h2>
-      {message && <p className="text-green-500">{message}</p>}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
@@ -207,8 +213,9 @@ const ProfilePage = () => {
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-4 py-2 rounded-md"
+                disabled={buttonLoading} // Disable button while loading
               >
-                Save
+                {buttonLoading ? 'Saving...' : 'Save'} {/* Show loading text */}
               </button>
               <button
                 type="button"
