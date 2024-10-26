@@ -5,15 +5,11 @@ const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
 const bcrypt = require('bcrypt')
 
-const createToken = (id) => {
-    return jwt.sign({ id }, "jldsjlgjslgjl", { expiresIn: '3d' });
-}
-
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
-        user: 'nexus@coed.svnit.ac.in',
-        pass: 'xzdy vuhr zdss jvpk'
+        user: process.env.EMAIL_ID,
+        pass: process.env.EMAIL_PASSWORD
     }
 });
 
@@ -87,7 +83,7 @@ const signupUser = async (req, res) => {
         const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
 
         const mailOptions = {
-            from: 'nexus@coed.svnit.ac.in',
+            from: process.env.EMAIL_ID,
             to: instituteEmail,
             subject: 'Verify your Email',
             text: `Click the link to verify your email: ${verificationUrl}`,
@@ -107,7 +103,6 @@ const signupUser = async (req, res) => {
         res.status(201).json({ message: 'User registered. Verification email sent!' });
 
     } catch (error) {
-        console.log(error);
         res.status(500).json({ message: 'Server error', error });
     }
 };
@@ -127,7 +122,6 @@ const verifyEmail = async (req, res) => {
 
         res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
-        console.log(error);
         res.status(500).json({ message: 'Server error', error });
     }
 };
@@ -241,7 +235,7 @@ const forgotPassword = async (req, res) => {
         // Step 2: Send reset email
         const resetUrl = `${req.headers.referer}auth/reset-password/${resetToken}`;
         const mailOptions = {
-            from: 'nexus@coed.svnit.ac.in',
+            from: process.env.EMAIL_ID,
             to: foundUser.instituteEmail,
             subject: 'Password Reset Request',
             html: `
@@ -281,7 +275,6 @@ const verifyPasswordResetEmail = async (req, res) => {
         resetPasswordToken: token,
         resetPasswordExpires: { $gt: Date.now() }  // Ensure token hasn't expired
       });
-      console.log(foundUser)
       if (!foundUser) {
         return res.status(400).json({ message: 'Invalid or expired verification token' });
       }
@@ -336,7 +329,7 @@ const resetPassword = async (req, res) => {
 
         const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
         const mailOptions = {
-            from: 'nexus@coed.svnit.ac.in',
+            from: process.env.EMAIL_ID,
             to: foundUser.instituteEmail,
             subject: 'Re-verify your Email',
             html: `

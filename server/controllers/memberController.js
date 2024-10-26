@@ -29,7 +29,6 @@ const getAllMember = wrapAsync(async (req, res, next) => {
   else if(year == "2023"){
     getAllMemberDetails = await member.find().sort({ _id: 1 });
   }
-  // console.log(getAllMemberDetails)
   res.status(200).json(getAllMemberDetails);
 });
 
