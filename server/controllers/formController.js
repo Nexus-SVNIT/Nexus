@@ -238,9 +238,22 @@ const submitResponse = async (req, res) => {
 const getResponses = async (req, res) => {
     const id = req.params.id;
     try {
-        const responses = await Forms.findById(id).select({ responses: true, _id: false });
-        if (!responses) throw new Error("Event not found");
-        res.status(200).json(responses);
+        // Fetch responses along with user details by admissionNumber
+        const form = await Forms.findById(id).select({ responses: true, _id: false });
+        
+        if (!form) throw new Error("Form not found");
+
+        const responseWithUserDetails = await Promise.all(
+            form.responses.map(async (response) => {
+                const user = await User.findOne({ admissionNumber: response.admissionNumber }).lean();
+                return {
+                    ...response,
+                    user: user || null,
+                };
+            })
+        );
+
+        res.status(200).json({ responses: responseWithUserDetails });
     } catch (err) {
         handleError(res, err);
     }

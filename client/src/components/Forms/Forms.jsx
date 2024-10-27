@@ -12,7 +12,7 @@ const Forms = () => {
     queryFn: async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`
         );
         if (!response.ok) {
           throw new Error("Failed to fetch forms");

@@ -122,8 +122,8 @@ export const AdminRoutes = [
     component: CreateForm
   },
   {
-    path: 'tables',
-    title: 'Tables',
+    path: 'responses',
+    title: 'Responses',
     component: Tables
   },
 

@@ -59,7 +59,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
       {/* <!-- SIDEBAR HEADER --> */}
       <div className="py-5.5 lg:py-6.5 flex items-center justify-between gap-2 px-6">
         <NavLink to="/">
-          <img src={"/assets/nexusText.png"} alt="Logo" className="w-1/2" />
+          <img src={"https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"} alt="Logo" className="w-1/2" />
         </NavLink>
 
         <button
@@ -208,7 +208,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Tables --> */}
               <li>
                 <NavLink
-                  to="/core/admin/tables"
+                  to="/core/admin/responses"
                   className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
                     pathname.includes("tables") && "bg-graydark dark:bg-meta-4"
                   }`}
@@ -238,7 +238,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       </clipPath>
                     </defs>
                   </svg>
-                  Tables
+                  Responses
                 </NavLink>
               </li>
               {/* <!-- Menu Item Tables --> */}

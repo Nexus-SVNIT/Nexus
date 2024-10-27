@@ -5,27 +5,32 @@ import Loader from "../../components/Loader/Loader";
 import FormIntroAdmin from "./FormIntroAdmin";
 
 const AllForms = () => {
+  const token = localStorage.getItem('core-token')
   const {
-    isLoading: loading,  // Correctly use isLoading instead of isPending
+    isLoading: loading, // Correctly use isLoading instead of isPending
     error,
-    data = [],  // Default data to an empty array if undefined
+    data = [], // Default data to an empty array if undefined
   } = useQuery({
-    queryKey: ["forms"],  // Update queryKey to match our API endpoint
+    queryKey: ["forms"], // Update queryKey to match our API endpoint
     queryFn: async () => {
       try {
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`,{
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/all`,
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`, // Attach token to Authorization header
+            },
           },
-        });
+        );
         if (!response.ok) {
           throw new Error("Failed to fetch forms");
         }
-        return response.json();  // Directly return the JSON data
+        return response.json(); // Directly return the JSON data
       } catch (error) {
         console.error(error);
-        throw error;  // Rethrow error to be caught by react-query
+        throw error; // Rethrow error to be caught by react-query
       }
     },
   });
