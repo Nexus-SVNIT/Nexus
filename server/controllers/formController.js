@@ -49,7 +49,6 @@ const notifyAllSubscribers = async (formId) => {
                     <tr><td>Deadline:</td><td>${form.deadline}</td></tr>
                     <tr><td>Link to apply:</td><td><a href="${linkToApply}/${formId}">Apply Now</a></td></tr>
                     </table>
-                    <button style="background-color:skyblue; border-radius:15px; padding:10px;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
                     <p> Thanks,<br>Team NEXUS</p>
                     </div>
                     `
@@ -57,7 +56,7 @@ const notifyAllSubscribers = async (formId) => {
 
             try {
                 await sendEmail(emailContent);
-                console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
+                // console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
             } catch (error) {
                 console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);
             }
