@@ -160,7 +160,7 @@ const updateUserProfile = async (req, res) => {
             githubProfile,
             leetcodeProfile,
             codeforcesProfile,
-            subscribe // Include `subscribe` only if this is part of the update
+            subscribed 
         } = req.body;
 
         // Step 1: Find the user by their ID
@@ -181,8 +181,8 @@ const updateUserProfile = async (req, res) => {
         foundUser.codeforcesProfile = codeforcesProfile || foundUser.codeforcesProfile;
 
         // Only allow `subscribe` to be set to `true` explicitly
-        if (subscribe === true) {
-            foundUser.subscribe = true;
+        if (subscribed === true) {
+            foundUser.subscribed = true;
         }
 
         // Step 3: Save the updated user profile

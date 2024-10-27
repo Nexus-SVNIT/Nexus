@@ -1,10 +1,11 @@
 import { useState } from "react";
 
 function FormIntroAdmin(props) {
-  const token = localStorage.getItem('core-token')
-  
+  const token = localStorage.getItem('core-token');
+
   const [publishState, setPublishState] = useState(props.form.publish);
   const [deadline, setDeadline] = useState(props.form.deadline);
+  const [notifySubscribers, setNotifySubscribers] = useState(false); // State for the checkbox
 
   const handleStatusChange = async () => {
     try {
@@ -58,6 +59,37 @@ function FormIntroAdmin(props) {
     }
   };
 
+  const notifySubscribersIfChecked = async () => {
+    try {
+      const notifyResponse = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/notify-subscribers/${props.form._id}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+      });
+
+      if (!notifyResponse.ok) {
+        console.error('Failed to notify subscribers');
+      } else {
+        console.log('Subscribers notified successfully');
+      }
+    } catch (error) {
+      console.error("Error notifying subscribers:", error);
+    }
+  };
+
+  // Call this function whenever the checkbox state changes
+  const handleCheckboxChange = (e) => {
+    const isChecked = e.target.checked;
+    setNotifySubscribers(isChecked); // Update the notifySubscribers state
+
+    // Call the notify function based on the new state
+    if (isChecked) {
+      notifySubscribersIfChecked();
+    }
+  };
+
   return (
     <div className="border-stroke px-7.5 shadow-default dark:border-strokedark dark:bg-boxdark flex w-[20rem] flex-col justify-between rounded-sm border bg-white py-6 sm:w-[22rem] md:w-[24rem]">
       <div className="flex text-lg">{props.form.name}</div>
@@ -75,18 +107,14 @@ function FormIntroAdmin(props) {
         >
           Status:
           {publishState ? (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
-                <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path>
-                <path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
-              </svg>
-            </>
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
+              <path fill="#c8e6c9" d="M36,42H12c-3.314,0-6-2.686-6-6V12c0-3.314,2.686-6,6-6h24c3.314,0,6,2.686,6,6v24C42,39.314,39.314,42,36,42z"></path>
+              <path fill="#4caf50" d="M34.585 14.586L21.014 28.172 15.413 22.584 12.587 25.416 21.019 33.828 37.415 17.414z"></path>
+            </svg>
           ) : (
-            <>
-              <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
-                <path fill="#c8e6c9" d="M36,42H12c-3.3,0-6-2.7-6-6V12c0-3.3,2.7-6,6-6h24c3.3,0,6,2.7,6,6v24C42,39.3,39.3,42,36,42z"></path>
-              </svg>
-            </>
+            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" width="40" height="40" viewBox="0 0 48 48">
+              <path fill="#c8e6c9" d="M36,42H12c-3.3,0-6-2.7-6-6V12c0-3.3,2.7-6,6-6h24c3.3,0,6,2.7,6,6v24C42,39.3,39.3,42,36,42z"></path>
+            </svg>
           )}
         </span>
       </div>
@@ -108,6 +136,20 @@ function FormIntroAdmin(props) {
         >
           Update Deadline
         </button>
+      </div>
+
+      {/* Checkbox for notifying subscribers */}
+      <div className="mt-4 flex items-center">
+        <input
+          type="checkbox"
+          id="notify-subscribers"
+          checked={notifySubscribers}
+          onChange={handleCheckboxChange} // Update state on checkbox change
+          className="mr-2"
+        />
+        <label htmlFor="notify-subscribers" className="text-sm font-medium text-gray-700">
+          Notify Subscribers
+        </label>
       </div>
     </div>
   );

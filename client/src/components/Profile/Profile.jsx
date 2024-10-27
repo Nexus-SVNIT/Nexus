@@ -14,7 +14,8 @@ const ProfilePage = () => {
     linkedInProfile: '',
     githubProfile: '',
     leetcodeProfile: '',
-    codeforcesProfile: ''
+    codeforcesProfile: '',
+    subscribed: false // Corrected to subscribed field
   });
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -40,13 +41,15 @@ const ProfilePage = () => {
   }, []);
 
   const handleChange = (e) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
+    const { name, value, type, checked } = e.target;
+    setProfile({ ...profile, [name]: type === 'checkbox' ? checked : value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setButtonLoading(true); // Show loading state in the button
     try {
+      console.log(profile);
       const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`, profile, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -69,7 +72,7 @@ const ProfilePage = () => {
 
   const SkeletonLoader = () => (
     <div className="space-y-4">
-      {Array(9).fill().map((_, index) => (
+      {Array(10).fill().map((_, index) => (
         <div key={index} className="h-10 bg-gray-300 animate-pulse rounded-md"></div>
       ))}
     </div>
@@ -205,6 +208,20 @@ const ProfilePage = () => {
             disabled={!isEditing}
             className="text-white bg-zinc-800 mt-1 block w-full border border-gray-300 p-2 rounded-md"
           />
+        </div>
+
+        <div>
+          <label className="flex items-center">
+            <input
+              type="checkbox"
+              name="subscribed" // Corrected to subscribed field
+              checked={profile.subscribed}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="mr-2"
+            />
+            Subscribe to newsletters
+          </label>
         </div>
 
         <div className="flex justify-between items-center">

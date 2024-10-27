@@ -10,8 +10,8 @@ const {
   getFormFields, 
   getPublicForms,
   updateFormStatus,
-  updateFormDeadline
-
+  updateFormDeadline,
+  notifyAllSubscribers
 } = require('../controllers/formController.js');
 
 const router = express.Router();
@@ -29,5 +29,21 @@ router.patch('/update-status/:id', coreAuthMiddleware, updateFormStatus);
 
 // Route to update form deadline
 router.patch('/update-deadline/:id', coreAuthMiddleware,updateFormDeadline);
+
+
+//Route to notify subscribers
+
+router.post('/notify-subscribers/:formId', coreAuthMiddleware, async (req, res) => {
+  const { formId } = req.params;
+
+  try {
+      await notifyAllSubscribers(formId);
+      res.status(200).json({ message: 'Subscribers notified successfully.' });
+  } catch (error) {
+      console.error(`Error notifying subscribers: ${error.message}`);
+      res.status(500).json({ message: 'Error notifying subscribers.' });
+  }
+});
+
 
 module.exports = router;

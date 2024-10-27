@@ -2,10 +2,53 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const newmember = require("../models/newmemberModel.js");
 const ExpressError = require("../utils/ExpressError.js");
+const User = require('../models/userModel.js'); // Adjust the path as necessary
+const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
 
 const handleError = (res, err) => {
     console.error(err);
     res.status(500).json(err);
+};
+
+const notifyAllSubscribers = async (formId) => {
+    try {
+        // Fetch the form details by ID
+        const form = await Forms.findById(formId);
+        if (!form) {
+            console.error(`Form with ID ${formId} not found.`);
+            return;
+        }
+
+        // Fetch users who are subscribed
+        const subscribers = await User.find({ subscribed: true });
+
+        // Notification link to apply
+        const linkToApply = 'https://www.nexus-svnit.tech/forms';
+
+        // Notify each subscriber
+        subscribers.forEach(async (subscriber) => {
+            const emailContent = {
+                to: subscriber.personalEmail,
+                subject: `New Form Created: ${form.name}`,
+                text: `Hello ${subscriber.fullName},\n\n` +
+                      `A new form has been created:\n` +
+                      `Name: ${form.name}\n` +
+                      `Description: ${form.desc}\n` +
+                      `Deadline: ${form.deadline}\n` +
+                      `Link to apply: ${linkToApply}\n\n` +
+                      `Best regards,\nTeam Nexus`
+            };
+
+            try {
+                await sendEmail(emailContent);
+                console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
+            } catch (error) {
+                console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);
+            }
+        });
+    } catch (error) {
+        console.error(`Error notifying subscribers:`, error);
+    }
 };
 
 const getPublicForms = async (req, res) => {
@@ -24,6 +67,7 @@ const getPublicForms = async (req, res) => {
         handleError(res, err);
     }
 };
+
 const getAllForms = async (req, res) => {
     try {
         const allForms = await Forms.find()
@@ -71,8 +115,6 @@ const updateFormDeadline = async (req, res) => {
         const { id } = req.params;
         const { deadline } = req.body;
 
-
-
         // Validate input
         if (!deadline || !/^\d{2}-\d{2}-\d{4}$/.test(deadline)) {
             return res.status(400).json({ success: false, message: 'Invalid deadline format. Expected format: DD-MM-YYYY' });
@@ -93,11 +135,6 @@ const updateFormDeadline = async (req, res) => {
         res.status(500).json({ success: false, message: 'Server error' });
     }
 };
-
-
-
-
-
 
 const createForm = async (req, res) => {
     const { name, desc, deadline, formFields, WaLink } = req.body;
@@ -152,59 +189,22 @@ const submitResponse = async (req, res) => {
             });
         }
 
-        try {
-            const form = await Forms.findOne({
-                'responses.admissionNumber': admissionNumber
-            });
+        // Check if the user has already submitted the form
+        const existingForm = await Forms.findOne({
+            'responses.admissionNumber': admissionNumber
+        });
 
-            if (form) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Already Registered.",
-                }); // User has already submitted
-            } 
-
-        } catch (error) {
-            handleError(res, err);
+        if (existingForm) {
+            return res.status(400).json({
+                success: false,
+                message: "Already Registered.",
+            }); // User has already submitted
         }
-
-        // // Check if the form contains an email field
-        // const hasEmailField = formDetails.formFields.some(field =>
-        //     field.questionText.toLowerCase().includes('email')
-        // );
-
-        // let existingResponse = null;
-
-        // // If the form has an email field, extract and validate the email
-        // if (hasEmailField) {
-        //     const emailField = formDetails.formFields.find(field =>
-        //         field.questionText.toLowerCase().includes('email')
-        //     );
-
-        //     // Extract email from req.body
-        //     const email = req.body[emailField.questionText];
-
-        //     if (!email) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: "Email field is required.",
-        //         });
-        //     }
-
-        //     // Check if the email already exists in the form responses
-        //     existingResponse = await Forms.findOne({ _id: id, "responses.Email": email });
-        //     if (existingResponse) {
-        //         return res.status(400).json({
-        //             success: false,
-        //             message: "Email already exists. Your response was not saved.",
-        //         });
-        //     }
-        // }
 
         // Update the form with the new response
         const form = await Forms.findByIdAndUpdate(
             id,
-            { $push: { responses: {...req.body, admissionNumber} } },
+            { $push: { responses: { ...req.body, admissionNumber } } },
             { new: true }
         );
 
@@ -219,16 +219,6 @@ const submitResponse = async (req, res) => {
         handleError(res, err);
     }
 };
-
-
-
-
-
-
-
-
-
-
 
 const getResponses = async (req, res) => {
     const id = req.params.id;
@@ -252,4 +242,14 @@ const getFormFields = async (req, res) => {
     }
 };
 
-module.exports = { getAllForms, getPublicForms, createForm, submitResponse, getResponses, getFormFields, updateFormStatus, updateFormDeadline };
+module.exports = {
+    getAllForms,
+    getPublicForms,
+    createForm,
+    submitResponse,
+    getResponses,
+    getFormFields,
+    updateFormStatus,
+    updateFormDeadline,
+    notifyAllSubscribers
+};
