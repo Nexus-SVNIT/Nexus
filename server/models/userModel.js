@@ -13,15 +13,15 @@ const userSchema = new mongoose.Schema({
     leetcodeProfile: String,
     codeforcesProfile: String,
     password: String,
-    emailVerified: { type: Boolean, default: false },  // New field
+    emailVerified: { type: Boolean, default: false },  // New field for email verification
     verificationToken: String,  // Token for email verification
     resetPasswordToken: String,  // Token for password reset
-    resetPasswordExpires: Date,  // Token
+    resetPasswordExpires: Date,  // Expiration date for password reset token
+    subscribed: { type: Boolean, default: false }, // New field for subscription status
 });
 
-
-
-  userSchema.pre('save', async function(next) {
+// Hash the password before saving
+userSchema.pre('save', async function(next) {
     if (this.isModified('password') || this.isNew) {
       try {
         const salt = await bcrypt.genSalt(10);
@@ -33,11 +33,11 @@ const userSchema = new mongoose.Schema({
     } else {
       return next();
     }
-  });
-  
-  // Method to compare password for login
-  userSchema.methods.comparePassword = function(candidatePassword) {
+});
+
+// Method to compare password for login
+userSchema.methods.comparePassword = function(candidatePassword) {
     return bcrypt.compare(candidatePassword, this.password);
-  };
-  
-module.exports = mongoose.model('user', userSchema);
+};
+
+module.exports = mongoose.model('User', userSchema);

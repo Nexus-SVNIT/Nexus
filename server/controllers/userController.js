@@ -165,7 +165,8 @@ const updateUserProfile = async (req, res) => {
             linkedInProfile,
             githubProfile,
             leetcodeProfile,
-            codeforcesProfile
+            codeforcesProfile,
+            subscribe // Include `subscribe` only if this is part of the update
         } = req.body;
 
         // Step 1: Find the user by their ID
@@ -185,6 +186,11 @@ const updateUserProfile = async (req, res) => {
         foundUser.leetcodeProfile = leetcodeProfile || foundUser.leetcodeProfile;
         foundUser.codeforcesProfile = codeforcesProfile || foundUser.codeforcesProfile;
 
+        // Only allow `subscribe` to be set to `true` explicitly
+        if (subscribe === true) {
+            foundUser.subscribe = true;
+        }
+
         // Step 3: Save the updated user profile
         await foundUser.save();
 
@@ -194,6 +200,7 @@ const updateUserProfile = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
 
 const getAllUsers = async (req, res) => {
     try {
