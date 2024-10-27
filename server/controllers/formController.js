@@ -29,14 +29,30 @@ const notifyAllSubscribers = async (formId) => {
         subscribers.forEach(async (subscriber) => {
             const emailContent = {
                 to: subscriber.personalEmail,
-                subject: `New Form Created: ${form.name}`,
-                text: `Hello ${subscriber.fullName},\n\n` +
-                      `A new form has been created:\n` +
-                      `Name: ${form.name}\n` +
-                      `Description: ${form.desc}\n` +
-                      `Deadline: ${form.deadline}\n` +
-                      `Link to apply: ${linkToApply}\n\n` +
-                      `Best regards,\nTeam Nexus`
+                subject: `New Form Realesed: ${form.name}`,
+                text: `New Form Realesed: ${form.name}. Apply before deadline.`,
+                // text: `Hello ${subscriber.fullName},\n\n` +
+                //     `A new form has been realesed:\n` +
+                //     `Name: ${form.name}\n` +
+                //     `Description: ${form.desc}\n` +
+                //     `Deadline: ${form.deadline}\n` +
+                //     `Link to apply: ${linkToApply}\n\n` +
+                //     `Best regards,\nTeam Nexus`,
+                html: `
+                    <div style=" background-color: black; color:white; font-size:12px; padding:20px;">
+                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/></div>
+                    <div> Dear ${subscriber.fullName},</div>
+                    <p style="">A new form has been realesed:</p>
+                    <table>
+                    <tr><td>Name:</td><td>${form.name}</td></tr>
+                    <tr><td>Description:</td><td>${form.desc}</td></tr>
+                    <tr><td>Deadline:</td><td>${form.deadline}</td></tr>
+                    <tr><td>Link to apply:</td><td><a href="${linkToApply}/${formId}">Apply Now</a></td></tr>
+                    </table>
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
+                    <p> Thanks,<br>Team NEXUS</p>
+                    </div>
+                    `
             };
 
             try {
