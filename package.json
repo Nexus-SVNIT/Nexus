@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "dotenv": "^16.4.5",
-    "xlsx": "^0.18.5"
-  }
-}
