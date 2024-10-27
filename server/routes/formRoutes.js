@@ -18,7 +18,7 @@ const router = express.Router();
 
 // Routes
 router.get('/', getPublicForms);
-router.get('/all', getAllForms);
+router.get('/all', coreAuthMiddleware, getAllForms);
 router.post('/create', coreAuthMiddleware, createForm);
 router.post('/submit/:id', authMiddleware, submitResponse);
 router.get('/get-responses/:id', coreAuthMiddleware, getResponses);

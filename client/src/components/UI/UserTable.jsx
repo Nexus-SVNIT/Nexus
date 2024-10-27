@@ -7,7 +7,7 @@ const UserTable = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [sortField, setSortField] = useState("fullName");
     const [sortOrder, setSortOrder] = useState("asc");
-    const token = localStorage.getItem('token')
+    const token = localStorage.getItem('core-token')
     
     const fetchUsers = async (page, sortField, sortOrder) => {
         try {
