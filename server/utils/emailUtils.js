@@ -10,12 +10,13 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send email
-const sendEmail = ({ to, subject, text }) => {
+const sendEmail = ({ to, subject, text, html }) => {
     const mailOptions = {
         from: process.env.EMAIL_ID, 
         to,                         
         subject,                   
-        text                        
+        text,
+        html               
     };
 
     return transporter.sendMail(mailOptions);
