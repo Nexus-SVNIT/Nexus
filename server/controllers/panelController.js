@@ -7,11 +7,9 @@ const moment = require('moment'); // Import moment for date formatting
 // Create Panels and Assign Candidates
 exports.createPanels = async (req, res) => {
     const { formId, panels } = req.body;
-    console.log(req.body);
 
     try {
         const form = await Forms.findById(formId);
-        console.log(form);
         
         if (!form) {
             return res.status(404).json({ error: 'Form not found' });

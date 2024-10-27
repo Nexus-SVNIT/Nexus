@@ -101,7 +101,6 @@ const updateFormDeadline = async (req, res) => {
 
 const createForm = async (req, res) => {
     const { name, desc, deadline, formFields, WaLink } = req.body;
-    console.log(name, desc, deadline, formFields, WaLink)
     const _event = "none";  // Set a default value for _event if it's not provided
 
     // Convert deadline to dd-mm-yy format
