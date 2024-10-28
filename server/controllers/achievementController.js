@@ -34,9 +34,7 @@ const allAchievements = async (req, res) => {
         .sort({ createdAt: 1 })
         .select('-isVerified');
         // Extract team member admission numbers from achievements
-        console.log(achievements)
         const allTeamMembers = achievements.flatMap(achievement => achievement.teamMembers);
-        console.log(achievements)
   
       // Fetch users corresponding to the team members
       const users = await userSchema.find({ admissionNumber: { $in: allTeamMembers } })
