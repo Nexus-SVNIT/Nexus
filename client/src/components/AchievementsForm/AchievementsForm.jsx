@@ -2,18 +2,18 @@ import Modal from "@mui/joy/Modal/Modal";
 import Loader from "../Loader/Loader";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 
 const AchievementsForm = () => {
   const [open, setOpen] = useState(false);
   const [AchievementForm, setAchievementForm] = useState({
-    email: "",
-    image: "",
-    members: "",
+    teamMembers: "",
     desc: "",
     proof: "",
+    image: null,
   });
   const [image, setImage] = useState(null);
+
   const handleInputChange = (event) => {
     setAchievementForm({
       ...AchievementForm,
@@ -22,54 +22,48 @@ const AchievementsForm = () => {
   };
 
   const handleImageChange = (event) => {
-    try {
-      const file = event?.target?.files?.[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (reader.readyState === 2) {
-          setImage(reader.result);
-        }
-      };
-      reader?.readAsDataURL(file);
-    } catch (error) {
-      return;
-    }
+    const file = event.target.files[0];
+    setAchievementForm((prev) => ({ ...prev, image: file }));
+    const reader = new FileReader();
+    reader.onload = () => setImage(reader.result);
+    reader.readAsDataURL(file);
   };
+
   const mutation = useMutation({
     mutationFn: (newAchievement) => {
-      return fetch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`,
-        {
-          method: "POST",
-          body: JSON.stringify(newAchievement),
-          headers: {
-            "Content-Type": "application/json",
-          },
+      const token = localStorage.getItem("token"); // Retrieve token from local storage
+      const formData = new FormData();
+      formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",")));
+      formData.append("desc", newAchievement.desc);
+      formData.append("proof", newAchievement.proof);
+      formData.append("image", newAchievement.image);
+      
+      return fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`, {
+        method: "POST",
+        headers: {
+          'Authorization': `Bearer ${token}` // Include token in headers
         },
-      );
+        body: formData,
+      });
     },
   });
+
   const handleSubmit = (event) => {
+    event.preventDefault();
     setOpen(true);
-    mutation.mutate({ ...AchievementForm, image });
+    mutation.mutate(AchievementForm);
   };
+
   if (mutation.isError) return <p>ERROR</p>;
+
   return (
     <section className="mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10 md:mx-auto">
       <Modal
         aria-describedby="modal-desc"
         open={open}
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          border: "none",
-        }}
+        sx={{ display: "flex", justifyContent: "center", alignItems: "center", border: "none" }}
       >
-        <div
-          id="modal-desc"
-          className={`mx-4 flex min-h-[10rem] flex-col items-center justify-center rounded-lg border-none bg-black/70 pb-8  transition-all md:w-[15rem] md:gap-4`}
-        >
+        <div className="mx-4 flex min-h-[10rem] flex-col items-center justify-center rounded-lg border-none bg-black/70 pb-8 transition-all md:w-[15rem] md:gap-4">
           {mutation.isPending ? (
             <>
               <Loader />
@@ -77,124 +71,64 @@ const AchievementsForm = () => {
             </>
           ) : !mutation.isError ? (
             <div className="flex flex-col items-center justify-center gap-4 text-white">
-              <p className="w-3/4  text-center text-sm text-white">
+              <p className="w-3/4 text-center text-sm text-white">
                 Your Achievement Details are under Review.
               </p>
-              <Link
-                to={"/achievements"}
-                className="rounded-sm bg-blue-600/50 px-4 py-2"
-              >
-                OK
-              </Link>
+              <Link to={"/achievements"} className="rounded-sm bg-blue-600/50 px-4 py-2">OK</Link>
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center gap-4 text-white">
-              <p className="text-center text-sm text-white md:w-3/4">
-                Something went wrong!!
-              </p>
-              <button
-                onClick={(e) => setOpen(false)}
-                className="rounded-sm bg-blue-600/50 px-4 py-2"
-              >
-                Try Again
-              </button>
+              <p className="text-center text-sm text-white md:w-3/4">Something went wrong!!</p>
+              <button onClick={() => setOpen(false)} className="rounded-sm bg-blue-600/50 px-4 py-2">Try Again</button>
             </div>
           )}
         </div>
       </Modal>
       <div className="px-0sc mb-10 flex w-full max-w-5xl flex-col items-center justify-center py-6 md:px-10">
-        <h4 className="text-lg font-bold md:text-2xl ">
-          Achievement Information
-        </h4>
+        <h4 className="text-lg font-bold md:text-2xl">Achievement Information</h4>
         <div className="mt-2 flex flex-col items-center justify-center gap-10 md:flex-row md:p-2">
           <div className="flex flex-col items-center justify-center md:w-3/4">
-            <label
-              htmlFor="image"
-              className="cursor-pointer"
-              title="Select an image"
-            >
+            <label htmlFor="image" className="cursor-pointer" title="Select an image">
               <img
-                src={
-                  image ??
-                  "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmrO6oGyxrMasnTJFJSt86C3Ecac3kTHtrbQ&usqp=CAU"
-                }
+                src={image || "https://via.placeholder.com/150"}
                 alt="profile"
                 className="h-56 w-56 rounded-md object-cover object-center md:h-80 md:w-80"
               />
             </label>
-            <input
-              type="file"
-              accept="image/*"
-              name="image"
-              id="image"
-              hidden
-              onChange={handleImageChange}
-            />
-            <p className="mt-4 text-xs text-gray-400">
-              Note: Your image will be showed as above*
-            </p>
+            <input type="file" accept="image/*" id="image" hidden onChange={handleImageChange} />
+            <p className="mt-4 text-xs text-gray-400">Note: Your image will be shown as above*</p>
           </div>
-
           <div className="mx-auto flex flex-wrap items-center justify-between gap-2 ">
             <div className="m-4 flex w-full flex-col gap-2 ">
-              <label htmlFor="email" className="uppercase">
-                {"Institute Email "}
-              </label>
-
+              <label htmlFor="teamMembers" className="uppercase">Team Members</label>
               <input
                 type="text"
-                id={"email"}
-                name={"email"}
-                value={AchievementForm.email}
+                id="teamMembers"
+                value={AchievementForm.teamMembers}
                 onChange={handleInputChange}
-                placeholder="u21cs134@coed.svnit.ac.in"
+                placeholder="e.g., John Doe, Jane Smith"
                 className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
               />
             </div>
-            <div className="m-4 flex w-full flex-col gap-2 ">
-              <label htmlFor="members" className="uppercase">
-                {"Team Member Names"}
-              </label>
-
-              <input
-                type="text"
-                id={"members"}
-                name={"members"}
-                value={AchievementForm.members}
-                onChange={handleInputChange}
-                placeholder="John Doe, Jane Smith,Michael Johnson"
-                className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
-              />
-            </div>
-
             <div className="m-4 flex w-full flex-col gap-2">
-              <label htmlFor="desc" className="uppercase">
-                {"Provide Description"}
-              </label>
-
+              <label htmlFor="desc" className="uppercase">Description</label>
               <textarea
-                type="text"
-                id={"desc"}
-                name={"desc"}
+                id="desc"
                 rows={4}
-                placeholder="As an innovative student, I spearheaded a groundbreaking coding project, securing first place in the National Coding Challenge. My commitment to excellence extends beyond the classroom—I initiated a tech-driven community outreach program, positively impacting 500+ lives. Let your achievements shine bright here!"
+                placeholder="Describe your achievement..."
                 className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
                 value={AchievementForm.desc}
                 onChange={handleInputChange}
               />
             </div>
             <div className="m-4 flex w-full flex-col gap-2 ">
-              <label htmlFor="proof" className="uppercase">
-                {"Proof Of Achievement"}
-              </label>
-
+              <label htmlFor="proof" className="uppercase">Proof of Achievement</label>
               <input
                 type="text"
-                id={"proof"}
-                name={"proof"}
+                id="proof"
                 value={AchievementForm.proof}
                 onChange={handleInputChange}
-                placeholder="Please Provide Public Drive Link with all necessary proof."
+                placeholder="Provide a public drive link"
                 className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
               />
             </div>

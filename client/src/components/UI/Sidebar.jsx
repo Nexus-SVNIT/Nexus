@@ -52,14 +52,20 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
   return (
     <aside
       ref={sidebar}
-      className={`z-9999 w-72.5 dark:bg-boxdark absolute left-0 top-0 flex h-screen flex-col overflow-y-hidden bg-black duration-300 ease-linear lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
       {/* <!-- SIDEBAR HEADER --> */}
-      <div className="py-5.5 lg:py-6.5 flex items-center justify-between gap-2 px-6">
+      <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
         <NavLink to="/">
-          <img src={"https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"} alt="Logo" className="w-1/2" />
+          <img
+            src={
+              "https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"
+            }
+            alt="Logo"
+            className="w-1/2"
+          />
         </NavLink>
 
         <button
@@ -91,7 +97,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
         <nav className="mt-5 px-4 py-4 lg:mt-9 lg:px-6">
           {/* <!-- Menu Group --> */}
           <div>
-            <h3 className="text-bodydark2 mb-4 ml-4 text-sm font-semibold">
+            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
               MENU
             </h3>
 
@@ -107,7 +113,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                     <React.Fragment>
                       <NavLink
                         to="#"
-                        className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           (pathname === "/forms" ||
                             pathname.includes("forms")) &&
                           "bg-graydark dark:bg-meta-4"
@@ -178,7 +184,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/core/admin/forms/all"
                               className={({ isActive }) =>
-                                "text-bodydark2 group relative flex items-center gap-2.5 rounded-md px-4 font-medium duration-300 ease-in-out hover:text-white " +
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white " +
                                 (isActive && "!text-white")
                               }
                             >
@@ -189,7 +195,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                             <NavLink
                               to="/core/admin/forms/create"
                               className={({ isActive }) =>
-                                "text-bodydark2 group relative flex items-center gap-2.5 rounded-md px-4 font-medium duration-300 ease-in-out hover:text-white " +
+                                "group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white " +
                                 (isActive && "!text-white")
                               }
                             >
@@ -209,7 +215,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               <li>
                 <NavLink
                   to="/core/admin/responses"
-                  className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes("tables") && "bg-graydark dark:bg-meta-4"
                   }`}
                 >
@@ -246,8 +252,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Profile --> */}
               <li>
                 <NavLink
-                  to="/core/admin/profile"
-                  className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
+                  to="/core/admin/add-project"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes("profile") && "bg-graydark dark:bg-meta-4"
                   }`}
                 >
@@ -268,7 +274,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       fill=""
                     />
                   </svg>
-                  Profile
+                  Add Project
                 </NavLink>
               </li>
               {/* <!-- Menu Item Profile --> */}
@@ -276,8 +282,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
               {/* <!-- Menu Item Settings --> */}
               <li>
                 <NavLink
-                  to="/core/admin/settings"
-                  className={`text-bodydark1 hover:bg-graydark dark:hover:bg-meta-4 group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium duration-300 ease-in-out ${
+                  to="/core/admin/create-panel"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes("settings") &&
                     "bg-graydark dark:bg-meta-4"
                   }`}
@@ -311,12 +317,46 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                       </clipPath>
                     </defs>
                   </svg>
-                  Settings
+                  Create Panel
                 </NavLink>
               </li>
-              
-            
-              
+
+              <li>
+                <NavLink
+                  to="/core/admin/verify-achievements"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes("settings") &&
+                    "bg-graydark dark:bg-meta-4"
+                  }`}
+                >
+                  <svg
+                    fill="#dee4ee"
+                    height="20px"
+                    width="20px"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24.00 24.00"
+                    stroke="#dee4ee"
+                    stroke-width="0.00024000000000000003"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <g id="achievement">
+                        {" "}
+                        <path d="M19.4,14.1l1.4,1.4l-4.6,4.6l-3-3l1.4-1.4l1.6,1.6L19.4,14.1z"></path>{" "}
+                        <path d="M24,7.3V2h-5V0H5v2H0v5.3C0,10,2.1,12,5,12h0.7c0.5,1.1,1.3,2,2.2,2.6c-0.9,0.9-1.6,2.1-1.8,3.4H4v6h13v0c0,0,0,0,0,0 c3.9,0,7-3.1,7-7c0-2.2-1.1-4.2-2.7-5.5C22.9,10.7,24,9.2,24,7.3z M5,10c-1.7,0-3-1.1-3-2.7V4h3v5C5,9.3,5,9.7,5,10L5,10z M7,9V2 h10v8c-2.7,0-5.1,1.6-6.2,3.8C8.6,13.3,7,11.3,7,9z M9.8,15.7c0.1,0,0.2,0.1,0.3,0.1C10,16.1,10,16.6,10,17c0,0.3,0,0.7,0.1,1H8.1 C8.4,17,9,16.2,9.8,15.7z M6,22v-2h4.7c0.4,0.7,0.8,1.4,1.4,2H6z M22,17c0,2.8-2.2,5-5,5s-5-2.2-5-5s2.2-5,5-5S22,14.2,22,17z M22,7.3c0,1.6-1.3,2.7-3,2.7V4h3V7.3z"></path>{" "}
+                      </g>{" "}
+                    </g>
+                  </svg>
+                  Verify Achievements
+                </NavLink>
+              </li>
             </ul>
           </div>
         </nav>

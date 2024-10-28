@@ -11,6 +11,7 @@ import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
 import ShowProject from '../components/Project/showProject.jsx'
 
+import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
 
@@ -107,8 +108,8 @@ export const AdminRoutes = [
   },
 
   {
-    path: 'profile',
-    title: 'Profile',
+    path: 'add-project',
+    title: 'Add Project',
     component: AddProject
   },
   {
@@ -126,12 +127,13 @@ export const AdminRoutes = [
     title: 'Responses',
     component: Tables
   },
-
- 
-
-
   {
-    path: 'settings',
+    path: 'verify-achievements',
+    title: 'Verify Achievements',
+    component: verifyAchievement
+  },
+  {
+    path: 'create-panel',
     title: 'Create Panel',
     component: CreatePanelForm
   },

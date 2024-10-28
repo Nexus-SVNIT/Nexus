@@ -1,27 +1,18 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const achievementSchema = new mongoose.Schema({
-  email: {
-    type: String, required: true
-  },
-  name: {
-    type: String, required: true
-  },
-  achievement: {
-    type: String, required: true
-  },
-  imageLink: {
-    type: String, required: true
-  },
-  additionalLink: {
-    type: String
-  },
-  isVerified: {
-    type: Boolean,
-    default: false
-  }
-}, { timestamps: true })
+  admissionNumber: { type: String, required: true },
+  teamMembers: { type: [String], required: true },
+  desc: { type: String, required: true },
+  proof: { type: String, required: true },
+  image: { type: String, required: true },
+  isVerified: { type: Boolean, default: false },
+}, { 
+  timestamps: true,
+  strictPopulate: false // Set this to false if needed
+});
 
-const Achievement = mongoose.model('Achievement', achievementSchema)
 
-module.exports = Achievement
+const Achievement = mongoose.model('Achievement', achievementSchema);
+
+module.exports = Achievement;
