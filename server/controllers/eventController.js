@@ -31,14 +31,16 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 });
 
 const addEvent = wrapAsync(async (req, res) => {
-    const { eventName, eventDate, name, desc, deadline, formFields } = req.body;
-    const concatEventName = eventName.toLowerCase().split(" ").join("");
-    const _event = concatEventName;
-    await Forms.create({ name, desc, deadline, formFields, _event });
+    const { eventName, eventDate,eventDescription,eventType,eventPoster,eventStatus } = req.body;
+    const concatEventName = eventName.toLowerCase().replace(/ /g, "");
     const createdEvent = await Event.create({
         eventName,
         eventDate,
         concatEventName,
+        eventDescription,
+        eventPoster,
+        eventStatus,
+        eventType,
     });
     res.status(200).json(createdEvent);
 });

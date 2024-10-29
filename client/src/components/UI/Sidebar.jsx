@@ -357,6 +357,43 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }) => {
                   Verify Achievements
                 </NavLink>
               </li>
+
+              <li>
+                <NavLink
+                  to="/core/admin/create-event"
+                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                    pathname.includes("create-event") &&
+                    "bg-graydark dark:bg-meta-4"
+                  }`}
+                >
+                  <svg
+                    fill="#dee4ee"
+                    height="20px"
+                    width="20px"
+                    version="1.1"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24.00 24.00"
+                    stroke="#dee4ee"
+                    stroke-width="0.00024000000000000003"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <g id="achievement">
+                        {" "}
+                        <path d="M19.4,14.1l1.4,1.4l-4.6,4.6l-3-3l1.4-1.4l1.6,1.6L19.4,14.1z"></path>{" "}
+                        <path d="M24,7.3V2h-5V0H5v2H0v5.3C0,10,2.1,12,5,12h0.7c0.5,1.1,1.3,2,2.2,2.6c-0.9,0.9-1.6,2.1-1.8,3.4H4v6h13v0c0,0,0,0,0,0 c3.9,0,7-3.1,7-7c0-2.2-1.1-4.2-2.7-5.5C22.9,10.7,24,9.2,24,7.3z M5,10c-1.7,0-3-1.1-3-2.7V4h3v5C5,9.3,5,9.7,5,10L5,10z M7,9V2 h10v8c-2.7,0-5.1,1.6-6.2,3.8C8.6,13.3,7,11.3,7,9z M9.8,15.7c0.1,0,0.2,0.1,0.3,0.1C10,16.1,10,16.6,10,17c0,0.3,0,0.7,0.1,1H8.1 C8.4,17,9,16.2,9.8,15.7z M6,22v-2h4.7c0.4,0.7,0.8,1.4,1.4,2H6z M22,17c0,2.8-2.2,5-5,5s-5-2.2-5-5s2.2-5,5-5S22,14.2,22,17z M22,7.3c0,1.6-1.3,2.7-3,2.7V4h3V7.3z"></path>{" "}
+                      </g>{" "}
+                    </g>
+                  </svg>
+                  create Event
+                </NavLink>
+              </li>
             </ul>
           </div>
         </nav>

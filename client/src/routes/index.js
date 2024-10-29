@@ -12,6 +12,7 @@ import LoginForm from '../components/LogInForm/LogInForm.jsx'
 import ShowProject from '../components/Project/showProject.jsx'
 
 import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
+import createEvent from '../components/Events/createEvent.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
 
@@ -137,6 +138,11 @@ export const AdminRoutes = [
     title: 'Create Panel',
     component: CreatePanelForm
   },
+  {
+    path:'create-event',
+    title: 'create-event',
+    component: createEvent
+  }
 
   
 ]

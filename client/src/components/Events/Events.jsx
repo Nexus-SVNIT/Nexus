@@ -25,109 +25,43 @@ const Events = () => {
       <HeadTags title={"Events - Nexus NIT Surat"} />
       <Title>Events</Title>
       <div className="container">
-        <div class="timeline">
+        <div className="timeline">
           <ul className="py-10 transition-all ">
             {loading ? (
-              <>
-                <li>
-                  <div className="timeline-content  ">
-                    <div className="date">
-                      <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
-                      <span
-                        className={`btn h-6 w-20 animate-pulse bg-slate-500 text-xs`}
-                      />
-                    </div>
-
-                    <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
-                    <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-                    <div
-                      alt="Banner"
-                      className="mt-4 min-h-[20rem] w-full animate-pulse  rounded-md bg-slate-500 "
-                    />
-                  </div>
-                </li>
-                <li>
-                  <div className="timeline-content  ">
-                    <div className="date">
-                      <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
-                      <span
-                        className={`btn h-6 w-20 animate-pulse bg-slate-500 text-xs`}
-                      />
-                    </div>
-
-                    <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
-                    <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-                    <div
-                      alt="Banner"
-                      className="mt-4 min-h-[20rem] w-full animate-pulse  rounded-md bg-slate-500 "
-                    />
-                  </div>
-                </li>
-                <li>
-                  <div className="timeline-content  ">
-                    <div className="date">
-                      <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
-                      <span
-                        className={`btn h-6 w-20 animate-pulse bg-slate-500 text-xs`}
-                      />
-                    </div>
-
-                    <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
-                    <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-                    <div
-                      alt="Banner"
-                      className="mt-4 min-h-[20rem] w-full animate-pulse  rounded-md bg-slate-500 "
-                    />
-                  </div>
-                </li>
-                <li>
-                  <div className="timeline-content  ">
-                    <div className="date">
-                      <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
-                      <span
-                        className={`btn h-6 w-20 animate-pulse bg-slate-500 text-xs`}
-                      />
-                    </div>
-
-                    <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
-                    <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-                    <div
-                      alt="Banner"
-                      className="mt-4 min-h-[20rem] w-full animate-pulse  rounded-md bg-slate-500 "
-                    />
-                  </div>
-                </li>
-              </>
+              // Loading placeholders
+              <LoadingPlaceholders />
             ) : (
-              data.map((item) => {
-                if (!item?.status?.trim()) return null;
-                return (
-                  <li key={item._id}>
-                    <div className="timeline-content  ">
-                      <div className="date">
-                        <p>{item.date}</p>
-                        <span
-                          className={`btn text-xs ${
-                            item.status === "Upcoming" ? "upcoming" : "active"
-                          }`}
-                        >
-                          {item.status}
-                        </span>
+              data
+                .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate)) // Sort events by date in descending order
+                .map((item) => {
+                  if (!item?.eventStatus?.trim()) return null;
+                  return (
+                    <li key={item._id}>
+                      <div className="timeline-content">
+                        <div className="date">
+                          <p>{item.eventDate}</p>
+                          <span
+                            className={`btn text-xs ${
+                              item.eventStatus === "Upcoming" ? "upcoming" : "active"
+                            }`}
+                          >
+                            {item.eventStatus}
+                          </span>
+                        </div>
+                        <h1>{item.eventName}</h1>
+                        <p>{item.eventDescription}</p>
+                        <img
+                          src={
+                            item?.eventPoster ??
+                            "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
+                          }
+                          alt="Banner"
+                          className="mt-4 min-h-[12rem] w-full rounded-md"
+                        />
                       </div>
-                      <h1>{item.name}</h1>
-                      <p>{item.description}</p>
-                      <img
-                        src={
-                          item?.imageLink ??
-                          "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
-                        }
-                        alt="Banner"
-                        className="mt-4 min-h-[12rem] w-full rounded-md"
-                      />
-                    </div>
-                  </li>
-                );
-              })
+                    </li>
+                  );
+                })
             )}
           </ul>
         </div>
@@ -135,5 +69,27 @@ const Events = () => {
     </div>
   );
 };
+
+// Loading placeholders component
+const LoadingPlaceholders = () => (
+  <>
+    {Array.from({ length: 4 }).map((_, index) => (
+      <li key={index}>
+        <div className="timeline-content">
+          <div className="date">
+            <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
+            <span className="btn h-6 w-20 animate-pulse bg-slate-500 text-xs" />
+          </div>
+          <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
+          <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
+          <div
+            alt="Banner"
+            className="mt-4 min-h-[20rem] w-full animate-pulse rounded-md bg-slate-500"
+          />
+        </div>
+      </li>
+    ))}
+  </>
+);
 
 export default Events;
