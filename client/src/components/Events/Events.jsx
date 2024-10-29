@@ -28,11 +28,11 @@ const Events = () => {
         <div className="timeline">
           <ul className="py-10 transition-all ">
             {loading ? (
-              // Loading placeholders
+             
               <LoadingPlaceholders />
             ) : (
               data
-                .sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate)) // Sort events by date in descending order
+                .sort((a, b) => new Date(b.eventDate) - new Date(a.eventDate))
                 .map((item) => {
                   if (!item?.eventStatus?.trim()) return null;
                   return (
