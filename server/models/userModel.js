@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     verificationToken: String,  // Token for email verification
     resetPasswordToken: String,  // Token for password reset
     resetPasswordExpires: Date,  // Expiration date for password reset token
-    subscribed: { type: Boolean, default: false }, // New field for subscription status
+    subscribed: { type: Boolean, default: true }, // New field for subscription status
 });
 
 // Hash the password before saving
