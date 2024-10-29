@@ -46,9 +46,9 @@ const uploadImageToDrive = async (imagePath, imageName) => {
         const response = await drive.files.create({
             resource: fileMetadata,
             media: media,
-            fields: 'id, webViewLink, webContentLink'
+            fields: 'id'
         });
-
+        fs.unlinkSync(imagePath); // Delete the image from the server after uploading
         return response.data;
     } catch (error) {
         console.error("Error uploading file to Google Drive:", error);
