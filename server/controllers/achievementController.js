@@ -3,7 +3,6 @@ const { google } = require('googleapis');
 const Achievement = require('../models/achievementModel');
 const userSchema = require('../models/userModel');
 const nodemailer = require('nodemailer');
-const User = require('./models/User'); 
 
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
@@ -105,28 +104,29 @@ const uploadImageToDrive = async (req) => {
     }
 };
 
-const addAlumniDetails = async (req, res) => {
+const addAchievement = async (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Image file is required" });
+        const uploadResult = await uploadImageToDrive(req);
+        if (!uploadResult.success) {
+            return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
         }
 
-        // Upload the image to Google Drive
-        const file = await uploadImageToDrive(req.file.path, req.file.originalname);
+        // Parse teamMembers and ensure it's an array of strings (admission numbers)
+        const teamMembersArray = JSON.parse(req.body.teamMembers);
+        const teamMembers = teamMembersArray.map(member => member.admissionNumber);
 
-        if (!file) {
-            return res.status(500).json({ message: "Failed to upload image" });
-        }
-
-        const alumniDetail = {
-            ...req.body,
-            ImageLink: `https://lh3.googleusercontent.com/d/${file.id}` // Store the Google Drive link in the database
+        const achievement = {
+            admissionNumber: req.user.admissionNumber,
+            teamMembers: teamMembersArray,
+            desc: req.body.desc,
+            image: uploadResult.fileId,
+            proof: req.body.proof,
         };
 
-        await AlumniDetails.create(alumniDetail);
+        await Achievement.create(achievement);
 
         // Fetch user details from the database
-        const user = await User.findOne({ admissionNumber: req.user.admissionNumber });
+        const user = await userSchema.findOne({ admissionNumber: req.user.admissionNumber });
         if (!user || !user.instituteEmail) {
             return res.status(400).json({ message: "User email not found" });
         }
@@ -144,16 +144,16 @@ const addAlumniDetails = async (req, res) => {
         const mailOptions = {
             from: process.env.EMAIL_ID,
             to: user.instituteEmail,
-            subject: 'Alumni Details Submission Under Review',
+            subject: 'Achievement Submission Under Review',
             html: `
                 <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
                     <div style="margin-bottom: 25px; display: flex; justify-content: center;">
                         <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
                     </div>
                     <div>Dear ${user.fullName},</div>
-                    <p>Thank you for taking the time to connect with us on the NEXUS Alumni portal.</p>
-                    <p>Your details are currently under review, and once verified, they will be displayed on our Alumni Connect page.</p>
-                    <p>We appreciate your support and look forward to showcasing your achievements to inspire our community.</p>
+                    <p>Thank you for submitting your achievement on the NEXUS portal. Your achievement is currently under review.</p>
+                    <p>Once verified, it will be displayed on the website's achievement bulletin section.</p>
+                    <p>We appreciate your hard work and look forward to sharing your success story with our community.</p>
                     <p>Thanks,<br>Team NEXUS</p>
                 </div>
             `
@@ -164,8 +164,8 @@ const addAlumniDetails = async (req, res) => {
 
         return res.status(200).json({ message: "Waiting for Review" });
     } catch (err) {
-        console.error('Error adding alumni details:', err.message);
-        return res.status(500).json({ message: "Error adding alumni details", error: err.message });
+        console.error('Error adding achievement:', err.message);
+        return res.status(500).json({ message: "Error adding achievement", error: err.message });
     }
 };
 
