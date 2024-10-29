@@ -49,7 +49,6 @@ const ProfilePage = () => {
     e.preventDefault();
     setButtonLoading(true); // Show loading state in the button
     try {
-      console.log(profile);
       const response = await axios.put(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`, profile, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('token')}`,

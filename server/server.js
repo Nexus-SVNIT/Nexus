@@ -12,10 +12,10 @@ const messageRoutes = require('./routes/messageRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
 const achievementRoute = require('./routes/achievementRoute.js')
 const alumniRoute = require('./routes/alumniRoute.js')
-const panelRoutes=require('./routes/panelRoute.js')
-const authRoutes=require('./routes/authRoutes.js')
-const coreRoutes=require('./routes/coreRoutes.js')
-const projectRoutes=require('./routes/projectRoute.js')
+const panelRoutes = require('./routes/panelRoute.js')
+const authRoutes = require('./routes/authRoutes.js')
+const coreRoutes = require('./routes/coreRoutes.js')
+const projectRoutes = require('./routes/projectRoute.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -26,7 +26,7 @@ const MONGO_URL = process.env.MONGO_URL
 // const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app', 'http://localhost:3001'];
 app.use(cors());
 
-app.use(bodyParser.json({ limit: '10mb' })); 
+app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/health-check', (req, res) => {
     return res.send('EveryThing is Fine.')
@@ -45,8 +45,8 @@ app.use('/api/user', userRoutes)
 app.use('/api/core', coreRoutes)
 app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
-app.use('/Panel',panelRoutes);
-app.use('/projects',projectRoutes);
+app.use('/Panel', panelRoutes);
+app.use('/projects', projectRoutes);
 
 mongoose
     .connect(MONGO_URL)
