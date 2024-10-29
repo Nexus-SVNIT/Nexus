@@ -3,6 +3,7 @@ import Loader from "../Loader/Loader";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const AchievementsForm = () => {
   const [open, setOpen] = useState(false);
@@ -30,31 +31,45 @@ const AchievementsForm = () => {
   };
 
   const mutation = useMutation({
-    mutationFn: (newAchievement) => {
-      const token = localStorage.getItem("token"); // Retrieve token from local storage
+    mutationFn: async (newAchievement) => {
+      const token = localStorage.getItem("token");
       const formData = new FormData();
       formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",")));
       formData.append("desc", newAchievement.desc);
       formData.append("proof", newAchievement.proof);
       formData.append("image", newAchievement.image);
-      
-      return fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`, {
+  
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`, {
         method: "POST",
         headers: {
-          'Authorization': `Bearer ${token}` // Include token in headers
+          'Authorization': `Bearer ${token}`
         },
         body: formData,
       });
+  
+      if (!response.ok) {
+        throw new Error("Failed to submit achievement details");
+      }
+  
+      return response.json(); // or response if you need the full response object
+    },
+    onMutate: () => {
+      toast.loading("Uploading your details...", { id: "submitToast" });
+    },
+    onSuccess: () => {
+      setOpen(true);
+      toast.success("Achievement details submitted successfully!", { id: "submitToast" });
+    },
+    onError: () => {
+      toast.error("Something went wrong! Please try again.", { id: "submitToast" });
     },
   });
+  
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setOpen(true);
     mutation.mutate(AchievementForm);
   };
-
-  if (mutation.isError) return <p>ERROR</p>;
 
   return (
     <section className="mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10 md:mx-auto">
@@ -106,8 +121,8 @@ const AchievementsForm = () => {
                 id="teamMembers"
                 value={AchievementForm.teamMembers}
                 onChange={handleInputChange}
-                placeholder="e.g., John Doe, Jane Smith"
-                className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
+                placeholder="U23CS002,I24AI003(without any white space)"
+                className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none uppercase"
               />
             </div>
             <div className="m-4 flex w-full flex-col gap-2">
