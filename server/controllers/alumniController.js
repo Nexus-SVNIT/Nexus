@@ -104,14 +104,14 @@ const addAlumniDetails = async (req, res) => {
         // Set up mail options
         const mailOptions = {
             from: process.env.EMAIL_ID,
-            to: req.body.instituteEmail, // Assuming instituteEmail is provided in the form data
+            to: req.body['E-Mail'], // Assuming instituteEmail is provided in the form data
             subject: 'Alumni Details Submission Under Review',
             html: `
                 <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
                     <div style="margin-bottom: 25px; display: flex; justify-content: center;">
                         <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
                     </div>
-                    <div>Dear ${req.body.fullName},</div>
+                    <div>Dear ${req.body['Name']},</div>
                     <p>Thank you for taking the time to connect with us on the NEXUS Alumni portal.</p>
                     <p>Your details are currently under review, and once verified, they will be displayed on our Alumni Connect page.</p>
                     <p>We appreciate your support and look forward to showcasing your achievements to inspire our community.</p>

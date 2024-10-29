@@ -3,14 +3,7 @@ const { google } = require('googleapis');
 const Achievement = require('../models/achievementModel');
 const userSchema = require('../models/userModel');
 const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORD
-    }
-});
+const User = require('./models/User'); 
 
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
@@ -112,26 +105,31 @@ const uploadImageToDrive = async (req) => {
     }
 };
 
-const addAchievement = async (req, res) => {
+const addAlumniDetails = async (req, res) => {
     try {
-        const uploadResult = await uploadImageToDrive(req);
-        if (!uploadResult.success) {
-            return res.status(500).json({ Message: `Error uploading file: ${uploadResult.error}` });
+        if (!req.file) {
+            return res.status(400).json({ message: "Image file is required" });
         }
 
-        // Parse teamMembers and ensure it's an array of strings (admission numbers)
-        const teamMembersArray = JSON.parse(req.body.teamMembers);
-        const teamMembers = teamMembersArray.map(member => member.admissionNumber);
+        // Upload the image to Google Drive
+        const file = await uploadImageToDrive(req.file.path, req.file.originalname);
 
-        const achievement = {
-            admissionNumber: req.user.admissionNumber, // Use admissionNumber from middleware
-            teamMembers: teamMembers, // Array of admission numbers
-            desc: req.body.desc,
-            image: uploadResult.fileId,
-            proof: req.body.proof,
+        if (!file) {
+            return res.status(500).json({ message: "Failed to upload image" });
+        }
+
+        const alumniDetail = {
+            ...req.body,
+            ImageLink: `https://lh3.googleusercontent.com/d/${file.id}` // Store the Google Drive link in the database
         };
 
-        await Achievement.create(achievement);
+        await AlumniDetails.create(alumniDetail);
+
+        // Fetch user details from the database
+        const user = await User.findOne({ admissionNumber: req.user.admissionNumber });
+        if (!user || !user.instituteEmail) {
+            return res.status(400).json({ message: "User email not found" });
+        }
 
         // Set up nodemailer transporter
         const transporter = nodemailer.createTransport({
@@ -145,17 +143,17 @@ const addAchievement = async (req, res) => {
         // Set up mail options
         const mailOptions = {
             from: process.env.EMAIL_ID,
-            to: req.user.instituteEmail, // Assuming instituteEmail is in user data
-            subject: 'Achievement Submission Under Review',
+            to: user.instituteEmail,
+            subject: 'Alumni Details Submission Under Review',
             html: `
                 <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
                     <div style="margin-bottom: 25px; display: flex; justify-content: center;">
                         <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
                     </div>
-                    <div>Dear ${req.user.fullName},</div>
-                    <p>Thank you for submitting your achievement on the NEXUS portal.</p>
-                    <p>Your achievement is currently under review. Once verified, it will be displayed on the website's Achievement Bulletin section.</p>
-                    <p>Thank you for your patience.</p>
+                    <div>Dear ${user.fullName},</div>
+                    <p>Thank you for taking the time to connect with us on the NEXUS Alumni portal.</p>
+                    <p>Your details are currently under review, and once verified, they will be displayed on our Alumni Connect page.</p>
+                    <p>We appreciate your support and look forward to showcasing your achievements to inspire our community.</p>
                     <p>Thanks,<br>Team NEXUS</p>
                 </div>
             `
@@ -164,10 +162,10 @@ const addAchievement = async (req, res) => {
         // Send mail
         await transporter.sendMail(mailOptions);
 
-        return res.status(200).json({ Message: "Waiting for Review" });
+        return res.status(200).json({ message: "Waiting for Review" });
     } catch (err) {
-        console.error('Error adding achievement:', err.message || err);
-        return res.status(500).json({ Message: "Error adding achievement", error: err.message || err });
+        console.error('Error adding alumni details:', err.message);
+        return res.status(500).json({ message: "Error adding alumni details", error: err.message });
     }
 };
 
