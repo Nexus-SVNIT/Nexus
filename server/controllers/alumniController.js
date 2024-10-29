@@ -76,10 +76,9 @@ const addAlumniDetails = async (req, res) => {
         if (!file) {
             return res.status(500).json({ message: "Failed to upload image" });
         }
-
         const alumniDetail = {
             ...req.body,
-            ImageLink: file.webViewLink // Store the Google Drive link in the database
+            ImageLink: `https://lh3.googleusercontent.com/d/${file.id}` // Store the Google Drive link in the database
         };
 
         await AlumniDetails.create(alumniDetail);
