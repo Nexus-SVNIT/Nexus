@@ -113,7 +113,7 @@ const AddProject = () => {
                             <label className="block text-gray-700 font-medium mb-2">Admission Number:</label>
                             <input
                                 type="text"
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 uppercase"
                                 value={member.admissionNumber}
                                 onChange={(e) => handleMemberChange(index, e.target.value)}
                                 required
@@ -136,7 +136,7 @@ const AddProject = () => {
                             <label className="block text-gray-700 font-medium mb-2">Admission Number:</label>
                             <input
                                 type="text"
-                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="w-full border border-gray-300 p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400 uppercase"
                                 value={mentor.admissionNumber}
                                 onChange={(e) => handleMentorChange(index, e.target.value)}
                                 required

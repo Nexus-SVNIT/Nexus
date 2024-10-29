@@ -11,6 +11,7 @@ import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
 import ShowProject from '../components/Project/showProject.jsx'
 
+import AlumniVerification from '../pages/Alumni/AlumniVerification.jsx'
 import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
@@ -131,6 +132,11 @@ export const AdminRoutes = [
     path: 'verify-achievements',
     title: 'Verify Achievements',
     component: verifyAchievement
+  },
+  {
+    path: 'verify-alumni',
+    title: 'Verify Alumni',
+    component: AlumniVerification
   },
   {
     path: 'create-panel',
