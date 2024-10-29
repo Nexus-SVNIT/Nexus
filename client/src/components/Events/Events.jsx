@@ -13,13 +13,30 @@ const Events = () => {
     data,
   } = useQuery({
     queryKey: ["eventData"],
-    queryFn: () =>
-      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/event`).then((res) =>
-        res.json(),
-      ),
+    queryFn: () => {
+      const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event`;
+      console.log("Fetching data from:", url); // Debug statement
+      return fetch(url)
+        .then((res) => {
+          console.log("Response status:", res.status); // Log response status
+          if (!res.ok) {
+            throw new Error(`HTTP error! status: ${res.status}`);
+          }
+          return res.json();
+        });
+    },
   });
 
-  if (error) return <Error />;
+  // Debug statements for error and loading state
+  console.log("Loading:", loading);
+  console.log("Error:", error);
+  console.log("Data:", data);
+
+  if (error) {
+    console.error("Fetch error:", error); // Log the error details
+    return <Error />;
+  }
+
   return (
     <div className="mx-auto overflow-hidden bg-[#111] pb-20 md:pb-48">
       <HeadTags title={"Events - Nexus NIT Surat"} />
@@ -28,7 +45,6 @@ const Events = () => {
         <div className="timeline">
           <ul className="py-10 transition-all ">
             {loading ? (
-             
               <LoadingPlaceholders />
             ) : (
               data
