@@ -1,10 +1,6 @@
 const { string } = require("joi");
 const mongoose = require("mongoose");
 
-
-
-
-
 const MemberInfoSchema = new mongoose.Schema({
     name: {
         type: String,

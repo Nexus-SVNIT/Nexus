@@ -16,6 +16,7 @@ import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
 import createEvent from '../components/Events/createEvent.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
+import AddTeamMember from '../pages/Team/AddTeamMember.jsx'
 
 export const DefaultRoutes = [
   {
@@ -146,9 +147,14 @@ export const AdminRoutes = [
   },
   {
     path:'create-event',
-    title: 'create-event',
+    title: 'Create Event',
     component: createEvent
-  }
+  },
+  {
+    path:'add-team-member',
+    title: 'Add Team Member',
+    component: AddTeamMember
+  },
 
   
 ]
