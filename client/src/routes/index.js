@@ -16,12 +16,12 @@ import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
 import createEvent from '../components/Events/createEvent.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
-<<<<<<< HEAD
+
 import cp from '../components/coding/cp.jsx'
 import MessageForm from "../components/Message/MessageForm.jsx"
-=======
+
 import AddTeamMember from '../pages/Team/AddTeamMember.jsx'
->>>>>>> 6f9c2b1c57619904c429f624921cce4a0a35783b
+
 
 export const DefaultRoutes = [
   {
