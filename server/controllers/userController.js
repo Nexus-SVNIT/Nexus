@@ -10,7 +10,7 @@ const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
         user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORDWORD
+        pass: process.env.EMAIL_PASSWORD
     }
 });
 
@@ -90,10 +90,10 @@ const signupUser = async (req, res) => {
             text: `Click the link to verify your email: ${verificationUrl}`,
             html: `
             <div style=" background-color: black; color:white; font-size:12px; padding:20px;">
-            <div style=" padding:10px; width:60%; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/></div>
+            <div style="margin-bottom: 25px; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/></div>
             <div> Dear ${fullName},</div>
             <p style="">Thank you for registering on NEXUS portal. Please verify your email using following link.</p>
-            <button style="background-color:skyblue; border-radius:15px; padding:10px;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
+            <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
             <p> Thanks,<br>Team NEXUS</p>
             </div>
             `
@@ -248,12 +248,12 @@ const forgotPassword = async (req, res) => {
             subject: 'Password Reset Request',
             html: `
                 <div style="background-color: black; color:white; font-size:12px; padding:20px;">
-                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                    <div style="margin-bottom: 25px; display:flex; justify-conte350px center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:80%"/>
                     </div>
                     <div> Dear ${foundUser.fullName},</div>
                     <p>You requested a password reset. Click the link below to reset your password:</p>
-                    <button style="background-color:skyblue; border-radius:15px; padding:10px;">
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;">
                         <a href="${resetUrl}" style="color:black">Reset Password</a>
                     </button>
                     <p>If you did not request this, please ignore this email.</p>
@@ -342,12 +342,12 @@ const resetPassword = async (req, res) => {
             subject: 'Re-verify your Email',
             html: `
                 <div style="background-color: black; color:white; font-size:12px; padding:20px;">
-                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                    <div style="margin-bottom: 25px; display:flex; justify-conte350px center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:80%"/>
                     </div>
                     <div> Dear ${foundUser.fullName},</div>
                     <p>Your password has been successfully reset. Please verify your email again using the link below:</p>
-                    <button style="background-color:skyblue; border-radius:15px; padding:10px;">
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;">
                         <a href="${verificationUrl}" style="color:black">Verify Your Email</a>
                     </button>
                     <p> Thanks,<br>Team NEXUS</p>

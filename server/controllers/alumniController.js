@@ -1,7 +1,15 @@
 const { google } = require('googleapis');
 const fs = require('fs');
 const AlumniDetails = require('../models/alumniDetailModel');
-const { log } = require('console');
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: process.env.EMAIL_ID,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
 
 const auth = new google.auth.GoogleAuth({
     credentials: {
@@ -38,9 +46,9 @@ const uploadImageToDrive = async (imagePath, imageName) => {
         const response = await drive.files.create({
             resource: fileMetadata,
             media: media,
-            fields: 'id, webViewLink, webContentLink'
+            fields: 'id'
         });
-
+        fs.unlinkSync(imagePath); // Delete the image from the server after uploading
         return response.data;
     } catch (error) {
         console.error("Error uploading file to Google Drive:", error);
@@ -76,16 +84,49 @@ const addAlumniDetails = async (req, res) => {
         if (!file) {
             return res.status(500).json({ message: "Failed to upload image" });
         }
+
         const alumniDetail = {
             ...req.body,
             ImageLink: `https://lh3.googleusercontent.com/d/${file.id}` // Store the Google Drive link in the database
         };
 
         await AlumniDetails.create(alumniDetail);
+
+        // Set up nodemailer transporter
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: process.env.EMAIL_ID,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
+
+        // Set up mail options
+        const mailOptions = {
+            from: process.env.EMAIL_ID,
+            to: req.body['E-Mail'], // Assuming instituteEmail is provided in the form data
+            subject: 'Alumni Details Submission Under Review',
+            html: `
+                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+                    <div style="margin-bottom: 25px; display: flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
+                    </div>
+                    <div>Dear ${req.body['Name']},</div>
+                    <p>Thank you for taking the time to connect with us on the NEXUS Alumni portal.</p>
+                    <p>Your details are currently under review, and once verified, they will be displayed on our Alumni Connect page.</p>
+                    <p>We appreciate your support and look forward to showcasing your achievements to inspire our community.</p>
+                    <p>Thanks,<br>Team NEXUS</p>
+                </div>
+            `
+        };
+
+        // Send mail
+        await transporter.sendMail(mailOptions);
+
         return res.status(200).json({ message: "Waiting for Review" });
     } catch (err) {
         console.error('Error adding alumni details:', err.message);
-        return res.status(500).json(err);
+        return res.status(500).json({ message: "Error adding alumni details", error: err.message });
     }
 };
 

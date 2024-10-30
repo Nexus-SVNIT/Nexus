@@ -2,6 +2,7 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const Achievement = require('../models/achievementModel');
 const userSchema = require('../models/userModel');
+const nodemailer = require('nodemailer');
 
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
@@ -107,26 +108,64 @@ const addAchievement = async (req, res) => {
     try {
         const uploadResult = await uploadImageToDrive(req);
         if (!uploadResult.success) {
-            return res.status(500).json({ Message: `Error uploading file: ${uploadResult.error}` });
+            return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
         }
 
         // Parse teamMembers and ensure it's an array of strings (admission numbers)
         const teamMembersArray = JSON.parse(req.body.teamMembers);
-        const teamMembers = teamMembersArray.map(member => member.admissionNumber); // Extract only admission numbers
+        const teamMembers = teamMembersArray.map(member => member.admissionNumber);
 
         const achievement = {
-            admissionNumber: req.user.admissionNumber, // Use admissionNumber from middleware
-            teamMembers: teamMembersArray, // Now this will be an array of strings
+            admissionNumber: req.user.admissionNumber,
+            teamMembers: teamMembersArray,
             desc: req.body.desc,
             image: uploadResult.fileId,
             proof: req.body.proof,
         };
 
         await Achievement.create(achievement);
-        return res.status(200).json({ Message: "Waiting for Review" });
+
+        // Fetch user details from the database
+        const user = await userSchema.findOne({ admissionNumber: req.user.admissionNumber });
+        if (!user || !user.instituteEmail) {
+            return res.status(400).json({ message: "User email not found" });
+        }
+
+        // Set up nodemailer transporter
+        const transporter = nodemailer.createTransport({
+            service: 'Gmail',
+            auth: {
+                user: process.env.EMAIL_ID,
+                pass: process.env.EMAIL_PASSWORD
+            }
+        });
+
+        // Set up mail options
+        const mailOptions = {
+            from: process.env.EMAIL_ID,
+            to: user.instituteEmail,
+            subject: 'Achievement Submission Under Review',
+            html: `
+                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+                    <div style="margin-bottom: 25px; display: flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
+                    </div>
+                    <div>Dear ${user.fullName},</div>
+                    <p>Thank you for submitting your achievement on the NEXUS portal. Your achievement is currently under review.</p>
+                    <p>Once verified, it will be displayed on the website's achievement bulletin section.</p>
+                    <p>We appreciate your hard work and look forward to sharing your success story with our community.</p>
+                    <p>Thanks,<br>Team NEXUS</p>
+                </div>
+            `
+        };
+
+        // Send mail
+        await transporter.sendMail(mailOptions);
+
+        return res.status(200).json({ message: "Waiting for Review" });
     } catch (err) {
-        console.error('Error adding achievement:', err.message || err);
-        return res.status(500).json({ Message: "Error adding achievement", error: err.message || err });
+        console.error('Error adding achievement:', err.message);
+        return res.status(500).json({ message: "Error adding achievement", error: err.message });
     }
 };
 
