@@ -140,7 +140,7 @@ const getUniqueYears = async (req, res) => {
       // Fetch unique years from the teamMembers collection
       const uniqueYears = await teamMembersModel.distinct("year");
       if (!uniqueYears || uniqueYears.length === 0) {
-        return res.status(404).json({ message: "No years found" });
+        return res.status(200).json({ years: ['2024-2025'], message: "No years found" });
       }
   
       res.status(200).json({ years: uniqueYears });
