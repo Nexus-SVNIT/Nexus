@@ -66,6 +66,9 @@ const notifyAllSubscribers = async (formId) => {
     }
 };
 
+
+
+
 const getPublicForms = async (req, res) => {
     try {
         const allForms = await Forms.find({ publish: true })
@@ -279,5 +282,6 @@ module.exports = {
     getFormFields,
     updateFormStatus,
     updateFormDeadline,
-    notifyAllSubscribers
+    notifyAllSubscribers,
+    
 };

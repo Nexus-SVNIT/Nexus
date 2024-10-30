@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
 const bcrypt = require('bcrypt')
+const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -363,6 +364,36 @@ const resetPassword = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+const generalNotification = async (subject, message) => {
+    try {
+        const subscribers = await user.find({ subscribed: true });
+
+        const linkToApply = 'https://www.nexus-svnit.tech';
+
+        subscribers.forEach(async (subscriber) => {
+            const emailContent = {
+                to: subscriber.personalEmail,
+                subject: subject, // Use the subject from the request
+                html: `
+                    <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                        <div style="padding: 10px; width: 60%; display: flex; justify-content: center;">
+                            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                        </div>
+                        <div>Dear ${subscriber.fullName},</div>
+                        <p>${message}</p> <!-- Include the custom message here -->
+                        <p>Visit <a href="${linkToApply}" style="color: blue;">this link</a> for more details.</p>
+                    </div>
+                `,
+            };
+
+            // Send the email (implementation depends on your email sending setup)
+            await sendEmail(emailContent); // Ensure you have an email sending function
+        });
+    } catch (err) {
+        console.error('Error notifying subscribers:', err);
+        throw err; 
+    }
+};
 
 module.exports = {
     getUserProfile,
@@ -370,4 +401,5 @@ module.exports = {
     loginUser, signupUser, verifyEmail,
     forgotPassword, verifyPasswordResetEmail,
     resetPassword,
+    generalNotification,
 };

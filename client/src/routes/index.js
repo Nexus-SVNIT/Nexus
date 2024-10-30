@@ -16,6 +16,8 @@ import verifyAchievement from '../pages/Achievements/verifyAchievement.jsx'
 import createEvent from '../components/Events/createEvent.jsx'
 import AddProject from '../components/Project/AddProject.jsx'
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
+import cp from '../components/coding/cp.jsx'
+import MessageForm from "../components/Message/MessageForm.jsx"
 
 export const DefaultRoutes = [
   {
@@ -96,6 +98,12 @@ export const DefaultRoutes = [
 
   },
   {
+    path: 'coding',
+    title: 'coding',
+    component: cp
+
+  },
+  {
     path: '*',
     title: 'Not Found',
     component: NotFound
@@ -148,6 +156,11 @@ export const AdminRoutes = [
     path:'create-event',
     title: 'create-event',
     component: createEvent
+  },
+  {
+    path:'general-notification',
+    title:'Notify',
+    component: MessageForm
   }
 
   

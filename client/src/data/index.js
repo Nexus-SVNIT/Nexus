@@ -6,7 +6,8 @@ export const NavList = [
   { label: 'Forms', path: '/forms' },
   { label: 'Connect', path: '/connect' },
   { label: 'About', path: '/about' },
-  { label: 'Projects',path: '/projects'}
+  { label: 'Projects',path: '/projects'},
+  { label: 'Coding',path: '/coding'}
 ]
 export const FAQsList = [
   {
