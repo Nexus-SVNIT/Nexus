@@ -23,11 +23,18 @@ const CustomBarChart = ({ batchData }) => {
     { value: "CodeChef", color: "rgba(255, 159, 64, 0.6)" },
   ];
 
+  console.log(data); // Ensure this logs your expected data
+
   return (
     <div className="mb-10 flex justify-center p-5">
-      <ResponsiveContainer width="100%" height={300}>
+      <ResponsiveContainer width="100%" height={400}> {/* Increased height */}
         <BarChart data={data}>
-          <XAxis dataKey="batch" tick={{ fill: "white" }} />
+          <XAxis
+            dataKey="batch"
+            tick={{ fill: "white" }}
+            angle={-90} // Rotate labels for better visibility
+            textAnchor="end" // Align text properly
+          />
           <YAxis tick={{ fill: "white" }} />
           <Tooltip
             contentStyle={{
@@ -40,7 +47,6 @@ const CustomBarChart = ({ batchData }) => {
             }}
             itemStyle={{ color: "white" }}
             cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
-            position={{ x: undefined, y: undefined }}
           />
           <Legend payload={legendPayload} />
           <Bar dataKey="Codeforces" fill="rgba(75, 192, 192, 0.6)" />
