@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js'); // Assuming you have an auth middleware
-const { loginUser, signupUser, verifyEmail, updateUserProfile, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail,generalNotification } = require('../controllers/userController.js')
+const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail,generalNotification } = require('../controllers/userController.js')
 
 router.post('/login', (req, res) => {
     loginUser(req, res);
@@ -18,6 +18,7 @@ router.get('/profile', authMiddleware, getUserProfile);
 // Route to update user profile (protected route)
 router.put('/profile', authMiddleware, updateUserProfile);
 
+router.get('/get', getUsers);
 router.get('/get/all', getAllUsers);
 
 router.post('/forgot-password', forgotPassword);

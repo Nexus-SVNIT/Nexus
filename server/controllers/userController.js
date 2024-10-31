@@ -204,7 +204,7 @@ const getAllUsers = async (req, res) => {
         const sortField = req.query.sortBy || 'fullName'; // Sort field
         const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
 
-        const users = await user.find()
+        const users = await user.find({}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
             .sort({ [sortField]: sortOrder }) // Sorting by field and order
             .skip((page - 1) * limit)
             .limit(limit);
@@ -216,6 +216,23 @@ const getAllUsers = async (req, res) => {
             totalUsers,
             totalPages: Math.ceil(totalUsers / limit),
             currentPage: page,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching users', error });
+    }
+}
+
+const getUsers = async (req, res) => {
+    try {
+        const sortField = req.query.sortBy || 'admissionNumber'; // Sort field
+        const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
+
+        const users = await user.find({}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+            .sort({ [sortField]: sortOrder }) // Sorting by field and order
+
+
+        res.status(200).json({
+            users
         });
     } catch (error) {
         res.status(500).json({ message: 'Error fetching users', error });
@@ -402,4 +419,5 @@ module.exports = {
     forgotPassword, verifyPasswordResetEmail,
     resetPassword,
     generalNotification,
+    getUsers
 };
