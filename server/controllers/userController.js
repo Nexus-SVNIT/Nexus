@@ -79,6 +79,32 @@ const signupUser = async (req, res) => {
         await newUser.save();
 
         // Step 5: Send verification email...
+           // Step 5: Send verification email
+
+
+           const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
+
+           const mailOptions = {
+               from: process.env.EMAIL_ID,
+               to: instituteEmail,
+               subject: 'Verify your Email',
+               text: `Click the link to verify your email: ${verificationUrl}`,
+               html: 
+               `<div style=" background-color: black; color:white; font-size:12px; padding:20px;">
+               <div style="margin-bottom: 25px; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/></div>
+               <div> Dear ${fullName},</div>
+               <p style="">Thank you for registering on NEXUS portal. Please verify your email using following link.</p>
+               <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
+               <p> Thanks,<br>Team NEXUS</p>
+               </div>`
+               
+           };
+   
+           await transporter.sendMail(mailOptions);
+   
+           res.status(201).json({ message: 'User registered. Verification email sent!' });
+   
+   
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
