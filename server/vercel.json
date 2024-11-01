@@ -19,6 +19,11 @@
         "src": "/(.+)",
         "dest": "build/$1"
       }
-    ]
+    ],
+    "functions": { 
+      "controllers/*.js": {
+        "maxDuration": 30
+      }
+    }
   }
   
