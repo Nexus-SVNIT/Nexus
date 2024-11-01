@@ -69,7 +69,7 @@ const Teams = () => {
     const team_devs = data.filter((member) => member.role === "Developer");
     const team_treasurer = data.filter((member) => member.role === "Treasurer");
     const team_social_med = data.filter((member) => member.role === "Media Head");
-    const team_designer = data.filter((member) => member.role === "Designer");
+    const team_designer = data.filter((member) => member.role === "Design Head");
     const team_AI = data.filter((member) => member.role === "AI/ML Head");
     const team_Alma = data.filter((member) => member.role === "Alma Relation Head");
     const team_Think_Tank = data.filter((member) => member.role === "Think Tank Head");

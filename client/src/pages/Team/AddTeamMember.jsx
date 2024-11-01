@@ -119,6 +119,7 @@ const AddTeamMember = () => {
               <option value="Developer">Developer</option>
               <option value="Treasurer">Treasurer</option>
               <option value="Media Head">Media Head</option>
+              <option value="Design Head">Design Head</option>
               <option value="Alma Relation Head">Alma Relation Head</option>
               <option value="AI/ML Head">AI/ML Head</option>
               <option value="Think Tank Head">Think Tank Head</option>
