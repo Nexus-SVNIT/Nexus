@@ -87,6 +87,8 @@ const Cp = () => {
                   admissionNumber: user.admissionNumber,
                   leetcodeProfile: user.leetcodeProfile,
                   globalRanking: userContestRanking.globalRanking || "N/A",
+                  rating:userContestRanking.rating || 0,
+                  ContestAttended:userContestRanking.attendedContestsCount||0,
                   totalSolved,
                 });
                 batchWiseData[batch].LeetCode++;
@@ -176,7 +178,9 @@ const Cp = () => {
       { Header: "Admission Number", accessor: "admissionNumber" },
       { Header: "Profile", accessor: "leetcodeProfile" },
       { Header: "Global Ranking", accessor: "globalRanking" },
+      { Header:"Rating",accessor: "rating"},
       { Header: "Total Solved", accessor: "totalSolved" },
+      {Header:"Contest Attended",accessor:"ContestAttended"},
     ],
     codechef: [
       { Header: "Name", accessor: "fullName" },
