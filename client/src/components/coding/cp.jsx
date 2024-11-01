@@ -35,9 +35,9 @@ const Cp = () => {
 
             if (!batchWiseData[batch]) {
               batchWiseData[batch] = {
-                Codeforces: 0,
-                LeetCode: 0,
-                CodeChef: 0,
+                Codeforces: { totalRating: 0, userCount: 0 },
+                LeetCode: { totalRating: 0, totalSolved: 0, userCount: 0 },
+                CodeChef: { totalRating: 0, userCount: 0 },
               };
             }
 
@@ -70,7 +70,11 @@ const Cp = () => {
                   latestContest: latestContest.contestName || "No contests",
                   contestRanking: latestContest.rank || "Not given",
                 });
-                batchWiseData[batch].Codeforces++;
+                
+                
+                  batchWiseData[batch].Codeforces.totalRating += rating;
+                  batchWiseData[batch].Codeforces.userCount++;
+                
               }
             }
 
@@ -93,7 +97,9 @@ const Cp = () => {
                   ContestAttended:userContestRanking.attendedContestsCount||0,
                   totalSolved,
                 });
-                batchWiseData[batch].LeetCode++;
+                batchWiseData[batch].LeetCode.totalRating += userContestRanking.rating
+                batchWiseData[batch].LeetCode.userCount++;
+                batchWiseData[batch].LeetCode.totalSolved += totalSolved;
               }
             }
 
@@ -111,11 +117,33 @@ const Cp = () => {
                   rating: ccData.rating || "N/A",
                   globalRank: ccData.global_rank || "N/A",
                 });
-                batchWiseData[batch].CodeChef++;
+                
+                batchWiseData[batch].CodeChef.totalRating += ccData.rating;
+                batchWiseData[batch].CodeChef.userCount++;
               }
             }
           })
         );
+         // Calculate average ratings for each batch on each platform
+         Object.keys(batchWiseData).forEach((batch) => {
+          const platformData = batchWiseData[batch];
+          platformData.Codeforces.avgRating =
+            platformData.Codeforces.userCount > 0
+              ? (platformData.Codeforces.totalRating / platformData.Codeforces.userCount).toFixed(2)
+              : 0;
+          platformData.LeetCode.avgRating =
+            platformData.LeetCode.userCount > 0
+              ? (platformData.LeetCode.totalRating / platformData.LeetCode.userCount).toFixed(2)
+              : 0;
+          platformData.LeetCode.avgSolved =
+            platformData.LeetCode.userCount > 0
+              ? (platformData.LeetCode.totalSolved / platformData.LeetCode.userCount).toFixed(2)
+              : 0;
+          platformData.CodeChef.avgRating =
+            platformData.CodeChef.userCount > 0
+              ? (platformData.CodeChef.totalRating / platformData.CodeChef.userCount).toFixed(2)
+              : 0;
+        });
 
         // Sort leaderboards by rating in descending order
         cfLeaderboard.sort((a, b) => b.rating - a.rating);
@@ -184,7 +212,7 @@ const Cp = () => {
           <h1 className="mb-10 text-center text-4xl text-blue-400">
             User Report by Platform and Batch
           </h1>
-          <CustomBarChart batchData={batchData} />
+          <CustomBarChart batchData={batchData}  />
 
           {/* Search Bar Component */}
           <SearchBar placeholder="Search..." onChange={setSearchTerm} />

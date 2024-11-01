@@ -10,11 +10,17 @@ import {
 } from "recharts";
 
 const CustomBarChart = ({ batchData }) => {
+  // Structure the data to include avgRating and avgProblemsSolved
+  console.log(batchData);
   const data = Object.keys(batchData).map((batch) => ({
     batch,
-    Codeforces: batchData[batch].Codeforces,
-    LeetCode: batchData[batch].LeetCode,
-    CodeChef: batchData[batch].CodeChef,
+    Codeforces: batchData[batch].Codeforces?.userCount || 0,
+    LeetCode: batchData[batch].LeetCode?.userCount || 0,
+    CodeChef: batchData[batch].CodeChef?.userCount || 0,
+    CodeforcesAvgRating: batchData[batch].Codeforces?.avgRating || "N/A",
+    LeetCodeAvgRating: batchData[batch].LeetCode?.avgRating || "N/A",
+    LeetCodeAvgSolved: batchData[batch].LeetCode?.avgSolved || "N/A",
+    CodeChefAvgRating: batchData[batch].CodeChef?.avgRating || "N/A",
   }));
 
   const legendPayload = [
@@ -23,28 +29,38 @@ const CustomBarChart = ({ batchData }) => {
     { value: "CodeChef", color: "rgba(255, 159, 64, 0.6)" },
   ];
 
-
   return (
     <div className="mb-10 flex justify-center p-5">
-      <ResponsiveContainer width="100%" height={400}> {/* Increased height */}
+      <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data}>
           <XAxis
             dataKey="batch"
             tick={{ fill: "white" }}
-            angle={-90} // Rotate labels for better visibility
-            textAnchor="end" // Align text properly
+            angle={-90}
+            textAnchor="end"
           />
           <YAxis tick={{ fill: "white" }} />
           <Tooltip
-            contentStyle={{
-              backgroundColor: "rgba(0, 0, 0, 0.8)",
-              borderRadius: "10px",
-              border: "1px solid rgba(255, 255, 255, 0.2)",
-              color: "white",
-              width: "auto",
-              maxWidth: "200px",
+            content={({ payload }) => {
+              if (!payload || !payload.length) return null;
+              const { batch, Codeforces, LeetCode, CodeChef, CodeforcesAvgRating, LeetCodeAvgRating, LeetCodeAvgSolved, CodeChefAvgRating } = payload[0].payload;
+
+              return (
+                <div style={{
+                  backgroundColor: "rgba(0, 0, 0, 0.8)",
+                  padding: "10px",
+                  borderRadius: "10px",
+                  border: "1px solid rgba(255, 255, 255, 0.2)",
+                  color: "white",
+                  maxWidth: "200px"
+                }}>
+                  <h3>Batch {batch}</h3>
+                  <p><strong>Codeforces:</strong> {Codeforces} users, Avg Rating: {CodeforcesAvgRating}</p>
+                  <p><strong>LeetCode:</strong> {LeetCode} users, Avg Rating: {LeetCodeAvgRating}, Avg Solved: {LeetCodeAvgSolved}</p>
+                  <p><strong>CodeChef:</strong> {CodeChef} users, Avg Rating: {CodeChefAvgRating}</p>
+                </div>
+              );
             }}
-            itemStyle={{ color: "white" }}
             cursor={{ fill: "rgba(255, 255, 255, 0.1)" }}
           />
           <Legend payload={legendPayload} />
