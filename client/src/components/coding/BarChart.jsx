@@ -10,17 +10,13 @@ import {
 } from "recharts";
 
 const CustomBarChart = ({ batchData }) => {
-  // Structure the data to include avgRating and avgProblemsSolved
-  console.log(batchData);
+  
   const data = Object.keys(batchData).map((batch) => ({
     batch,
     Codeforces: batchData[batch].Codeforces?.userCount || 0,
     LeetCode: batchData[batch].LeetCode?.userCount || 0,
     CodeChef: batchData[batch].CodeChef?.userCount || 0,
-    CodeforcesAvgRating: batchData[batch].Codeforces?.avgRating || "N/A",
-    LeetCodeAvgRating: batchData[batch].LeetCode?.avgRating || "N/A",
-    LeetCodeAvgSolved: batchData[batch].LeetCode?.avgSolved || "N/A",
-    CodeChefAvgRating: batchData[batch].CodeChef?.avgRating || "N/A",
+    
   }));
 
   const legendPayload = [
@@ -43,7 +39,7 @@ const CustomBarChart = ({ batchData }) => {
           <Tooltip
             content={({ payload }) => {
               if (!payload || !payload.length) return null;
-              const { batch, Codeforces, LeetCode, CodeChef, CodeforcesAvgRating, LeetCodeAvgRating, LeetCodeAvgSolved, CodeChefAvgRating } = payload[0].payload;
+              const { batch, Codeforces, LeetCode, CodeChef } = payload[0].payload;
 
               return (
                 <div style={{
@@ -55,9 +51,9 @@ const CustomBarChart = ({ batchData }) => {
                   maxWidth: "200px"
                 }}>
                   <h3>Batch {batch}</h3>
-                  <p><strong>Codeforces:</strong> {Codeforces} users, Avg Rating: {CodeforcesAvgRating}</p>
-                  <p><strong>LeetCode:</strong> {LeetCode} users, Avg Rating: {LeetCodeAvgRating}, Avg Solved: {LeetCodeAvgSolved}</p>
-                  <p><strong>CodeChef:</strong> {CodeChef} users, Avg Rating: {CodeChefAvgRating}</p>
+                  <p><strong>Codeforces:</strong> {Codeforces} users</p>
+                  <p><strong>LeetCode:</strong> {LeetCode} users</p>
+                  <p><strong>CodeChef:</strong> {CodeChef} users</p>
                 </div>
               );
             }}

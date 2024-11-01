@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import Chart from "chart.js/auto";
+import Chart, { elements } from "chart.js/auto";
 import SearchInput from "react-search-input";
 import "tailwindcss/tailwind.css";
 import SortableTable from "./SortedTable";
@@ -65,16 +65,18 @@ const Cp = () => {
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
                   codeforcesProfile: user.codeforcesProfile,
-                  rating,
+                  rating: rating || 0,
                   rank,
                   avatar,
                   latestContest: latestContest.contestName || "No contests",
                   contestRanking: latestContest.rank || "Not given",
                 });
                 
-                
+                if(rating){
                   batchWiseData[batch].Codeforces.totalRating += rating;
                   batchWiseData[batch].Codeforces.userCount++;
+                }
+                  
                 
               }
             }
@@ -100,9 +102,12 @@ const Cp = () => {
                     userContestRanking.attendedContestsCount || 0,
                   totalSolved,
                 });
-                batchWiseData[batch].LeetCode.totalRating += userContestRanking.rating
-                batchWiseData[batch].LeetCode.userCount++;
-                batchWiseData[batch].LeetCode.totalSolved += totalSolved;
+                if(userContestRanking.rating){
+                  batchWiseData[batch].LeetCode.totalRating += userContestRanking.rating
+                  batchWiseData[batch].LeetCode.userCount++;
+                  batchWiseData[batch].LeetCode.totalSolved += totalSolved;
+                }
+                
               }
             }
 
@@ -117,12 +122,15 @@ const Cp = () => {
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
                   codechefProfile: user.codechefProfile,
-                  rating: ccData.rating || "N/A",
-                  globalRank: ccData.global_rank || "N/A",
+                  rating_number:ccData.rating_number||0,
+                  rating: ccData.rating || 0,
+                  globalRank: ccData.global_rank || 0,
                 });
+                if(ccData.rating){
+                  batchWiseData[batch].CodeChef.totalRating += ccData.rating;
+                  batchWiseData[batch].CodeChef.userCount++;
+                }
                 
-                batchWiseData[batch].CodeChef.totalRating += ccData.rating;
-                batchWiseData[batch].CodeChef.userCount++;
               }
             }
           }),
@@ -150,8 +158,8 @@ const Cp = () => {
 
         // Sort leaderboards by rating in descending order
         cfLeaderboard.sort((a, b) => b.rating - a.rating);
-        lcLeaderboard.sort((a, b) => b.globalRanking - a.globalRanking);
-        ccLeaderboard.sort((a, b) => b.rating - a.rating);
+        lcLeaderboard.sort((a, b) => b.rating - a.rating);
+        ccLeaderboard.sort((a, b) => b.rating_number - a.rating_number);
 
         setUserData(data.users);
         setBatchData(batchWiseData);
@@ -162,6 +170,7 @@ const Cp = () => {
         console.error("Error fetching user data:", error);
       } finally {
         setLoading(false); // Stop loading after data is fetched
+        {alert("Anyone who registered but didnot get their profile data then Go to Account Settings > Profile Privacy or similar settings and make it public.")};
       }
     };
 
@@ -199,6 +208,7 @@ const Cp = () => {
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
       { Header: "Profile", accessor: "codechefProfile" },
+      { Header:"rating_number",accessor:"rating_number"},
       { Header: "Rating", accessor: "rating" },
       { Header: "Global Rank", accessor: "globalRank" },
     ],
@@ -213,8 +223,9 @@ const Cp = () => {
       ) : (
         <>
 
-
+          
           <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">
+            
             {/* Upcoming Contests Component */}
             <UpcomingContests />
             <h1 className="mb-10 text-center text-4xl text-blue-400">
