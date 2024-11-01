@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import SortableTable from "./SortedTable";
 import SearchBar from "./SearchBar";
 import CustomBarChart from "./BarChart";
+import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 
 const Cp = () => {
   const [userData, setUserData] = useState([]);
@@ -14,12 +15,13 @@ const Cp = () => {
   const [leetcodeLeaderboard, setLeetcodeLeaderboard] = useState([]);
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [loading, setLoading] = useState(true); // Loader state
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/get/`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/get/`
         );
         const data = await response.json();
         const batchWiseData = {};
@@ -40,19 +42,19 @@ const Cp = () => {
             }
 
             const leetcodeUsername = user.leetcodeProfile
-              ? user.leetcodeProfile.split("/").pop()
+              ? user.leetcodeProfile
               : null;
             const codeforcesUsername = user.codeforcesProfile
-              ? user.codeforcesProfile.split("/").pop()
+              ? user.codeforcesProfile
               : null;
             const codechefUsername = user.codechefProfile
-              ? user.codechefProfile.split("/").pop()
+              ? user.codechefProfile
               : null;
 
             // Fetch Codeforces data
             if (codeforcesUsername) {
               const cfResponse = await fetch(
-                `https://competeapi.vercel.app/user/codeforces/${codeforcesUsername}`,
+                `https://competeapi.vercel.app/user/codeforces/${codeforcesUsername}`
               );
               const cfData = await cfResponse.json();
               if (cfData && cfData.length > 0) {
@@ -75,13 +77,13 @@ const Cp = () => {
             // Fetch LeetCode data
             if (leetcodeUsername) {
               const lcResponse = await fetch(
-                `https://competeapi.vercel.app/user/leetcode/${leetcodeUsername}`,
+                `https://competeapi.vercel.app/user/leetcode/${leetcodeUsername}`
               );
               const lcData = await lcResponse.json();
               if (lcData.data) {
                 const userContestRanking = lcData.data.userContestRanking || {};
                 const totalSolved =
-                  lcData.data.matchedUser.submitStats.acSubmissionNum[0].count;
+                  lcData.data.matchedUser?.submitStats?.acSubmissionNum[0]?.count;
                 lcLeaderboard.push({
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
@@ -96,7 +98,7 @@ const Cp = () => {
             // Fetch CodeChef data
             if (codechefUsername) {
               const ccResponse = await fetch(
-                `https://competeapi.vercel.app/user/codechef/${codechefUsername}`,
+                `https://competeapi.vercel.app/user/codechef/${codechefUsername}`
               );
               const ccData = await ccResponse.json();
               if (ccData) {
@@ -110,7 +112,7 @@ const Cp = () => {
                 batchWiseData[batch].CodeChef++;
               }
             }
-          }),
+          })
         );
 
         // Sort leaderboards by rating in descending order
@@ -125,39 +127,19 @@ const Cp = () => {
         setCodechefLeaderboard(ccLeaderboard);
       } catch (error) {
         console.error("Error fetching user data:", error);
+      } finally {
+        setLoading(false); // Stop loading after data is fetched
       }
     };
 
     fetchUsers();
   }, []);
 
-  // Prepare chart data for batch-wise distribution
-  const chartData = {
-    labels: Object.keys(batchData),
-    datasets: [
-      {
-        label: "Codeforces",
-        data: Object.values(batchData).map((data) => data.Codeforces),
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
-      },
-      {
-        label: "LeetCode",
-        data: Object.values(batchData).map((data) => data.LeetCode),
-        backgroundColor: "rgba(153, 102, 255, 0.6)",
-      },
-      {
-        label: "CodeChef",
-        data: Object.values(batchData).map((data) => data.CodeChef),
-        backgroundColor: "rgba(255, 159, 64, 0.6)",
-      },
-    ],
-  };
-
   const filterData = (data) => {
     return data.filter((user) =>
       Object.values(user).some((val) =>
-        String(val).toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
+        String(val).toLowerCase().includes(searchTerm.toLowerCase())
+      )
     );
   };
 
@@ -189,38 +171,46 @@ const Cp = () => {
 
   return (
     <div className="App text-gray-200 min-h-screen p-8">
-      <h1 className="mb-10 text-center text-4xl text-blue-400">
-        User Report by Platform and Batch
-      </h1>
+      {loading ? (
+        <div className="w-full h-screen flex justify-center items-center">
+          <Loader />
+        </div>
+      ) : (
+        <>
+          <h1 className="mb-10 text-center text-4xl text-blue-400">
+            User Report by Platform and Batch
+          </h1>
           <CustomBarChart batchData={batchData} />
 
-      {/* Search Bar Component */}
-      <SearchBar placeholder="Search..." onChange={setSearchTerm} />
+          {/* Search Bar Component */}
+          <SearchBar placeholder="Search..." onChange={setSearchTerm} />
 
-      {/* Leaderboard Tables */}
-      <h2 className="mt-12 text-3xl font-semibold text-blue-400">
-        Codeforces Leaderboard
-      </h2>
-      <SortableTable
-        columns={columns.codeforces}
-        data={filterData(codeforcesLeaderboard)}
-      />
+          {/* Leaderboard Tables */}
+          <h2 className="mt-12 text-3xl font-semibold text-blue-400">
+            Codeforces Leaderboard
+          </h2>
+          <SortableTable
+            columns={columns.codeforces}
+            data={filterData(codeforcesLeaderboard)}
+          />
 
-      <h2 className="mt-12 text-3xl font-semibold text-blue-400">
-        LeetCode Leaderboard
-      </h2>
-      <SortableTable
-        columns={columns.leetcode}
-        data={filterData(leetcodeLeaderboard)}
-      />
+          <h2 className="mt-12 text-3xl font-semibold text-blue-400">
+            LeetCode Leaderboard
+          </h2>
+          <SortableTable
+            columns={columns.leetcode}
+            data={filterData(leetcodeLeaderboard)}
+          />
 
-      <h2 className="mt-12 text-3xl font-semibold text-blue-400">
-        CodeChef Leaderboard
-      </h2>
-      <SortableTable
-        columns={columns.codechef}
-        data={filterData(codechefLeaderboard)}
-      />
+          <h2 className="mt-12 text-3xl font-semibold text-blue-400">
+            CodeChef Leaderboard
+          </h2>
+          <SortableTable
+            columns={columns.codechef}
+            data={filterData(codechefLeaderboard)}
+          />
+        </>
+      )}
     </div>
   );
 };

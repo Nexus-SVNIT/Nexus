@@ -12,6 +12,7 @@ const userSchema = new mongoose.Schema({
     githubProfile: String,
     leetcodeProfile: String,
     codeforcesProfile: String,
+    codechefProfile: String, // New field for CodeChef profile
     password: String,
     emailVerified: { type: Boolean, default: false },  // New field for email verification
     verificationToken: String,  // Token for email verification

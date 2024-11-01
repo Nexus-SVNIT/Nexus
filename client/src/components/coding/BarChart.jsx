@@ -23,7 +23,6 @@ const CustomBarChart = ({ batchData }) => {
     { value: "CodeChef", color: "rgba(255, 159, 64, 0.6)" },
   ];
 
-  console.log(data); // Ensure this logs your expected data
 
   return (
     <div className="mb-10 flex justify-center p-5">

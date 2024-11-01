@@ -15,6 +15,7 @@ const ProfilePage = () => {
     githubProfile: '',
     leetcodeProfile: '',
     codeforcesProfile: '',
+    codechefProfile: '', // Added CodeChef profile
     subscribed: false // Corrected to subscribed field
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -34,6 +35,7 @@ const ProfilePage = () => {
         setLoading(false);
       } catch (error) {
         console.error('Error fetching profile:', error.response?.data?.message || error.message);
+        toast.error('Error fetching profile.');
       }
     };
 
@@ -188,7 +190,6 @@ const ProfilePage = () => {
         <div>
           <label className="block text-gray-700">LeetCode Profile</label>
           <input
-            type="url"
             name="leetcodeProfile"
             value={profile.leetcodeProfile}
             onChange={handleChange}
@@ -200,9 +201,19 @@ const ProfilePage = () => {
         <div>
           <label className="block text-gray-700">Codeforces Profile</label>
           <input
-            type="url"
             name="codeforcesProfile"
             value={profile.codeforcesProfile}
+            onChange={handleChange}
+            disabled={!isEditing}
+            className="text-white bg-zinc-800 mt-1 block w-full border border-gray-300 p-2 rounded-md"
+          />
+        </div>
+
+        <div>
+          <label className="block text-gray-700">CodeChef Profile</label> {/* Added CodeChef Profile field */}
+          <input
+            name="codechefProfile"
+            value={profile.codechefProfile}
             onChange={handleChange}
             disabled={!isEditing}
             className="text-white bg-zinc-800 mt-1 block w-full border border-gray-300 p-2 rounded-md"
