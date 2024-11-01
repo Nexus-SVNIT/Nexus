@@ -2,22 +2,10 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Toaster, toast } from 'react-hot-toast'; // Import react-hot-toast
+import CodingProfile from './CodingProfile';
 
-const ProfilePage = () => {
-  const [profile, setProfile] = useState({
-    fullName: '',
-    admissionNumber: '',
-    mobileNumber: '',
-    personalEmail: '',
-    instituteEmail: '',
-    branch: '',
-    linkedInProfile: '',
-    githubProfile: '',
-    leetcodeProfile: '',
-    codeforcesProfile: '',
-    codechefProfile: '', // Added CodeChef profile
-    subscribed: false // Corrected to subscribed field
-  });
+const ProfilePage = ({profile, setProfile}) => {
+  
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false); // New state for button loading
@@ -88,11 +76,8 @@ const ProfilePage = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto mt-10 p-4 bg-zinc-900 shadow-lg rounded-lg mb-36">
-      <Toaster position="top-right" reverseOrder={false} /> {/* Toast notification container */}
-      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Profile</h2>
-
       <form onSubmit={handleSubmit} className="space-y-4">
+        <Toaster position="top-right" reverseOrder={false} /> {/* Toast notification container */}
         <div>
           <label className="block text-gray-700">Full Name</label>
           <input
@@ -270,7 +255,6 @@ const ProfilePage = () => {
           </button>
         </div>
       </form>
-    </div>
   );
 };
 
