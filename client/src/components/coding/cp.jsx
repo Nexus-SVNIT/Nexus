@@ -6,6 +6,7 @@ import "tailwindcss/tailwind.css";
 import SortableTable from "./SortedTable";
 import SearchBar from "./SearchBar";
 import CustomBarChart from "./BarChart";
+import { BatchCard } from "./BatchCard";
 import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
 
@@ -91,7 +92,7 @@ const Cp = () => {
                 const userContestRanking = lcData.data.userContestRanking || {};
                 const totalSolved =
                   lcData.data.matchedUser?.submitStats?.acSubmissionNum[0]
-                    ?.count;
+                    ?.count || 0;
                 lcLeaderboard.push({
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
@@ -102,7 +103,7 @@ const Cp = () => {
                     userContestRanking.attendedContestsCount || 0,
                   totalSolved,
                 });
-                if(userContestRanking.rating){
+                if(userContestRanking && userContestRanking.rating){
                   batchWiseData[batch].LeetCode.totalRating += userContestRanking.rating
                   batchWiseData[batch].LeetCode.userCount++;
                   batchWiseData[batch].LeetCode.totalSolved += totalSolved;
@@ -124,10 +125,10 @@ const Cp = () => {
                   codechefProfile: user.codechefProfile,
                   rating_number:ccData.rating_number||0,
                   rating: ccData.rating || 0,
-                  globalRank: ccData.global_rank || 0,
+                  globalRank: ccData.global_rank || "N/A",
                 });
-                if(ccData.rating){
-                  batchWiseData[batch].CodeChef.totalRating += ccData.rating;
+                if(ccData.rating_number){
+                  batchWiseData[batch].CodeChef.totalRating += ccData.rating_number;
                   batchWiseData[batch].CodeChef.userCount++;
                 }
                 
@@ -232,6 +233,20 @@ const Cp = () => {
               User Report by Platform and Batch
             </h1>
             <CustomBarChart batchData={batchData} />
+
+            {/* Render Batch Data */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
+          {Object.keys(batchData).map((batch) => (
+            <BatchCard
+              key={batch}
+              batch={batch}
+              avgCodeforcesRating={batchData[batch].Codeforces.avgRating}
+              avgLeetcodeRating={batchData[batch].LeetCode.avgRating}
+              avgLeetcodeSolved={batchData[batch].LeetCode.avgSolved}
+              avgCodechefRating={batchData[batch].CodeChef.avgRating}
+            />
+          ))}
+        </div>
 
 
             {/* Search Bar Component */}
