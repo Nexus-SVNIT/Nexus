@@ -13,8 +13,9 @@ function SignUpForm() {
     githubProfile: "",
     leetcodeProfile: "",
     codeforcesProfile: "",
-    codechefProfile: "", // Added CodeChef profile
+    codechefProfile: "",
     password: "",
+    shareCodingProfile: false, // Added shareCodingProfile field
   });
 
   const handleChange = (e) => {
@@ -23,7 +24,7 @@ function SignUpForm() {
     }
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
     });
   };
 
@@ -340,6 +341,19 @@ function SignUpForm() {
               placeholder="Password (min 8 characters)"
               required
             />
+          </div>
+
+          <div className="mb-4">
+            <label className="mb-2 block text-sm text-white" htmlFor="shareCodingProfile">
+              <input
+                type="checkbox"
+                id="shareCodingProfile"
+                name="shareCodingProfile"
+                checked={formData.shareCodingProfile}
+                onChange={handleChange}
+              />
+              {" "}I agree to share my coding profiles on NEXUS's coding profile leaderboard for the analytics purpose.
+            </label>
           </div>
 
           <button

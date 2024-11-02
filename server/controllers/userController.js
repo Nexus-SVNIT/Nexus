@@ -47,7 +47,7 @@ const loginUser = async (req, res) => {
 
 
 const signupUser = async (req, res) => {
-    const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password } = req.body;
+    const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password, shareCodingProfile } = req.body;
 
     try {
         // Step 1: Check if the user already exists
@@ -71,7 +71,8 @@ const signupUser = async (req, res) => {
             githubProfile,
             leetcodeProfile,
             codeforcesProfile,
-            codechefProfile,  // New field for CodeChef profile
+            codechefProfile,
+            shareCodingProfile,  // New field for CodeChef profile
             password,
             verificationToken
         });
@@ -164,7 +165,8 @@ const updateUserProfile = async (req, res) => {
             githubProfile,
             leetcodeProfile,
             codeforcesProfile,
-            codechefProfile,  // Include codechefProfile in the request body
+            codechefProfile,
+            shareCodingProfile,  // Include codechefProfile in the request body
             subscribed 
         } = req.body;
 
@@ -185,10 +187,9 @@ const updateUserProfile = async (req, res) => {
         foundUser.leetcodeProfile = leetcodeProfile || foundUser.leetcodeProfile;
         foundUser.codeforcesProfile = codeforcesProfile || foundUser.codeforcesProfile;
         foundUser.codechefProfile = codechefProfile || foundUser.codechefProfile;  // Update codechefProfile
-
-        if (subscribed === true) {
-            foundUser.subscribed = true;
-        }
+        foundUser.subscribed = subscribed;
+        foundUser.shareCodingProfile = shareCodingProfile;
+        
 
         // Step 3: Save the updated user profile
         await foundUser.save();
@@ -209,7 +210,7 @@ const getAllUsers = async (req, res) => {
         const sortField = req.query.sortBy || 'fullName'; // Sort field
         const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
 
-        const users = await user.find({}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+        const users = await user.find({ emailVerified: true }, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
             .sort({ [sortField]: sortOrder }) // Sorting by field and order
             .skip((page - 1) * limit)
             .limit(limit);
@@ -232,7 +233,7 @@ const getUsers = async (req, res) => {
         const sortField = req.query.sortBy || 'admissionNumber'; // Sort field
         const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
 
-        const users = await user.find({}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+        const users = await user.find({emailVerified: true, shareCodingProfile: true}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
             .sort({ [sortField]: sortOrder }) // Sorting by field and order
 
 

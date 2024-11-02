@@ -9,6 +9,8 @@ import CustomBarChart from "./BarChart";
 import { BatchCard } from "./BatchCard";
 import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
+import { FaInfoCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 const Cp = () => {
   const [userData, setUserData] = useState([]);
@@ -72,13 +74,11 @@ const Cp = () => {
                   latestContest: latestContest.contestName || "No contests",
                   contestRanking: latestContest.rank || "Not given",
                 });
-                
-                if(rating){
+
+                if (rating) {
                   batchWiseData[batch].Codeforces.totalRating += rating;
                   batchWiseData[batch].Codeforces.userCount++;
                 }
-                  
-                
               }
             }
 
@@ -103,12 +103,12 @@ const Cp = () => {
                     userContestRanking.attendedContestsCount || 0,
                   totalSolved,
                 });
-                if(userContestRanking && userContestRanking.rating){
-                  batchWiseData[batch].LeetCode.totalRating += userContestRanking.rating
+                if (userContestRanking && userContestRanking.rating) {
+                  batchWiseData[batch].LeetCode.totalRating +=
+                    userContestRanking.rating;
                   batchWiseData[batch].LeetCode.userCount++;
                   batchWiseData[batch].LeetCode.totalSolved += totalSolved;
                 }
-                
               }
             }
 
@@ -123,37 +123,49 @@ const Cp = () => {
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
                   codechefProfile: user.codechefProfile,
-                  rating_number:ccData.rating_number||0,
+                  rating_number: ccData.rating_number || 0,
                   rating: ccData.rating || 0,
                   globalRank: ccData.global_rank || "N/A",
                 });
-                if(ccData.rating_number){
-                  batchWiseData[batch].CodeChef.totalRating += ccData.rating_number;
+                if (ccData.rating_number) {
+                  batchWiseData[batch].CodeChef.totalRating +=
+                    ccData.rating_number;
                   batchWiseData[batch].CodeChef.userCount++;
                 }
-                
               }
             }
           }),
         );
-         // Calculate average ratings for each batch on each platform
-         Object.keys(batchWiseData).forEach((batch) => {
+        // Calculate average ratings for each batch on each platform
+        Object.keys(batchWiseData).forEach((batch) => {
           const platformData = batchWiseData[batch];
           platformData.Codeforces.avgRating =
             platformData.Codeforces.userCount > 0
-              ? (platformData.Codeforces.totalRating / platformData.Codeforces.userCount).toFixed(2)
+              ? (
+                  platformData.Codeforces.totalRating /
+                  platformData.Codeforces.userCount
+                ).toFixed(2)
               : 0;
           platformData.LeetCode.avgRating =
             platformData.LeetCode.userCount > 0
-              ? (platformData.LeetCode.totalRating / platformData.LeetCode.userCount).toFixed(2)
+              ? (
+                  platformData.LeetCode.totalRating /
+                  platformData.LeetCode.userCount
+                ).toFixed(2)
               : 0;
           platformData.LeetCode.avgSolved =
             platformData.LeetCode.userCount > 0
-              ? (platformData.LeetCode.totalSolved / platformData.LeetCode.userCount).toFixed(2)
+              ? (
+                  platformData.LeetCode.totalSolved /
+                  platformData.LeetCode.userCount
+                ).toFixed(2)
               : 0;
           platformData.CodeChef.avgRating =
             platformData.CodeChef.userCount > 0
-              ? (platformData.CodeChef.totalRating / platformData.CodeChef.userCount).toFixed(2)
+              ? (
+                  platformData.CodeChef.totalRating /
+                  platformData.CodeChef.userCount
+                ).toFixed(2)
               : 0;
         });
 
@@ -171,7 +183,11 @@ const Cp = () => {
         console.error("Error fetching user data:", error);
       } finally {
         setLoading(false); // Stop loading after data is fetched
-        {alert("Anyone who registered but didnot get their profile data then Go to Account Settings > Profile Privacy or similar settings and make it public.")};
+        {
+          // alert(
+          //   "Anyone who registered but didnot get their profile data then Go to Account Settings > Profile Privacy or similar settings and make it public.",
+          // );
+        }
       }
     };
 
@@ -209,7 +225,7 @@ const Cp = () => {
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
       { Header: "Profile", accessor: "codechefProfile" },
-      { Header:"rating_number",accessor:"rating_number"},
+      { Header: "rating_number", accessor: "rating_number" },
       { Header: "Rating", accessor: "rating" },
       { Header: "Global Rank", accessor: "globalRank" },
     ],
@@ -223,37 +239,52 @@ const Cp = () => {
         </div>
       ) : (
         <>
-
-          
+          <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
+            <FaInfoCircle size={42} className="h-auto text-yellow-500" />
+            <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
+              If you registered but did not get your coding profile data here in leaderboard, then go to 
+              <Link
+                to="/profile"
+                className="mx-1 font-bold text-blue-500  underline underline-offset-4"
+              >
+                Profile Page
+              </Link>
+              and turn on "Share Your Coding Profile" feature.
+            </p>
+          </div>
           <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">
-            
             {/* Upcoming Contests Component */}
             <UpcomingContests />
-            <h1 className="mb-10 text-center text-4xl text-blue-400">
+            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
               User Report by Platform and Batch
-            </h1>
+            </h2>
             <CustomBarChart batchData={batchData} />
 
             {/* Render Batch Data */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8">
-          {Object.keys(batchData).map((batch) => (
-            <BatchCard
-              key={batch}
-              batch={batch}
-              avgCodeforcesRating={batchData[batch].Codeforces.avgRating}
-              avgLeetcodeRating={batchData[batch].LeetCode.avgRating}
-              avgLeetcodeSolved={batchData[batch].LeetCode.avgSolved}
-              avgCodechefRating={batchData[batch].CodeChef.avgRating}
-            />
-          ))}
-        </div>
+            <div className="mb-8 mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {Object.keys(batchData).map((batch) => (
+                <BatchCard
+                  key={batch}
+                  batch={batch}
+                  avgCodeforcesRating={batchData[batch].Codeforces.avgRating}
+                  avgLeetcodeRating={batchData[batch].LeetCode.avgRating}
+                  avgLeetcodeSolved={batchData[batch].LeetCode.avgSolved}
+                  avgCodechefRating={batchData[batch].CodeChef.avgRating}
+                />
+              ))}
+            </div>
 
+            <h1 className="mb-4 border-b border-blue-600 pb-2 text-center text-3xl font-semibold  text-blue-400">
+              Coding Profile Leaderboard
+            </h1>
 
             {/* Search Bar Component */}
-            <SearchBar placeholder="Search..." onChange={setSearchTerm} />
+            <div className="mb-10 mt-10">
+              <SearchBar placeholder="Search..." onChange={setSearchTerm} />
+            </div>
 
             {/* Leaderboard Tables */}
-            <h2 className="text-3xl font-semibold text-blue-400 border-b border-blue-600 pb-2 mb-4">
+            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
               Codeforces Leaderboard
             </h2>
             <SortableTable
@@ -261,7 +292,7 @@ const Cp = () => {
               data={filterData(codeforcesLeaderboard)}
             />
 
-            <h2 className="text-3xl font-semibold text-blue-400 border-b border-blue-600 pb-2 mb-4">
+            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
               LeetCode Leaderboard
             </h2>
             <SortableTable
@@ -269,15 +300,13 @@ const Cp = () => {
               data={filterData(leetcodeLeaderboard)}
             />
 
-            <h2 className="text-3xl font-semibold text-blue-400 border-b border-blue-600 pb-2 mb-4">
+            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
               CodeChef Leaderboard
             </h2>
             <SortableTable
               columns={columns.codechef}
               data={filterData(codechefLeaderboard)}
             />
-
-            
           </div>
         </>
       )}
