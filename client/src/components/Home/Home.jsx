@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import IssueModal from "../Issue/issue";
 import {
   Button,
   FAQs,
@@ -8,11 +9,17 @@ import {
 } from "../index";
 
 const Home = () => {
+  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "./SpaceParticlesMain.js";
     document.body.appendChild(script);
   }, []);
+
+  const openIssueModal = () => setIsIssueModalOpen(true);
+  const closeIssueModal = () => setIsIssueModalOpen(false);
+
   return (
     <div className="mx-auto overflow-x-hidden transition-all delay-300">
       <div className=" flex h-screen flex-col items-center ">
@@ -33,6 +40,13 @@ const Home = () => {
             <Button to={"#terminal"} isButton={false}>
               Explore More
             </Button>
+            {/* Add button to open the issue modal */}
+            <button
+              onClick={openIssueModal}
+              className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg"
+            >
+              Report an Issue
+            </button>
           </div>
         </div>
       </div>
@@ -49,6 +63,9 @@ const Home = () => {
       <div className="relative my-48 w-full ">
         <WhatPeopleThinkAboutUS />
       </div>
+
+      {/* Render the IssueModal component */}
+      <IssueModal isOpen={isIssueModalOpen} onClose={closeIssueModal} />
     </div>
   );
 };
