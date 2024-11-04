@@ -52,7 +52,7 @@ const ShowProject = () => {
     }
 
     return (
-        <div className="bg-[#111111] min-h-screen py-6 px-4">
+        <div className="min-h-screen py-6 px-4">
             <div className="bg-gray-900 text-white p-8 rounded-md shadow-md max-w-5xl mx-auto">
                 <h1 className="text-4xl font-bold mb-6 text-center">Ongoing Projects</h1>
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
