@@ -36,7 +36,7 @@ const IssueModal = ({ isOpen, onClose }) => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-800 bg-opacity-70 flex items-center justify-center z-50">
+    <div className="fixed top-0 left-0 h-screen w-full inset-0 bg-zinc-950 bg-opacity-70 flex items-center justify-center z-50">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative z-60">
         <h2 className="text-2xl font-bold mb-4 text-black">Create New Issue</h2>
 
