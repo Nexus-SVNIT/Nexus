@@ -22,9 +22,11 @@ function SignUpForm() {
     if (e.target.name === "admissionNumber") {
       e.target.value = e.target.value.toUpperCase();
     }
+
     setFormData({
       ...formData,
-      [e.target.name]: e.target.type === "checkbox" ? e.target.checked : e.target.value,
+      [e.target.name]:
+        e.target.type === "checkbox" ? e.target.checked : e.target.value,
     });
   };
 
@@ -37,6 +39,9 @@ function SignUpForm() {
       instituteEmail,
       branch,
       password,
+      leetcodeProfile,
+      codeforcesProfile,
+      codechefProfile,
     } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
@@ -59,6 +64,19 @@ function SignUpForm() {
       toast.error("Invalid Institute Email");
       return false;
     }
+    if (leetcodeProfile.includes("leetcode.com/")) {
+      toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
+      return false;
+    }
+    if (codeforcesProfile.includes("codeforces.com/")) {
+      toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
+      return false;
+    }
+    if (codechefProfile.includes("codechef.com/")) {
+      toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
+      return false;
+    }
+
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters");
       return false;
@@ -344,15 +362,19 @@ function SignUpForm() {
           </div>
 
           <div className="mb-4">
-            <label className="mb-2 block text-sm text-white" htmlFor="shareCodingProfile">
+            <label
+              className="mb-2 block text-sm text-white"
+              htmlFor="shareCodingProfile"
+            >
               <input
                 type="checkbox"
                 id="shareCodingProfile"
                 name="shareCodingProfile"
                 checked={formData.shareCodingProfile}
                 onChange={handleChange}
-              />
-              {" "}I agree to share my coding profiles on NEXUS's coding profile leaderboard for the analytics purpose.
+              />{" "}
+              I agree to share my coding profiles on NEXUS's coding profile
+              leaderboard for the analytics purpose.
             </label>
           </div>
 

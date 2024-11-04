@@ -239,7 +239,7 @@ const Cp = () => {
         </div>
       ) : (
         <>
-          <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
+          <div className="mx-2 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
             <FaInfoCircle size={42} className="h-auto text-yellow-500" />
             <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
               If you registered but did not get your coding profile data here in leaderboard, then go to 
