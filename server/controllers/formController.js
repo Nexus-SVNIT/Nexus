@@ -86,6 +86,8 @@ const getPublicForms = async (req, res) => {
     }
 };
 
+
+
 const getAllForms = async (req, res) => {
     try {
         const allForms = await Forms.find()
@@ -95,7 +97,7 @@ const getAllForms = async (req, res) => {
                 deadline: true,
                 publish: true
             })
-            .sort({ created_date: -1 }); // Sort by creation date, descending
+            .sort({ created_date: -1 }); 
         res.status(200).json(allForms);
     } catch (err) {
         handleError(res, err);
@@ -155,7 +157,7 @@ const updateFormDeadline = async (req, res) => {
 };
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink } = req.body;
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     // Convert deadline to dd-mm-yy format
@@ -171,6 +173,16 @@ const createForm = async (req, res) => {
     const created_date = new Date().toISOString();
     const publish = false;
 
+    // Validate team size if enableTeams is true
+    let teamData = {};
+    if (enableTeams) {
+        if (teamSize && teamSize > 0) {
+            teamData = { enableTeams, teamSize };
+        } else {
+            return res.status(400).json({ error: "Invalid team size. It should be a positive integer." });
+        }
+    }
+
     try {
         const createdForm = await Forms.create({
             name,
@@ -180,13 +192,15 @@ const createForm = async (req, res) => {
             publish,
             formFields,
             WaLink,
-            _event
+            _event,
+            ...teamData // Spread the team data if teams are enabled
         });
         res.status(200).json(createdForm);
     } catch (err) {
         handleError(res, err);
     }
 };
+
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;

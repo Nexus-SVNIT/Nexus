@@ -6,10 +6,12 @@ const CreateForm = () => {
     name: "",
     desc: "",
     deadline: "",
-    WaLink: "", // Add WaLink field here
+    WaLink: "",
   });
   const [questions, setQuestions] = useState([]);
   const [inputValues, setInputValues] = useState([]);
+  const [enableTeams, setEnableTeams] = useState(false);
+  const [teamSize, setTeamSize] = useState("");
 
   const handleInputChange = (index, value) => {
     const newInputValues = [...inputValues];
@@ -61,6 +63,8 @@ const CreateForm = () => {
       deadline: formData.deadline,
       WaLink: formData.WaLink,
       formFields: questions,
+      enableTeams: enableTeams,
+      teamSize: enableTeams ? teamSize : null,
     };
 
     try {
@@ -78,9 +82,11 @@ const CreateForm = () => {
 
       if (response.ok) {
         console.log("Form created successfully");
-        setFormData({ name: "", desc: "", deadline: "", WaLink: "" }); // Reset WaLink
+        setFormData({ name: "", desc: "", deadline: "", WaLink: "" });
         setQuestions([]);
         setInputValues([]);
+        setEnableTeams(false);
+        setTeamSize("");
       } else {
         console.error("Error creating form");
       }
@@ -124,30 +130,23 @@ const CreateForm = () => {
             value={formData.WaLink}
             onChange={(e) =>
               setFormData({ ...formData, WaLink: e.target.value })
-            } // Capture WhatsApp link
+            }
             className="rounded-lg border px-4 py-2 text-lg text-black"
           />
         </div>
 
         {questions.map((ques, i) => (
-          <div
-            key={i}
-            className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2"
-          >
+          <div key={i} className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2">
             <input
               type="text"
               placeholder="Question Text"
               value={ques.questionText}
-              onChange={(e) =>
-                handleQuestionChange(i, "questionText", e.target.value)
-              }
+              onChange={(e) => handleQuestionChange(i, "questionText", e.target.value)}
               className="rounded-lg border px-4 py-2 text-lg font-semibold"
             />
             <select
               value={ques.questionType}
-              onChange={(e) =>
-                handleQuestionChange(i, "questionType", e.target.value)
-              }
+              onChange={(e) => handleQuestionChange(i, "questionType", e.target.value)}
               className="rounded-lg border px-4 py-2"
             >
               <option value="text">Text</option>
@@ -159,9 +158,7 @@ const CreateForm = () => {
               <input
                 type="checkbox"
                 checked={ques.required}
-                onChange={(e) =>
-                  handleQuestionChange(i, "required", e.target.checked)
-                }
+                onChange={(e) => handleQuestionChange(i, "required", e.target.checked)}
               />
             </div>
             <button
@@ -173,21 +170,37 @@ const CreateForm = () => {
           </div>
         ))}
 
-        <div className="flex justify-center">
-          <button
-            onClick={addNewQuestion}
-            className="mx-2 my-4 rounded-md bg-green-500 p-2 text-white"
-          >
-            Add Question
-          </button>
+        <button onClick={addNewQuestion} className="my-4 rounded-md bg-green-500 p-2 text-white">
+          Add Question
+        </button>
+
+        <div className="my-4 flex items-center gap-2">
+          <label>Enable Teams:</label>
+          <input
+            type="checkbox"
+            checked={enableTeams}
+            onChange={(e) => setEnableTeams(e.target.checked)}
+          />
         </div>
+
+        {enableTeams && (
+          <div className="my-4">
+            <input
+              type="number"
+              placeholder="Enter Team Size"
+              value={teamSize}
+              onChange={(e) => setTeamSize(e.target.value)}
+              className="rounded-lg border px-4 py-2 text-lg text-black"
+            />
+          </div>
+        )}
 
         <div className="flex justify-center">
           <button
             onClick={handleFormSubmit}
-            className="my-4 cursor-pointer rounded-md bg-blue-500 p-2 text-white"
+            className="rounded-lg bg-blue-800 p-3 text-lg font-semibold text-white"
           >
-            Create Form
+            Submit Form
           </button>
         </div>
       </div>

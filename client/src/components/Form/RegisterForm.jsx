@@ -16,14 +16,12 @@ const RegisterForm = () => {
     name: "",
     desc: "",
     deadline: "",
-    formFields: [
-      
-    ],
+    formFields: [],
     responseCount: 0,
-    toekn: localStorage.getItem('token')
+    token: localStorage.getItem("token"),
   });
-  const [formResponse, setFormResponse] = useState({
-  });
+  const [formResponse, setFormResponse] = useState({});
+  const [teamMembers, setTeamMembers] = useState([]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -33,13 +31,21 @@ const RegisterForm = () => {
     }));
   };
 
+  const handleTeamMemberChange = (index, value) => {
+    setTeamMembers((prevMembers) => {
+      const newMembers = [...prevMembers];
+      newMembers[index] = value;
+      return newMembers;
+    });
+  };
+
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Validate only required fields
-    const requiredFields = formData.formFields.filter(field => field.required);
-    const missingRequiredFields = requiredFields.some(field => 
-      !formResponse[field.questionText]?.trim()
+    // Validate required fields
+    const requiredFields = formData.formFields.filter((field) => field.required);
+    const missingRequiredFields = requiredFields.some(
+      (field) => !formResponse[field.questionText]?.trim()
     );
 
     if (missingRequiredFields) {
@@ -47,41 +53,59 @@ const RegisterForm = () => {
       return;
     }
 
+    // Validate team members if team registration is enabled
+    if (formData.enableTeams) {
+      const missingTeamMembers = teamMembers.some((member) => !member.trim());
+      if (missingTeamMembers) {
+        toast.error("Please fill in all team member admission numbers.");
+        return;
+      }
+    }
+
     setLoading(true);
-    
-    // console.log(formResponse)
+
+    // Add team members to formResponse if teams are enabled
+    const submissionData = {
+      ...formResponse,
+      teamMembers: formData.enableTeams ? teamMembers : [],
+    };
+
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      body: JSON.stringify(formResponse),
+      body: JSON.stringify(submissionData),
     })
       .then((res) => res.json())
       .then((res) => {
         if (res.success) {
           setFormResponse({});
+          setTeamMembers([]);
           toast.success("Your Response Collected Successfully!");
           setFlag(true);
           setLink(res.WaLink);
         } else {
-          if(res.message === 'Token is not valid'){
-            toast.error('First login to register! Redirecting...');
-            setTimeout(()=>{
-              window.location.href = '/login'
-            }, 2000)
-          } else if(res.message === 'Already Registered.'){
-            toast.error('Already Registered!');
-            setFormResponse({})
-          } else  {
-            toast.error('Unexpected error! Try again later.');
-
-          }
+          handleFormError(res);
         }
       })
       .catch((e) => toast.error("Something Went Wrong. Please Try Again"))
       .finally(() => setLoading(false));
+  };
+
+  const handleFormError = (res) => {
+    if (res.message === "Token is not valid") {
+      toast.error("First login to register! Redirecting...");
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 2000);
+    } else if (res.message === "Already Registered.") {
+      toast.error("Already Registered!");
+      setFormResponse({});
+    } else {
+      toast.error("Unexpected error! Try again later.");
+    }
   };
 
   useEffect(() => {
@@ -94,6 +118,7 @@ const RegisterForm = () => {
           return acc;
         }, {});
         setFormResponse(initialResponse);
+        setTeamMembers(Array(form.teamSize || 0).fill(""));
       })
       .catch((e) => {
         console.error(e);
@@ -152,6 +177,24 @@ const RegisterForm = () => {
               onInputChange={handleInputChange}
             />
           ))}
+
+          {formData.enableTeams && (
+            <div className="team-members-section">
+              <h4 className="mt-4 text-xl">Team Members Admission Numbers:</h4>
+              {[...Array(formData.teamSize)].map((_, index) => (
+                <input
+                  key={index}
+                  type="text"
+                  value={teamMembers[index] || ""}
+                  onChange={(e) => handleTeamMemberChange(index, e.target.value)}
+                  placeholder={`Admission Number of Member ${index + 1}`}
+                  className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
+                  required
+                />
+              ))}
+            </div>
+          )}
+
           <div className="flex justify-center">
             <button
               type="submit"

@@ -13,6 +13,7 @@ const formSchema = new Schema({
         required: true,
         trim: true
     },
+    
     deadline: {
         type: String,
         required: true
@@ -41,7 +42,19 @@ const formSchema = new Schema({
     WaLink:{
         type:String,
         
+    },
+    enableTeams: {  // New field to specify if teams are enabled
+        type: Boolean,
+        default: false
+    },
+    teamSize: {  // New field to specify the required team size if teams are enabled
+        type: Number,
+        required: function() {
+            return this.enableTeams;  // teamSize is required only if enableTeams is true
+        },
+        min: [1, 'Team size must be at least 1']
     }
+
     
 });
 
