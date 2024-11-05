@@ -66,6 +66,7 @@ const Cp = () => {
                   admissionNumber: user.admissionNumber,
                   codeforcesProfile: user.codeforcesProfile,
                   rating: rating || 0,
+                  maxrating:maxrating||0,
                   rank,
                   avatar,
                   latestContest: latestContest.contestName || "No contests",
