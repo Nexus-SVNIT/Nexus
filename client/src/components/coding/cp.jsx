@@ -60,7 +60,9 @@ const Cp = () => {
               const cfData = await cfResponse.json();
               if (cfData && cfData.length > 0) {
                 const { rating, rank, avatar,maxrating } = cfData[0];
-                const latestContest = cfData[1]?.ratings?.[0] || {};
+                
+                const latestContest = cfData[1]?.ratings?.[cfData[1].ratings.length - 1] || {};
+
                 cfLeaderboard.push({
                   fullName: user.fullName,
                   admissionNumber: user.admissionNumber,
