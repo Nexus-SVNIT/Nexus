@@ -18,7 +18,6 @@ const Cp = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true); // Loader state
 
-  console.log(process.env)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
