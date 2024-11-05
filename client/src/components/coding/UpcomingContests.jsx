@@ -61,7 +61,7 @@ const UpcomingContests = () => {
                 <p>
                   Duration:{" "}
                   <span className="text-gray-300">
-                    {Math.floor(contest.duration / 60000)} minutes
+                    {(contest.site=="leetcode")?Math.floor(contest.duration / 3600000):Math.floor(contest.duration / 60000)} minutes
                   </span>
                 </p>
               </div>
