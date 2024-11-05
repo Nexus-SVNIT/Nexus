@@ -59,7 +59,7 @@ const Cp = () => {
               );
               const cfData = await cfResponse.json();
               if (cfData && cfData.length > 0) {
-                const { rating, rank, avatar,maxrating } = cfData[0];
+                const { rating, rank, avatar,maxRating } = cfData[0];
                 
                 const latestContest = cfData[1]?.ratings?.[cfData[1].ratings.length - 1] || {};
 
@@ -68,7 +68,7 @@ const Cp = () => {
                   admissionNumber: user.admissionNumber,
                   codeforcesProfile: user.codeforcesProfile,
                   rating: rating || 0,
-                  maxrating:maxrating||0,
+                  maxRating:maxRating||0,
                   rank,
                   avatar,
                   latestContest: latestContest.contestName || "No contests",
@@ -170,7 +170,7 @@ const Cp = () => {
         });
 
         // Sort leaderboards by rating in descending order
-        cfLeaderboard.sort((a, b) => b.rating - a.rating);
+        cfLeaderboard.sort((a, b) => b.maxRating - a.maxRating);
         lcLeaderboard.sort((a, b) => b.rating - a.rating);
         ccLeaderboard.sort((a, b) => b.rating_number - a.rating_number);
 
