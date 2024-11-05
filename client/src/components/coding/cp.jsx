@@ -60,6 +60,8 @@ const Cp = () => {
               const cfData = await cfResponse.json();
               if (cfData && cfData.length > 0) {
                 const { rating, rank, avatar,maxRating } = cfData[0];
+
+                console.log(maxRating);
                 
                 const latestContest = cfData[1]?.ratings?.[cfData[1].ratings.length - 1] || {};
 
@@ -207,6 +209,7 @@ const Cp = () => {
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
       { Header: "Profile", accessor: "codeforcesProfile" },
+      { Header:"MaxRating",accessor:"maxRating"},
       { Header: "Rating", accessor: "rating" },
       { Header: "Rank", accessor: "rank" },
       { Header: "Latest Contest", accessor: "latestContest" },
