@@ -4,10 +4,11 @@ const UpcomingContests = () => {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const response = await fetch("https://competeapi.vercel.app/contests/upcoming");
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests/upcoming`);
         const data = await response.json();
         setContests(data);
       } catch (error) {

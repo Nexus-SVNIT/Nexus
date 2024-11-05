@@ -1,7 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
-import Chart, { elements } from "chart.js/auto";
-import SearchInput from "react-search-input";
 import "tailwindcss/tailwind.css";
 import SortableTable from "./SortedTable";
 import SearchBar from "./SearchBar";
@@ -21,6 +18,7 @@ const Cp = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true); // Loader state
 
+  console.log(process.env)
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -58,7 +56,7 @@ const Cp = () => {
             // Fetch Codeforces data
             if (codeforcesUsername) {
               const cfResponse = await fetch(
-                `https://competeapi.vercel.app/user/codeforces/${codeforcesUsername}`,
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codeforces/${codeforcesUsername}`,
               );
               const cfData = await cfResponse.json();
               if (cfData && cfData.length > 0) {
@@ -85,7 +83,7 @@ const Cp = () => {
             // Fetch LeetCode data
             if (leetcodeUsername) {
               const lcResponse = await fetch(
-                `https://competeapi.vercel.app/user/leetcode/${leetcodeUsername}`,
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/leetcode/${leetcodeUsername}`,
               );
               const lcData = await lcResponse.json();
               if (lcData.data) {
@@ -115,7 +113,7 @@ const Cp = () => {
             // Fetch CodeChef data
             if (codechefUsername) {
               const ccResponse = await fetch(
-                `https://competeapi.vercel.app/user/codechef/${codechefUsername}`,
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codechef/${codechefUsername}`,
               );
               const ccData = await ccResponse.json();
               if (ccData) {

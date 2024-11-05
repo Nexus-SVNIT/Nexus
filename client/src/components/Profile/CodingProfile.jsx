@@ -16,11 +16,12 @@ const CodingProfile = ({ leetcodeProfile, codeforcesProfile, codechefProfile }) 
   const [codechefData, setCodechefData] = useState(null); // State for CodeChef data
   const [loading, setLoading] = useState(true);
 
+
   useEffect(() => {
     const fetchLeetcodeData = async () => {
       try {
         const response = await fetch(
-          `https://competeapi.vercel.app/user/leetcode/${leetcodeProfile}`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/leetcode/${leetcodeProfile}`
         );
         const data = await response.json();
         setLeetcodeData(data);
@@ -32,7 +33,7 @@ const CodingProfile = ({ leetcodeProfile, codeforcesProfile, codechefProfile }) 
     const fetchCodeforcesData = async () => {
       try {
         const response = await fetch(
-          `https://competeapi.vercel.app/user/codeforces/${codeforcesProfile}`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codeforces/${codeforcesProfile}`
         );
         const data = await response.json();
         setCodeforcesData(data);
@@ -44,7 +45,7 @@ const CodingProfile = ({ leetcodeProfile, codeforcesProfile, codechefProfile }) 
     const fetchCodechefData = async () => {
       try {
         const response = await fetch(
-          `https://competeapi.vercel.app/user/codechef/${codechefProfile}`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codechef/${codechefProfile}`
         );
         const data = await response.json();
         setCodechefData(data);

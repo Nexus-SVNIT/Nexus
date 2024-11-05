@@ -18,6 +18,7 @@ const coreRoutes = require('./routes/coreRoutes.js')
 const projectRoutes = require('./routes/projectRoute.js')
 const teamMembersRoutes = require('./routes/teamMembersRoute.js')
 const issueRoutes=require('./routes/issueRoutes.js')
+const codingProfileRoutes = require('./routes/codingProfileRoutes.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -51,6 +52,7 @@ app.use('/alumni', alumniRoute)
 app.use('/Panel', panelRoutes);
 app.use('/projects', projectRoutes);
 app.use("/issue",issueRoutes);
+app.use('/coding-profiles', codingProfileRoutes);
 
 mongoose
     .connect(MONGO_URL)
