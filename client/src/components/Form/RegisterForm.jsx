@@ -22,6 +22,7 @@ const RegisterForm = () => {
   });
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
+  const [teamName, setTeamName] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,7 +35,7 @@ const RegisterForm = () => {
   const handleTeamMemberChange = (index, value) => {
     setTeamMembers((prevMembers) => {
       const newMembers = [...prevMembers];
-      newMembers[index] = value;
+      newMembers[index] = value.toUpperCase();
       return newMembers;
     });
   };
@@ -60,6 +61,13 @@ const RegisterForm = () => {
         toast.error("Please fill in all team member admission numbers.");
         return;
       }
+      teamMembers.forEach((member, index) => {
+        if (teamMembers.indexOf(member) !== index) {
+          toast.error("Duplicate team members are not allowed.");
+          return;
+        }
+      });
+      teamMembers.map((member) => member.toUpperCase());
     }
 
     setLoading(true);
@@ -68,6 +76,7 @@ const RegisterForm = () => {
     const submissionData = {
       ...formResponse,
       teamMembers: formData.enableTeams ? teamMembers : [],
+      teamName: formData.enableTeams ? teamName : "",
     };
 
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, {
@@ -103,7 +112,11 @@ const RegisterForm = () => {
     } else if (res.message === "Already Registered.") {
       toast.error("Already Registered!");
       setFormResponse({});
-    } else {
+    } else if (res.message === "Team Name already exists.") {
+      toast.error("Team Name already exists.");
+    } else if (res.message.startsWith("Team member with admission number")) {
+      toast.error(res.message);
+    }else {
       toast.error("Unexpected error! Try again later.");
     }
   };
@@ -180,17 +193,29 @@ const RegisterForm = () => {
 
           {formData.enableTeams && (
             <div className="team-members-section">
-              <h4 className="mt-4 text-xl">Team Members Admission Numbers:</h4>
-              {[...Array(formData.teamSize)].map((_, index) => (
-                <input
-                  key={index}
+              <h4 className="mt-4 text-xl">Team & Team Members Details:</h4>
+              <QuestionBox
+              key={-1}
+              ques={{ questionText: "Team Name", required: true, questionType: "text" }}
+              inputValue={teamName || ""}
+              onInputChange={(e) => setTeamName(e.target.value)}
+            />
+              {/* <input
+                  key={-1}
                   type="text"
-                  value={teamMembers[index] || ""}
-                  onChange={(e) => handleTeamMemberChange(index, e.target.value)}
-                  placeholder={`Admission Number of Member ${index + 1}`}
+                  value={teamName || ""}
+                  onChange={(e) => setTeamName(e.target.value)}
+                  placeholder={`Team Name`}
                   className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
                   required
-                />
+                /> */}
+              {[...Array(formData.teamSize)].map((_, index) => (
+                <QuestionBox
+                key={100+index}
+                ques={{ questionText: `Admission Number of Member ${index + 1}`, required: true, questionType: "text", isUser : true }}
+                inputValue={teamMembers[index] || ""}
+                onInputChange={(e) => handleTeamMemberChange(index, e.target.value)}
+              />
               ))}
             </div>
           )}

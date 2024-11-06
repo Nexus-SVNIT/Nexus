@@ -205,7 +205,6 @@ const createForm = async (req, res) => {
 const submitResponse = async (req, res) => {
     const id = req.params.id;
     const admissionNumber = req.user?.admissionNumber;
-    const userId = req.user?.id;
 
     try {
         // Retrieve form details
@@ -223,14 +222,45 @@ const submitResponse = async (req, res) => {
 
         // Check if the user has already submitted the form
         const existingForm = await Forms.findOne({
-            'responses.admissionNumber': admissionNumber
+            _id: id,
+            "responses.admissionNumber": admissionNumber
         });
+
+        if (!existingForm && formDetails.enableTeams) {
+            const { teamMembers } = req.body;
+            for (const admissionNumber of teamMembers) {
+            const existingMemberForm = await Forms.findOne({
+                _id: id,
+                "responses.teamMembers": admissionNumber
+            });
+            if (existingMemberForm) {
+                return res.status(400).json({
+                success: false,
+                message: `Team member with admission number ${admissionNumber} has already registered.`,
+                });
+            }
+            }
+        }
 
         if (existingForm) {
             return res.status(400).json({
                 success: false,
                 message: "Already Registered.",
             }); // User has already submitted
+        }
+
+        if(formDetails.enableTeams){
+            const { teamName } = req.body;
+            const existingTeam = await Forms.findOne({
+                _id: id,
+                "responses.teamName": teamName
+            });
+            if (existingTeam) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Team Name already exists.",
+                }); // Team Name already exists
+            }
         }
 
         // Update the form with the new response

@@ -53,9 +53,7 @@ const formSchema = new Schema({
             return this.enableTeams;  // teamSize is required only if enableTeams is true
         },
         min: [1, 'Team size must be at least 1']
-    }
-
-    
+    },   
 });
 
 module.exports = mongoose.model('form', formSchema);
