@@ -220,11 +220,13 @@ const submitResponse = async (req, res) => {
             });
         }
 
+
         // Check if the user has already submitted the form
         const existingForm = await Forms.findOne({
             _id: id,
             "responses.admissionNumber": admissionNumber
         });
+
 
         if (!existingForm && formDetails.enableTeams) {
             const { teamMembers } = req.body;
