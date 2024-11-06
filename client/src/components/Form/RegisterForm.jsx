@@ -61,12 +61,14 @@ const RegisterForm = () => {
         toast.error("Please fill in all team member admission numbers.");
         return;
       }
+      flag = false;
       teamMembers.forEach((member, index) => {
         if (teamMembers.indexOf(member) !== index) {
           toast.error("Duplicate team members are not allowed.");
-          return;
+          flag = true;
         }
       });
+      if (flag) return;
       teamMembers.map((member) => member.toUpperCase());
     }
 
