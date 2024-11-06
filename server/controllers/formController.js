@@ -221,10 +221,9 @@ const submitResponse = async (req, res) => {
             });
         }
 
-        // Check if the user has already submitted the form
-        const existingForm = await Forms.findOne({
-            'responses.admissionNumber': admissionNumber
-        });
+        const existingForm = formDetails.responses.find(
+            response => response.admissionNumber === admissionNumber
+        );
 
         if (existingForm) {
             return res.status(400).json({
