@@ -61,7 +61,6 @@ const Cp = () => {
               if (cfData && cfData.length > 0) {
                 const { rating, rank, avatar,maxRating } = cfData[0];
 
-                console.log(maxRating);
                 
                 const latestContest = cfData[1]?.ratings?.[cfData[1].ratings.length - 1] || {};
 

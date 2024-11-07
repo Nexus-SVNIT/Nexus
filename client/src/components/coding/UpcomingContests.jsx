@@ -55,13 +55,13 @@ const UpcomingContests = () => {
                 <p>
                   Start Time:{" "}
                   <span className="text-gray-300">
-                    {new Date(contest.startTime).toLocaleString()}
+                    {new Date(contest.startTime).toString().replace('India Standard Time','IST')}
                   </span>
                 </p>
                 <p>
                   Duration:{" "}
                   <span className="text-gray-300">
-                    {(contest.site=="leetcode")?Math.floor(contest.duration / 3600000):Math.floor(contest.duration / 60000)} minutes
+                    {(contest.site==="leetcode")?Math.floor(contest.duration / 3600000):Math.floor(contest.duration / 60000)} minutes
                   </span>
                 </p>
               </div>

@@ -41,7 +41,7 @@ const Achievements = () => {
             to="/achievements/add-new"
             className="mx-1 font-bold text-blue-500  underline underline-offset-4"
           >
-            Share Us
+            Share With Us
           </Link>
           Your Departmental Achievements and Inspire Others to Reach New
           Heights!

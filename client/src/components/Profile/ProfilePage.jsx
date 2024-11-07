@@ -34,9 +34,9 @@ const ProfilePage = () => {
         </h2>
 
         <CodingProfile
-          leetcodeProfile={profile.leetcodeProfile}
-          codeforcesProfile={profile.codeforcesProfile}
-          codechefProfile={profile.codechefProfile}
+          leetcodeProfile={profile.leetcodeProfile || ""}
+          codeforcesProfile={profile.codeforcesProfile || ""}
+          codechefProfile={profile.codechefProfile || ""}
         />
       </div>
     </div>
