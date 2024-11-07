@@ -242,14 +242,14 @@ const submitResponse = async (req, res) => {
                 }
 
                 const existingMember = await User.findOne({ admissionNumber });
-                if(!existingMember){
+                if (!existingMember) {
                     return res.status(400).json({
                         success: false,
                         message: `Team member with admission number ${admissionNumber} does not exist.`,
                     });
                 }
-                
-               
+
+
             }
         }
 
@@ -297,21 +297,35 @@ const getResponses = async (req, res) => {
     const id = req.params.id;
     try {
         // Fetch responses along with user details by admissionNumber
-        const form = await Forms.findById(id).select({ responses: true, _id: false });
+        const form = await Forms.findById(id).select({ responses: true, enableTeams: true, _id: false });
 
         if (!form) throw new Error("Form not found");
 
         const responseWithUserDetails = await Promise.all(
-            form.responses.map(async (response) => {
-                const user = await User.findOne({ admissionNumber: response.admissionNumber }).lean();
-                return {
-                    ...response,
-                    user: user || null,
-                };
-            })
+            !form.enableTeams
+                ? form.responses.map(async (response) => {
+                    const user = await User.findOne({ admissionNumber: response.admissionNumber }, {password: false, shareCodingProfile: false, subscribed: false, emailVerified: false}).lean();
+                    return {
+                        ...response,
+                        user: user || null,
+                    };
+                })
+                : form.responses.map(async (response) => {
+                    const teamMemberDetails = await Promise.all(
+                        response.teamMembers.map(async (teamMember) => {
+                            const user = await User.findOne({ admissionNumber: teamMember }).lean();
+                            return user || null;
+                        })
+                    );
+                    return {
+                        ...response,
+                        teamMembers: teamMemberDetails,
+                    };
+                })
         );
+        
 
-        res.status(200).json({ responses: responseWithUserDetails });
+        res.status(200).json({ responses: responseWithUserDetails, enableTeams: form.enableTeams });
     } catch (err) {
         handleError(res, err);
     }

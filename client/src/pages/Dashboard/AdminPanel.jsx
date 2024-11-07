@@ -1,6 +1,4 @@
 import Card from "../../components/UI/CardFour";
-import ChatCard from "../../components/UI/ChatCard";
-import TableThree from "../../components/UI/ResponseTable";
 import UserTable from "../../components/UI/UserTable";
 const AdminPanel = () => {
   return (

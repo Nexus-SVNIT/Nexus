@@ -1,5 +1,5 @@
 
-import ResponsePage from "../../components/UI/ResponsePage";
+import ResponsePage from "./ResponsePage";
 
 const Tables = () => {
   return (
