@@ -45,7 +45,7 @@ const notifyAllSubscribers = async (formId) => {
                     <tr><td>Name:</td><td>${form.name}</td></tr>
                     <tr><td>Description:</td><td>${form.desc}</td></tr>
                     <tr><td>Deadline:</td><td>${form.deadline}</td></tr>
-                    <tr><td>Link to apply:</td><td><a href="${linkToApply}/${formId}">Apply Now</a></td></tr>
+                    <tr><td>Link to apply:</td><td><a href="${linkToApply}">Apply Now</a></td></tr>
                     </table>
                     <p> Thanks,<br>Team NEXUS</p>
                     </div>
