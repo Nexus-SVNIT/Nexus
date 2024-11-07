@@ -1,7 +1,5 @@
 const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
-const newmember = require("../models/newmemberModel.js");
-const ExpressError = require("../utils/ExpressError.js");
 const User = require('../models/userModel.js'); // Adjust the path as necessary
 const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
 
@@ -97,7 +95,7 @@ const getAllForms = async (req, res) => {
                 deadline: true,
                 publish: true
             })
-            .sort({ created_date: -1 }); 
+            .sort({ created_date: -1 });
         res.status(200).json(allForms);
     } catch (err) {
         handleError(res, err);
@@ -231,16 +229,27 @@ const submitResponse = async (req, res) => {
         if (!existingForm && formDetails.enableTeams) {
             const { teamMembers } = req.body;
             for (const admissionNumber of teamMembers) {
-            const existingMemberForm = await Forms.findOne({
-                _id: id,
-                "responses.teamMembers": admissionNumber
-            });
-            if (existingMemberForm) {
-                return res.status(400).json({
-                success: false,
-                message: `Team member with admission number ${admissionNumber} has already registered.`,
+                const existingMemberForm = await Forms.findOne({
+                    _id: id,
+                    "responses.teamMembers": admissionNumber
                 });
-            }
+
+                if (existingMemberForm) {
+                    return res.status(400).json({
+                        success: false,
+                        message: `Team member with admission number ${admissionNumber} has already registered.`,
+                    });
+                }
+
+                const existingMember = await User.findOne({ admissionNumber });
+                if(!existingMember){
+                    return res.status(400).json({
+                        success: false,
+                        message: `Team member with admission number ${admissionNumber} does not exist.`,
+                    });
+                }
+                
+               
             }
         }
 
@@ -251,7 +260,7 @@ const submitResponse = async (req, res) => {
             }); // User has already submitted
         }
 
-        if(formDetails.enableTeams){
+        if (formDetails.enableTeams) {
             const { teamName } = req.body;
             const existingTeam = await Forms.findOne({
                 _id: id,
@@ -289,7 +298,7 @@ const getResponses = async (req, res) => {
     try {
         // Fetch responses along with user details by admissionNumber
         const form = await Forms.findById(id).select({ responses: true, _id: false });
-        
+
         if (!form) throw new Error("Form not found");
 
         const responseWithUserDetails = await Promise.all(
@@ -329,5 +338,5 @@ module.exports = {
     updateFormStatus,
     updateFormDeadline,
     notifyAllSubscribers,
-    
+
 };
