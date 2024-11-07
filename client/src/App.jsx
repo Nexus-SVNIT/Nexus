@@ -51,7 +51,7 @@ function App() {
             ) : (
               <>
                 <Route path="/login" element={<LoginForm />} />
-                <Route path="/projects" element={<ShowProject />} />
+                
                 <Route
                   path="/profile"
                   element={<Navigate to={"/login"}></Navigate>}
