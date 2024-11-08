@@ -319,6 +319,8 @@ const getResponses = async (req, res) => {
                     );
                     return {
                         ...response,
+                        teamLeader: response.admissionNumber,
+                        admissionNumber: undefined,
                         teamMembers: teamMemberDetails,
                     };
                 })
