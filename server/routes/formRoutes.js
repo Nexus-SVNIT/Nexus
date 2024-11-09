@@ -15,12 +15,14 @@ const {
 } = require('../controllers/formController.js');
 
 const router = express.Router();
+const multer = require('multer');
+const upload = multer({ storage: multer.memoryStorage() });
 
 // Routes
 router.get('/', getAllForms);
 router.get('/all', coreAuthMiddleware, getAllForms);
 router.post('/create', coreAuthMiddleware, createForm);
-router.post('/submit/:id', authMiddleware, submitResponse);
+router.post('/submit/:id', authMiddleware, upload.single('file'), submitResponse);
 router.get('/get-responses/:id', coreAuthMiddleware, getResponses);
 router.get('/:id', getFormFields);
 

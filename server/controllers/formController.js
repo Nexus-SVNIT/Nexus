@@ -2,6 +2,33 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const User = require('../models/userModel.js'); // Adjust the path as necessary
 const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
+const fs = require('fs');
+const path = require('path');
+const { google } = require('googleapis');
+const { Readable } = require('stream');
+
+const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
+
+const credentials = {
+    type: process.env.GOOGLE_CLOUD_TYPE,
+    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
+    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
+    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
+    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
+    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
+};
+
+const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: SCOPES,
+});
+
+const drive = google.drive({ version: 'v3', auth });
 
 const handleError = (res, err) => {
     console.error(err);
@@ -134,8 +161,8 @@ const updateFormDeadline = async (req, res) => {
         const { deadline } = req.body;
 
         // Validate input
-        if (!deadline || !/^\d{2}-\d{2}-\d{4}$/.test(deadline)) {
-            return res.status(400).json({ success: false, message: 'Invalid deadline format. Expected format: DD-MM-YYYY' });
+        if (!deadline || !/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
+            return res.status(400).json({ success: false, message: 'Invalid deadline format. Expected format: YYYY-MM-DD' });
         }
 
         // Find the form and update its deadline
@@ -154,20 +181,43 @@ const updateFormDeadline = async (req, res) => {
     }
 };
 
-const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize } = req.body;
-    const _event = "none";  // Set a default value for _event if it's not provided
-
-    // Convert deadline to dd-mm-yy format
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        const day = String(date.getDate()).padStart(2, '0');
-        const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are 0-indexed
-        const year = String(date.getFullYear());
-        return `${day}-${month}-${year}`;
+async function createDriveFolder(formTitle) {
+    const folderName = `${formTitle} - ${new Date().toLocaleDateString()}`;
+    const fileMetadata = {
+        name: folderName,
+        mimeType: "application/vnd.google-apps.folder",
+        parents: [process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID], // ID of the main folder in Drive
     };
 
-    const formattedDeadline = formatDate(deadline);
+    try {
+        const response = await drive.files.create({
+            resource: fileMetadata,
+            fields: "id",
+        });
+        return response.data.id; // Returns the subfolder ID
+    } catch (error) {
+        console.error("Error creating Drive folder:", error);
+        throw new Error("Failed to create folder in Google Drive");
+    }
+}
+
+
+const createForm = async (req, res) => {
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled } = req.body;
+    const _event = "none";  // Set a default value for _event if it's not provided
+
+    let driveFolderId = null;
+
+    // If file upload is enabled, create a subfolder on Google Drive
+    if (fileUploadEnabled) {
+        try {
+            driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
+        } catch (error) {
+            console.log(error)
+            return res.status(500).json({ message: "Failed to create folder in Google Drive" });
+        }
+    }
+
     const created_date = new Date().toISOString();
     const publish = false;
 
@@ -185,13 +235,15 @@ const createForm = async (req, res) => {
         const createdForm = await Forms.create({
             name,
             desc,
-            deadline: formattedDeadline,
+            deadline,
             created_date,
             publish,
             formFields,
             WaLink,
             _event,
-            ...teamData // Spread the team data if teams are enabled
+            ...teamData, // Spread the team data if teams are enabled
+            fileUploadEnabled,
+            driveFolderId
         });
         res.status(200).json(createdForm);
     } catch (err) {
@@ -199,11 +251,43 @@ const createForm = async (req, res) => {
     }
 };
 
+const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
+    try {
+        if (!req.file) {
+            return { success: false, error: 'No file uploaded.' };
+        }
+
+        const fileMetadata = {
+            name: admissionNumber || req.file.originalname,
+            parents: [driveFolderId || process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID]
+        };
+
+        const bufferStream = new Readable();
+        bufferStream.push(req.file.buffer);
+        bufferStream.push(null);
+
+        const media = {
+            mimeType: req.file.mimetype,
+            body: bufferStream,
+        };
+
+        const file = await drive.files.create({
+            resource: fileMetadata,
+            media: media,
+            fields: 'id',
+        });
+
+        return { success: true, fileId: file.data.id };
+    } catch (error) {
+        console.log('Error uploading file:', error);
+        return { success: false, error: error.message || 'Unknown error' };
+    }
+};
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
     const admissionNumber = req.user?.admissionNumber;
-
+    // console.log(req.body)
     try {
         // Retrieve form details
         const formDetails = await Forms.findById(id).select();
@@ -212,7 +296,7 @@ const submitResponse = async (req, res) => {
 
         // Check if the deadline has been missed
         if (deadlineDate < currentDate) {
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 message: "The deadline has passed. Your response was not saved.",
             });
@@ -227,7 +311,8 @@ const submitResponse = async (req, res) => {
 
 
         if (!existingForm && formDetails.enableTeams) {
-            const { teamMembers } = req.body;
+            const teamMembers  = JSON.parse(req.body.teamMembers);
+            req.body.teamMembers = teamMembers;
             for (const admissionNumber of teamMembers) {
                 const existingMemberForm = await Forms.findOne({
                     _id: id,
@@ -235,7 +320,7 @@ const submitResponse = async (req, res) => {
                 });
 
                 if (existingMemberForm) {
-                    return res.status(400).json({
+                    return res.status(200).json({
                         success: false,
                         message: `Team member with admission number ${admissionNumber} has already registered.`,
                     });
@@ -243,7 +328,7 @@ const submitResponse = async (req, res) => {
 
                 const existingMember = await User.findOne({ admissionNumber });
                 if (!existingMember) {
-                    return res.status(400).json({
+                    return res.status(200).json({
                         success: false,
                         message: `Team member with admission number ${admissionNumber} does not exist.`,
                     });
@@ -254,7 +339,7 @@ const submitResponse = async (req, res) => {
         }
 
         if (existingForm) {
-            return res.status(400).json({
+            return res.status(200).json({
                 success: false,
                 message: "Already Registered.",
             }); // User has already submitted
@@ -267,11 +352,20 @@ const submitResponse = async (req, res) => {
                 "responses.teamName": teamName
             });
             if (existingTeam) {
-                return res.status(400).json({
+                return res.status(200).json({
                     success: false,
                     message: "Team Name already exists.",
                 }); // Team Name already exists
             }
+        }
+
+        // Upload file to Google Drive if file upload is enabled
+        if (formDetails.fileUploadEnabled) {
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
+            if (!uploadResult.success) {
+                return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
+            }
+            req.body.files = uploadResult.fileId;
         }
 
         // Update the form with the new response
@@ -289,6 +383,7 @@ const submitResponse = async (req, res) => {
 
         res.status(200).json(responseMessage);
     } catch (err) {
+        console.log(err)
         handleError(res, err);
     }
 };
@@ -304,7 +399,7 @@ const getResponses = async (req, res) => {
         const responseWithUserDetails = await Promise.all(
             !form.enableTeams
                 ? form.responses.map(async (response) => {
-                    const user = await User.findOne({ admissionNumber: response.admissionNumber }, {password: false, shareCodingProfile: false, subscribed: false, emailVerified: false}).lean();
+                    const user = await User.findOne({ admissionNumber: response.admissionNumber }, { password: false, shareCodingProfile: false, subscribed: false, emailVerified: false }).lean();
                     return {
                         ...response,
                         user: user || null,
@@ -325,7 +420,7 @@ const getResponses = async (req, res) => {
                     };
                 })
         );
-        
+
 
         res.status(200).json({ responses: responseWithUserDetails, enableTeams: form.enableTeams });
     } catch (err) {

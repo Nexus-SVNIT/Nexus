@@ -5,6 +5,7 @@ import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
+import axios from "axios";
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -19,10 +20,15 @@ const RegisterForm = () => {
     formFields: [],
     responseCount: 0,
     token: localStorage.getItem("token"),
+    enableTeams: false,
+    teamSize: 0,
+    fileUploadEnabled: false,
+    driveFolderId: "",
   });
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
+  const [files, setFiles] = useState(null);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -40,7 +46,15 @@ const RegisterForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleImageChange = (event) => {
+    const file = event.target.files[0];
+    setFormResponse((prev) => ({ ...prev, file: file }));
+    const reader = new FileReader();
+    reader.onload = () => setFiles(reader.result);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     // Validate required fields
@@ -69,10 +83,14 @@ const RegisterForm = () => {
         }
       });
       if (flag) {
-        console.log("hihih")
         return;
       }
       teamMembers.map((member) => member.toUpperCase());
+    }
+
+    if(formData.fileUploadEnabled && !files) {
+      toast.error("Please upload the required file.");
+      return;
     }
 
     setLoading(true);
@@ -83,28 +101,37 @@ const RegisterForm = () => {
       teamMembers: formData.enableTeams ? teamMembers : [],
       teamName: formData.enableTeams ? teamName : "",
     };
+    
+    const finalResponse = new FormData();
 
-    fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, {
-      method: "POST",
+    for(const key in submissionData) {
+      finalResponse.append(key, JSON.stringify(submissionData[key]));
+    }
+
+    if (files) {
+      finalResponse.append('file', files);
+    }
+    
+    const token = localStorage.getItem("token");
+    console.log(finalResponse, submissionData)
+    await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, finalResponse, {
       headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(submissionData),
     })
-      .then((res) => res.json())
       .then((res) => {
-        if (res.success) {
-          setFormResponse({});
-          setTeamMembers([]);
-          toast.success("Your Response Collected Successfully!");
+        if (res.data.success === true) {
           setFlag(true);
-          setLink(res.WaLink);
+          setLink(res.data.WaLink);
         } else {
-          handleFormError(res);
+          handleFormError(res.data);
         }
       })
-      .catch((e) => toast.error("Something Went Wrong. Please Try Again"))
+      .catch((e) => {
+        console.error(e);
+        toast.error(e.message || "Something went wrong. Please try again later.");
+      })
       .finally(() => setLoading(false));
   };
 
@@ -140,7 +167,7 @@ const RegisterForm = () => {
       })
       .catch((e) => {
         console.error(e);
-        alert("Something Went Wrong.");
+        toast.error("Something went wrong. Please try again later.");
       })
       .finally(() => setLoading(false));
   }, [formId]);
@@ -224,6 +251,21 @@ const RegisterForm = () => {
               ))}
             </div>
           )}
+
+          {
+            formData.fileUploadEnabled && (
+              <div className="file-upload-section">
+                <h4 className="mt-4 text-xl">Upload Required File:</h4>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setFiles(e.target.files[0])}
+                  className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
+                  required
+                />
+              </div>
+            )
+          }
 
           <div className="flex justify-center">
             <button

@@ -7,7 +7,9 @@ const CreateForm = () => {
     desc: "",
     deadline: "",
     WaLink: "",
+    fileUploadEnabled: false, // New field for file uploads
   });
+
   const [questions, setQuestions] = useState([]);
   const [inputValues, setInputValues] = useState([]);
   const [enableTeams, setEnableTeams] = useState(false);
@@ -65,7 +67,8 @@ const CreateForm = () => {
       formFields: questions,
       enableTeams: enableTeams,
       teamSize: enableTeams ? teamSize : null,
-    };
+      fileUploadEnabled: formData.fileUploadEnabled, // Include in form creation
+    };    
 
     try {
       const response = await fetch(
@@ -136,17 +139,24 @@ const CreateForm = () => {
         </div>
 
         {questions.map((ques, i) => (
-          <div key={i} className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2">
+          <div
+            key={i}
+            className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2"
+          >
             <input
               type="text"
               placeholder="Question Text"
               value={ques.questionText}
-              onChange={(e) => handleQuestionChange(i, "questionText", e.target.value)}
+              onChange={(e) =>
+                handleQuestionChange(i, "questionText", e.target.value)
+              }
               className="rounded-lg border px-4 py-2 text-lg font-semibold"
             />
             <select
               value={ques.questionType}
-              onChange={(e) => handleQuestionChange(i, "questionType", e.target.value)}
+              onChange={(e) =>
+                handleQuestionChange(i, "questionType", e.target.value)
+              }
               className="rounded-lg border px-4 py-2"
             >
               <option value="text">Text</option>
@@ -158,7 +168,9 @@ const CreateForm = () => {
               <input
                 type="checkbox"
                 checked={ques.required}
-                onChange={(e) => handleQuestionChange(i, "required", e.target.checked)}
+                onChange={(e) =>
+                  handleQuestionChange(i, "required", e.target.checked)
+                }
               />
             </div>
             <button
@@ -170,7 +182,10 @@ const CreateForm = () => {
           </div>
         ))}
 
-        <button onClick={addNewQuestion} className="my-4 rounded-md bg-green-500 p-2 text-white">
+        <button
+          onClick={addNewQuestion}
+          className="my-4 rounded-md bg-green-500 p-2 text-white"
+        >
           Add Question
         </button>
 
@@ -194,6 +209,17 @@ const CreateForm = () => {
             />
           </div>
         )}
+
+        <div className="my-4 flex items-center gap-2">
+          <label>Enable File Upload:</label>
+          <input
+            type="checkbox"
+            checked={formData.fileUploadEnabled}
+            onChange={(e) =>
+              setFormData({ ...formData, fileUploadEnabled: e.target.checked })
+            }
+          />
+        </div>
 
         <div className="flex justify-center">
           <button

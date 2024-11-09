@@ -35,7 +35,7 @@ const ResponseTable = ({ id }) => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
-          }
+          },
         );
         setData(response.data);
         setLoading(false);
@@ -49,8 +49,13 @@ const ResponseTable = ({ id }) => {
     fetchData();
   }, [token, id]);
 
-  const orderedMandatoryFields = ['admissionNumber', 'fullName', 'branch', 'mobileNumber'];
-  for(let i=0; i<orderedMandatoryFields.length; i++){
+  const orderedMandatoryFields = [
+    "admissionNumber",
+    "fullName",
+    "branch",
+    "mobileNumber",
+  ];
+  for (let i = 0; i < orderedMandatoryFields.length; i++) {
     selectedFields[orderedMandatoryFields[i]] = true;
   }
 
@@ -64,7 +69,7 @@ const ResponseTable = ({ id }) => {
 
   const responses = data?.responses || [];
   const formSpecificKeys = Object.keys(responses[0] || {}).filter(
-    (key) => key !== "user" && key !== "teamMembers"
+    (key) => key !== "user" && key !== "teamMembers",
   );
 
   const handleCheckboxChange = (field) => {
@@ -78,14 +83,20 @@ const ResponseTable = ({ id }) => {
     const teamMembers = response.teamMembers || [];
     const user = response.user || {};
 
-    const searchWithinFields = (item) => 
+    const searchWithinFields = (item) =>
       Object.keys(selectedFields).some(
         (field) =>
           selectedFields[field] &&
-          item[field]?.toString().toLowerCase().includes(searchQuery.toLowerCase())
-      ) || formSpecificKeys.some(
-        (key) =>
-          response[key]?.toString().toLowerCase().includes(searchQuery.toLowerCase())
+          item[field]
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase()),
+      ) ||
+      formSpecificKeys.some((key) =>
+        response[key]
+          ?.toString()
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
       );
 
     return data.enableTeams
@@ -100,7 +111,7 @@ const ResponseTable = ({ id }) => {
 
       const mapFields = (item, indx) => {
         const row = {};
-        if(indx !== -1){
+        if (indx !== -1) {
           formSpecificKeys.forEach((key) => {
             row[key] = response[key] || "N/A";
           });
@@ -111,7 +122,7 @@ const ResponseTable = ({ id }) => {
             (field) =>
               !orderedMandatoryFields.includes(field) &&
               selectedFields[field] &&
-              (row[field] = item[field] || "N/A")
+              (row[field] = item[field] || "N/A"),
           );
         } else {
           orderedMandatoryFields.forEach((field) => {
@@ -124,13 +135,15 @@ const ResponseTable = ({ id }) => {
             (field) =>
               !orderedMandatoryFields.includes(field) &&
               selectedFields[field] &&
-              (row[field] = item[field] || "N/A")
+              (row[field] = item[field] || "N/A"),
           );
         }
-        
+
         return row;
       };
-      return data.enableTeams ? teamMembers.map(mapFields) : [mapFields(user,-1)];
+      return data.enableTeams
+        ? teamMembers.map(mapFields)
+        : [mapFields(user, -1)];
     });
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -185,103 +198,68 @@ const ResponseTable = ({ id }) => {
         <table className="w-full table-auto">
           <thead>
             <tr className="bg-gray-2 text-left dark:bg-meta-4">
-              {
-                !data.enableTeams ? (<>
-                  {orderedMandatoryFields.map((field) => (
-                    <th key={field} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
+              {orderedMandatoryFields.map((field) => (
+                <th
+                  key={field}
+                  className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
+                >
+                  {field}
+                </th>
+              ))}
+              {formSpecificKeys.map((key) => (
+                <th
+                  key={key}
+                  className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
+                >
+                  {key}
+                </th>
+              ))}
+              {Object.keys(selectedFields).map(
+                (field) =>
+                  !orderedMandatoryFields.includes(field) &&
+                  selectedFields[field] && (
+                    <th
+                      key={field}
+                      className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11"
+                    >
                       {field}
                     </th>
-                  ))}
-                  {formSpecificKeys.map((key) => (
-                    <th key={key} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
-                      {key}
-                    </th>
-                  ))}
-                  {Object.keys(selectedFields).map(
-                    (field) =>
-                      !orderedMandatoryFields.includes(field) &&
-                      selectedFields[field] && (
-                        <th key={field} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
-                          {field}
-                        </th>
-                      )
-                  )}
-                </>) : (<>
-                  {formSpecificKeys.map((key) => (
-                    <th key={key} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
-                      {key}
-                    </th>
-                  ))}
-                  {orderedMandatoryFields.map((field) => (
-                    <th key={field} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
-                      {field}
-                    </th>
-                  ))}
-                  {Object.keys(selectedFields).map(
-                    (field) =>
-                      !orderedMandatoryFields.includes(field) &&
-                      selectedFields[field] && (
-                        <th key={field} className="min-w-[200px] px-4 py-4 font-medium text-black dark:text-white xl:pl-11">
-                          {field}
-                        </th>
-                      )
-                  )}
-                </>)
-              }
+                  ),
+              )}
             </tr>
           </thead>
           <tbody>
             {filteredResponses.map((response, index) => {
               const renderRow = (item) => (
                 <tr key={`${index}-${item._id || item.admissionNumber}`}>
-                  {
-                    !data.enableTeams ? (
-                      <>
-                        {orderedMandatoryFields.map((field) => (
-                          <td key={field} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                            <p className="text-sm">{item[field] || "N/A"}</p>
-                          </td>
-                        ))}
-                        {formSpecificKeys.map((key) => (
-                          <td key={key} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                            <p className="text-sm">{response[key] || "N/A"}</p>
-                          </td>
-                        ))}
-                        {Object.keys(selectedFields).map(
-                          (field) =>
-                            !orderedMandatoryFields.includes(field) &&
-                            selectedFields[field] && (
-                              <td key={field} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                                <p className="text-sm">{item[field] || "N/A"}</p>
-                              </td>
-                            )
-                        )}
-                      </>
-                    ) : (
-                      <>
-                        {formSpecificKeys.map((key) => (
-                          <td key={key} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                            <p className="text-sm">{response[key] || "N/A"}</p>
-                          </td>
-                        ))}
-                        {orderedMandatoryFields.map((field) => (
-                          <td key={field} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                            <p className="text-sm">{item[field] || "N/A"}</p>
-                          </td>
-                        ))}
-                        {Object.keys(selectedFields).map(
-                          (field) =>
-                            !orderedMandatoryFields.includes(field) &&
-                            selectedFields[field] && (
-                              <td key={field} className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11">
-                                <p className="text-sm">{item[field] || "N/A"}</p>
-                              </td>
-                            )
-                        )}
-                      </>
-                    )
-                  }
-                  
+                  {orderedMandatoryFields.map((field) => (
+                    <td
+                      key={field}
+                      className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"
+                    >
+                      <p className="text-sm">{item[field] || "N/A"}</p>
+                    </td>
+                  ))}
+                  {formSpecificKeys.map((key) => (
+                    <td
+                      key={key}
+                      className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"
+                    >
+                      <p className="text-sm">{(key!=='files' ? response[key] : <a href={`https://lh3.googleusercontent.com/d/${response[key]}`} target="_blank">Link</a>) || "N/A"}</p>
+                    </td>
+                  ))}
+                  {Object.keys(selectedFields).map(
+                    (field) =>
+                      !orderedMandatoryFields.includes(field) &&
+                      selectedFields[field] && (
+                        <td
+                          key={field}
+                          className="border-b border-[#eee] px-4 py-5 pl-9 dark:border-strokedark xl:pl-11"
+                        >
+                          <p className="text-sm">{item[field] || "N/A"}</p>
+                        </td>
+                      ),
+                  )}
                 </tr>
               );
 
