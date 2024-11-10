@@ -35,6 +35,51 @@ const handleError = (res, err) => {
     res.status(500).json(err);
 };
 
+const temp = async (req, res) => {
+    const formId = req.params.id;
+    const form = await Forms.findById(formId);
+    if (!form) {
+        console.error(`Form with ID ${formId} not found.`);
+        return;
+    }
+    const emailContent = {
+        to: 'devesh1217@gmail.com',
+        subject: `New Form Released: ${form.name}`,
+        text: `New Form Released: ${form.name}. Apply before deadline.`,
+        html: `
+            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
+                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+                </div>
+                <div>Dear Devesh,</div>
+                <p>A new form has been released:</p>
+                <div style="margin-bottom: 20px;">
+                    <strong>Name:</strong> ${form.name}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Description:</strong> ${form.desc}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Deadline:</strong> ${form.deadline}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.tech/forms" style="color: #1a73e8;">Apply Now</a>
+                </div>
+                <p>Thanks,<br>Team NEXUS</p>
+            </div>
+        `
+    };
+
+    try {
+        await sendEmail(emailContent);
+        res.status(200).json({ message: 'Email sent successfully.' });
+        // console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
+    } catch (error) {
+        console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);
+        res.status(500).json({ message: 'Failed to send email.' });
+    }
+};
+
 const notifyAllSubscribers = async (formId) => {
     try {
         // Fetch the form details by ID
@@ -64,19 +109,27 @@ const notifyAllSubscribers = async (formId) => {
                 //     `Link to apply: ${linkToApply}\n\n` +
                 //     `Best regards,\nTeam Nexus`,
                 html: `
-                    <div style=" background-color: black; color:white; font-size:12px; padding:20px;">
-                    <div style=" padding:10px; width:60%; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/></div>
-                    <div> Dear ${subscriber.fullName},</div>
-                    <p style="">A new form has been realesed:</p>
-                    <table>
-                    <tr><td>Name:</td><td>${form.name}</td></tr>
-                    <tr><td>Description:</td><td>${form.desc}</td></tr>
-                    <tr><td>Deadline:</td><td>${form.deadline}</td></tr>
-                    <tr><td>Link to apply:</td><td><a href="${linkToApply}">Apply Now</a></td></tr>
-                    </table>
-                    <p> Thanks,<br>Team NEXUS</p>
-                    </div>
-                    `
+            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
+                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+                </div>
+                <div>Dear ${subscriber.fullName},</div>
+                <p>A new form has been released:</p>
+                <div style="margin-bottom: 20px;">
+                    <strong>Name:</strong> ${form.name}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Description:</strong> ${form.desc}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Deadline:</strong> ${form.deadline}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.tech/forms" style="color: #1a73e8;">Apply Now</a>
+                </div>
+                <p>Thanks,<br>Team NEXUS</p>
+            </div>
+        `
             };
 
             try {
@@ -203,7 +256,7 @@ async function createDriveFolder(formTitle) {
 
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId,extraLinkName,extraLink, } = req.body;
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     let driveFolderId = null;
@@ -314,7 +367,7 @@ const submitResponse = async (req, res) => {
 
 
         if (!existingForm && formDetails.enableTeams) {
-            const teamMembers  = JSON.parse(req.body.teamMembers);
+            const teamMembers = JSON.parse(req.body.teamMembers);
             req.body.teamMembers = teamMembers;
             for (const admissionNumber of teamMembers) {
                 const existingMemberForm = await Forms.findOne({
@@ -369,9 +422,9 @@ const submitResponse = async (req, res) => {
 
             // Check if paymentId and screenshotUrl are provided
             if (!paymentId || !screenshotUrl) {
-                return res.status(400).json({ 
-                    success: false, 
-                    message: "Payment ID and screenshot URL are required for this form." 
+                return res.status(400).json({
+                    success: false,
+                    message: "Payment ID and screenshot URL are required for this form."
                 });
             }
 
@@ -482,5 +535,5 @@ module.exports = {
     updateFormStatus,
     updateFormDeadline,
     notifyAllSubscribers,
-
+    temp
 };

@@ -237,7 +237,7 @@ const RegisterForm = () => {
                 <img
                   src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
                   alt="Event Poster"
-                  className="w-full rounded-md object-cover object-center "
+                  className="md:w-1/2 rounded-md object-cover object-center "
                 />
               </div>
             </p>

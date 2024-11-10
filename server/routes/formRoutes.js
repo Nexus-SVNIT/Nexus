@@ -11,7 +11,8 @@ const {
   getPublicForms,
   updateFormStatus,
   updateFormDeadline,
-  notifyAllSubscribers
+  notifyAllSubscribers,
+  temp
 } = require('../controllers/formController.js');
 
 const router = express.Router();
@@ -47,7 +48,6 @@ router.post('/notify-subscribers/:formId', coreAuthMiddleware, async (req, res) 
   }
 });
 
-
-
+router.get('/test/:id', temp);
 
 module.exports = router;
