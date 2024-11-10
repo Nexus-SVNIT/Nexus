@@ -13,7 +13,6 @@ const formSchema = new Schema({
         required: true,
         trim: true
     },
-    
     deadline: {
         type: String,
         required: true
@@ -39,22 +38,21 @@ const formSchema = new Schema({
         ref: 'Event',
         default: 'none'
     },
-    WaLink:{
-        type:String,
-        
+    WaLink: {
+        type: String,
     },
-    enableTeams: {  // New field to specify if teams are enabled
+    enableTeams: {
         type: Boolean,
         default: false
     },
-    teamSize: {  // New field to specify the required team size if teams are enabled
+    teamSize: {
         type: Number,
         required: function() {
-            return this.enableTeams;  // teamSize is required only if enableTeams is true
+            return this.enableTeams;
         },
         min: [1, 'Team size must be at least 1']
     },
-    fileUploadEnabled: {  // New field to specify if file uploads are enabled
+    fileUploadEnabled: {
         type: Boolean,
         default: false
     },
@@ -63,6 +61,29 @@ const formSchema = new Schema({
         required: function () {
             return this.fileUploadEnabled;
         }
+    },
+    receivePayment: {  // Field to specify if payment is required
+        type: Boolean,
+        default: false
+    },
+    amount:{
+        type:Number,
+        default:0
+    },
+    qrCodeUrl: {  // Field to store QR code URL for payment
+        type: String,
+        required: function() {
+            return this.receivePayment;
+        }
+    },
+    payments: {  // New field to track payment details per response
+        type: [{
+            responseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Response' },
+            paymentId: { type: String, required: true },
+            screenshotUrl: { type: String, required: true }, // URL to screenshot of payment
+            paymentStatus: { type: String, enum: ['Pending', 'Verified', 'Rejected'], default: 'Pending' }
+        }],
+        default: []
     }
 });
 

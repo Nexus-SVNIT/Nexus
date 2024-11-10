@@ -25,12 +25,23 @@ const RegisterForm = () => {
     teamSize: 0,
     fileUploadEnabled: false,
     driveFolderId: "",
+    receivePayment: false,
+    amount: 0,
+    qrCodeUrl: "",
   });
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
+<<<<<<< HEAD
   const [files, setFiles] = useState(null);
   const [gotoLogin, setGotoLogin] = useState(false);
+=======
+  const [file, setFile] = useState(null);  // Changed to 'file' for singular
+  const [Payments, setPayments] = useState({
+    paymentId: "",
+    screenshotUrl: "",
+  });
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,17 +59,18 @@ const RegisterForm = () => {
     });
   };
 
-  const handleImageChange = (event) => {
-    const file = event.target.files[0];
-    setFormResponse((prev) => ({ ...prev, file: file }));
-    const reader = new FileReader();
-    reader.onload = () => setFiles(reader.result);
-    reader.readAsDataURL(file);
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPayments((prevDetails) => ({
+      ...prevDetails,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+<<<<<<< HEAD
     // Validate required fields
     const requiredFields = formData.formFields.filter(
       (field) => field.required,
@@ -94,24 +106,36 @@ const RegisterForm = () => {
 
     if (formData.fileUploadEnabled && !files) {
       toast.error("Please upload the required file.");
+=======
+    // Ensure token is present
+    const token = localStorage.getItem("token");
+    if (!token) {
+      toast.error("You must be logged in to submit the form.");
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
       return;
     }
 
     setLoading(true);
 
-    // Add team members to formResponse if teams are enabled
     const submissionData = {
       ...formResponse,
       teamMembers: formData.enableTeams ? teamMembers : [],
       teamName: formData.enableTeams ? teamName : "",
+      Payments,
     };
+<<<<<<< HEAD
 
     const finalResponse = new FormData();
 
+=======
+
+    const finalResponse = new FormData();
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
     for (const key in submissionData) {
       finalResponse.append(key, JSON.stringify(submissionData[key]));
     }
 
+<<<<<<< HEAD
     if (files) {
       finalResponse.append("file", files);
     }
@@ -129,6 +153,19 @@ const RegisterForm = () => {
           },
         },
       )
+=======
+    if (file) {
+      finalResponse.append("file", file);
+    }
+
+    await axios
+      .post(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, finalResponse, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
       .then((res) => {
         if (res.data.success === true) {
           setFlag(true);
@@ -144,6 +181,7 @@ const RegisterForm = () => {
   };
 
   const handleFormError = (res) => {
+<<<<<<< HEAD
     if (res.message === "Token is not valid") {
       toast.error("First login to register! Redirecting...");
       setTimeout(() => {
@@ -159,6 +197,10 @@ const RegisterForm = () => {
     } else {
       toast.error("Unexpected error! Try again later.");
     }
+=======
+    // Error handling logic, you can add specific messages here
+    toast.error(res.message || "Form submission failed.");
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
   };
 
   useEffect(() => {
@@ -202,9 +244,7 @@ const RegisterForm = () => {
         title={`Register for ${formData.name || "Event"}`}
         description={formData.desc}
       />
-      <h3 className="mb-4 mt-10 text-center text-2xl md:text-3xl">
-        Register For Event
-      </h3>
+      <h3 className="mb-4 mt-10 text-center text-2xl md:text-3xl">Register For Event</h3>
       {flag ? (
         <div className="flex min-h-[50vh] flex-col items-center justify-center p-4">
           <h4 className="text-lg font-bold">Thank you for registering!</h4>
@@ -220,12 +260,17 @@ const RegisterForm = () => {
           onSubmit={handleSubmit}
         >
           <div className="flex flex-col gap-2 rounded-lg border border-t-[.5rem] border-blue-800 bg-white p-4 md:p-6">
+<<<<<<< HEAD
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2">
               {formData.desc}
             </p>
+=======
+            <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">{formData.name}</p>
+            <p className="text-md px-4 text-slate-500 md:py-2">{formData.desc}</p>
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
           </div>
 
           {formData.formFields.map((ques, i) => (
@@ -242,6 +287,7 @@ const RegisterForm = () => {
               <h4 className="mt-4 text-xl">Team & Team Members Details:</h4>
               <QuestionBox
                 key={-1}
+<<<<<<< HEAD
                 ques={{
                   questionText: "Team Name",
                   required: true,
@@ -259,6 +305,12 @@ const RegisterForm = () => {
                   className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
                   required
                 /> */}
+=======
+                ques={{ questionText: "Team Name", required: true, questionType: "text" }}
+                inputValue={teamName || ""}
+                onInputChange={(e) => setTeamName(e.target.value)}
+              />
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
               {[...Array(formData.teamSize)].map((_, index) => (
                 <QuestionBox
                   key={100 + index}
@@ -269,9 +321,13 @@ const RegisterForm = () => {
                     isUser: true,
                   }}
                   inputValue={teamMembers[index] || ""}
+<<<<<<< HEAD
                   onInputChange={(e) =>
                     handleTeamMemberChange(index, e.target.value)
                   }
+=======
+                  onInputChange={(e) => handleTeamMemberChange(index, e.target.value)}
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
                 />
               ))}
             </div>
@@ -283,22 +339,51 @@ const RegisterForm = () => {
               <input
                 type="file"
                 accept="image/*"
+<<<<<<< HEAD
                 onChange={(e) => setFiles(e.target.files[0])}
                 className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
+=======
+                onChange={(e) => setFile(e.target.files[0])}
+                className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
+>>>>>>> 5c3ac612ea74151f5316a979aabfbcf429aea0eb
                 required
               />
             </div>
           )}
 
-          <div className="flex justify-center">
-            <button
-              type="submit"
-              className="my-4 w-full cursor-pointer rounded-md bg-blue-500 p-4 px-6 text-white hover:bg-blue-600 active:bg-transparent active:text-blue-800"
-              disabled={loading}
-            >
-              Submit
-            </button>
-          </div>
+          {formData.receivePayment && (
+            <div className="payment-section mt-4">
+              <h4 className="text-xl">Payment Details:</h4>
+              <p className="text-md">Amount: ₹{formData.amount}</p>
+              {formData.qrCodeUrl && (
+                <div className="payment-qr-code mt-4 text-center">
+                  <img src={formData.qrCodeUrl} alt="Payment QR Code" className="max-w-[200px]" />
+                </div>
+              )}
+              <input
+                type="text"
+                name="paymentId"
+                placeholder="Enter Payment ID"
+                className="mt-2 w-full p-2 border border-gray-300 rounded-md"
+                onChange={handlePaymentChange}
+              />
+              <input
+                type="text"
+                name="screenshotUrl"
+                placeholder="Enter Screenshot URL"
+                className="mt-2 w-full p-2 border border-gray-300 rounded-md"
+                onChange={handlePaymentChange}
+              />
+            </div>
+          )}
+
+          <button
+            type="submit"
+            className="mt-4 w-full bg-blue-600 text-white p-2 rounded-lg"
+            disabled={loading}
+          >
+            Submit Form
+          </button>
         </form>
       )}
     </div>

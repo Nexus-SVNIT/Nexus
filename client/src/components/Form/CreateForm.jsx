@@ -7,13 +7,18 @@ const CreateForm = () => {
     desc: "",
     deadline: "",
     WaLink: "",
-    fileUploadEnabled: false, // New field for file uploads
+    fileUploadEnabled: false,
   });
 
   const [questions, setQuestions] = useState([]);
   const [inputValues, setInputValues] = useState([]);
   const [enableTeams, setEnableTeams] = useState(false);
   const [teamSize, setTeamSize] = useState("");
+  const [receivePayment, setReceivePayment] = useState(false); // Boolean for payment requirement
+  const [paymentDetails, setPaymentDetails] = useState({
+    amount: 0,
+    qrCodeUrl: "",
+  });
 
   const handleInputChange = (index, value) => {
     const newInputValues = [...inputValues];
@@ -28,7 +33,7 @@ const CreateForm = () => {
         questionText: "",
         questionType: "text",
         required: false,
-        options: [], // Add options field here
+        options: [],
       },
     ]);
     setInputValues([...inputValues, ""]);
@@ -79,10 +84,14 @@ const CreateForm = () => {
       deadline: formData.deadline,
       WaLink: formData.WaLink,
       formFields: questions,
-      enableTeams: enableTeams,
+      enableTeams,
       teamSize: enableTeams ? teamSize : null,
-      fileUploadEnabled: formData.fileUploadEnabled, // Include in form creation
-    };    
+      fileUploadEnabled: formData.fileUploadEnabled,
+      receivePayment,
+      amount: receivePayment ? paymentDetails.amount : 0,
+      qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl : null,
+      payments: [], // Initialize as empty; will populate with responses later
+    };
 
     try {
       const response = await fetch(
@@ -104,6 +113,8 @@ const CreateForm = () => {
         setInputValues([]);
         setEnableTeams(false);
         setTeamSize("");
+        setReceivePayment(false);
+        setPaymentDetails({ amount: 0, qrCodeUrl: "" });
       } else {
         console.error("Error creating form");
       }
@@ -147,24 +158,17 @@ const CreateForm = () => {
         </div>
 
         {questions.map((ques, i) => (
-          <div
-            key={i}
-            className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2"
-          >
+          <div key={i} className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2">
             <input
               type="text"
               placeholder="Question Text"
               value={ques.questionText}
-              onChange={(e) =>
-                handleQuestionChange(i, "questionText", e.target.value)
-              }
+              onChange={(e) => handleQuestionChange(i, "questionText", e.target.value)}
               className="rounded-lg border px-4 py-2 text-lg font-semibold"
             />
             <select
               value={ques.questionType}
-              onChange={(e) =>
-                handleQuestionChange(i, "questionType", e.target.value)
-              }
+              onChange={(e) => handleQuestionChange(i, "questionType", e.target.value)}
               className="rounded-lg border px-4 py-2"
             >
               <option value="text">Text</option>
@@ -195,24 +199,16 @@ const CreateForm = () => {
               <input
                 type="checkbox"
                 checked={ques.required}
-                onChange={(e) =>
-                  handleQuestionChange(i, "required", e.target.checked)
-                }
+                onChange={(e) => handleQuestionChange(i, "required", e.target.checked)}
               />
             </div>
-            <button
-              onClick={() => removeQuestion(i)}
-              className="mt-2 cursor-pointer rounded-md bg-red-500 p-2 text-white"
-            >
+            <button onClick={() => removeQuestion(i)} className="mt-2 cursor-pointer rounded-md bg-red-500 p-2 text-white">
               Remove Question
             </button>
           </div>
         ))}
 
-        <button
-          onClick={addNewQuestion}
-          className="my-4 rounded-md bg-green-500 p-2 text-white"
-        >
+        <button onClick={addNewQuestion} className="my-4 rounded-md bg-green-500 p-2 text-white">
           Add Question
         </button>
 
@@ -238,24 +234,36 @@ const CreateForm = () => {
         )}
 
         <div className="my-4 flex items-center gap-2">
-          <label>Enable File Upload:</label>
+          <label>Receive Payment:</label>
           <input
             type="checkbox"
-            checked={formData.fileUploadEnabled}
-            onChange={(e) =>
-              setFormData({ ...formData, fileUploadEnabled: e.target.checked })
-            }
+            checked={receivePayment}
+            onChange={(e) => setReceivePayment(e.target.checked)}
           />
         </div>
 
-        <div className="flex justify-center">
-          <button
-            onClick={handleFormSubmit}
-            className="rounded-lg bg-blue-800 p-3 text-lg font-semibold text-white"
-          >
-            Submit Form
-          </button>
-        </div>
+        {receivePayment && (
+          <div className="my-4 flex flex-col gap-4">
+            <input
+              type="number"
+              placeholder="Payment Amount"
+              value={paymentDetails.amount}
+              onChange={(e) => setPaymentDetails({ ...paymentDetails, amount: e.target.value })}
+              className="rounded-lg border px-4 py-2 text-lg text-black"
+            />
+            <input
+              type="text"
+              placeholder="QR Code URL"
+              value={paymentDetails.qrCodeUrl}
+              onChange={(e) => setPaymentDetails({ ...paymentDetails, qrCodeUrl: e.target.value })}
+              className="rounded-lg border px-4 py-2 text-lg text-black"
+            />
+          </div>
+        )}
+
+        <button onClick={handleFormSubmit} className="my-4 cursor-pointer rounded-md bg-blue-500 p-2 text-white">
+          Submit Form
+        </button>
       </div>
     </div>
   );
