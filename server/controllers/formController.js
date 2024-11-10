@@ -285,12 +285,7 @@ const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
 };
 
 const submitResponse = async (req, res) => {
-<<<<<<< HEAD
-    console.log(req.body);
-    const formId = req.params.id;
-=======
     const id = req.params.id;
->>>>>>> 6cab966e0ce85fbf0d6c10efd4fa730aaf9a01d4
     const admissionNumber = req.user?.admissionNumber;
     // console.log(req.body)
     try {
@@ -362,38 +357,6 @@ const submitResponse = async (req, res) => {
                     message: "Team Name already exists.",
                 }); // Team Name already exists
             }
-<<<<<<< HEAD
-
-            // Verify each team member's registration status and existence
-            const teamChecks = await Promise.all(
-                parsedTeamMembers.map(async (memberAdmissionNumber) => {
-                    const [existingMemberForm, existingMember] = await Promise.all([
-                        Forms.findOne({
-                            _id: formId,
-                            "responses.teamMembers": memberAdmissionNumber,
-                        }),
-                        User.findOne({ admissionNumber: memberAdmissionNumber }),
-                    ]);
-
-                    if (existingMemberForm) {
-                        return `Team member with admission number ${memberAdmissionNumber} has already registered.`;
-                    }
-                    if (!existingMember) {
-                        return `Team member with admission number ${memberAdmissionNumber} does not exist.`;
-                    }
-                    return null;
-                })
-            );
-
-            const teamErrors = teamChecks.filter((msg) => msg !== null);
-            if (teamErrors.length > 0) {
-                return res.status(200).json({
-                    success: false,
-                    message: teamErrors.join(" "),
-                });
-            }
-
-            req.body.teamMembers = parsedTeamMembers; // Add parsed members to request body
         }
 
         // Payment validation if required
@@ -424,8 +387,6 @@ const submitResponse = async (req, res) => {
                 screenshotUrl,
                 paymentStatus: "Pending"
             };
-=======
->>>>>>> 6cab966e0ce85fbf0d6c10efd4fa730aaf9a01d4
         }
 
         // Upload file to Google Drive if file upload is enabled
@@ -457,12 +418,6 @@ const submitResponse = async (req, res) => {
     }
 };
 
-<<<<<<< HEAD
-
-
-
-=======
->>>>>>> 6cab966e0ce85fbf0d6c10efd4fa730aaf9a01d4
 const getResponses = async (req, res) => {
     const id = req.params.id;
     try {
