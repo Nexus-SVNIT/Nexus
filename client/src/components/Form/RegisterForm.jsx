@@ -105,8 +105,16 @@ const RegisterForm = () => {
         }
       })
       .catch((e) => {
-        console.error(e);
-        toast.error(e.message || "Something went wrong. Please try again later.");
+        if(e.code === "ERR_BAD_REQUEST") {
+          console.error(e);
+          toast.error("First login to register! Redirecting...");
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 2000);
+        } else {
+          toast.error("Something went wrong. Please try again later.");
+        }
+        // toast.error(e.message || "Something went wrong. Please try again later.");
       })
       .finally(() => setLoading(false));
   };
