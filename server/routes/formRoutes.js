@@ -48,6 +48,6 @@ router.post('/notify-subscribers/:formId', coreAuthMiddleware, async (req, res) 
   }
 });
 
-router.get('/test/:id', temp);
+// router.get('/test/:id', temp);
 
 module.exports = router;
