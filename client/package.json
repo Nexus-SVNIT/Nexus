@@ -18,6 +18,7 @@
     "bcrypt": "^5.1.1",
     "chart.js": "^4.4.6",
     "client": "file:",
+    "html-react-parser": "^5.1.18",
     "js-cookie": "^3.0.5",
     "prettier": "^3.1.1",
     "prettier-plugin-tailwindcss": "^0.5.11",
