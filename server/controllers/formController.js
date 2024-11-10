@@ -304,6 +304,7 @@ const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
 };
 
 const submitResponse = async (req, res) => {
+    console.log(req.body);
     const formId = req.params.id;
     const admissionNumber = req.user?.admissionNumber;
 
@@ -395,8 +396,8 @@ const submitResponse = async (req, res) => {
 
         // Payment validation if required
         if (formDetails.receivePayment) {
-            console.log(formDetails);
-            const { paymentId, screenshotUrl } = req.body.payments;
+            const paymentData = JSON.parse(req.body.Payments); // Parse Payments if it's a string
+            const { paymentId, screenshotUrl } = paymentData;
 
             // Check if paymentId and screenshotUrl are provided
             if (!paymentId || !screenshotUrl) {
@@ -458,6 +459,7 @@ const submitResponse = async (req, res) => {
         });
     }
 };
+
 
 
 

@@ -90,7 +90,7 @@ const CreateForm = () => {
       receivePayment,
       amount: receivePayment ? paymentDetails.amount : 0,
       qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl : null,
-      payments: [], // Initialize as empty; will populate with responses later
+      payments: [],
     };
 
     try {
@@ -157,6 +157,11 @@ const CreateForm = () => {
           />
         </div>
 
+        
+
+        
+        
+
         {questions.map((ques, i) => (
           <div key={i} className="my-4 flex flex-col gap-2 rounded-lg border px-4 py-2">
             <input
@@ -221,11 +226,21 @@ const CreateForm = () => {
           />
         </div>
 
+        {/* Add checkbox for enabling file upload */}
+        <div className="my-4 flex items-center gap-2">
+          <label>Enable File Upload:</label>
+          <input
+            type="checkbox"
+            checked={formData.fileUploadEnabled}
+            onChange={(e) => setFormData({ ...formData, fileUploadEnabled: e.target.checked })}
+          />
+        </div>
+
         {enableTeams && (
           <div className="my-4">
             <input
               type="number"
-              placeholder="Enter Team Size"
+              placeholder="Team Size"
               value={teamSize}
               onChange={(e) => setTeamSize(e.target.value)}
               className="rounded-lg border px-4 py-2 text-lg text-black"
@@ -233,6 +248,7 @@ const CreateForm = () => {
           </div>
         )}
 
+        {/* Payment */}
         <div className="my-4 flex items-center gap-2">
           <label>Receive Payment:</label>
           <input
@@ -243,10 +259,10 @@ const CreateForm = () => {
         </div>
 
         {receivePayment && (
-          <div className="my-4 flex flex-col gap-4">
+          <div className="my-4">
             <input
               type="number"
-              placeholder="Payment Amount"
+              placeholder="Amount"
               value={paymentDetails.amount}
               onChange={(e) => setPaymentDetails({ ...paymentDetails, amount: e.target.value })}
               className="rounded-lg border px-4 py-2 text-lg text-black"
@@ -261,8 +277,11 @@ const CreateForm = () => {
           </div>
         )}
 
-        <button onClick={handleFormSubmit} className="my-4 cursor-pointer rounded-md bg-blue-500 p-2 text-white">
-          Submit Form
+        <button
+          onClick={handleFormSubmit}
+          className="mt-6 rounded-lg bg-blue-500 py-2 text-lg text-white"
+        >
+          Create Form
         </button>
       </div>
     </div>
