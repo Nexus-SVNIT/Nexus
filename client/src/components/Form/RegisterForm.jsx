@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
 import axios from "axios";
+import { Navigate } from "react-router-dom";
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -29,6 +30,7 @@ const RegisterForm = () => {
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [files, setFiles] = useState(null);
+  const [gotoLogin, setGotoLogin] = useState(false);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -58,9 +60,11 @@ const RegisterForm = () => {
     e.preventDefault();
 
     // Validate required fields
-    const requiredFields = formData.formFields.filter((field) => field.required);
+    const requiredFields = formData.formFields.filter(
+      (field) => field.required,
+    );
     const missingRequiredFields = requiredFields.some(
-      (field) => !formResponse[field.questionText]?.trim()
+      (field) => !formResponse[field.questionText]?.trim(),
     );
 
     if (missingRequiredFields) {
@@ -88,7 +92,7 @@ const RegisterForm = () => {
       teamMembers.map((member) => member.toUpperCase());
     }
 
-    if(formData.fileUploadEnabled && !files) {
+    if (formData.fileUploadEnabled && !files) {
       toast.error("Please upload the required file.");
       return;
     }
@@ -101,25 +105,30 @@ const RegisterForm = () => {
       teamMembers: formData.enableTeams ? teamMembers : [],
       teamName: formData.enableTeams ? teamName : "",
     };
-    
+
     const finalResponse = new FormData();
 
-    for(const key in submissionData) {
+    for (const key in submissionData) {
       finalResponse.append(key, JSON.stringify(submissionData[key]));
     }
 
     if (files) {
-      finalResponse.append('file', files);
+      finalResponse.append("file", files);
     }
-    
+
     const token = localStorage.getItem("token");
-    console.log(finalResponse, submissionData)
-    await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`, finalResponse, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-        Authorization: `Bearer ${token}`,
-      },
-    })
+    console.log(finalResponse, submissionData);
+    await axios
+      .post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`,
+        finalResponse,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      )
       .then((res) => {
         if (res.data.success === true) {
           setFlag(true);
@@ -129,16 +138,7 @@ const RegisterForm = () => {
         }
       })
       .catch((e) => {
-        if(e.code === "ERR_BAD_REQUEST") {
-          console.error(e);
-          toast.error("First login to register! Redirecting...");
-          setTimeout(() => {
-            window.location.href = "/login";
-          }, 2000);
-        } else {
-          toast.error("Something went wrong. Please try again later.");
-        }
-        // toast.error(e.message || "Something went wrong. Please try again later.");
+        handleFormError(e.response.data);
       })
       .finally(() => setLoading(false));
   };
@@ -147,7 +147,7 @@ const RegisterForm = () => {
     if (res.message === "Token is not valid") {
       toast.error("First login to register! Redirecting...");
       setTimeout(() => {
-        window.location.href = "/login";
+        setGotoLogin(true);
       }, 2000);
     } else if (res.message === "Already Registered.") {
       toast.error("Already Registered!");
@@ -156,7 +156,7 @@ const RegisterForm = () => {
       toast.error("Team Name already exists.");
     } else if (res.message.startsWith("Team member with admission number")) {
       toast.error(res.message);
-    }else {
+    } else {
       toast.error("Unexpected error! Try again later.");
     }
   };
@@ -192,6 +192,10 @@ const RegisterForm = () => {
       </div>
     );
 
+  if (gotoLogin) {
+    return <Navigate to="/login" />;
+  }
+
   return (
     <div className="relative flex w-screen flex-col justify-center">
       <HeadTags
@@ -202,7 +206,7 @@ const RegisterForm = () => {
         Register For Event
       </h3>
       {flag ? (
-        <div className="flex flex-col items-center justify-center min-h-[50vh] p-4">
+        <div className="flex min-h-[50vh] flex-col items-center justify-center p-4">
           <h4 className="text-lg font-bold">Thank you for registering!</h4>
           <p className="text-md text-blue-500">
             <a href={link} target="_blank" rel="noopener noreferrer">
@@ -219,7 +223,9 @@ const RegisterForm = () => {
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
-            <p className="text-md px-4 text-slate-500 md:py-2">{formData.desc}</p>
+            <p className="text-md px-4 text-slate-500 md:py-2">
+              {formData.desc}
+            </p>
           </div>
 
           {formData.formFields.map((ques, i) => (
@@ -235,11 +241,15 @@ const RegisterForm = () => {
             <div className="team-members-section">
               <h4 className="mt-4 text-xl">Team & Team Members Details:</h4>
               <QuestionBox
-              key={-1}
-              ques={{ questionText: "Team Name", required: true, questionType: "text" }}
-              inputValue={teamName || ""}
-              onInputChange={(e) => setTeamName(e.target.value)}
-            />
+                key={-1}
+                ques={{
+                  questionText: "Team Name",
+                  required: true,
+                  questionType: "text",
+                }}
+                inputValue={teamName || ""}
+                onInputChange={(e) => setTeamName(e.target.value)}
+              />
               {/* <input
                   key={-1}
                   type="text"
@@ -251,29 +261,34 @@ const RegisterForm = () => {
                 /> */}
               {[...Array(formData.teamSize)].map((_, index) => (
                 <QuestionBox
-                key={100+index}
-                ques={{ questionText: `Admission Number of Member ${index + 1}`, required: true, questionType: "text", isUser : true }}
-                inputValue={teamMembers[index] || ""}
-                onInputChange={(e) => handleTeamMemberChange(index, e.target.value)}
-              />
+                  key={100 + index}
+                  ques={{
+                    questionText: `Admission Number of Member ${index + 1}`,
+                    required: true,
+                    questionType: "text",
+                    isUser: true,
+                  }}
+                  inputValue={teamMembers[index] || ""}
+                  onInputChange={(e) =>
+                    handleTeamMemberChange(index, e.target.value)
+                  }
+                />
               ))}
             </div>
           )}
 
-          {
-            formData.fileUploadEnabled && (
-              <div className="file-upload-section">
-                <h4 className="mt-4 text-xl">Upload Required File:</h4>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => setFiles(e.target.files[0])}
-                  className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
-                  required
-                />
-              </div>
-            )
-          }
+          {formData.fileUploadEnabled && (
+            <div className="file-upload-section">
+              <h4 className="mt-4 text-xl">Upload Required File:</h4>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setFiles(e.target.files[0])}
+                className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
+                required
+              />
+            </div>
+          )}
 
           <div className="flex justify-center">
             <button

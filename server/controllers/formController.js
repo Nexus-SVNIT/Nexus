@@ -296,7 +296,7 @@ const submitResponse = async (req, res) => {
 
         // Check if the deadline has been missed
         if (deadlineDate < currentDate) {
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 message: "The deadline has passed. Your response was not saved.",
             });
@@ -320,7 +320,7 @@ const submitResponse = async (req, res) => {
                 });
 
                 if (existingMemberForm) {
-                    return res.status(200).json({
+                    return res.status(400).json({
                         success: false,
                         message: `Team member with admission number ${admissionNumber} has already registered.`,
                     });
@@ -328,7 +328,7 @@ const submitResponse = async (req, res) => {
 
                 const existingMember = await User.findOne({ admissionNumber });
                 if (!existingMember) {
-                    return res.status(200).json({
+                    return res.status(400).json({
                         success: false,
                         message: `Team member with admission number ${admissionNumber} does not exist.`,
                     });
@@ -339,7 +339,7 @@ const submitResponse = async (req, res) => {
         }
 
         if (existingForm) {
-            return res.status(200).json({
+            return res.status(400).json({
                 success: false,
                 message: "Already Registered.",
             }); // User has already submitted
@@ -352,7 +352,7 @@ const submitResponse = async (req, res) => {
                 "responses.teamName": teamName
             });
             if (existingTeam) {
-                return res.status(200).json({
+                return res.status(400).json({
                     success: false,
                     message: "Team Name already exists.",
                 }); // Team Name already exists
