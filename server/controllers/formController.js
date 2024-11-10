@@ -203,9 +203,22 @@ async function createDriveFolder(formTitle) {
 
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled } = req.body;
-    const _event = "none";  // Set a default value for _event if it's not provided
-
+    const {
+        name,
+        desc,
+        deadline,
+        formFields,
+        WaLink,
+        enableTeams,
+        teamSize,
+        fileUploadEnabled,
+        receivePayment,
+        amount,
+        qrCodeUrl,
+        Payments
+    } = req.body;
+    
+    const _event = "none";  // Default value for _event if not provided
     let driveFolderId = null;
 
     // If file upload is enabled, create a subfolder on Google Drive
@@ -213,22 +226,22 @@ const createForm = async (req, res) => {
         try {
             driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
         } catch (error) {
-            console.log(error)
+            console.error(error);
             return res.status(500).json({ message: "Failed to create folder in Google Drive" });
         }
     }
 
+    // Default values
     const created_date = new Date().toISOString();
     const publish = false;
 
     // Validate team size if enableTeams is true
     let teamData = {};
     if (enableTeams) {
-        if (teamSize && teamSize > 0) {
-            teamData = { enableTeams, teamSize };
-        } else {
+        if (!teamSize || teamSize <= 0) {
             return res.status(400).json({ error: "Invalid team size. It should be a positive integer." });
         }
+        teamData = { enableTeams, teamSize };
     }
 
     try {
@@ -243,13 +256,19 @@ const createForm = async (req, res) => {
             _event,
             ...teamData, // Spread the team data if teams are enabled
             fileUploadEnabled,
-            driveFolderId
+            driveFolderId,
+            receivePayment,
+            amount,
+            qrCodeUrl,
+            Payments
         });
-        res.status(200).json(createdForm);
+
+        res.status(200).json({ success: true, form: createdForm });
     } catch (err) {
         handleError(res, err);
     }
 };
+
 
 const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
     try {
@@ -285,16 +304,19 @@ const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
 };
 
 const submitResponse = async (req, res) => {
-    const id = req.params.id;
+    const formId = req.params.id;
     const admissionNumber = req.user?.admissionNumber;
-    // console.log(req.body)
+
     try {
         // Retrieve form details
-        const formDetails = await Forms.findById(id).select();
-        const deadlineDate = formDetails.deadline;
-        const currentDate = Date.now();
+        const formDetails = await Forms.findById(formId);
+        if (!formDetails) {
+            return res.status(404).json({ success: false, message: "Form not found." });
+        }
 
-        // Check if the deadline has been missed
+        // Check if the deadline has passed
+        const deadlineDate = new Date(formDetails.deadline).getTime();
+        const currentDate = Date.now();
         if (deadlineDate < currentDate) {
             return res.status(200).json({
                 success: false,
@@ -302,91 +324,142 @@ const submitResponse = async (req, res) => {
             });
         }
 
-
         // Check if the user has already submitted the form
-        const existingForm = await Forms.findOne({
-            _id: id,
-            "responses.admissionNumber": admissionNumber
+        const existingResponse = await Forms.findOne({
+            _id: formId,
+            "responses.admissionNumber": admissionNumber,
         });
-
-
-        if (!existingForm && formDetails.enableTeams) {
-            const teamMembers  = JSON.parse(req.body.teamMembers);
-            req.body.teamMembers = teamMembers;
-            for (const admissionNumber of teamMembers) {
-                const existingMemberForm = await Forms.findOne({
-                    _id: id,
-                    "responses.teamMembers": admissionNumber
-                });
-
-                if (existingMemberForm) {
-                    return res.status(200).json({
-                        success: false,
-                        message: `Team member with admission number ${admissionNumber} has already registered.`,
-                    });
-                }
-
-                const existingMember = await User.findOne({ admissionNumber });
-                if (!existingMember) {
-                    return res.status(200).json({
-                        success: false,
-                        message: `Team member with admission number ${admissionNumber} does not exist.`,
-                    });
-                }
-
-
-            }
-        }
-
-        if (existingForm) {
+        if (existingResponse) {
             return res.status(200).json({
                 success: false,
-                message: "Already Registered.",
-            }); // User has already submitted
+                message: "You have already registered.",
+            });
         }
 
+        // Handle team requirements if teams are enabled
         if (formDetails.enableTeams) {
-            const { teamName } = req.body;
+            const { teamName, teamMembers } = req.body;
+            const parsedTeamMembers = teamMembers ? JSON.parse(teamMembers) : [];
+
+            // Validate teamName and teamMembers
+            if (!teamName || parsedTeamMembers.length === 0) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Team name and team members are required."
+                });
+            }
+
+            // Check if the team name is already registered
             const existingTeam = await Forms.findOne({
-                _id: id,
-                "responses.teamName": teamName
+                _id: formId,
+                "responses.teamName": teamName,
             });
             if (existingTeam) {
                 return res.status(200).json({
                     success: false,
-                    message: "Team Name already exists.",
-                }); // Team Name already exists
+                    message: "Team name already exists.",
+                });
             }
+
+            // Verify each team member's registration status and existence
+            const teamChecks = await Promise.all(
+                parsedTeamMembers.map(async (memberAdmissionNumber) => {
+                    const [existingMemberForm, existingMember] = await Promise.all([
+                        Forms.findOne({
+                            _id: formId,
+                            "responses.teamMembers": memberAdmissionNumber,
+                        }),
+                        User.findOne({ admissionNumber: memberAdmissionNumber }),
+                    ]);
+
+                    if (existingMemberForm) {
+                        return `Team member with admission number ${memberAdmissionNumber} has already registered.`;
+                    }
+                    if (!existingMember) {
+                        return `Team member with admission number ${memberAdmissionNumber} does not exist.`;
+                    }
+                    return null;
+                })
+            );
+
+            const teamErrors = teamChecks.filter((msg) => msg !== null);
+            if (teamErrors.length > 0) {
+                return res.status(200).json({
+                    success: false,
+                    message: teamErrors.join(" "),
+                });
+            }
+
+            req.body.teamMembers = parsedTeamMembers; // Add parsed members to request body
+        }
+
+        // Payment validation if required
+        if (formDetails.receivePayment) {
+            console.log(formDetails);
+            const { paymentId, screenshotUrl } = req.body.payments;
+
+            // Check if paymentId and screenshotUrl are provided
+            if (!paymentId || !screenshotUrl) {
+                return res.status(400).json({ 
+                    success: false, 
+                    message: "Payment ID and screenshot URL are required for this form." 
+                });
+            }
+
+            // Ensure unique paymentId in payments array
+            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
+            if (existingPayment) {
+                return res.status(200).json({
+                    success: false,
+                    message: "This payment ID has already been used.",
+                });
+            }
+
+            // Add payment details to request body for tracking
+            req.body.paymentDetails = {
+                paymentId,
+                screenshotUrl,
+                paymentStatus: "Pending"
+            };
         }
 
         // Upload file to Google Drive if file upload is enabled
         if (formDetails.fileUploadEnabled) {
             const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
             if (!uploadResult.success) {
-                return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
+                return res.status(500).json({ success: false, message: `Error uploading file: ${uploadResult.error}` });
             }
-            req.body.files = uploadResult.fileId;
+            req.body.files = uploadResult.fileId; // Set uploaded file ID in request body
         }
 
-        // Update the form with the new response
-        const form = await Forms.findByIdAndUpdate(
-            id,
-            { $push: { responses: { ...req.body, admissionNumber } } },
+        // Create response with the payment details and save it to the form
+        const response = {
+            ...req.body,
+            admissionNumber,
+            ...(formDetails.receivePayment ? { payments: [req.body.paymentDetails] } : {})
+        };
+
+        const updatedForm = await Forms.findByIdAndUpdate(
+            formId,
+            { $push: { responses: response, ...(formDetails.receivePayment ? { payments: req.body.paymentDetails } : {}) } },
             { new: true }
         );
 
-        const responseMessage = {
+        res.status(200).json({
             success: true,
             message: "Your response has been successfully saved.",
-            WaLink: form?.WaLink,
-        };
-
-        res.status(200).json(responseMessage);
+            WaLink: updatedForm?.WaLink || "Default link", // Handle missing WaLink gracefully
+        });
     } catch (err) {
-        console.log(err)
-        handleError(res, err);
+        console.error(err);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while submitting the response. Please try again later."
+        });
     }
 };
+
+
 
 const getResponses = async (req, res) => {
     const id = req.params.id;
