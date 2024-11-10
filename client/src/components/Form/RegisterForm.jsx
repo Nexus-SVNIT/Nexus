@@ -137,6 +137,7 @@ const RegisterForm = () => {
         if (res.data.success === true) {
           setFlag(true);
           setLink(res.data.WaLink);
+          toast.success("Form submitted successfully!");
         } else {
           handleFormError(res.data);
         }
@@ -241,7 +242,7 @@ const RegisterForm = () => {
               </div>
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2">
-              <a href={formData.extraLink} className="text-blue-700 font-bold italic hover:underline">{formData.extraLinkName}</a>
+              <a href={formData.extraLink} target="_blank" className="text-blue-700 font-bold italic hover:underline">{formData.extraLinkName}</a>
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2">
               <strong>Deadline:</strong> {formData.deadline}
