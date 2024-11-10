@@ -232,12 +232,12 @@ const RegisterForm = () => {
               {parse(formData.desc)}
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2 ">
-              <div className="flex flex-col items-center justify-center">
+              <div className="flex flex-col items-center justify-center gap-5 p-5">
                 <strong>QR Code for Payment</strong>
                 <img
                   src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
                   alt="Event Poster"
-                  className="h-56 w-full rounded-md object-cover object-center "
+                  className="w-full rounded-md object-cover object-center "
                 />
               </div>
             </p>
