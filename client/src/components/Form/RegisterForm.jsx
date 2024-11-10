@@ -7,6 +7,7 @@ import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
+import parse from 'html-react-parser';
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -25,6 +26,9 @@ const RegisterForm = () => {
     teamSize: 0,
     fileUploadEnabled: false,
     driveFolderId: "",
+    posterImageDriveId: '',
+    extraLinkName: '',
+    extraLink: ''
   });
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
@@ -224,7 +228,23 @@ const RegisterForm = () => {
               {formData.name}
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2">
-              {formData.desc}
+              {parse(formData.desc)}
+            </p>
+            <p className="text-md px-4 text-slate-500 md:py-2 ">
+              <div className="flex flex-col items-center justify-center">
+                <strong>QR Code for Payment</strong>
+                <img
+                  src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
+                  alt="Event Poster"
+                  className="h-56 w-full rounded-md object-cover object-center "
+                />
+              </div>
+            </p>
+            <p className="text-md px-4 text-slate-500 md:py-2">
+              <a href={formData.extraLink} className="text-blue-700 font-bold italic hover:underline">{formData.extraLinkName}</a>
+            </p>
+            <p className="text-md px-4 text-slate-500 md:py-2">
+              <strong>Deadline:</strong> {formData.deadline}
             </p>
           </div>
 

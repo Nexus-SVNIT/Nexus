@@ -84,6 +84,18 @@ const formSchema = new Schema({
             paymentStatus: { type: String, enum: ['Pending', 'Verified', 'Rejected'], default: 'Pending' }
         }],
         default: []
+    },
+    posterImageDriveId:{
+        type: String,
+        default: ''
+    },
+    extraLinkName:{
+        type: String,
+        default: ''
+    },
+    extraLink:{
+        type: String,
+        default: ''
     }
 });
 

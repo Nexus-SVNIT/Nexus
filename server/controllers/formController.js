@@ -203,7 +203,7 @@ async function createDriveFolder(formTitle) {
 
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled } = req.body;
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId,extraLinkName,extraLink, } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     let driveFolderId = null;
@@ -243,7 +243,10 @@ const createForm = async (req, res) => {
             _event,
             ...teamData, // Spread the team data if teams are enabled
             fileUploadEnabled,
-            driveFolderId
+            driveFolderId,
+            posterImageDriveId,
+            extraLinkName,
+            extraLink,
         });
         res.status(200).json(createdForm);
     } catch (err) {

@@ -8,6 +8,9 @@ const CreateForm = () => {
     deadline: "",
     WaLink: "",
     fileUploadEnabled: false,
+    posterImageDriveId: '',
+    extraLinkName: '',
+    extraLink: '',
   });
 
   const [questions, setQuestions] = useState([]);
@@ -91,8 +94,10 @@ const CreateForm = () => {
       amount: receivePayment ? paymentDetails.amount : 0,
       qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl : null,
       payments: [],
+      posterImageDriveId: formData.posterImageDriveId,
+      extraLinkName: formData.extraLinkName,
+      extraLink: formData.extraLink,
     };
-
     try {
       const response = await fetch(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/create`,
@@ -136,11 +141,36 @@ const CreateForm = () => {
             className="rounded-lg border px-4 py-2 text-2xl text-black"
           />
           <textarea
-            placeholder="Form Description"
+            placeholder="Form Description(HTML allowed)"
             value={formData.desc}
             onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
             className="text-md rounded-lg border px-4 py-2 text-slate-500"
           />
+          <input
+            type="text"
+            placeholder="Poster Image Drive ID"
+            value={formData.posterImageDriveId}
+            onChange={(e) => setFormData({ ...formData, posterImageDriveId: e.target.value })}
+            className="rounded-lg border px-4 py-2 text-lg text-black"
+          />
+          <input
+            type="text"
+            placeholder="Extra Link Name"
+            value={formData.extraLinkName}
+            onChange={(e) => setFormData({ ...formData, extraLinkName: e.target.value })}
+            className="rounded-lg border px-4 py-2 text-lg text-black"
+          />
+          {
+            formData.extraLinkName && (
+              <input
+                type="text"
+                placeholder="Extra Link"
+                value={formData.extraLink}
+                onChange={(e) => setFormData({ ...formData, extraLink: e.target.value })}
+                className="rounded-lg border px-4 py-2 text-lg text-black"
+              />
+            )
+          }
           <input
             type="date"
             placeholder="Deadline"
