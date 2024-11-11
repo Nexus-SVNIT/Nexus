@@ -133,7 +133,7 @@ const notifyAllSubscribers = async (formId) => {
             };
 
             try {
-                await sendEmail(emailContent);
+                const temp = await sendEmail(emailContent);
                 // console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
             } catch (error) {
                 console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);

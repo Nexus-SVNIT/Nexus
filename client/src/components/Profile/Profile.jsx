@@ -55,9 +55,9 @@ const ProfilePage = ({ profile, setProfile }) => {
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const instituteEmailPattern =
-      /^(u|i)\d{2}(cs|ai)\d{3}@(coed|aid)\.svnit\.ac\.in$/;
+      /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
-    if (!admissionNumber.match(/(U|I)\d{2}(CS|AI)\d{3}/)) {
+    if (!admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }

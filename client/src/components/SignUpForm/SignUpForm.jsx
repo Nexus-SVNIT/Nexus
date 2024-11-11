@@ -46,9 +46,9 @@ function SignUpForm() {
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const instituteEmailPattern =
-      /^(u|i)\d{2}(cs|ai)\d{3}@(coed|aid)\.svnit\.ac\.in$/;
+      /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
-    if (!admissionNumber.match(/(U|I)\d{2}(CS|AI)\d{3}/)) {
+    if (!admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }
@@ -169,7 +169,7 @@ function SignUpForm() {
               type="text"
               id="admissionNumber"
               name="admissionNumber"
-              pattern="(I|U)\d{2}(CS|AI)\d{3}"
+              pattern="(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
               placeholder="IXXCSXXX or UXXAIXXX"
@@ -229,7 +229,7 @@ function SignUpForm() {
               type="email"
               id="instituteEmail"
               name="instituteEmail"
-              pattern="^(u|i)\d{2}(cs|ai)\d{3}@(coed|aid)\.svnit\.ac\.in$"
+              pattern="^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$"
               value={formData.instituteEmail}
               onChange={handleChange}
               placeholder="(u|i)XX(cs|ai)XXX@(coed|aid).svnit.ac.in"

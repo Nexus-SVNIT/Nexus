@@ -54,8 +54,7 @@ app.use('/projects', projectRoutes);
 app.use("/issue",issueRoutes);
 app.use('/coding-profiles', codingProfileRoutes);
 
-mongoose
-    .connect(MONGO_URL)
+mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         app.listen(PORT, (req, res) => {
             console.log('connected to db')
