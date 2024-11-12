@@ -81,14 +81,14 @@ function App() {
           <Toaster />
         </Router>
       </QueryClientProvider>
-      <button
+      {/* <button
         onClick={openIssueModal}
         className="fixed bottom-4 left-4 z-50 w-40 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
       >
         Report an Issue
       </button>
 
-      <IssueModal isOpen={isIssueModalOpen} onClose={closeIssueModal} />
+      <IssueModal isOpen={isIssueModalOpen} onClose={closeIssueModal} /> */}
     </>
   );
 }
