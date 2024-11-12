@@ -1,8 +1,6 @@
 const express = require("express");
 const router = express.Router();
 const axios = require("axios");
-const Contest = require("../models/contestModel");
-const CodingProfile = require("../models/codingProfileModel");
 
 const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 

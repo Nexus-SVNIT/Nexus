@@ -30,6 +30,21 @@ const Cp = () => {
         const lcLeaderboard = [];
         const ccLeaderboard = [];
 
+        const localData = JSON.parse(localStorage.getItem('coding-profile-data'));
+        console.log(localData)
+        const lastUpdate = localData['lastUpdate'];
+        console.log(lastUpdate)
+        if(localData && Date.now() - lastUpdate < 1000 * 60 * 60 * 24){
+          setUserData(localData['users']);
+          setBatchData(localData['batchData']);
+          setCodeforcesLeaderboard(localData['codeforcesLeaderboard']);
+          setLeetcodeLeaderboard(localData['leetcodeLeaderboard']);
+          setCodechefLeaderboard(localData['codechefLeaderboard']);
+          setLoading(false);
+          console.log('hi')
+          return;
+        }
+
         await Promise.all(
           data.users.map(async (user) => {
             const batch = user.admissionNumber.slice(1, 3);
@@ -180,6 +195,16 @@ const Cp = () => {
         setCodeforcesLeaderboard(cfLeaderboard);
         setLeetcodeLeaderboard(lcLeaderboard);
         setCodechefLeaderboard(ccLeaderboard);
+
+        const dataToStore = {
+          users: data.users,
+          batchData: batchWiseData,
+          codeforcesLeaderboard: cfLeaderboard,
+          leetcodeLeaderboard: lcLeaderboard,
+          codechefLeaderboard: ccLeaderboard,
+          lastUpdate: Date.now(),
+        };
+        localStorage.setItem('coding-profile-data', JSON.stringify(dataToStore));
       } catch (error) {
         console.error("Error fetching user data:", error);
       } finally {
