@@ -31,17 +31,13 @@ const Cp = () => {
         const ccLeaderboard = [];
 
         const localData = JSON.parse(localStorage.getItem('coding-profile-data'));
-        console.log(localData)
-        const lastUpdate = localData['lastUpdate'];
-        console.log(lastUpdate)
-        if(localData && Date.now() - lastUpdate < 1000 * 60 * 60 * 24){
+        if(localData && Date.now() - localData.lastUpdate < 1000 * 60 * 60 * 24){
           setUserData(localData['users']);
           setBatchData(localData['batchData']);
           setCodeforcesLeaderboard(localData['codeforcesLeaderboard']);
           setLeetcodeLeaderboard(localData['leetcodeLeaderboard']);
           setCodechefLeaderboard(localData['codechefLeaderboard']);
           setLoading(false);
-          console.log('hi')
           return;
         }
 
