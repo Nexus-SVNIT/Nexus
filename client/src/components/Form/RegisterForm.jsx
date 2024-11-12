@@ -40,14 +40,14 @@ const RegisterForm = () => {
     const { name, value } = e.target;
     setFormResponse((prevResponse) => ({
       ...prevResponse,
-      [name]: value,
+      [name]: value.trim(), // Trim whitespace here
     }));
   };
 
   const handleTeamMemberChange = (index, value) => {
     setTeamMembers((prevMembers) => {
       const newMembers = [...prevMembers];
-      newMembers[index] = value.toUpperCase();
+      newMembers[index] = value.trim().toUpperCase();
       return newMembers;
     });
   };
