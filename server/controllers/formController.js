@@ -358,6 +358,13 @@ const submitResponse = async (req, res) => {
             });
         }
 
+        if(admissionNumber.substring(1, 3) === "24" && admissionNumber[0] !== "P"){
+            return res.status(400).json({
+                success: false,
+                message: "You are not allowed to submit the form.",
+            });
+        }
+
 
         // Check if the user has already submitted the form
         const existingForm = await Forms.findOne({
