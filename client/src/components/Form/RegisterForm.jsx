@@ -161,7 +161,9 @@ const RegisterForm = () => {
       toast.error("Team Name already exists.");
     } else if (res.message.startsWith("Team member with admission number")) {
       toast.error(res.message);
-    } else {
+    } else if (res.message.startsWith("You are not allowed")) {
+      toast.error(res.message);
+    }else {
       toast.error("Unexpected error! Try again later.");
     }
   };
