@@ -357,8 +357,7 @@ const submitResponse = async (req, res) => {
                 message: "The deadline has passed. Your response was not saved.",
             });
         }
-
-        if(admissionNumber.substring(1, 3) !== "23" && admissionNumber[0] === "P"){
+        if(admissionNumber.substring(1, 3) !== "23" || admissionNumber[0] === "P"){
             return res.status(400).json({
                 success: false,
                 message: "You are not allowed to submit the form.",
