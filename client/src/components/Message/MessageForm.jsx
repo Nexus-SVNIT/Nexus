@@ -10,28 +10,22 @@ const NotifySubscribers = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        try {
-            const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-subscribers`, {
-                method: 'POST',
-                headers: {
-                    "Content-Type": "application/json",
-                    'Authorization': `Bearer ${token}`,
-                },
-                body: JSON.stringify({ subject, message }), // Convert object to JSON string
-            });
-
-            // Check if the response is ok (status in the range 200-299)
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
+        
+            try {
+                const response = await axios.post(
+                    `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-subscribers`,
+                    { subject, message },
+                    { headers: { 'Authorization': `Bearer ${token}` } }
+                );
+            
+                alert('Notification sent successfully!');
+                setSubject('');
+                setMessage('');
+            } catch (error) {
+                console.error(error);
+                alert(error.response?.data?.message || 'Error sending notification');
             }
-
-            alert('Notification sent successfully!');
-            setSubject(''); // Clear the subject after submission
-            setMessage(''); // Clear the message after submission
-        } catch (error) {
-            console.error(error);
-            alert('Error sending notification');
-        }
+            
     };
 
     return (
