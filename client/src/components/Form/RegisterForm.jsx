@@ -161,7 +161,9 @@ const RegisterForm = () => {
       toast.error("Team Name already exists.");
     } else if (res.message.startsWith("Team member with admission number")) {
       toast.error(res.message);
-    } else {
+    } else if (res.message.startsWith("You are not allowed")) {
+      toast.error(res.message);
+    }else {
       toast.error("Unexpected error! Try again later.");
     }
   };
@@ -233,7 +235,6 @@ const RegisterForm = () => {
             </p>
             <p className="text-md px-4 text-slate-500 md:py-2 ">
               <div className="flex flex-col items-center justify-center gap-5 p-5">
-                <strong>QR Code for Payment</strong>
                 <img
                   src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
                   alt="Event Poster"
