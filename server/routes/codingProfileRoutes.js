@@ -1,58 +1,60 @@
 const express = require("express");
-const router = express.Router();
 const axios = require("axios");
+const Redis = require('ioredis');
 
+
+const router = express.Router();
+
+// Get Redis URL and API base URL from environment variables
+const REDIS_URL = process.env.REDIS_URL;
 const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 
-// Route for creating an issue
+
+const redis = new Redis(REDIS_URL);
+
+// Check if Redis connection is successful
+redis.on('connect', () => {
+    console.log('Connected to Redis Cloud');
+});
+
+redis.on('error', (err) => {
+    console.error('Redis error:', err);
+});
+
+// Route for getting user data
 router.get("/user/:platform/:id", async (req, res) => {
-    // const contest = await Contest.findOne({},{time: 1, data: -1, _id:-1});
-    // if(contest && contest.time){
-    //     const currentTime = new Date();
-    //     if(currentTime - contest.time < 1000 * 60 * 60 * 24){
-    //         const user = await CodingProfile.findOne({userId: req.params.id},{platform: 1, _id: 0});
-    //         if(user && user.data){
-    //             res.json(user.data);
-    //         } else {
-    //             const data = await axios.get(`${CODING_PROFILE_API}/user/${req.params.platform}/${req.params.id}`);
-    //             await CodingProfile.create({[req.params.platform]: data.data, userId: req.params.id, data: data.data});
-    //             res.json(data.data);
-    //         }
-    //     } else {
-    //         const data = await axios.get(`${CODING_PROFILE_API}/user/${req.params.platform}/${req.params.id}`);
-    //             await CodingProfile.create({[req.params.platform]: data.data, userId: req.params.id, data: data.data});
-    //             res.json(data.data);
-    //     }
-    // } else {
-    //     const newData = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
-    //     await Contest.create({data: newData.data, time: new Date()});
-    //     res.json(newData.data);
-    // }
-    const user = await axios.get(`${CODING_PROFILE_API}/user/${req.params.platform}/${req.params.id}`);
-    res.json(user.data);
+    const cacheKey = `user:${req.params.platform}:${req.params.id}`;
+
+    // Check if data is already in Redis cache
+    const cachedData = await redis.get(cacheKey);
+    if (cachedData) {
+        // console.log("data from cached");
+        return res.json(JSON.parse(cachedData));  // Return cached data if available
+    }else{
+
+    
+
+    try {
+        // If data is not in cache, fetch from the external API
+        // console.log("data from api");
+        const response = await axios.get(`${CODING_PROFILE_API}/user/${req.params.platform}/${req.params.id}`);
+        // Cache the response for 3 days (259200 seconds)
+        await redis.setex(cacheKey, 259200, JSON.stringify(response.data));  // Cache for 3 days
+        res.json(response.data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch user data' });
+    }
+}
 });
 
+// Route for getting upcoming contests
 router.get("/contests/upcoming", async (req, res) => {
-    const data = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
-    res.json(data.data);
-    // const data = await Contest.findOne({});
-
-    // if(data && data.time){
-    //     const currentTime = new Date();
-    //     if(currentTime - data.time < 1000 * 60 * 60 * 24){
-    //         res.json(data.data);
-    //     } else {
-    //         const newData = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
-    //         await Contest.findOneAndUpdate({}, {data: newData.data, time: new Date()});
-    //         res.json(newData.data);
-    //     }
-    // } else {
-    //     const newData = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
-    //     await Contest.create({data: newData.data, time: new Date()});
-    //     res.json(newData.data);
-    // }
-
+    try {
+        const data = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
+        res.json(data.data);
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to fetch contests' });
+    }
 });
-
 
 module.exports = router;
