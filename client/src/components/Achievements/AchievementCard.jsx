@@ -32,13 +32,24 @@ const AchievementCard = ({ el }) => {
             </div>
 
             <div className="mx-2 flex flex-1 flex-col items-center justify-evenly gap-2 overflow-hidden px-2">
-              <p className="line-clamp-none w-4/5 text-center text-sm text-[#FFD700]">
-                - {el.teamMembersDetails.map(member => member.fullName).join(", ")} {/* Display full names of team members */}
-              </p>
-              <p className="text-whiter line-clamp-none text-sm ">
+              <ul className="line-clamp-none w-4/5 text-center text-sm text-[#FFD700]">
+                {el.teamMembersDetails
+                  .map((member) => <li className="italic hover:underline"><a href={member.linkedInProfile} target="_blank">{member.fullName + " (" + member.admissionNumber + ")"}</a></li>)
+                  }{" "}
+                {/* Display full names of team members */}
+              </ul>
+              <p className="line-clamp-none text-sm text-whiter ">
                 {el.desc} {/* Updated to show description */}
               </p>
-              <a href={el.proof} target="_blank" rel="noopener noreferrer" className="text-blue-400 underline">View Proof</a> {/* Link to proof */}
+              <a
+                href={el.proof}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 underline"
+              >
+                View Proof
+              </a>{" "}
+              {/* Link to proof */}
             </div>
           </div>
         </Modal>
@@ -56,15 +67,15 @@ const AchievementCard = ({ el }) => {
           />
         </div>
 
-        <div className="mx-2 flex flex-1 flex-col items-center justify-evenly gap-2 overflow-hidden px-2">
-          <p className="line-clamp-1 w-4/5 text-center text-sm text-[#FFD700]">
-            - {el.teamMembersDetails.map(member => member.fullName).join(", ")} {/* Display full names of team members */}
+        <div className="mx-2 flex flex-1 flex-col items-center justify-evenly gap-0 overflow-hidden px-2">
+          <p className=" w-4/5 text-center text-sm text-[#FFD700]">
+          - {el.teamMembersDetails.map(member => member.fullName).join(", ")} {/*Display full names of team members*/}
           </p>
-          <p className="line-clamp-3 text-sm text-gray-400 ">
+          <p className="text-gray-400 line-clamp-3 text-sm ">
             {el.desc} {/* Updated to show description */}
           </p>
           <button
-            className="mb-2 w-full cursor-pointer justify-start p-0 text-start text-blue-600"
+            className="mb-2 w-full cursor-pointer justify-start p-0  text-center text-blue-600"
             onClick={() => setOpen(true)}
           >
             Read More...

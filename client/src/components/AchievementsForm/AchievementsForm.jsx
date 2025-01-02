@@ -14,6 +14,15 @@ const AchievementsForm = () => {
     image: null,
   });
   const [image, setImage] = useState(null);
+  const token = localStorage.getItem("token");
+
+  if(!token) {
+    toast.error("You need to login first!", { id: "loginToast" });
+    toast.loading("Redirecting to login page...", { id: "a" });
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 2000);
+  }
 
   const handleInputChange = (event) => {
     setAchievementForm({
