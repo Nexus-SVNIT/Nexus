@@ -5,8 +5,7 @@ const axios = require("axios");
 
 const router = express.Router();
 
-// Get Redis URL and API base URL from environment variables
-const REDIS_URL = process.env.REDIS_URL;
+// Get API base URL from environment variables
 const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 
 
@@ -49,11 +48,26 @@ router.get("/user/:platform/:id", async (req, res) => {
 
 // Route for getting upcoming contests
 router.get("/contests/upcoming", async (req, res) => {
+    const cacheKey = `contests:upcoming`;
+
     try {
-        const data = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
-        res.json(data.data);
+        // Check if contests data is already in Redis cache
+        const cachedData = await redis.get(cacheKey);
+        if (cachedData) {
+            console.log("Cache hit");
+            return res.json(JSON.parse(cachedData));
+        }
+
+        console.log("Cache miss");
+        // Fetch data from the external API
+        const response = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
+
+        // Cache the contests data for 12 hours (43200 seconds)
+        await redis.setex(cacheKey, 43200, JSON.stringify(response.data));
+        res.json(response.data);
     } catch (error) {
-        res.status(500).json({ error: 'Failed to fetch contests' });
+        console.error("Error fetching upcoming contests:", error.message);
+        res.status(500).json({ error: "Failed to fetch contests" });
     }
 });
 
