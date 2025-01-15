@@ -149,13 +149,14 @@ const notifyAllSubscribers = async (formId) => {
 
 const getPublicForms = async (req, res) => {
     try {
-        const allForms = await Forms.find({ publish: true })
+        const allForms = await Forms.find({ publish: true, isHidden: false })
             .select({
                 "responseCount": { $size: "$responses" },
                 name: true,
                 desc: true,
                 deadline: true,
                 formFields: true,
+                publish: true,
                 _event: true
             });
         res.status(200).json(allForms);
@@ -173,7 +174,8 @@ const getAllForms = async (req, res) => {
                 "responseCount": { $size: "$responses" },
                 name: true,
                 deadline: true,
-                publish: true
+                publish: true,
+                isHidden: true
             })
             .sort({ created_date: -1 });
         res.status(200).json(allForms);
@@ -185,10 +187,10 @@ const getAllForms = async (req, res) => {
 const updateFormStatus = async (req, res) => {
     try {
         const { id } = req.params;
-        const { publish } = req.body;
+        const { publish, isHidden } = req.body;
 
         // Validate input
-        if (typeof publish !== 'boolean') {
+        if (typeof publish !== 'boolean' || typeof isHidden !== 'boolean') {
             return res.status(400).json({ success: false, message: 'Invalid input' });
         }
 
@@ -199,6 +201,7 @@ const updateFormStatus = async (req, res) => {
         }
 
         form.publish = publish;
+        form.isHidden = isHidden;
         await form.save();
 
         res.json({ success: true, message: 'Form status updated successfully' });
@@ -256,7 +259,7 @@ async function createDriveFolder(formTitle) {
 
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, } = req.body;
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, isHidden } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     let driveFolderId = null;
@@ -300,6 +303,7 @@ const createForm = async (req, res) => {
             posterImageDriveId,
             extraLinkName,
             extraLink,
+            isHidden,
         });
         res.status(200).json(createdForm);
     } catch (err) {
@@ -357,12 +361,12 @@ const submitResponse = async (req, res) => {
                 message: "The deadline has passed. Your response was not saved.",
             });
         }
-        if(admissionNumber.substring(1, 3) !== "23" || admissionNumber[0] === "P"){
-            return res.status(400).json({
-                success: false,
-                message: "You are not allowed to submit the form.",
-            });
-        }
+        // if(admissionNumber.substring(1, 3) !== "23" || admissionNumber[0] === "P"){
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "You are not allowed to submit the form.",
+        //     });
+        // }
 
 
         // Check if the user has already submitted the form

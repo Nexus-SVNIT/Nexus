@@ -20,7 +20,7 @@ const multer = require('multer');
 const upload = multer({ storage: multer.memoryStorage() });
 
 // Routes
-router.get('/', getAllForms);
+router.get('/', getPublicForms);
 router.get('/all', coreAuthMiddleware, getAllForms);
 router.post('/create', coreAuthMiddleware, createForm);
 router.post('/submit/:id', authMiddleware, upload.single('file'), submitResponse);

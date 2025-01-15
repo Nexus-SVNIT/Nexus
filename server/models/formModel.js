@@ -96,6 +96,10 @@ const formSchema = new Schema({
     extraLink:{
         type: String,
         default: ''
+    },
+    isHidden: {
+        type: Boolean,
+        default: false
     }
 });
 
