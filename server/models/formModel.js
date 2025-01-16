@@ -100,6 +100,10 @@ const formSchema = new Schema({
     isHidden: {
         type: Boolean,
         default: false
+    },
+    sheetId: {
+        type: String,
+        required: true
     }
 });
 

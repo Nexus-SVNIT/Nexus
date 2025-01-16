@@ -7,7 +7,7 @@ const path = require('path');
 const { google } = require('googleapis');
 const { Readable } = require('stream');
 
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
+const SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/spreadsheets'];
 
 const credentials = {
     type: process.env.GOOGLE_CLOUD_TYPE,
@@ -29,6 +29,7 @@ const auth = new google.auth.GoogleAuth({
 });
 
 const drive = google.drive({ version: 'v3', auth });
+const sheets = google.sheets({ version: 'v4', auth });
 
 const handleError = (res, err) => {
     console.error(err);
@@ -257,25 +258,43 @@ async function createDriveFolder(formTitle) {
     }
 }
 
+async function createGoogleSheet(formTitle, folderId) {
+    const resource = {
+        name :`${formTitle} Responses`,
+        mimeType: 'application/vnd.google-apps.spreadsheet',
+        parents: [folderId],
+    };
+
+    try {
+        const response = await drive.files.create({
+            resource,
+            fields: 'id, name',
+        });
+        return response.data.id; // Returns the Google Sheet ID
+    } catch (error) {
+        console.error("Error creating Google Sheet:", error);
+        throw new Error("Failed to create Google Sheet");
+    }
+}
 
 const createForm = async (req, res) => {
     const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, isHidden } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     let driveFolderId = null;
+    let sheetId = null;
 
     // If file upload is enabled, create a subfolder on Google Drive
-    if (fileUploadEnabled) {
-        try {
-            driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
-        } catch (error) {
-            console.log(error)
-            return res.status(500).json({ message: "Failed to create folder in Google Drive" });
-        }
+    try {
+        driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
+        sheetId = await createGoogleSheet(name, driveFolderId); // Create Google Sheet and get sheet ID
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ message: "Failed to create folder or sheet in Google Drive" });
     }
 
     const created_date = new Date().toISOString();
-    const publish = false;
+    const publish = true;
 
     // Validate team size if enableTeams is true
     let teamData = {};
@@ -300,6 +319,7 @@ const createForm = async (req, res) => {
             ...teamData, // Spread the team data if teams are enabled
             fileUploadEnabled,
             driveFolderId,
+            sheetId,
             posterImageDriveId,
             extraLinkName,
             extraLink,
@@ -470,6 +490,19 @@ const submitResponse = async (req, res) => {
             { $push: { responses: { ...req.body, admissionNumber } } },
             { new: true }
         );
+
+        // Add response to Google Sheet
+        if (form.sheetId) {
+            const values = Object.values(req.body);
+            const res = await sheets.spreadsheets.values.append({
+                spreadsheetId: form.sheetId,
+                range: 'Sheet1',
+                valueInputOption: 'RAW',
+                resource: {
+                    values: [values],
+                },
+            });
+        }
 
         const responseMessage = {
             success: true,
