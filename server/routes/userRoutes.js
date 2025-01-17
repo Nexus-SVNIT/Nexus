@@ -18,8 +18,8 @@ router.get('/profile', authMiddleware, getUserProfile);
 // Route to update user profile (protected route)
 router.put('/profile', authMiddleware, updateUserProfile);
 
-router.get('/get', getUsers);
-router.get('/get/all', getAllUsers);
+router.get('/get', coreAuthMiddleware, getUsers);
+router.get('/get/all', coreAuthMiddleware, getAllUsers);
 
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', verifyPasswordResetEmail);

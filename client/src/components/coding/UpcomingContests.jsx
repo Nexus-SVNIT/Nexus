@@ -4,7 +4,6 @@ const UpcomingContests = () => {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
     const fetchContests = async () => {
       try {
@@ -14,7 +13,7 @@ const UpcomingContests = () => {
           return;
         }
 
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests/upcoming`);
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
         const data = await response.json();
         setContests(data);
         localStorage.setItem('upcoming-contests', JSON.stringify({data: data, lastUpdated: new Date()}));

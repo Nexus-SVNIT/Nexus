@@ -261,7 +261,7 @@ function SignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="linkedInProfile"
             >
-              LinkedIn Profile
+              LinkedIn Profile <span className="text-red-500">*</span>
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
@@ -272,6 +272,7 @@ function SignUpForm() {
               value={formData.linkedInProfile}
               onChange={handleChange}
               placeholder="LinkedIn Profile URL"
+              required
             />
           </div>
 
@@ -280,7 +281,7 @@ function SignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="githubProfile"
             >
-              GitHub Profile
+              GitHub Profile <span className="text-red-500">*</span>
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
@@ -291,6 +292,7 @@ function SignUpForm() {
               value={formData.githubProfile}
               onChange={handleChange}
               placeholder="GitHub Profile URL"
+              required
             />
           </div>
 
@@ -299,7 +301,7 @@ function SignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="leetcodeProfile"
             >
-              LeetCode Profile
+              LeetCode Profile <span className="text-red-500">*</span>
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
@@ -308,6 +310,7 @@ function SignUpForm() {
               value={formData.leetcodeProfile}
               onChange={handleChange}
               placeholder="LeetCode ID (e.g. neal_wu)"
+              required
             />
           </div>
 
@@ -316,7 +319,7 @@ function SignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="codeforcesProfile"
             >
-              Codeforces Profile
+              Codeforces Profile <span className="text-red-500">*</span>
             </label>
             <input
               className="w-full rounded bg-gray-2 p-2 text-black"
@@ -325,6 +328,7 @@ function SignUpForm() {
               value={formData.codeforcesProfile}
               onChange={handleChange}
               placeholder="Codeforces ID (e.g. tourist)"
+              required
             />
           </div>
 
@@ -347,7 +351,7 @@ function SignUpForm() {
 
           <div className="mb-4">
             <label className="mb-2 block text-sm text-white" htmlFor="password">
-              Password
+              Password <span className="text-red-500">*</span>
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"

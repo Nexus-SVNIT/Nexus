@@ -55,9 +55,14 @@ const signupUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
-
+        
         // Step 3: Generate a verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
+        
+        if(admissionNumber.toLowerCase() !== instituteEmail.split('@')[0]){
+            return res.status(400).json({ message: 'Email does not match with email' });
+
+        }
 
         // Step 4: Create a new user with the token and save to DB
         const newUser = new user({
