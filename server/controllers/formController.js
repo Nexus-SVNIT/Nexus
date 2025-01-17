@@ -176,7 +176,8 @@ const getAllForms = async (req, res) => {
                 name: true,
                 deadline: true,
                 publish: true,
-                isHidden: true
+                isHidden: true,
+                sheetId:true
             })
             .sort({ created_date: -1 });
         res.status(200).json(allForms);

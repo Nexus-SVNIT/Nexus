@@ -253,6 +253,15 @@ function FormIntroAdmin(props) {
         >
           Copy Form Link
         </button>
+        {
+          props.form.sheetId &&
+          <button
+          className="bg-gray-500 hover:bg-gray-700 focus:ring-gray-500 w-full rounded-md px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-offset-2"
+        >
+          <a href={'https://docs.google.com/spreadsheets/d/'+props.form.sheetId} target="_blank">Open Google Sheet</a>
+        </button>
+        }
+        
       </div>
     </div>
   );
