@@ -17,6 +17,7 @@ const Cp = () => {
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true); // Loader state
+  const [activePlatform, setActivePlatform] = useState('codeforces'); // Add this new state
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -182,6 +183,8 @@ const Cp = () => {
   }, []);
 
   const filterData = (data) => {
+    if (!searchTerm) return data;
+    
     return data.filter((user) =>
       Object.values(user).some((val) =>
         String(val).toLowerCase().includes(searchTerm.toLowerCase()),
@@ -217,6 +220,10 @@ const Cp = () => {
       { Header: "Rating", accessor: "rating" },
       { Header: "Global Rank", accessor: "globalRank" },
     ],
+  };
+
+  const getPlatformColor = (platform) => {
+    return activePlatform === platform ? 'bg-blue-600' : 'bg-gray-700';
   };
 
   return (
@@ -267,34 +274,68 @@ const Cp = () => {
             </h1>
 
             {/* Search Bar Component */}
-            <div className="mb-10 mt-10">
+            <div className="mb-6 mt-10">
               <SearchBar placeholder="Search..." onChange={setSearchTerm} />
             </div>
 
-            {/* Leaderboard Tables */}
-            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-              Codeforces Leaderboard
-            </h2>
-            <SortableTable
-              columns={columns.codeforces}
-              data={filterData(codeforcesLeaderboard)}
-            />
+            {/* Platform Toggle Buttons */}
+            <div className="flex flex-wrap gap-4 justify-center mb-8">
+              <button
+                onClick={() => setActivePlatform('codeforces')}
+                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${getPlatformColor('codeforces')} hover:bg-blue-700`}
+              >
+                Codeforces
+              </button>
+              <button
+                onClick={() => setActivePlatform('leetcode')}
+                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${getPlatformColor('leetcode')} hover:bg-blue-700`}
+              >
+                LeetCode
+              </button>
+              <button
+                onClick={() => setActivePlatform('codechef')}
+                className={`px-6 py-3 rounded-lg font-semibold transition-colors ${getPlatformColor('codechef')} hover:bg-blue-700`}
+              >
+                CodeChef
+              </button>
+            </div>
 
-            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-              LeetCode Leaderboard
-            </h2>
-            <SortableTable
-              columns={columns.leetcode}
-              data={filterData(leetcodeLeaderboard)}
-            />
+            {/* Conditional Table Rendering */}
+            {activePlatform === 'codeforces' && (
+              <>
+                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
+                  Codeforces Leaderboard
+                </h2>
+                <SortableTable
+                  columns={columns.codeforces}
+                  data={filterData(codeforcesLeaderboard)}
+                />
+              </>
+            )}
 
-            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-              CodeChef Leaderboard
-            </h2>
-            <SortableTable
-              columns={columns.codechef}
-              data={filterData(codechefLeaderboard)}
-            />
+            {activePlatform === 'leetcode' && (
+              <>
+                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
+                  LeetCode Leaderboard
+                </h2>
+                <SortableTable
+                  columns={columns.leetcode}
+                  data={filterData(leetcodeLeaderboard)}
+                />
+              </>
+            )}
+
+            {activePlatform === 'codechef' && (
+              <>
+                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
+                  CodeChef Leaderboard
+                </h2>
+                <SortableTable
+                  columns={columns.codechef}
+                  data={filterData(codechefLeaderboard)}
+                />
+              </>
+            )}
           </div>
         </>
       )}

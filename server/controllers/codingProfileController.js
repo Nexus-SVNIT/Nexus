@@ -15,7 +15,7 @@ const getProfile = async (req, res) => {
         const response = await axios.get(`${CODING_PROFILE_API}/user/${platform}/${userId}`);
         const data = response.data;
         if (profile) {
-            const newProfile = await codingProfileModel.update
+            const newProfile = await codingProfileModel.findOneAndUpdate
                 ({ platform, userId }, { data, updatedAt: currentDateTime });
             res.json(newProfile);
         } else {
@@ -36,7 +36,7 @@ const getProfiles = async (req, res) => {
             if (currentDateTime - profile.updatedAt > 86400000) {
                 const response = await axios.get(`${CODING_PROFILE_API}/user/${profile.platform}/${profile.userId}`);
                 const data = response.data;
-                await codingProfileModel.update({ platform: profile.platform, userId: profile.userId }, { data, updatedAt: currentDateTime });
+                await codingProfileModel.findOneAndUpdate({ platform: profile.platform, userId: profile.userId }, { data, updatedAt: currentDateTime });
             }
         });
         res.json(profiles);
@@ -65,7 +65,7 @@ const getPlatformProfile = async (req, res) => {
                 const response = await axios.get(`${CODING_PROFILE_API}/user/${platform}/${userId}`);
                 const data = response.data?.data || response.data;
                 if (profile) {
-                    const newProfile = await codingProfileModel.update
+                    const newProfile = await codingProfileModel.findOneAndUpdate
                         ({ platform, userId }, { data, updatedAt: currentDateTime });
                     profiles.push({
                         ...newProfile.toObject(),
