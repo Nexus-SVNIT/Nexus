@@ -7,7 +7,7 @@ import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import parse from 'html-react-parser';
+import parse from "html-react-parser";
 import increamentCounter from "../../libs/increamentCounter";
 
 const RegisterForm = () => {
@@ -27,9 +27,9 @@ const RegisterForm = () => {
     teamSize: 0,
     fileUploadEnabled: false,
     driveFolderId: "",
-    posterImageDriveId: '',
-    extraLinkName: '',
-    extraLink: ''
+    posterImageDriveId: "",
+    extraLinkName: "",
+    extraLink: "",
   });
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
@@ -41,7 +41,7 @@ const RegisterForm = () => {
     const { name, value } = e.target;
     setFormResponse((prevResponse) => ({
       ...prevResponse,
-      [name]: value, 
+      [name]: value,
     }));
   };
 
@@ -63,7 +63,7 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Trim form response fields
     const trimmedFormResponse = {};
     for (const key in formResponse) {
@@ -73,10 +73,12 @@ const RegisterForm = () => {
         trimmedFormResponse[key] = formResponse[key]; // For non-string fields (like arrays or numbers)
       }
     }
-  
+
     // Trim team members
-    const trimmedTeamMembers = teamMembers.map((member) => member.trim().toUpperCase());
-  
+    const trimmedTeamMembers = teamMembers.map((member) =>
+      member.trim().toUpperCase(),
+    );
+
     // Validate required fields
     const requiredFields = formData.formFields.filter(
       (field) => field.required,
@@ -84,12 +86,12 @@ const RegisterForm = () => {
     const missingRequiredFields = requiredFields.some(
       (field) => !trimmedFormResponse[field.questionText],
     );
-  
+
     if (missingRequiredFields) {
       toast.error("Please fill in all the required fields.");
       return;
     }
-  
+
     // Validate team members if team registration is enabled
     if (formData.enableTeams) {
       const missingTeamMembers = trimmedTeamMembers.some((member) => !member);
@@ -97,7 +99,7 @@ const RegisterForm = () => {
         toast.error("Please fill in all team member admission numbers.");
         return;
       }
-  
+
       let flag = false;
       trimmedTeamMembers.forEach((member, index) => {
         if (trimmedTeamMembers.indexOf(member) !== index) {
@@ -109,34 +111,34 @@ const RegisterForm = () => {
         return;
       }
     }
-  
+
     if (formData.fileUploadEnabled && !files) {
       toast.error("Please upload the required file.");
       return;
     }
-  
+
     setLoading(true);
-  
+
     // Add team members to formResponse if teams are enabled
     const submissionData = {
       ...trimmedFormResponse,
       teamMembers: formData.enableTeams ? trimmedTeamMembers : [],
       teamName: formData.enableTeams ? teamName : "",
     };
-  
+
     const finalResponse = new FormData();
-  
+
     for (const key in submissionData) {
       finalResponse.append(key, JSON.stringify(submissionData[key]));
     }
-  
+
     if (files) {
       finalResponse.append("file", files);
     }
-  
+
     const token = localStorage.getItem("token");
     console.log(finalResponse, submissionData);
-  
+
     await axios
       .post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`,
@@ -146,7 +148,7 @@ const RegisterForm = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       )
       .then((res) => {
         if (res.data.success === true) {
@@ -162,7 +164,6 @@ const RegisterForm = () => {
       })
       .finally(() => setLoading(false));
   };
-  
 
   const handleFormError = (res) => {
     if (res.message === "Token is not valid") {
@@ -179,7 +180,7 @@ const RegisterForm = () => {
       toast.error(res.message);
     } else if (res.message.startsWith("You are not allowed")) {
       toast.error(res.message);
-    }else {
+    } else {
       toast.error("Unexpected error! Try again later.");
     }
   };
@@ -201,7 +202,7 @@ const RegisterForm = () => {
         toast.error("Something went wrong. Please try again later.");
       })
       .finally(() => setLoading(false));
-      increamentCounter();
+    increamentCounter();
   }, [formId]);
 
   if (loading)
@@ -247,22 +248,31 @@ const RegisterForm = () => {
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
-            <p className="text-md px-4 text-slate-500 md:py-2">
+            <p className="text-md px-4 text-slate-700 md:py-2">
               {parse(formData.desc)}
             </p>
-            <p className="text-md px-4 text-slate-500 md:py-2 ">
-              <div className="flex flex-col items-center justify-center gap-5 p-5">
-                <img
-                  src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
-                  alt="Event Poster"
-                  className="md:w-1/2 rounded-md object-cover object-center "
-                />
-              </div>
-            </p>
-            <p className="text-md px-4 text-slate-500 md:py-2">
-              <a href={formData.extraLink} target="_blank" className="text-blue-700 font-bold italic hover:underline">{formData.extraLinkName}</a>
-            </p>
-            <p className="text-md px-4 text-slate-500 md:py-2">
+            {formData.posterImageDriveId && (
+              <p className="text-md px-4 text-slate-500 md:py-2 ">
+                <div className="flex flex-col items-center justify-center gap-5 p-5">
+                  <img
+                    src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
+                    alt="Event Poster"
+                    className="rounded-md object-cover object-center md:w-1/2 "
+                  />
+                </div>
+              </p>
+            )}
+            { formData.extraLink && formData.extraLinkName && 
+              <p className="text-md px-4 text-slate-500 md:py-2">
+              <a
+                href={formData.extraLink}
+                target="_blank"
+                className="font-bold italic text-blue-700 hover:underline"
+              >
+                {formData.extraLinkName}
+              </a>
+            </p>}
+            <p className="text-md px-4 text-slate-700 md:py-2">
               <strong>Deadline:</strong> {formData.deadline}
             </p>
           </div>

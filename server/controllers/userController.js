@@ -210,17 +210,30 @@ const updateUserProfile = async (req, res) => {
 
 const getAllUsers = async (req, res) => {
     try {
-        const page = parseInt(req.query.page) || 1; // Current page
-        const limit = parseInt(req.query.limit) || 10; // Limit per page
-        const sortField = req.query.sortBy || 'fullName'; // Sort field
-        const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+        const sortField = req.query.sortBy || 'fullName';
+        const sortOrder = req.query.order === 'desc' ? -1 : 1;
+        const searchQuery = req.query.search || '';
 
-        const users = await user.find({ emailVerified: true }, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
-            .sort({ [sortField]: sortOrder }) // Sorting by field and order
+        // Create search query
+        const searchConditions = {
+            emailVerified: true,
+            $or: [
+                { fullName: { $regex: searchQuery, $options: 'i' } },
+                { admissionNumber: { $regex: searchQuery, $options: 'i' } },
+                { branch: { $regex: searchQuery, $options: 'i' } },
+                { personalEmail: { $regex: searchQuery, $options: 'i' } },
+                { instituteEmail: { $regex: searchQuery, $options: 'i' } }
+            ]
+        };
+
+        const users = await user.find(searchConditions, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+            .sort({ [sortField]: sortOrder })
             .skip((page - 1) * limit)
             .limit(limit);
 
-        const totalUsers = await user.countDocuments();
+        const totalUsers = await user.countDocuments(searchConditions);
 
         res.status(200).json({
             users,

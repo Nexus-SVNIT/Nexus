@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { google } = require('googleapis');
 const { Readable } = require('stream');
+const userModel = require('../models/userModel.js');
 
 const SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/spreadsheets'];
 
@@ -289,6 +290,27 @@ const createForm = async (req, res) => {
     try {
         driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
         sheetId = await createGoogleSheet(name, driveFolderId); // Create Google Sheet and get sheet ID
+
+        if (sheetId) {
+            const values = [
+                'admissionNumber',
+                'name',
+                'mobileNumber',
+                'personalEmail',
+                'branch',
+            ];
+            formFields.forEach(field => {
+                values.push(field.questionText);
+            });
+            const res = await sheets.spreadsheets.values.append({
+                spreadsheetId: form.sheetId,
+                range: 'Sheet1',
+                valueInputOption: 'RAW',
+                resource: {
+                    values: [values],
+                },
+            });
+        }
     } catch (error) {
         console.log(error)
         return res.status(500).json({ message: "Failed to create folder or sheet in Google Drive" });
@@ -494,7 +516,15 @@ const submitResponse = async (req, res) => {
 
         // Add response to Google Sheet
         if (form.sheetId) {
-            const values = Object.values(req.body);
+            const userData = await userModel.findOne({admissionNumber});
+            const values = Object.values({
+                admissionNumber,
+                name: userData.fullName,
+                mobileNumber: userData.mobileNumber,
+                personalEmail: userData.personalEmail,
+                branch: userData.branch,
+                ...req.body
+            });
             const res = await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
                 range: 'Sheet1',
