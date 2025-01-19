@@ -1,12 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useEffect } from "react";
 import Error from "../Error/Error";
 import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import FormCard from "./FormCard";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Forms = () => {
+  useEffect(()=>{
+    increamentCounter();
+  })
   const { isLoading, isError, data: forms } = useQuery({
     queryKey: ["forms"],
     queryFn: async () => {

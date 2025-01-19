@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import increamentCounter from '../../libs/increamentCounter';
 
 const ShowProject = () => {
     const [projects, setProjects] = useState([]);
@@ -24,6 +25,7 @@ const ShowProject = () => {
         };
 
         fetchProjects();
+        increamentCounter();
     }, []);
 
     if (isLoading) {

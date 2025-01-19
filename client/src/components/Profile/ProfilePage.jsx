@@ -1,8 +1,9 @@
 // ProfilePage.js
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Profile from "./Profile";
 import CodingProfile from "./CodingProfile";
 import { Toaster } from "react-hot-toast";
+import increamentCounter from "../../libs/increamentCounter";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -19,6 +20,10 @@ const ProfilePage = () => {
     codechefProfile: "", // Added CodeChef profile
     subscribed: false, // Corrected to subscribed field
   });
+  
+  useEffect(()=>{
+    increamentCounter();
+  },[]);
 
   // return (
   //   <div>

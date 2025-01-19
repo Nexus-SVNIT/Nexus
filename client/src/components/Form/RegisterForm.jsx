@@ -8,6 +8,7 @@ import QuestionBox from "./QuestionBox";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
 import parse from 'html-react-parser';
+import increamentCounter from "../../libs/increamentCounter";
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -185,6 +186,7 @@ const RegisterForm = () => {
         toast.error("Something went wrong. Please try again later.");
       })
       .finally(() => setLoading(false));
+      increamentCounter();
   }, [formId]);
 
   if (loading)

@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
+import increamentCounter from '../../libs/increamentCounter';
 
 const ForgotPasswordForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState('');
+
+  useEffect(()=>{
+    increamentCounter();
+  },[]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';  // Import the toast functionality
+import increamentCounter from '../../libs/increamentCounter';
 
 const LoginForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState('');
@@ -46,6 +47,9 @@ const LoginForm = () => {
       }
     }
   };
+  useEffect(()=>{
+      increamentCounter();
+    },[]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-black-2 text-white">

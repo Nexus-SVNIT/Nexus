@@ -6,6 +6,7 @@ import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
 import { Title } from "../index";
 import TeamCard from "./TeamCard";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Teams = () => {
   const [selectedYear, setSelectedYear] = useState(""); // Default year set after fetching unique years
@@ -32,6 +33,7 @@ const Teams = () => {
     };
 
     fetchYears();
+    increamentCounter();
   }, []);
 
   useEffect(() => {

@@ -1,9 +1,10 @@
 import Modal from "@mui/joy/Modal/Modal";
 import Loader from "../Loader/Loader";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
+import increamentCounter from "../../libs/increamentCounter";
 
 const AchievementsForm = () => {
   const [open, setOpen] = useState(false);
@@ -15,6 +16,10 @@ const AchievementsForm = () => {
   });
   const [image, setImage] = useState(null);
   const token = localStorage.getItem("token");
+
+  useEffect(()=>{
+    increamentCounter();
+  })
 
   if(!token) {
     toast.error("You need to login first!", { id: "loginToast" });

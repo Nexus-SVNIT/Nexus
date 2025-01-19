@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import increamentCounter from "../../libs/increamentCounter";
 
 function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -48,7 +49,9 @@ function SignUpForm() {
     const instituteEmailPattern =
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
-    if (!admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)) {
+    if (
+      !admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)
+    ) {
       toast.error("Invalid Admission Number");
       return false;
     }
@@ -120,6 +123,10 @@ function SignUpForm() {
       toast.error("Error signing up");
     }
   };
+
+  useEffect(() => {
+    increamentCounter();
+  }, []);
 
   return (
     <div className="bg-black-2 p-16">

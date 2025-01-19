@@ -6,6 +6,7 @@ import {
   Three,
   WhatPeopleThinkAboutUS,
 } from "../index";
+import Counter from "../Counter/Counter";
 
 const Home = () => {
   
@@ -50,6 +51,9 @@ const Home = () => {
       </div>
       <div className="relative my-48 w-full ">
         <WhatPeopleThinkAboutUS />
+      </div>
+      <div className="relative my-48 w-full ">
+        <Counter />
       </div>
     </div>
   );

@@ -1,10 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { Link } from "react-router-dom";
 import Logo from "../../data/images/nexus.png";
 import HeadTags from "../HeadTags/HeadTags";
+import increamentCounter from "../../libs/increamentCounter";
 const About = () => {
+  useEffect(() => {
+    increamentCounter();
+},[])
   return (
     <div className="mx-auto mb-20 mt-10 flex max-w-7xl flex-col gap-2 text-white/75 sm:px-10 md:p-0">
       <HeadTags title={"About - Nexus NIT Surat"} />

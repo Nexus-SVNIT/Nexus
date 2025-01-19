@@ -3,6 +3,7 @@ import Error from "../Error/Error";
 import Title from "../Title/Title";
 import "./events.css";
 import HeadTags from "../HeadTags/HeadTags";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Events = () => {
   const [loading, setLoading] = useState(true);
@@ -34,6 +35,7 @@ const Events = () => {
     };
 
     fetchData();
+    increamentCounter();
   }, []); // Empty dependency array to run once on mount
 
   if (error) {

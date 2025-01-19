@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import Error from "../Error/Error";
@@ -7,9 +7,15 @@ import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import AchievementCard from "./AchievementCard";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Achievements = () => {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    increamentCounter();
+  }
+  , []);
   const {
     isPending: loading,
     error,

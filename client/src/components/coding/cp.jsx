@@ -8,6 +8,7 @@ import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
 import { FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Cp = () => {
   const [userData, setUserData] = useState([]);
@@ -180,6 +181,7 @@ const Cp = () => {
     };
 
     fetchUsers();
+    increamentCounter();
   }, []);
 
   const filterData = (data) => {

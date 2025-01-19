@@ -19,6 +19,7 @@ const projectRoutes = require('./routes/projectRoute.js')
 const teamMembersRoutes = require('./routes/teamMembersRoute.js')
 const issueRoutes=require('./routes/issueRoutes.js')
 const codingProfileRoutes = require('./routes/codingProfileRoutes.js')
+const counterRoutes = require('./routes/counterRoutes.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -53,6 +54,7 @@ app.use('/Panel', panelRoutes);
 app.use('/projects', projectRoutes);
 app.use("/issue",issueRoutes);
 app.use('/coding-profiles', codingProfileRoutes);
+app.use('/api/counter', counterRoutes)
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
@@ -7,6 +7,7 @@ import Profile from "./Profile";
 import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import { useQuery } from "@tanstack/react-query";
+import increamentCounter from "../../libs/increamentCounter";
 
 const Connect = () => {
   const {
@@ -30,7 +31,9 @@ const Connect = () => {
     },
   });
 
-
+  useEffect(()=>{
+    increamentCounter();
+  },[])
 
   if (isLoading) {
     return (
