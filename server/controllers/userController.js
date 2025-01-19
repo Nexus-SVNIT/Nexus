@@ -55,11 +55,11 @@ const signupUser = async (req, res) => {
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
-        
+
         // Step 3: Generate a verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
-        
-        if(admissionNumber.toLowerCase() !== instituteEmail.split('@')[0]){
+
+        if (admissionNumber.toLowerCase() !== instituteEmail.split('@')[0]) {
             return res.status(400).json({ message: 'Email does not match with email' });
 
         }
@@ -85,32 +85,32 @@ const signupUser = async (req, res) => {
         await newUser.save();
 
         // Step 5: Send verification email...
-           // Step 5: Send verification email
+        // Step 5: Send verification email
 
 
-           const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
+        const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
 
-           const mailOptions = {
-               from: process.env.EMAIL_ID,
-               to: instituteEmail,
-               subject: 'Verify your Email',
-               text: `Click the link to verify your email: ${verificationUrl}`,
-               html: 
-               `<div style=" background-color: black; color:white; font-size:12px; padding:20px;">
+        const mailOptions = {
+            from: process.env.EMAIL_ID,
+            to: instituteEmail,
+            subject: 'Verify your Email',
+            text: `Click the link to verify your email: ${verificationUrl}`,
+            html:
+                `<div style=" background-color: black; color:white; font-size:12px; padding:20px;">
                <div style="margin-bottom: 25px; display:flex; justify-content: center;"><img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/></div>
                <div> Dear ${fullName},</div>
                <p style="">Thank you for registering on NEXUS portal. Please verify your email using following link.</p>
                <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;"> <a href="${verificationUrl}" style="color:black">Verify Your Email</a></button>
                <p> Thanks,<br>Team NEXUS</p>
                </div>`
-               
-           };
-   
-           await transporter.sendMail(mailOptions);
-   
-           res.status(201).json({ message: 'User registered. Verification email sent!' });
-   
-   
+
+        };
+
+        await transporter.sendMail(mailOptions);
+
+        res.status(201).json({ message: 'User registered. Verification email sent!' });
+
+
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
@@ -172,7 +172,7 @@ const updateUserProfile = async (req, res) => {
             codeforcesProfile,
             codechefProfile,
             shareCodingProfile,  // Include codechefProfile in the request body
-            subscribed 
+            subscribed
         } = req.body;
 
         // Step 1: Find the user by their ID
@@ -194,7 +194,7 @@ const updateUserProfile = async (req, res) => {
         foundUser.codechefProfile = codechefProfile || foundUser.codechefProfile;  // Update codechefProfile
         foundUser.subscribed = subscribed;
         foundUser.shareCodingProfile = shareCodingProfile;
-        
+
 
         // Step 3: Save the updated user profile
         await foundUser.save();
@@ -238,7 +238,7 @@ const getUsers = async (req, res) => {
         const sortField = req.query.sortBy || 'admissionNumber'; // Sort field
         const sortOrder = req.query.order === 'desc' ? -1 : 1; // Sort order
 
-        const users = await user.find({emailVerified: true, shareCodingProfile: true}, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+        const users = await user.find({ emailVerified: true, shareCodingProfile: true }, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
             .sort({ [sortField]: sortOrder }) // Sorting by field and order
 
 
@@ -304,32 +304,32 @@ const forgotPassword = async (req, res) => {
 const verifyPasswordResetEmail = async (req, res) => {
     const { token } = req.params;
     const { newPassword } = req.body;
-  
+
     try {
-      // Step 1: Find user by token and check if token is still valid
-      const foundUser = await user.findOne({
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() }  // Ensure token hasn't expired
-      });
-      if (!foundUser) {
-        return res.status(400).json({ message: 'Invalid or expired verification token' });
-      }
-  
-      // Step 2: Verify the email
-      foundUser.emailVerified = true;
-      foundUser.password = newPassword;
-      foundUser.resetPasswordToken = undefined;
-      foundUser.resetPasswordExpires = undefined;
-  
-      await foundUser.save();
-  
-      res.status(200).json({ message: 'Password Reset Successfully' });
-  
+        // Step 1: Find user by token and check if token is still valid
+        const foundUser = await user.findOne({
+            resetPasswordToken: token,
+            resetPasswordExpires: { $gt: Date.now() }  // Ensure token hasn't expired
+        });
+        if (!foundUser) {
+            return res.status(400).json({ message: 'Invalid or expired verification token' });
+        }
+
+        // Step 2: Verify the email
+        foundUser.emailVerified = true;
+        foundUser.password = newPassword;
+        foundUser.resetPasswordToken = undefined;
+        foundUser.resetPasswordExpires = undefined;
+
+        await foundUser.save();
+
+        res.status(200).json({ message: 'Password Reset Successfully' });
+
     } catch (error) {
-      console.error('Error reseting password:', error);
-      res.status(500).json({ message: 'Server error', error });
+        console.error('Error reseting password:', error);
+        res.status(500).json({ message: 'Server error', error });
     }
-  };
+};
 
 const resetPassword = async (req, res) => {
     const { token } = req.params;
@@ -400,16 +400,26 @@ const generalNotification = async (subject, message) => {
 
         subscribers.forEach(async (subscriber) => {
             const emailContent = {
+                from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
                 to: subscriber.personalEmail,
                 subject: subject, // Use the subject from the request
                 html: `
-                    <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
-                        <div style="padding: 10px; width: 60%; display: flex; justify-content: center;">
-                            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC"/>
+                    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+                        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+                            <p>
+                            <h3 style="color: white;">Dear ${subscriber.fullName},</h3>
+                            </p>
+                            <p style="color: #ccc;">${message}</p>
+                            <p style="color: #ccc;">Visit <a href="${linkToApply}" style="color: #1a73e8;">this link</a> for more details.</p>
                         </div>
-                        <div>Dear ${subscriber.fullName},</div>
-                        <p>${message}</p> <!-- Include the custom message here -->
-                        <p>Visit <a href="${linkToApply}" style="color: blue;">this link</a> for more details.</p>
+                        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+                            <p>Thanks,<br>Team NEXUS</p>
+                        </div>
+                        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+                            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+                            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+                        </div>
                     </div>
                 `,
             };
@@ -419,7 +429,7 @@ const generalNotification = async (subject, message) => {
         });
     } catch (err) {
         console.error('Error notifying subscribers:', err);
-        throw err; 
+        throw err;
     }
 };
 

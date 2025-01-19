@@ -30,8 +30,8 @@ const NotifySubscribers = () => {
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
-            <div className="bg-white shadow-lg rounded-lg p-6 max-w-md w-full">
-                <h2 className="text-2xl font-semibold text-center text-gray-800 mb-4">Notify Subscribers</h2>
+            <div className="bg-slate-800 shadow-lg rounded-lg p-6 max-w-md w-full">
+                <h2 className="text-2xl font-semibold text-center text-white mb-4">Notify Subscribers</h2>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <input
                         type="text"
@@ -39,14 +39,14 @@ const NotifySubscribers = () => {
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         required
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     <textarea
-                        placeholder="Enter your message to subscribers"
+                        placeholder="Enter your message to subscribers (HTML allowed)"
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
                         required
-                        className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
+                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 h-32"
                     />
                     <button
                         type="submit"
