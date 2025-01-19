@@ -41,7 +41,7 @@ const RegisterForm = () => {
     const { name, value } = e.target;
     setFormResponse((prevResponse) => ({
       ...prevResponse,
-      [name]: value.trim(), // Trim whitespace here
+      [name]: value, 
     }));
   };
 
@@ -63,30 +63,44 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
+    // Trim form response fields
+    const trimmedFormResponse = {};
+    for (const key in formResponse) {
+      if (formResponse[key]?.trim) {
+        trimmedFormResponse[key] = formResponse[key].trim();
+      } else {
+        trimmedFormResponse[key] = formResponse[key]; // For non-string fields (like arrays or numbers)
+      }
+    }
+  
+    // Trim team members
+    const trimmedTeamMembers = teamMembers.map((member) => member.trim().toUpperCase());
+  
     // Validate required fields
     const requiredFields = formData.formFields.filter(
       (field) => field.required,
     );
     const missingRequiredFields = requiredFields.some(
-      (field) => !formResponse[field.questionText]?.trim(),
+      (field) => !trimmedFormResponse[field.questionText],
     );
-
+  
     if (missingRequiredFields) {
       toast.error("Please fill in all the required fields.");
       return;
     }
-
+  
     // Validate team members if team registration is enabled
     if (formData.enableTeams) {
-      const missingTeamMembers = teamMembers.some((member) => !member.trim());
+      const missingTeamMembers = trimmedTeamMembers.some((member) => !member);
       if (missingTeamMembers) {
         toast.error("Please fill in all team member admission numbers.");
         return;
       }
+  
       let flag = false;
-      teamMembers.forEach((member, index) => {
-        if (teamMembers.indexOf(member) !== index) {
+      trimmedTeamMembers.forEach((member, index) => {
+        if (trimmedTeamMembers.indexOf(member) !== index) {
           toast.error("Duplicate team members are not allowed.");
           flag = true;
         }
@@ -94,35 +108,35 @@ const RegisterForm = () => {
       if (flag) {
         return;
       }
-      teamMembers.map((member) => member.toUpperCase());
     }
-
+  
     if (formData.fileUploadEnabled && !files) {
       toast.error("Please upload the required file.");
       return;
     }
-
+  
     setLoading(true);
-
+  
     // Add team members to formResponse if teams are enabled
     const submissionData = {
-      ...formResponse,
-      teamMembers: formData.enableTeams ? teamMembers : [],
+      ...trimmedFormResponse,
+      teamMembers: formData.enableTeams ? trimmedTeamMembers : [],
       teamName: formData.enableTeams ? teamName : "",
     };
-
+  
     const finalResponse = new FormData();
-
+  
     for (const key in submissionData) {
       finalResponse.append(key, JSON.stringify(submissionData[key]));
     }
-
+  
     if (files) {
       finalResponse.append("file", files);
     }
-
+  
     const token = localStorage.getItem("token");
     console.log(finalResponse, submissionData);
+  
     await axios
       .post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`,
@@ -132,7 +146,7 @@ const RegisterForm = () => {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       )
       .then((res) => {
         if (res.data.success === true) {
@@ -148,6 +162,7 @@ const RegisterForm = () => {
       })
       .finally(() => setLoading(false));
   };
+  
 
   const handleFormError = (res) => {
     if (res.message === "Token is not valid") {
