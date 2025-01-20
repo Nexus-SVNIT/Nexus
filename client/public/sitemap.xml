@@ -6,20 +6,50 @@
             http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
 
 <url>
-    <loc>https://www.nexus-svnit.tech/</loc>
+    <loc>https://nexus-svnit.in/</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <priority>1</priority>
   </url>
 
   <url>
-    <loc>https://www.nexus-svnit.tech/events</loc>
+    <loc>https://nexus-svnit.in/team</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://www.nexus-svnit.tech/forms</loc>
+    <loc>https://nexus-svnit.in/achievements</loc>
     <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
+    <priority>0.85</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/coding</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/forms</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/projects</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.75</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/events</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/about</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://nexus-svnit.in/login</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.65</priority>
   </url>
 
 
