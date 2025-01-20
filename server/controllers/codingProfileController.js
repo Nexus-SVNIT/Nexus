@@ -86,7 +86,7 @@ const getPlatformProfile = async (req, res) => {
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: "Failed to fetch user data" });
-    }
+    }   
 };
 
 const getContest = async (req, res) => {

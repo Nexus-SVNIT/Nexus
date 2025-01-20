@@ -100,7 +100,7 @@ const Cp = () => {
               admissionNumber: profile.admissionNumber,
               leetcodeProfile: userData.username,
               globalRanking: contestData?.globalRanking || "N/A",
-              rating: contestData?.rating || 0,
+              rating: contestData?.rating ? contestData.rating.toFixed(2) : 0,
               totalSolved: totalSolved,
               ContestAttended: contestData?.attendedContestsCount || 0
             });

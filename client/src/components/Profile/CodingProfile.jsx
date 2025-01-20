@@ -21,7 +21,6 @@ const CodingProfile = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    console.log(leetcodeProfile, codeforcesProfile, codechefProfile);
     const fetchLeetcodeData = async () => {
       try {
         if (leetcodeProfile) {
@@ -89,15 +88,15 @@ const CodingProfile = ({
   const leetcodeStats = leetcodeUser?.submitStats?.acSubmissionNum;
   const leetcodeLanguages = leetcodeUser?.languageProblemCount;
 
-  const codeforcesProfileData = codeforcesData ? codeforcesData[0] : null;
-  const codeforcesRatings = codeforcesData ? codeforcesData[1]?.ratings?.map((rating) => ({
+  const codeforcesProfileData = codeforcesData ? codeforcesData?.data[0] : null;
+  const codeforcesRatings = codeforcesData ? codeforcesData?.data[1]?.ratings?.map((rating) => ({
     date: new Date(rating.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
     contestName: rating.contestName,
     oldRating: rating.oldRating,
     newRating: rating.newRating,
   })) : [];
 
-  const codechefUser = codechefData; // Assuming the API response structure is correct
+  const codechefUser = codechefData?.data; // Assuming the API response structure is correct
 
   return (
     <div className="rounded-lg p-6 text-white">
@@ -118,6 +117,12 @@ const CodingProfile = ({
           </p>
           <p>
             Global Ranking: {leetcodeData?.data?.userContestRanking?.globalRanking}
+          </p>
+          <p>
+            Rating: {leetcodeData?.data?.userContestRanking?.rating.toFixed(2)}
+          </p>
+          <p>
+            Top Percentage: {leetcodeData?.data?.userContestRanking?.topPercentage}
           </p>
 
           {/* Submission stats */}

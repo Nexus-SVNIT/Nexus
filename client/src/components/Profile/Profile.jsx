@@ -86,6 +86,10 @@ const ProfilePage = ({ profile, setProfile }) => {
       return false;
     }
 
+    if(instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
+      return false;
+    }
+
     return true;
   };
 
@@ -156,6 +160,7 @@ const ProfilePage = ({ profile, setProfile }) => {
           value={profile.fullName}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
@@ -177,6 +182,7 @@ const ProfilePage = ({ profile, setProfile }) => {
           value={profile.mobileNumber}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
@@ -188,6 +194,7 @@ const ProfilePage = ({ profile, setProfile }) => {
           value={profile.personalEmail}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
@@ -209,53 +216,58 @@ const ProfilePage = ({ profile, setProfile }) => {
           value={profile.branch}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
       <div>
-        <label className="text-gray-700 block">LinkedIn Profile</label>
+        <label className="text-gray-700 block">LinkedIn Profile (Link)</label>
         <input
           type="url"
           name="linkedInProfile"
           value={profile.linkedInProfile}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
       <div>
-        <label className="text-gray-700 block">GitHub Profile</label>
+        <label className="text-gray-700 block">GitHub Profile (Link)</label>
         <input
           type="url"
           name="githubProfile"
           value={profile.githubProfile}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
       <div>
-        <label className="text-gray-700 block">LeetCode Profile</label>
+        <label className="text-gray-700 block">LeetCode Profile (Only ID not Link)</label>
         <input
           name="leetcodeProfile"
           value={profile.leetcodeProfile}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
       <div>
-        <label className="text-gray-700 block">Codeforces Profile</label>
+        <label className="text-gray-700 block">Codeforces Profile (Only ID not Link)</label>
         <input
           name="codeforcesProfile"
           value={profile.codeforcesProfile}
           onChange={handleChange}
           disabled={!isEditing}
+          required
           className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
         />
       </div>
       <div>
-        <label className="text-gray-700 block">CodeChef Profile</label>{" "}
+        <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>{" "}
         {/* Added CodeChef Profile field */}
         <input
           name="codechefProfile"
