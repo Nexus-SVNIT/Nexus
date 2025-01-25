@@ -1,6 +1,51 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import parse from 'react-html-parser';
+import { Link } from "react-router-dom";
+
+const formatCompensation = (compensation) => {
+  if (!compensation) return 'Not disclosed';
+  const parts = [];
+  if (compensation.stipend) parts.push(`Stipend: ₹${compensation.stipend}/month`);
+  if (compensation.ctc) parts.push(`CTC: ₹${compensation.ctc} LPA`);
+  if (compensation.baseSalary) parts.push(`Base: ₹${compensation.baseSalary} LPA`);
+  return parts.length ? parts.join(' | ') : 'Not disclosed';
+};
+
+const formatSelectionProcess = (process) => {
+  if (!process) return 'Not specified';
+  const steps = [];
+  
+  if (process.onlineAssessment) {
+    const assessments = Object.entries(process.onlineAssessment)
+      .filter(([_, value]) => value)
+      .map(([key]) => key.replace(/([A-Z])/g, ' $1').toLowerCase());
+    if (assessments.length) steps.push(...assessments);
+  }
+  
+  if (process.groupDiscussion) steps.push('group discussion');
+  if (process.onlineInterview) steps.push('online interview');
+  if (process.offlineInterview) steps.push('offline interview');
+  if (process.others?.length) steps.push(...process.others);
+  
+  return steps.length ? steps.join(', ') : 'Not specified';
+};
+
+const formatRounds = (rounds) => {
+  if (!rounds) return 'Not specified';
+  const { technical = 0, hr = 0, hybrid = 0 } = rounds;
+  return `${technical} Tech, ${hr} HR, ${hybrid} Hybrid`;
+};
+
+const formatCGPA = (cgpa) => {
+  if (!cgpa) return 'Not specified';
+  return `Boys: ${cgpa.boys || 'N/A'} | Girls: ${cgpa.girls || 'N/A'}`;
+};
+
+const formatCount = (count) => {
+  if (!count) return 'Not specified';
+  return `Boys: ${count.boys || 0} | Girls: ${count.girls || 0}`;
+};
 
 const InterviewExperience = () => {
   const [posts, setPosts] = useState([]);
@@ -13,6 +58,13 @@ const InterviewExperience = () => {
   const [admissionFilter, setAdmissionFilter] = useState("");
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
+  const [campusTypeFilter, setCampusTypeFilter] = useState("");
+  const [jobTypeFilter, setJobTypeFilter] = useState("");
+  const [minStipendFilter, setMinStipendFilter] = useState("");
+  const [maxStipendFilter, setMaxStipendFilter] = useState("");
+  const [minCTCFilter, setMinCTCFilter] = useState("");
+  const [maxCTCFilter, setMaxCTCFilter] = useState("");
+  const [difficultyFilter, setDifficultyFilter] = useState("");
   const token = localStorage.getItem("token");
 
   const fetchPosts = async (filters = {}) => {
@@ -191,6 +243,47 @@ const InterviewExperience = () => {
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
+        <select 
+          value={campusTypeFilter} 
+          onChange={(e) => setCampusTypeFilter(e.target.value)}
+          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+        >
+          <option value="">All Campus Types</option>
+          <option value="In Campus">In Campus</option>
+          <option value="Off Campus">Off Campus</option>
+          <option value="Pool Campus">Pool Campus</option>
+        </select>
+
+        <select 
+          value={jobTypeFilter}
+          onChange={(e) => setJobTypeFilter(e.target.value)}
+          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+        >
+          <option value="">All Job Types</option>
+          <option value="2 Month Internship">2 Month Internship</option>
+          <option value="6 Month Internship">6 Month Internship</option>
+          <option value="Full Time">Full Time</option>
+          <option value="6 Month Internship + Full Time">Internship + Full Time</option>
+        </select>
+
+        {/* Salary Range Filters */}
+        <div className="flex gap-2 items-center">
+          <input
+            type="number"
+            placeholder="Min Stipend"
+            value={minStipendFilter}
+            onChange={(e) => setMinStipendFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
+          />
+          <span className="text-white">-</span>
+          <input
+            type="number"
+            placeholder="Max Stipend"
+            value={maxStipendFilter}
+            onChange={(e) => setMaxStipendFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
+          />
+        </div>
         <button 
           onClick={handleFilter}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
@@ -211,7 +304,7 @@ const InterviewExperience = () => {
           No posts available. Be the first to share your experience!
         </p>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {posts.map((post) => (
             <div key={post._id} className="bg-zinc-900 rounded-lg shadow-zinc-800 shadow-lg p-6 hover:shadow-lg transition duration-200">
               <div className="flex justify-between items-start">
@@ -251,13 +344,20 @@ const InterviewExperience = () => {
                 )}
               </div>
               <div className="text-gray-300 mt-4 prose prose-invert max-w-none">
-                {parse(post.content)}
+                <div 
+                  className="prose-headings:text-white prose-h1:text-2xl prose-h2:text-xl prose-h3:text-lg 
+                  prose-p:text-gray-300 prose-strong:text-white prose-em:text-gray-200
+                  prose-ul:list-disc prose-ol:list-decimal prose-li:text-gray-300
+                  prose-a:text-blue-400 hover:prose-a:text-blue-300"
+                >
+                  {parse(post.content)}
+                </div>
               </div>
               <div className="flex flex-wrap gap-2 mt-2">
                 {post.tags.map((tag, index) => (
                   <button 
                     key={index} 
-                    className="bg-zinc-700/50 text-zinc-300 text-xs px-3 py-1 rounded-full hover:bg-gray-700/70 transition-colors cursor-pointer inline-flex items-center"
+                    className="bg-zinc-800/50 text-zinc-300 text-xs px-3 py-1 rounded-full hover:bg-zinc-800/70 transition-colors cursor-pointer inline-flex items-center"
                     onClick={() => handleTagClick(tag)}
                   >
                     #{tag}
@@ -265,10 +365,70 @@ const InterviewExperience = () => {
                 ))}
               </div>
 
+              {/* New Interview Details Section */}
+              <div className="mt-4 grid grid-cols-2 gap-4 text-sm bg-zinc-800/50 p-4 rounded-lg">
+                <div className="text-blue-400">Campus Type:</div>
+                <div className="text-gray-300">{post.campusType || 'Not specified'}</div>
+                
+                <div className="text-blue-400">Job Type:</div>
+                <div className="text-gray-300">{post.jobType || 'Not specified'}</div>
+                
+                <div className="text-blue-400">Selection Process:</div>
+                <div className="text-gray-300">
+                  {formatSelectionProcess(post.selectionProcess)}
+                </div>
+
+                <div className="text-blue-400">Interview Rounds:</div>
+                <div className="text-gray-300">
+                  {formatRounds(post.rounds)}
+                </div>
+
+                <div className="text-blue-400">Compensation:</div>
+                <div className="text-gray-300">
+                  {formatCompensation(post.compensation)}
+                </div>
+
+                <div className="text-blue-400">Difficulty Level:</div>
+                <div className="text-gray-300">
+                  {post.difficultyLevel ? `${post.difficultyLevel}/10` : 'Not rated'}
+                </div>
+
+                <div className="text-blue-400">Hiring Period:</div>
+                <div className="text-gray-300">
+                  {post.hiringPeriod?.month && post.hiringPeriod?.year
+                    ? `${new Date(0, post.hiringPeriod.month - 1).toLocaleString('default', { month: 'long' })} ${post.hiringPeriod.year}`
+                    : 'Not specified'}
+                </div>
+
+                {/* Add Placement Statistics */}
+                <div className="col-span-2 mt-2">
+                  <h4 className="text-white font-semibold mb-2">Placement Statistics</h4>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-blue-400">CGPA Criteria:</div>
+                    <div className="text-gray-300">{formatCGPA(post.cgpaCriteria)}</div>
+
+                    <div className="text-blue-400">Shortlist Criteria:</div>
+                    <div className="text-gray-300">{formatCGPA(post.shortlistCriteria)}</div>
+
+                    <div className="text-blue-400">Shortlisted:</div>
+                    <div className="text-gray-300">{formatCount(post.shortlistedCount)}</div>
+
+                    <div className="text-blue-400">Selected:</div>
+                    <div className="text-gray-300">{formatCount(post.selectedCount)}</div>
+
+                    <div className="text-blue-400">Work Mode:</div>
+                    <div className="text-gray-300">{post.workMode || 'Not specified'}</div>
+
+                    <div className="text-blue-400">Location:</div>
+                    <div className="text-gray-300">{post.location || 'Not specified'}</div>
+                  </div>
+                </div>
+              </div>
+
               {/* Comment Section */}
               <div className="mt-6">
                 <textarea
-                  className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 bg-zinc-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Write a comment..."
                   value={comments[post._id] || ""}
                   onChange={(e) => handleCommentChange(post._id, e.target.value)}
@@ -284,7 +444,7 @@ const InterviewExperience = () => {
               {/* Question Section */}
               <div className="mt-6">
                 <textarea
-                  className="w-full p-3 bg-gray-700 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full p-3 bg-zinc-800 text-white border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                   placeholder="Ask a question..."
                   value={questions[post._id] || ""}
                   onChange={(e) => handleQuestionChange(post._id, e.target.value)}
@@ -303,7 +463,7 @@ const InterviewExperience = () => {
                 {post.comments && post.comments.length > 0 ? (
                   <div className="space-y-2">
                     {post.comments.map((comment) => (
-                      <p key={comment._id} className="text-gray-300 text-sm bg-gray-700 p-2 rounded">
+                      <p key={comment._id} className="text-gray-300 text-sm bg-zinc-800 p-2 rounded">
                         {comment.content}
                       </p>
                     ))}
@@ -319,7 +479,7 @@ const InterviewExperience = () => {
                 {post.questions && post.questions.length > 0 ? (
                   <div className="space-y-2">
                     {post.questions.map((question) => (
-                      <p key={question._id} className="text-gray-300 text-sm bg-gray-700 p-2 rounded">
+                      <p key={question._id} className="text-gray-300 text-sm bg-zinc-800 p-2 rounded">
                         {question.question}
                       </p>
                     ))}
