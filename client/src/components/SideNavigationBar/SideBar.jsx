@@ -68,14 +68,14 @@ const CustomSidebar = () => {
       link: "/coding",
     },
     {
-      title: "Coding Interview Exp",
+      title: "Interview Experience",
       icon: <FaUserTie />,
-      link: "/coding-interview-exp",
+      link: "/interview-experiences",
     },
     {
-      title: "Create Post",
+      title: "Create Interview Experiences Post",
       icon: <FaPen />,
-      link: "/create-post",
+      link: "/interview-experiences/create",
     },
     {
       title: "Profile",

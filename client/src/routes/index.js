@@ -125,13 +125,13 @@ export const DefaultRoutes = [
   },
 
   {
-    path:'post/create',
-    title:'create post',
+    path:'interview-experiences/create',
+    title:'Create Interview Experience post',
     component:CreatePost
   },
 
   {
-    path:'/InterviewEXP',
+    path:'interview-experiences',
     title:'Interview Experience',
     component:InterviewExperience
   },

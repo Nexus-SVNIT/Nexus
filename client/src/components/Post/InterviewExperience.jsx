@@ -99,7 +99,7 @@ const InterviewExperience = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen bg-gray-100 p-6 md:mx-46">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Interview Experiences</h2>
       {posts.length === 0 ? (
         <p className="text-gray-600">

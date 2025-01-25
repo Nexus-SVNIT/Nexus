@@ -8,8 +8,8 @@ export const NavList = [
   { label: 'About', path: '/about' },
   { label: 'Projects',path: '/projects'},
   { label: 'Coding',path: '/coding'},
-  { label:'Interview Experience',path:'/InterviewExp'},
-  { label:'create Post',path:'/post/create'}
+  { label:'Interview Experience',path:'/interview-experiences'},
+  { label:'Create Post',path:'/interview-experiences/create'}
 ]
 export const FAQsList = [
   {
