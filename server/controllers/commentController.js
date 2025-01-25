@@ -4,7 +4,8 @@ const Post = require('../models/postModel');
 // Create a new comment
 const createComment = async (req, res) => {
   try {
-    const { content, postId, author } = req.body;
+    const { content, postId} = req.body;
+    const author=req.user.id;
     const comment = new Comment({ content, postId, author });
     const savedComment = await comment.save();
 

@@ -50,6 +50,7 @@ const createPost = async (req, res) => {
 const getAllPosts = async (req, res) => {
   try {
     const posts = await Post.find().populate('author').populate('comments').populate('questions');
+    
     res.status(200).json(posts);
   } catch (error) {
     res.status(500).json({ error: error.message });
