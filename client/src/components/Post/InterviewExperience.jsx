@@ -5,18 +5,28 @@ const InterviewExperience = () => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState({});
   const [questions, setQuestions] = useState({});
+  const token = localStorage.getItem("token");
 
+  // Fetch all posts on component mount
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Include Bearer token in headers
+            },
+          }
+        );
         setPosts(response.data);
       } catch (error) {
-        console.error("Error fetching posts:", error);
+        console.error("Error fetching posts:", error.response?.data || error);
       }
     };
+
     fetchPosts();
-  }, []);
+  }, [token]);
 
   const handleCommentChange = (postId, value) => {
     setComments((prev) => ({
@@ -34,24 +44,56 @@ const InterviewExperience = () => {
 
   const handleCommentSubmit = async (postId) => {
     try {
-      const payload = { comment: comments[postId] };
-      await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${postId}`, payload);
+      const payload = { content: comments[postId], postId };
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Comment submitted successfully!");
+      // Update the local state instead of re-fetching
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, comments: [...post.comments, { content: comments[postId] }] }
+            : post
+        )
+      );
       setComments((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
-      console.error("Error submitting comment:", error);
+      console.error("Error submitting comment:", error.response?.data || error);
       alert("Error submitting comment. Please try again.");
     }
   };
 
   const handleQuestionSubmit = async (postId) => {
     try {
-      const payload = { question: questions[postId] };
-      await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/`, payload);
+      const payload = { question: questions[postId], postId };
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       alert("Question submitted successfully!");
+      // Update the local state instead of re-fetching
+      setPosts((prevPosts) =>
+        prevPosts.map((post) =>
+          post._id === postId
+            ? { ...post, questions: [...post.questions, { question: questions[postId] }] }
+            : post
+        )
+      );
       setQuestions((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
-      console.error("Error submitting question:", error);
+      console.error("Error submitting question:", error.response?.data || error);
       alert("Error submitting question. Please try again.");
     }
   };
@@ -60,7 +102,9 @@ const InterviewExperience = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <h2 className="text-3xl font-bold mb-6 text-gray-800">Interview Experiences</h2>
       {posts.length === 0 ? (
-        <p className="text-gray-600">No posts available. Be the first to share your experience!</p>
+        <p className="text-gray-600">
+          No posts available. Be the first to share your experience!
+        </p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 text-black">
           {posts.map((post) => (
@@ -100,6 +144,34 @@ const InterviewExperience = () => {
                 >
                   Submit Question
                 </button>
+              </div>
+
+              {/* Display Comments */}
+              <div className="mt-4">
+                <h4 className="font-semibold">Comments:</h4>
+                {post.comments && post.comments.length > 0 ? (
+                  post.comments.map((comment) => (
+                    <p key={comment._id} className="text-gray-600 text-sm">
+                      {comment.content}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No comments yet.</p>
+                )}
+              </div>
+
+              {/* Display Questions */}
+              <div className="mt-4">
+                <h4 className="font-semibold">Questions:</h4>
+                {post.questions && post.questions.length > 0 ? (
+                  post.questions.map((question) => (
+                    <p key={question._id} className="text-gray-600 text-sm">
+                      {question.question}
+                    </p>
+                  ))
+                ) : (
+                  <p className="text-gray-400 text-sm">No questions yet.</p>
+                )}
               </div>
             </div>
           ))}
