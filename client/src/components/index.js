@@ -21,3 +21,4 @@ export { default as AlumniMenu } from './AlumniDetail/AlumniMenu.jsx'
 export { default as AchievementsForm } from './AchievementsForm/AchievementsForm.jsx'
 
 export { default as Achievements } from './Achievements/Achievements.jsx'
+export {default as SideBar} from './SideNavigationBar/SideBar.jsx'
