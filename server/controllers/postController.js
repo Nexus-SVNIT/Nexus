@@ -49,7 +49,35 @@ const createPost = async (req, res) => {
 // Fetch all posts
 const getAllPosts = async (req, res) => {
   try {
-    const posts = await Post.find().populate('author').populate('comments').populate('questions');
+    const { companyName, tag, admissionNumber, startDate, endDate } = req.query;
+    const filter = {};
+
+    if (companyName) {
+      filter.company = new RegExp(companyName, 'i');
+    }
+    if (tag) {
+      filter.tags = tag;
+    }
+    if (admissionNumber) {
+      // First find users with matching admission numbers
+      const users = await User.find({ 
+        admissionNumber: new RegExp(admissionNumber, 'i') 
+      });
+      const userIds = users.map(user => user._id);
+      filter.author = { $in: userIds };
+    }
+
+    if (startDate || endDate) {
+      filter.createdAt = {};
+      if (startDate) filter.createdAt.$gte = new Date(startDate);
+      if (endDate) filter.createdAt.$lte = new Date(endDate);
+    }
+
+    const posts = await Post.find(filter)
+      .populate('author', 'fullName linkedInProfile admissionNumber')
+      .populate('comments')
+      .populate('questions')
+      .sort({ createdAt: -1 });
     
     res.status(200).json(posts);
   } catch (error) {
