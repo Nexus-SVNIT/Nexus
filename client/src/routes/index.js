@@ -21,7 +21,8 @@ import cp from '../components/coding/cp.jsx'
 import MessageForm from "../components/Message/MessageForm.jsx"
 
 import AddTeamMember from '../pages/Team/AddTeamMember.jsx'
-
+import CreatePost from '../components/Post/CreatePost.jsx'
+import InterviewExperience from '../components/Post/InterviewExperience.jsx'
 
 export const DefaultRoutes = [
   {
@@ -29,89 +30,118 @@ export const DefaultRoutes = [
     title: 'Home',
     component: Home
   },
+  
   {
     path: 'team',
     title: 'Teams',
     component: Teams
   },
+
   {
     path: 'achievements',
     title: 'Achievements',
     component: Achievements
   },
+
   {
     path: 'achievements/add-new',
     title: 'Add New Achievement',
     component: AchievementsForm
   },
+
   {
     path: 'events',
     title: 'Events',
     component: Events
   },
+
   {
     path: 'forms',
     title: 'Forms',
     component: Forms
   },
+
   {
     path: 'about',
     title: 'About',
     component: About
   },
+
   {
     path: 'register/:formId',
     title: 'Register Form',
     component: RegisterForm
   },
+
   {
     path: 'connect',
     title: 'Connect',
     component: Connect
   },
+
   {
     path: 'connect/alumni',
     title: 'Alumni Menu',
     component: AlumniMenu
   },
+
   {
     path: 'login',
     title: 'Login',
     component: LoginForm
   },
+
   {
     path: 'signup',
     title: 'Signup',
     component: SignUpForm
   },
+
   {
     path: 'profile',
     title: 'Profile',
     component: UserProfile
   },
+
   {
 
     path: 'projects',
     title: 'projects',
     component: ShowProject
   },
+
   {
     path: 'forgot-password',
     title: 'Reset Password',
     component: ForgotPasswordForm
 
   },
+
   {
     path: 'coding',
     title: 'coding',
     component: cp
 
   },
+
+  {
+    path:'post/create',
+    title:'create post',
+    component:CreatePost
+  },
+
+  {
+    path:'/InterviewEXP',
+    title:'Interview Experience',
+    component:InterviewExperience
+  },
+
   {
     path: '*',
     title: 'Not Found',
     component: NotFound
-  }
+  },
+  
 ]
 
 export const AdminRoutes = [

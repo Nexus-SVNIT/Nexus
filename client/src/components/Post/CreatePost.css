@@ -1,0 +1,31 @@
+/* CreatePost.css */
+.custom-quill .ql-toolbar {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px 8px 0 0;
+  padding: 8px;
+}
+
+.custom-quill .ql-container {
+  border: 1px solid #ddd;
+  border-radius: 0 0 8px 8px;
+  min-height: 200px;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  padding: 10px;
+  background-color: #fff;
+}
+
+.custom-quill .ql-editor {
+  min-height: 150px;
+  line-height: 1.6;
+}
+
+.custom-quill .ql-toolbar button {
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.custom-quill .ql-toolbar button:hover {
+  background-color: #e2e8f0;
+}

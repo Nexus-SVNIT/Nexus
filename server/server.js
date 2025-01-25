@@ -20,14 +20,18 @@ const teamMembersRoutes = require('./routes/teamMembersRoute.js')
 const issueRoutes=require('./routes/issueRoutes.js')
 const codingProfileRoutes = require('./routes/codingProfileRoutes.js')
 const counterRoutes = require('./routes/counterRoutes.js')
+const postRoutes=require("./routes/postRoutes.js");
+const companyRoutes=require("./routes/comapnyRoutes.js");
+const questionRoutes=require("./routes/questionRoutes.js");
+const commentRoutes=require("./routes/commentRoutes.js");
+
 
 const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
 
-// console.log(MONGO_URL,PORT)
-// const allowedOrigins = ['https://nexus-svnit.tech', 'https://nexus-svnit.vercel.app', 'http://localhost:3001'];
+
 app.use(cors());
 
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -55,6 +59,10 @@ app.use('/projects', projectRoutes);
 app.use("/issue",issueRoutes);
 app.use('/coding-profiles', codingProfileRoutes);
 app.use('/api/counter', counterRoutes)
+app.use('/api/posts', postRoutes);
+app.use('/api/companies', companyRoutes);
+app.use('/api/questions', questionRoutes);
+app.use('/api/comments', commentRoutes);
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

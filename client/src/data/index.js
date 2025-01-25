@@ -7,7 +7,9 @@ export const NavList = [
   { label: 'Connect', path: '/connect' },
   { label: 'About', path: '/about' },
   { label: 'Projects',path: '/projects'},
-  { label: 'Coding',path: '/coding'}
+  { label: 'Coding',path: '/coding'},
+  { label:'Interview Experience',path:'/InterviewExp'},
+  { label:'create Post',path:'/post/create'}
 ]
 export const FAQsList = [
   {
