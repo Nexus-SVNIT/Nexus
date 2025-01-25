@@ -11,14 +11,14 @@ const Navbar = () => {
   return (
     <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full">
       <div className="ml-4 flex items-center">
-        <Link to={"/"}>
+        <Link to={"/"} className="flex justify-center">
           <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
-        </Link>
         <span className="mx-2 text-2xl uppercase text-white/80">Nexus</span>
+        </Link>
       </div>
       <div className="relative flex items-center">
         <ul className="mr-5 hidden items-center gap-[3vw] text-sm md:flex lg:gap-12 lg:text-base">
-          {NavList.map((item) => {
+          {/* {NavList.map((item) => {
             return (
               <Link to={item.path} key={item.path}>
                 <li
@@ -33,20 +33,7 @@ const Navbar = () => {
               </Link>
             );
 
-          })}
-          {
-            token && <Link to={'profile'} key={'profile'}>
-              <li
-                key={'profile'}
-                className={`${'profile' === pathname
-                  ? "text-[#3586ff] underline underline-offset-8"
-                  : "text-white"
-                  } transition-colors`}
-              >
-                {'Profile'}
-              </li>
-            </Link>
-          }
+          })} */}
           {
             token ?
               <Button onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}>Logout</Button>

@@ -5,7 +5,6 @@ import {
   Terminal,
   Three,
   WhatPeopleThinkAboutUS,
-  SideBar,
 } from "../index";
 import Counter from "../Counter/Counter";
 
@@ -19,8 +18,6 @@ const Home = () => {
   
   return (
     <div className="relative mx-auto overflow-x-hidden transition-all delay-300">
-      <SideBar></SideBar>
-      
       <div className=" flex h-screen flex-col items-center ">
       
         <Three />
