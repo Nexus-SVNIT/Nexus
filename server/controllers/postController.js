@@ -79,7 +79,8 @@ const getAllPosts = async (req, res) => {
       difficultyLevel, hiringYear, hiringMonth,
       minCgpaBoys, maxCgpaBoys,
       minCgpaGirls, maxCgpaGirls,
-      workMode, location
+      workMode, location,
+      page = 1, limit = 5
     } = req.query;
     
     const filter = {};
@@ -138,13 +139,26 @@ const getAllPosts = async (req, res) => {
       filter.location = { $in: [new RegExp(location, 'i')] };
     }
 
+    const pageNumber = parseInt(page);
+    const pageSize = parseInt(limit);
+
+    const skipCount = (pageNumber - 1) * pageSize;
+    const totalCount = await Post.countDocuments(filter); 
+    const totalPages = Math.ceil(totalCount / pageSize);
+
     const posts = await Post.find(filter)
       .populate('author', 'fullName linkedInProfile admissionNumber')
       .populate('comments')
       .populate('questions')
-      .sort({ createdAt: -1 });
+      .sort({ createdAt: -1 })
+      .skip(skipCount)
+      .limit(pageSize);
     
-    res.status(200).json(posts);
+    res.status(200).json({
+      posts,
+      totalPages,
+      currentPage: pageNumber,
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

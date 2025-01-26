@@ -69,6 +69,9 @@ const InterviewExperiencePage = () => {
   const [difficultyFilter, setDifficultyFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
   const [locations, setLocations] = useState([]); // New state for locations
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [pageLimit, setPageLimit] = useState(5); // New limit state
   const token = localStorage.getItem("token");
 
   const fetchPosts = async (filters = {}) => {
@@ -90,19 +93,22 @@ const InterviewExperiencePage = () => {
             minStipend: filters.minStipend || "",
             maxStipend: filters.maxStipend || "",
             location: filters.location || "",
+            page: currentPage,
+            limit: pageLimit,
           }
         }
       );
-      setPosts(response.data);
-      const uniqueCompanies = [...new Set(response.data.map((p) => p.company))]
+      setPosts(response.data.posts);
+      setTotalPages(response.data.totalPages);
+      const uniqueCompanies = [...new Set(response.data.posts.map((p) => p.company))]
         .filter(Boolean)  // Remove any null/undefined values
         .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
       
-      const uniqueTags = [...new Set(response.data.flatMap((p) => p.tags))]
+      const uniqueTags = [...new Set(response.data.posts.flatMap((p) => p.tags))]
         .filter(Boolean)  // Remove any null/undefined values
         .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
 
-      const uniqueLocations = [...new Set(response.data.flatMap((p) => p.location))]
+      const uniqueLocations = [...new Set(response.data.posts.flatMap((p) => p.location))]
         .filter(Boolean)  // Remove any null/undefined values
         .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
       
@@ -121,7 +127,7 @@ const InterviewExperiencePage = () => {
   // Fetch all posts on component mount
   useEffect(() => {
     fetchPosts();
-  }, [token]);
+  }, [token, currentPage, pageLimit]);
 
   const handleFilter = () => {
     fetchPosts({ 
@@ -232,8 +238,12 @@ const InterviewExperiencePage = () => {
     fetchPosts({ companyName: companyFilter, tag });
   };
 
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 p-6 md:mx-46">
+    <div className="min-h-screen bg-gray-900 p-6 md:mx-46 mb-36">
       <div className="flex justify-end mb-4">
         <Link
           to="/create-post"
@@ -338,6 +348,19 @@ const InterviewExperiencePage = () => {
             <option key={loc} value={loc}>{loc}</option>
           ))}
         </select>
+        <select
+          value={pageLimit}
+          onChange={(e) => {
+            setCurrentPage(1);
+            setPageLimit(parseInt(e.target.value, 10));
+          }}
+          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          <option value={5}>5 per page</option>
+          <option value={10}>10 per page</option>
+          <option value={20}>20 per page</option>
+          <option value={50}>50 per page</option>
+        </select>
         <button 
           onClick={handleFilter}
           className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
@@ -369,6 +392,26 @@ const InterviewExperiencePage = () => {
           ))}
         </div>
       )}
+      {/* Pagination Controls */}
+      <div className="flex justify-center mt-4 gap-2 mt-24">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage <= 1}
+          className="bg-blue-600 text-white px-3 py-1 rounded disabled:bg-gray-600"
+        >
+          Previous
+        </button>
+        <span className="text-white">
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage >= totalPages}
+          className="bg-blue-600 text-white px-3 py-1 rounded disabled:bg-gray-600"
+        >
+          Next
+        </button>
+      </div>
     </div>
   );
 };

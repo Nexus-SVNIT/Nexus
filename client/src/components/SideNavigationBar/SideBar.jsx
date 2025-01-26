@@ -3,7 +3,6 @@ import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import "react-pro-sidebar/dist/css/styles.css";
 import {
   FaBars,
-  FaPen,
   FaUser,
   FaHome,
   FaTrophy,
@@ -71,11 +70,6 @@ const CustomSidebar = () => {
       title: "Interview Experience",
       icon: <FaUserTie />,
       link: "/interview-experiences",
-    },
-    {
-      title: "Create Interview Experiences Post",
-      icon: <FaPen />,
-      link: "/interview-experiences/create",
     },
     {
       title: "Profile",
