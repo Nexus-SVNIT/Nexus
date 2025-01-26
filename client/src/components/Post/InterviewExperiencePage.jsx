@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
+import { Link } from "react-router-dom";
 import InterviewPostCard from './InterviewPostCard';
+import { FaPenToSquare } from "react-icons/fa6";
 
 const formatCompensation = (compensation) => {
   if (!compensation) return 'Not disclosed';
@@ -232,6 +234,15 @@ const InterviewExperiencePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 p-6 md:mx-46">
+      <div className="flex justify-end mb-4">
+        <Link
+          to="/create-post"
+          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition duration-200 flex justify-center items-center gap-2"
+        >
+          <FaPenToSquare />
+          Create New Post
+        </Link>
+      </div>
       <h2 className="text-3xl font-bold mb-6 text-white">Interview Experiences</h2>
       <div className="flex flex-wrap gap-4 mb-6">
         <select 
