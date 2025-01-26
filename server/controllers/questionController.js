@@ -8,7 +8,7 @@ const createQuestion = async (req, res) => {
     const { question, postId } = req.body;
     const author=req.user.id;
 
-    const newQuestion = new Question({ question, postId, author });
+    const newQuestion = new Question({ question, postId, askedBy:author });
     const savedQuestion = await newQuestion.save();
 
     const post = await Post.findById(postId);
@@ -17,6 +17,7 @@ const createQuestion = async (req, res) => {
 
     res.status(201).json(savedQuestion);
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: error.message });
   }
 };
@@ -24,7 +25,10 @@ const createQuestion = async (req, res) => {
 // Get questions for a specific post
 const getQuestionsByPost = async (req, res) => {
   try {
-    const questions = await Question.find({ postId: req.params.postId }).populate('answers.author');
+    const questions = await Question.find({ postId: req.params.postId })
+      .populate('askedBy', 'fullName linkedInProfile')
+      .populate('answers.author', 'fullName linkedInProfile')
+      .sort({ createdAt: -1 });
     res.status(200).json(questions);
   } catch (error) {
     res.status(500).json({ error: error.message });

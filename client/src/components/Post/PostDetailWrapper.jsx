@@ -5,7 +5,7 @@ const PostDetailWrapper = ({ children }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gray-900 px-4 py-6 md:px-8">
+    <div className="min-h-screen bg-gray-900 px-4 py-6 md:px-8 mb-36">
       <div className="max-w-6xl mx-auto">
         <button
           onClick={() => navigate(-1)}

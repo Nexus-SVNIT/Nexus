@@ -393,7 +393,7 @@ const InterviewExperiencePage = () => {
         </div>
       )}
       {/* Pagination Controls */}
-      <div className="flex justify-center mt-4 gap-2 mt-24">
+      <div className="flex justify-center gap-2 mt-24">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}

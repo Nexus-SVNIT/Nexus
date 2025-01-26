@@ -1,9 +1,5 @@
 const mongoose = require('mongoose');
 
-function arrayLimit(val) {
-  return val.length >= 1;
-}
-
 const Schema = mongoose.Schema;
 const PostSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -60,32 +56,6 @@ const PostSchema = new mongoose.Schema({
   hiringPeriod: {
     month: Number,
     year: Number
-  },
-  cgpaCriteria: {
-    boys: { type: Number, min: 0, max: 10 },
-    girls: { type: Number, min: 0, max: 10 }
-  },
-  shortlistCriteria: {
-    boys: { type: Number, min: 0, max: 10 },
-    girls: { type: Number, min: 0, max: 10 }
-  },
-  shortlistedCount: {
-    boys: { type: Number, min: 0 },
-    girls: { type: Number, min: 0 }
-  },
-  selectedCount: {
-    boys: { type: Number, min: 0 },
-    girls: { type: Number, min: 0 }
-  },
-  workMode: {
-    type: String,
-    enum: ['Remote', 'On-site', 'Hybrid'],
-    required: true
-  },
-  location: {
-    type: [String], // Changed to array of strings
-    required: true,
-    validate: [arrayLimit, 'Must have at least one location']
   }
 }, {
   timestamps: true,

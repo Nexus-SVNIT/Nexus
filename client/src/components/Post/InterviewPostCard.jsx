@@ -56,7 +56,7 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
         <span>{post.workMode}</span>
         <span>•</span>
         <span className="flex gap-1">
-          {post.location.join(', ')}
+          {Array.isArray(post.location) ? post.location.join(', ') : post.location}
         </span>
         {post.compensation?.stipend && (
           <>

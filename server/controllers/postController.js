@@ -168,13 +168,25 @@ const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('author', 'fullName linkedInProfile admissionNumber')
-      .populate('comments')
-      .populate('questions');
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'fullName linkedInProfile'
+        }
+      })
+      .populate({
+        path: 'questions',
+        populate: {
+          path: 'askedBy',
+          select: 'fullName linkedInProfile'
+        }
+      });
     
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    
+
     res.status(200).json(post);
   } catch (error) {
     res.status(500).json({ error: error.message });

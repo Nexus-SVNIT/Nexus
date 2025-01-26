@@ -24,6 +24,7 @@ const postRoutes=require("./routes/postRoutes.js");
 const companyRoutes=require("./routes/comapnyRoutes.js");
 const questionRoutes=require("./routes/questionRoutes.js");
 const commentRoutes=require("./routes/commentRoutes.js");
+const answerRoutes=require("./routes/answerRoutes.js");
 
 
 const app = express()
@@ -62,6 +63,7 @@ app.use('/api/counter', counterRoutes)
 app.use('/api/posts', postRoutes);
 app.use('/api/companies', companyRoutes);
 app.use('/api/questions', questionRoutes);
+app.use('/api/questions', answerRoutes);
 app.use('/api/comments', commentRoutes);
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
