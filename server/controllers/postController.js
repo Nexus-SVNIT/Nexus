@@ -133,7 +133,10 @@ const getAllPosts = async (req, res) => {
     if (maxCgpaGirls) filter['cgpaCriteria.girls'] = { ...filter['cgpaCriteria.girls'], $lte: Number(maxCgpaGirls) };
     
     if (workMode) filter.workMode = workMode;
-    if (location) filter.location = new RegExp(location, 'i');
+    if (location) {
+      // Update to search in array of locations
+      filter.location = { $in: [new RegExp(location, 'i')] };
+    }
 
     const posts = await Post.find(filter)
       .populate('author', 'fullName linkedInProfile admissionNumber')
@@ -147,4 +150,21 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getAllPosts };
+const getPostById = async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id)
+      .populate('author', 'fullName linkedInProfile admissionNumber')
+      .populate('comments')
+      .populate('questions');
+    
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { createPost, getAllPosts, getPostById };

@@ -22,7 +22,8 @@ import MessageForm from "../components/Message/MessageForm.jsx"
 
 import AddTeamMember from '../pages/Team/AddTeamMember.jsx'
 import CreatePost from '../components/Post/CreatePost.jsx'
-import InterviewExperience from '../components/Post/InterviewExperience.jsx'
+import InterviewExperiencePage from '../components/Post/InterviewExperiencePage.jsx'
+import InterviewPost from '../components/Post/InterviewPost.jsx'
 
 export const DefaultRoutes = [
   {
@@ -133,7 +134,13 @@ export const DefaultRoutes = [
   {
     path:'interview-experiences',
     title:'Interview Experience',
-    component:InterviewExperience
+    component:InterviewExperiencePage
+  },
+
+  {
+    path:'interview-experiences/post/:id',
+    title:'Interview Experience',
+    component: InterviewPost
   },
 
   {

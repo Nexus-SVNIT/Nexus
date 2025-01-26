@@ -1,5 +1,9 @@
 const mongoose = require('mongoose');
 
+function arrayLimit(val) {
+  return val.length >= 1;
+}
+
 const Schema = mongoose.Schema;
 const PostSchema = new mongoose.Schema({
   title: { type: String, required: true },
@@ -79,8 +83,9 @@ const PostSchema = new mongoose.Schema({
     required: true
   },
   location: {
-    type: String,
-    required: true
+    type: [String], // Changed to array of strings
+    required: true,
+    validate: [arrayLimit, 'Must have at least one location']
   }
 }, {
   timestamps: true,

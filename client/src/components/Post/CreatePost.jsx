@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import axios from "axios";
+import { toast } from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; 
 import "./CreatePost.css"; 
@@ -62,7 +63,7 @@ const CreatePost = () => {
       girls: ""
     },
     workMode: "",
-    location: ""
+    location: [] // Initialize as empty array
   });
 
   const handleChange = (e) => {
@@ -125,9 +126,18 @@ const CreatePost = () => {
     }));
   };
 
+  const handleLocationChange = (e) => {
+    const value = e.target.value;
+    setFormData(prev => ({
+      ...prev,
+      location: value.split(',').map(loc => loc.trim())
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      toast.loading("Creating post...");
       const token = localStorage.getItem("token");
       const tagsArray = formData.tags.split(",").map((tag) => tag.trim());
       
@@ -148,11 +158,13 @@ const CreatePost = () => {
         { headers: { Authorization: `Bearer ${token}` } }
       );
       
-      alert("Post created successfully!");
-      navigate("/");
+      toast.dismiss();
+      toast.success("Post created successfully!");
+      navigate("/interview-experiences");
     } catch (error) {
+      toast.dismiss();
+      toast.error("Failed to create the post.");
       console.error("Error creating post:", error);
-      alert("Failed to create the post.");
     }
   };
 
@@ -523,15 +535,15 @@ const CreatePost = () => {
               </select>
             </div>
             <div>
-              <label className={labelClassName}>Location</label>
+              <label className={labelClassName}>Locations (comma-separated)</label>
               <input
                 type="text"
                 name="location"
-                value={formData.location}
-                onChange={handleChange}
+                value={formData.location.join(', ')}
+                onChange={handleLocationChange}
                 className={inputClassName}
                 required
-                placeholder="City, State"
+                placeholder="Bangalore, Mumbai, Delhi"
               />
             </div>
           </div>
