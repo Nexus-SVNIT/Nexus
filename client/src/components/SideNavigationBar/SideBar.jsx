@@ -91,9 +91,9 @@ const CustomSidebar = () => {
   return (
     <ProSidebar
       collapsed={collapsed}
-      className="fixed left-0 top-0 z-9999 h-screen"
+      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-90"
     >
-      <Menu iconShape="circle" className={`absolute left-0 top-0`}>
+      <Menu iconShape="circle" className={`absolute left-0 top-0 text-white`}>
         {/* Sidebar Toggle */}
         <div className="flex justify-evenly">
           {!collapsed && (
@@ -113,9 +113,9 @@ const CustomSidebar = () => {
             </MenuItem>
           )}
           <MenuItem
-            icon={collapsed ? <FaBars /> : <FaX />}
+            icon={collapsed ? <FaBars size={20} /> : <FaX size={20} />}
             onClick={() => setCollapsed(!collapsed)}
-            className="hover:bg-gray-100"
+            className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500 hover-icon"
           ></MenuItem>
         </div>
 
@@ -123,8 +123,8 @@ const CustomSidebar = () => {
         {menuList.map((item, index) => {
           return (
             <MenuItem
-              icon={item.icon}
-              className="hover:bg-gray-100"
+              icon={React.cloneElement(item.icon, { size: 20, className: "hover-icon" })}
+              className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500"
               title={item.title}
             >
               {!collapsed && item.title}
@@ -138,6 +138,11 @@ const CustomSidebar = () => {
           <MenuItem className="hover:bg-gray-100">Component 2</MenuItem>
         </SubMenu> */}
       </Menu>
+      <style jsx>{`
+          .pro-sidebar > .pro-sidebar-inner{
+            background-color: transparent;
+          }
+        `}</style>
     </ProSidebar>
   );
 };

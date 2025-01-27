@@ -217,7 +217,7 @@ const CreatePost = () => {
             </div>
 
             {/* Content with React Quill */}
-            <div className="mb-4">
+            <div className="mb-4 md:col-span-2">
               <label className={labelClassName}>Content</label>
               <div className="text-white">
                 <ReactQuill
@@ -225,7 +225,7 @@ const CreatePost = () => {
                   onChange={handleEditorChange}
                   theme="snow"
                   placeholder="Write your interview experience here..."
-                  className="custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800"
+                  className="text-white custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800"
                 />
               </div>
             </div>
@@ -305,7 +305,7 @@ const CreatePost = () => {
                 <h5 className="text-gray-300 text-sm font-medium">
                   Online Assessment
                 </h5>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                   {Object.entries(
                     formData.selectionProcess.onlineAssessment,
                   ).map(([key, value]) => (
@@ -338,38 +338,41 @@ const CreatePost = () => {
                   <input
                     type="checkbox"
                     name="groupDiscussion"
+                    id="groupDiscussion"
                     checked={formData.selectionProcess.groupDiscussion}
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200">Group Discussion</label>
+                  <label className="text-gray-200" htmlFor="groupDiscussion">Group Discussion</label>
                 </div>
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     name="onlineInterview"
+                    id="onlineInterview"
                     checked={formData.selectionProcess.onlineInterview}
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200">Online Interview</label>
+                  <label className="text-gray-200" htmlFor="onlineInterview">Online Interview</label>
                 </div>
                 <div className="flex items-center">
                   <input
                     type="checkbox"
                     name="offlineInterview"
+                    id="offlineInterview"
                     checked={formData.selectionProcess.offlineInterview}
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200">Offline Interview</label>
+                  <label className="text-gray-200" htmlFor="offlineInterview">Offline Interview</label>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Interview Rounds */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
             {Object.keys(formData.rounds).map((roundType) => (
               <div key={roundType}>
                 <label className={labelClassName}>
@@ -389,7 +392,7 @@ const CreatePost = () => {
           </div>
 
           {/* Compensation */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
             <div>
               <label className={labelClassName}>Stipend (₹/month)</label>
               <input
@@ -423,7 +426,7 @@ const CreatePost = () => {
           </div>
 
           {/* Add Hiring Period before Difficulty Level */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-4 my-4">
             <div>
               <label className={labelClassName}>Hiring Month</label>
               <select
@@ -466,7 +469,7 @@ const CreatePost = () => {
           </div>
 
           {/* Difficulty Level */}
-          <div>
+          <div className="my-4">
             <label className={labelClassName}>Difficulty Level (1-10)</label>
             <input
               type="range"
@@ -483,7 +486,7 @@ const CreatePost = () => {
           </div>
 
           {/* Placement Statistics */}
-          <div className="mb-4 space-y-4">
+          <div className="mb-4 space-y-4 my-4">
             <h3 className="text-gray-200 text-lg font-semibold">
               Placement Statistics
             </h3>
@@ -640,12 +643,20 @@ const CreatePost = () => {
           }
           .custom-quill .ql-picker {
             color: white;
+            background-color: rgb(63 63 70); /* Dark shade of zinc */
+          }
+          .custom-quill .ql-picker-options {
+            min-width: fit-content;
+            background-color: rgb(63 63 70); /* Dark shade of zinc */
           }
           .custom-quill .ql-stroke {
             stroke: white;
           }
           .custom-quill .ql-fill {
             fill: white;
+          }
+          .custom-quill .ql-editor::before {
+            color: white; /* Placeholder text color */
           }
         `}</style>
       </div>
