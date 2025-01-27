@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import parse from "react-html-parser";
+import parse from "html-react-parser";
 
 const InterviewExperience = () => {
   const [posts, setPosts] = useState([]);

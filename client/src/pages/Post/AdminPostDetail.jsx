@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
-import parse from "react-html-parser";
+import parse from "html-react-parser";
 import Loader from "../../components/Loader/Loader";
 
 // Add utility functions at the top

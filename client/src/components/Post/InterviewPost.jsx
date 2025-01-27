@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import parse from "react-html-parser";
+import parse from "html-react-parser";
 import PostDetailWrapper from "./PostDetailWrapper";
 import Loader from "../Loader/Loader";
 
