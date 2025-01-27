@@ -229,7 +229,7 @@ const Cp = () => {
   };
 
   return (
-    <div className="App text-gray-200 min-h-screen p-8">
+    <div className="App text-gray-200 min-h-screen p-8 md:mx-24">
       {loading ? (
         <div className="flex h-screen w-full items-center justify-center">
           <Loader />
