@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
-import "react-pro-sidebar/dist/css/styles.css";
+import "react-pro-sidebar/dist/css/styles.css"; // Default styles
 import {
   FaBars,
   FaUser,
@@ -28,62 +28,62 @@ const CustomSidebar = () => {
   const menuList = [
     {
       title: "Home",
-      icon: <FaHome />,
+      icon: <FaHome className="text-2xl" />,
       link: "/",
     },
     {
       title: "Team",
-      icon: <FaPeopleGroup />,
+      icon: <FaPeopleGroup className="text-2xl" />,
       link: "/team",
     },
     {
       title: "Achievements",
-      icon: <FaTrophy />,
+      icon: <FaTrophy className="text-2xl" />,
       link: "/achievements",
     },
     {
       title: "Events",
-      icon: <FaCalendar />,
+      icon: <FaCalendar className="text-2xl" />,
       link: "/events",
     },
     {
       title: "Forms",
-      icon: <FaFileLines />,
+      icon: <FaFileLines className="text-2xl" />,
       link: "/forms",
     },
     {
       title: "Connect",
-      icon: <FaUserGraduate />,
+      icon: <FaUserGraduate className="text-2xl" />,
       link: "/connect",
     },
     {
       title: "Projects",
-      icon: <FaFileCode />,
+      icon: <FaFileCode className="text-2xl" />,
       link: "/projects",
     },
     {
       title: "Coding Profile LeaderBoard",
-      icon: <FaLaptopCode />,
+      icon: <FaLaptopCode className="text-2xl" />,
       link: "/coding",
     },
     {
       title: "Interview Experience",
-      icon: <FaUserTie />,
+      icon: <FaUserTie className="text-2xl" />,
       link: "/interview-experiences",
     },
     {
       title: "Profile",
-      icon: <FaUser />,
+      icon: <FaUser className="text-2xl" />,
       link: "/profile",
     },
     {
       title: "About",
-      icon: <FaInfo />,
+      icon: <FaInfo className="text-2xl" />,
       link: "/about",
     },
     {
       title: "Login",
-      icon: <FaRightToBracket />,
+      icon: <FaRightToBracket className="text-2xl" />,
       link: "/login",
     },
   ];
@@ -91,27 +91,28 @@ const CustomSidebar = () => {
   return (
     <ProSidebar
       collapsed={collapsed}
-      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-90"
+      className="!bg-slate-950 fixed left-0 top-0 z-9999 h-screen text-white transition-all duration-300 overflow-visible"
     >
-      <Menu iconShape="circle" className={`absolute left-0 top-0 text-white`}>
-        {/* Sidebar Toggle */}
-        <div className="flex justify-evenly">
+      <Menu iconShape="circle" className="absolute left-0 top-0 overflow-visible">
+        {/* Sidebar Toggle and Logo Section */}
+        <div className="flex items-center justify-between p-4">
+          {/* Logo and Nexus Text (Visible when sidebar is expanded) */}
           {!collapsed && (
-            <MenuItem className="hover:bg-gray-100">
-              <div className="ml-4 flex items-center">
-                <Link to={"/"}>
-                  <img
-                    src={Logo}
-                    alt="Nexus_Official"
-                    className="min-h-8 min-w-8"
-                  />
-                </Link>
-                <span className="mx-2 text-xl uppercase text-white/80">
-                  Nexus
-                </span>
-              </div>
-            </MenuItem>
+            <div className="flex items-center">
+              <Link to={"/"}>
+                <img
+                  src={Logo}
+                  alt="Nexus_Official"
+                  className="h-8 w-8 rounded-full"
+                />
+              </Link>
+              <span className="ml-2 text-xl font-semibold uppercase text-white/80">
+                Nexus
+              </span>
+            </div>
           )}
+
+          {/* Toggle Button */}
           <MenuItem
             icon={collapsed ? <FaBars size={20} /> : <FaX size={20} />}
             onClick={() => setCollapsed(!collapsed)}
@@ -127,16 +128,23 @@ const CustomSidebar = () => {
               className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500"
               title={item.title}
             >
-              {!collapsed && item.title}
+              {/* Bubble Animation Effect with Blue Color */}
+              <div className="absolute left-0 top-0 h-full w-full rounded-full bg-blue-500/30 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300"></div>
+
+              {/* Hover Box for Menu Item Name (Right Side and Above the Screen) */}
+              {collapsed && (
+                <div className="absolute left-2 -top-6 bg-white text-black px-2 py-1 rounded-md opacity-0 text-sm group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-50">
+                  {item.title}
+                </div>
+              )}
+
+              {!collapsed && (
+                <span className="ml-4 text-lg font-medium">{item.title}</span>
+              )}
               <Link to={item.link} />
             </MenuItem>
           );
         })}
-        {/* SubMenu */}
-        {/* <SubMenu title={!collapsed ? "Components" : ""} icon={<FaHeart />}>
-          <MenuItem className="hover:bg-gray-100">Component 1</MenuItem>
-          <MenuItem className="hover:bg-gray-100">Component 2</MenuItem>
-        </SubMenu> */}
       </Menu>
       <style jsx>{`
           .pro-sidebar > .pro-sidebar-inner{

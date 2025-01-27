@@ -81,7 +81,7 @@ const InterviewPost = () => {
         if (!checkAuth()) return;
 
         toast.loading("Loading post...");
-        const [postResponse, questionsResponse] = await Promise.all([
+        const [postResponse, questionsResponse,commentResponse] = await Promise.all([
           axios.get(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
             {
@@ -94,10 +94,19 @@ const InterviewPost = () => {
               headers: { Authorization: `Bearer ${token}` },
             },
           ),
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          ),
         ]);
 
+
+        
         setPost(postResponse.data);
         setQuestionsWithAnswers(questionsResponse.data);
+        setComments(commentResponse.data);
         setLoading(false);
         toast.dismiss();
         toast.success("Post loaded successfully!");
@@ -149,6 +158,7 @@ const InterviewPost = () => {
       
       toast.dismiss(loadingToast);
       toast.success("Comment submitted successfully!");
+      console.log(response.data);
       
       // Update the local state with populated comment data
       const populatedComment = {
@@ -355,9 +365,9 @@ const InterviewPost = () => {
 
               <div className="mt-6">
                 <h4 className="mb-2 font-semibold text-white">Comments:</h4>
-                {post.comments && post.comments.length > 0 ? (
+                {comments && comments.length > 0 ? (
                   <div className="space-y-2">
-                    {post.comments.map((comment) => (
+                    {comments.map((comment) => (
                       <div className="text-gray-300 mb-2 rounded bg-zinc-800 p-2 text-sm">
                         <p key={comment._id} className="">
                           {comment.content}

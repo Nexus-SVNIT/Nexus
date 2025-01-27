@@ -65,6 +65,8 @@
   flex-shrink: 0;
 }
 
+
+
 .faq-section::after {
   content: ""; /* :before will only appear if this content is declared */
   position: absolute;
