@@ -1,4 +1,8 @@
 const Question = require('../models/QuestionModel');
+const User = require('../models/userModel');
+const Post = require('../models/postModel');
+const { sendEmail } = require('../utils/emailUtils');
+const { newAnswerTemplate } = require('../utils/emailTemplates');
 
 const createAnswer = async (req, res) => {
   try {
@@ -6,7 +10,10 @@ const createAnswer = async (req, res) => {
     const questionId = req.params.questionId;
     const author = req.user.id;
 
-    const question = await Question.findById(questionId);
+    const question = await Question.findById(questionId)
+      .populate('askedBy')
+      .populate('postId');
+      
     if (!question) {
       return res.status(404).json({ error: 'Question not found' });
     }
@@ -19,6 +26,23 @@ const createAnswer = async (req, res) => {
 
     question.answers.push(answer);
     await question.save();
+
+    // Send email notification to the person who asked the question
+    if (question.askedBy.personalEmail && question.askedBy._id.toString() !== author) {
+      const answeredBy = await User.findById(author);
+      const emailContent = newAnswerTemplate(
+        question.askedBy,
+        question.postId.title,
+        question.question,
+        content,
+        answeredBy,
+        question.postId._id
+      );
+      await sendEmail({
+        to: question.askedBy.personalEmail,
+        ...emailContent
+      });
+    }
 
     // Populate the author details of the new answer
     const populatedQuestion = await Question.findById(questionId)

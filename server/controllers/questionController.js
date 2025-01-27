@@ -1,23 +1,42 @@
 const Question = require('../models/QuestionModel');
 const Post = require('../models/postModel');
+const { sendEmail } = require('../utils/emailUtils');
+const { newQuestionTemplate } = require('../utils/emailTemplates');
+const User = require('../models/userModel');
 
 // Create a new question
 const createQuestion = async (req, res) => {
   try {
     console.log(req.body);
     const { question, postId } = req.body;
-    const author=req.user.id;
+    const author = req.user.id;
 
-    const newQuestion = new Question({ question, postId, askedBy:author });
+    const newQuestion = new Question({ question, postId, askedBy: author });
     const savedQuestion = await newQuestion.save();
 
-    const post = await Post.findById(postId);
+    const post = await Post.findById(postId).populate('author');
     post.questions.push(savedQuestion._id);
     await post.save();
 
+    // Send email notification to post author
+    if (post.author.personalEmail) {
+      const askedByUser = await User.findById(author);
+      const emailContent = newQuestionTemplate(
+        post.author,
+        post.title,
+        question,
+        askedByUser,
+        post._id
+      );
+      await sendEmail({
+        to: post.author.personalEmail,
+        ...emailContent
+      });
+    }
+
     res.status(201).json(savedQuestion);
   } catch (error) {
-    console.log(error)
+    console.log(error);
     res.status(400).json({ error: error.message });
   }
 };

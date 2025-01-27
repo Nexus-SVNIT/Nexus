@@ -49,21 +49,17 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
         )}
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Modified */}
       <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-400">
         <span>{post.jobType}</span>
+        <span>•</span>
+        <span>{post.campusType}</span>
         <span>•</span>
         <span>{post.workMode}</span>
         <span>•</span>
         <span className="flex gap-1">
           {Array.isArray(post.location) ? post.location.join(', ') : post.location}
         </span>
-        {post.compensation?.stipend && (
-          <>
-            <span>•</span>
-            <span>₹{post.compensation.stipend}/month</span>
-          </>
-        )}
       </div>
 
       {/* Tags */}

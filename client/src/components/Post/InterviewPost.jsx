@@ -135,6 +135,7 @@ const InterviewPost = () => {
 
   const handleCommentSubmit = async (postId) => {
     try {
+      const loadingToast = toast.loading("Submitting comment...");
       const payload = { content: comments[postId], postId };
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments`,
@@ -143,16 +144,28 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
+      
+      toast.dismiss(loadingToast);
       toast.success("Comment submitted successfully!");
-      // Update the local state with the full comment data including author
+      
+      // Update the local state with populated comment data
+      const populatedComment = {
+        ...response.data,
+        author: {
+          fullName: response.data.author.fullName,
+          linkedInProfile: response.data.author.linkedInProfile
+        }
+      };
+      
       setPost((prevPost) => ({
         ...prevPost,
-        comments: [...prevPost.comments, response.data],
+        comments: [...prevPost.comments, populatedComment],
       }));
       setComments((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
+      toast.dismiss();
       toast.error("Error submitting comment. Please try again.");
       console.error("Error submitting comment:", error.response?.data || error);
     }
@@ -167,6 +180,7 @@ const InterviewPost = () => {
 
   const handleQuestionSubmit = async (postId) => {
     try {
+      const loadingToast = toast.loading("Submitting question...");
       const payload = { question: questions[postId], postId };
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/`,
@@ -175,28 +189,29 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
+      
+      toast.dismiss(loadingToast);
       toast.success("Question submitted successfully!");
-      // Update the local state instead of re-fetching
-      setPost((prevPost) => ({
-        ...prevPost,
-        questions: [
-          ...prevPost.questions,
-          {
-            question: questions[postId],
-            askedBy: response.data.askedBy,
-            createdAt: new Date(),
-          },
-        ],
-      }));
+
+      // Add the new question to questionsWithAnswers array
+      const newQuestion = {
+        ...response.data,
+        answers: [],
+        askedBy: {
+          fullName: response.data.askedBy.fullName,
+          linkedInProfile: response.data.askedBy.linkedInProfile
+        },
+        createdAt: new Date()
+      };
+
+      setQuestionsWithAnswers(prev => [newQuestion, ...prev]);
       setQuestions((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
+      toast.dismiss();
       toast.error("Error submitting question. Please try again.");
-      console.error(
-        "Error submitting question:",
-        error.response?.data || error,
-      );
+      console.error("Error submitting question:", error);
     }
   };
 
@@ -209,6 +224,7 @@ const InterviewPost = () => {
 
   const handleAnswerSubmit = async (questionId) => {
     try {
+      const loadingToast = toast.loading("Submitting answer...");
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${questionId}/answers`,
         { content: answers[questionId] },
@@ -216,24 +232,28 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        },
+        }
       );
 
+      toast.dismiss(loadingToast);
+      toast.success("Answer submitted successfully!");
+
+      // Update questions with the new answer
       setQuestionsWithAnswers((prev) =>
         prev.map((q) => {
           if (q._id === questionId) {
             return {
               ...q,
-              answers: [...q.answers, response.data],
+              answers: [...q.answers, response.data]
             };
           }
           return q;
-        }),
+        })
       );
 
       setAnswers((prev) => ({ ...prev, [questionId]: "" }));
-      toast.success("Answer submitted successfully!");
     } catch (error) {
+      toast.dismiss();
       toast.error("Error submitting answer. Please try again.");
       console.error("Error submitting answer:", error);
     }
@@ -290,9 +310,9 @@ const InterviewPost = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid gap-8 md:grid-cols-3">
+        <div className="grid gap-8 md:grid-cols-5">
           {/* Left Column - Main Content */}
-          <div className="space-y-8 md:col-span-2">
+          <div className="space-y-8 md:col-span-3">
             <div className="prose prose-invert max-w-none">
               {parse(post.content)}
             </div>
@@ -472,9 +492,9 @@ const InterviewPost = () => {
           </div>
 
           {/* Right Column - Interview Details */}
-          <div className="space-y-6">
-            <div className="rounded-lg bg-zinc-800 p-6">
-              <div className="mt-4 grid grid-cols-2 gap-4 rounded-lg bg-zinc-800/50 p-4 text-sm">
+          <div className="space-y-6 col-span-2">
+            <div className="rounded-lg bg-zinc-800 p-2">
+              <div className="mt-2 grid grid-cols-2 gap-4 rounded-lg bg-zinc-800/50 p-4 text-sm">
                 <div className="text-blue-400">Campus Type:</div>
                 <div className="text-gray-300">
                   {post.campusType || "Not specified"}
@@ -525,7 +545,17 @@ const InterviewPost = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-blue-400">CGPA Criteria:</div>
                     <div className="text-gray-300">
-                      {formatCGPA(post.cgpaCriteria)}
+                      Boys: {post.cgpaCriteria?.boys || 'N/A'} | Girls: {post.cgpaCriteria?.girls || 'N/A'}
+                    </div>
+
+                    <div className="text-blue-400">Shortlisted Count:</div>
+                    <div className="text-gray-300">
+                      Boys: {post.shortlistedCount?.boys || '0'} | Girls: {post.shortlistedCount?.girls || '0'}
+                    </div>
+
+                    <div className="text-blue-400">Selected Count:</div>
+                    <div className="text-gray-300">
+                      Boys: {post.selectedCount?.boys || '0'} | Girls: {post.selectedCount?.girls || '0'}
                     </div>
 
                     <div className="text-blue-400">Shortlist Criteria:</div>

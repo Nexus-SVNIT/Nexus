@@ -25,6 +25,12 @@ const PostSchema = new mongoose.Schema({
     enum: ['2 Month Internship', '6 Month Internship', 'Full Time', '6 Month Internship + Full Time'],
     required: true
   },
+  workMode: {
+    type: String,
+    enum: ['Remote', 'On-site', 'Hybrid'],
+    required: true
+  },
+  location: [String],
   selectionProcess: {
     onlineAssessment: {
       aptitude: Boolean,
@@ -56,6 +62,30 @@ const PostSchema = new mongoose.Schema({
   hiringPeriod: {
     month: Number,
     year: Number
+  },
+  cgpaCriteria: {
+    boys: { type: Number, min: 0, max: 10 },
+    girls: { type: Number, min: 0, max: 10 }
+  },
+  shortlistedCount: {
+    boys: { type: Number, min: 0 },
+    girls: { type: Number, min: 0 }
+  },
+  selectedCount: {
+    boys: { type: Number, min: 0 },
+    girls: { type: Number, min: 0 }
+  },
+  isVerified: {
+    type: Boolean,
+    default: false
+  },
+  verifiedBy: {
+    type: String,
+    default: null
+  },
+  verifiedAt: {
+    type: Date,
+    default: null
   }
 }, {
   timestamps: true,

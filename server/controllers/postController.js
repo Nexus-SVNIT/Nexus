@@ -1,6 +1,8 @@
 const Post = require('../models/postModel');
 const Company = require('../models/CompanyModel');
 const User = require('../models/userModel');
+const { sendEmail } = require('../utils/emailUtils');
+const { postVerificationTemplate } = require('../utils/emailTemplates');
 
 const createPost = async (req, res) => {
   try {
@@ -139,6 +141,12 @@ const getAllPosts = async (req, res) => {
       filter.location = { $in: [new RegExp(location, 'i')] };
     }
 
+    // Check if request has core-auth-token
+    const isCoreAdmin = req.headers['core-auth-token'];
+    if (!isCoreAdmin) {
+      filter.isVerified = true; // Only show verified posts to regular users
+    }
+
     const pageNumber = parseInt(page);
     const pageSize = parseInt(limit);
 
@@ -168,20 +176,9 @@ const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('author', 'fullName linkedInProfile admissionNumber')
-      .populate({
-        path: 'comments',
-        populate: {
-          path: 'author',
-          select: 'fullName linkedInProfile'
-        }
-      })
-      .populate({
-        path: 'questions',
-        populate: {
-          path: 'askedBy',
-          select: 'fullName linkedInProfile'
-        }
-      });
+      .populate('comments')
+      .populate('questions.askedBy')
+      .populate('questions');
     
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
@@ -193,4 +190,55 @@ const getPostById = async (req, res) => {
   }
 };
 
-module.exports = { createPost, getAllPosts, getPostById };
+const getPendingPosts = async (req, res) => {
+  try {
+    const posts = await Post.find({ isVerified: false })
+      .populate('author', 'fullName linkedInProfile admissionNumber')
+      .sort({ createdAt: -1 });
+    res.status(200).json(posts);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+const verifyPost = async (req, res) => {
+  try {
+    const { postId } = req.params;
+    const verifiedBy = req.user.email;
+
+    const post = await Post.findById(postId).populate('author');
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+
+    post.isVerified = true;
+    post.verifiedBy = verifiedBy;
+    post.verifiedAt = new Date();
+    await post.save();
+
+    // Send verification email to the author
+    if (post.author.personalEmail) {
+      const emailContent = postVerificationTemplate(
+        post.author,
+        post.title,
+        post._id
+      );
+      await sendEmail({
+        to: post.author.personalEmail,
+        ...emailContent
+      });
+    }
+
+    res.status(200).json(post);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+module.exports = { 
+  createPost, 
+  getAllPosts, 
+  getPostById,
+  getPendingPosts,
+  verifyPost
+};

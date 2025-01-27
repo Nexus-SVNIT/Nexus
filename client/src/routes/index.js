@@ -24,6 +24,8 @@ import AddTeamMember from '../pages/Team/AddTeamMember.jsx'
 import CreatePost from '../components/Post/CreatePost.jsx'
 import InterviewExperiencePage from '../components/Post/InterviewExperiencePage.jsx'
 import InterviewPost from '../components/Post/InterviewPost.jsx'
+import AdminPostPage from '../pages/Post/AdminPostPage.jsx'
+import AdminPostDetail from '../pages/Post/AdminPostDetail.jsx'
 
 export const DefaultRoutes = [
   {
@@ -207,7 +209,15 @@ export const AdminRoutes = [
     path:'add-team-member',
     title: 'Add Team Member',
     component: AddTeamMember
+  },
+  {
+    path: 'verify-posts',
+    title: 'Verify Posts',
+    component: AdminPostPage
+  },
+  {
+    path: 'verify-posts/:id',
+    title: 'Verify Post',
+    component: AdminPostDetail
   }
-
-  
 ]

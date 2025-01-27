@@ -425,8 +425,6 @@ const generalNotification = async (subject, message) => {
                             </p>
                             <p style="color: #ccc;">${message}</p>
                             <p style="color: #ccc;">Visit <a href="${linkToApply}" style="color: #1a73e8;">this link</a> for more details.</p>
-                        </div>
-                        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
                             <p>Thanks,<br>Team NEXUS</p>
                         </div>
                         <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
