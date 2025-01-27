@@ -176,7 +176,13 @@ const getPostById = async (req, res) => {
   try {
     const post = await Post.findById(req.params.id)
       .populate('author', 'fullName linkedInProfile admissionNumber')
-      .populate('comments')
+      .populate({
+        path: 'comments',
+        populate: {
+          path: 'author',
+          select: 'fullName linkedInProfile admissionNumber'
+        }
+      })
       .populate('questions.askedBy')
       .populate('questions');
     

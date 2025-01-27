@@ -44,7 +44,9 @@ const createComment = async (req, res) => {
 // Get comments for a specific post
 const getCommentsByPost = async (req, res) => {
   try {
-    const comments = await Comment.find({ postId: req.params.postId }).populate('author');
+    const comments = await Comment.find({ postId: req.params.postId })
+      .populate('author', 'fullName linkedInProfile admissionNumber')
+      .sort({ createdAt: -1 });
     res.status(200).json(comments);
   } catch (error) {
     res.status(500).json({ error: error.message });

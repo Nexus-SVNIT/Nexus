@@ -362,7 +362,7 @@ const InterviewPost = () => {
                         <p key={comment._id} className="">
                           {comment.content}
                         </p>
-                        <p className="text-gray-400 flex items-center justify-between text-xs">
+                        <p className="text-gray-400 flex items-center justify-between text-xs mt-2">
                           {comment.author?.linkedInProfile ? (
                             <a
                               href={comment.author.linkedInProfile}
@@ -403,7 +403,7 @@ const InterviewPost = () => {
                       >
                         <div className="mb-2">
                           <p className="text-gray-300">{question.question}</p>
-                          <p className="text-gray-400 flex items-center justify-between text-xs">
+                          <p className="text-gray-400 flex items-center justify-between text-xs mt-2">
                             {question.askedBy?.linkedInProfile ? (
                               <a
                                 href={question.askedBy.linkedInProfile}
@@ -438,7 +438,7 @@ const InterviewPost = () => {
                                 <p className="text-gray-300">
                                   {answer.content}
                                 </p>
-                                <p className="text-gray-400 text-xs flex justify-between items-center">
+                                <p className="text-gray-400 text-xs flex justify-between items-center mt-2">
                                   {answer.author?.linkedInProfile ? (
                                     <a
                                       href={answer.author.linkedInProfile}
