@@ -151,7 +151,7 @@ const notifyAllSubscribers = async (formId) => {
 
 const getPublicForms = async (req, res) => {
     try {
-        const allForms = await Forms.find({ publish: true, isHidden: false })
+        const allForms = await Forms.find({ isHidden: false })
             .select({
                 "responseCount": { $size: "$responses" },
                 name: true,
