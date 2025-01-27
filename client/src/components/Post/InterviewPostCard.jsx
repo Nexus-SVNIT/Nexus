@@ -5,14 +5,14 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
   return (
     <div className="bg-zinc-900 rounded-lg shadow-zinc-800 shadow-lg p-4 hover:shadow-xl transition duration-200">
       {/* Title and Date */}
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
         <Link 
           to={`/interview-experiences/post/${post._id}`}
           className="text-xl font-bold text-white hover:text-blue-400 transition-colors"
         >
           {post.title}
         </Link>
-        <span className="text-sm text-gray-400">
+        <span className="text-sm text-gray-400 whitespace-nowrap">
           {new Date(post.createdAt).toLocaleDateString('en-US', {
             year: 'numeric',
             month: 'short',
@@ -22,7 +22,7 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
       </div>
 
       {/* Author and Company Info */}
-      <div className="flex items-center justify-between mt-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-2 gap-2">
         <button 
           className="px-3 py-1 bg-blue-600/20 text-blue-400 rounded-full text-sm hover:bg-blue-600/30 transition-colors cursor-pointer inline-flex items-center"
           onClick={() => handleCompanyClick(post.company)}
@@ -50,14 +50,14 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
       </div>
 
       {/* Quick Stats - Modified */}
-      <div className="mt-3 flex flex-wrap gap-3 text-sm text-gray-400">
+      <div className="mt-3 flex flex-wrap gap-2 text-sm text-gray-400">
         <span>{post.jobType}</span>
         <span>•</span>
         <span>{post.campusType}</span>
         <span>•</span>
         <span>{post.workMode}</span>
         <span>•</span>
-        <span className="flex gap-1">
+        <span className="break-all">
           {Array.isArray(post.location) ? post.location.join(', ') : post.location}
         </span>
       </div>

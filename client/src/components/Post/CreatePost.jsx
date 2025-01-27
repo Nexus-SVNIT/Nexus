@@ -198,69 +198,66 @@ const CreatePost = () => {
 
   return (
     <PostDetailWrapper>
-      <div className="bg-gray-900 mx-auto min-h-screen max-w-4xl p-6">
-        <h2 className="mb-6 text-3xl font-bold text-white">Create Post</h2>
-        <form
-          className="rounded-lg bg-zinc-900 p-6 shadow-lg"
-          onSubmit={handleSubmit}
-        >
-          {/* Title */}
-          <div className="mb-4">
-            <label className={labelClassName}>Title</label>
-            <input
-              type="text"
-              name="title"
-              value={formData.title}
-              onChange={handleChange}
-              className={inputClassName}
-              required
-            />
-          </div>
-
-          {/* Content with React Quill */}
-          <div className="mb-4">
-            <label className={labelClassName}>Content</label>
-            <div className="text-white">
-              <ReactQuill
-                value={formData.content}
-                onChange={handleEditorChange}
-                theme="snow"
-                placeholder="Write your interview experience here..."
-                className="custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800"
+      <div className="bg-gray-900 mx-auto min-h-screen p-4 sm:p-6">
+        <h2 className="mb-6 text-2xl sm:text-3xl font-bold text-white">Create Post</h2>
+        <form className="rounded-lg bg-zinc-900 p-4 sm:p-6 shadow-lg" onSubmit={handleSubmit}>
+          {/* Grid layouts */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* Title */}
+            <div className="mb-4">
+              <label className={labelClassName}>Title</label>
+              <input
+                type="text"
+                name="title"
+                value={formData.title}
+                onChange={handleChange}
+                className={inputClassName}
+                required
               />
             </div>
-          </div>
 
-          {/* Company */}
-          <div className="mb-4">
-            <label className={labelClassName}>Company</label>
-            <input
-              type="text"
-              list="companies"
-              name="company"
-              value={formData.company}
-              onChange={handleChange}
-              className={inputClassName}
-              required
-              placeholder="Select existing or type new company name"
-            />
-            <datalist id="companies">
-              {companies.map((company) => (
-                <option key={company} value={company}>
-                  {company}
-                </option>
-              ))}
-            </datalist>
+            {/* Content with React Quill */}
+            <div className="mb-4">
+              <label className={labelClassName}>Content</label>
+              <div className="text-white">
+                <ReactQuill
+                  value={formData.content}
+                  onChange={handleEditorChange}
+                  theme="snow"
+                  placeholder="Write your interview experience here..."
+                  className="custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800"
+                />
+              </div>
+            </div>
+
+            {/* Company */}
+            <div className="mb-4">
+              <label className={labelClassName}>Company</label>
+              <input
+                type="text"
+                list="companies"
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                className={inputClassName}
+                required
+                placeholder="Select existing or type new company name"
+              />
+              <datalist id="companies">
+                {companies.map((company) => (
+                  <option key={company} value={company}>
+                    {company}
+                  </option>
+                ))}
+              </datalist>
+            </div>
           </div>
 
           {/* Interview Details Section */}
           <div className="mb-4 space-y-4">
-            <h3 className="text-gray-200 text-lg font-semibold">
-              Interview Details
-            </h3>
-
-            {/* Campus and Job Type */}
-            <div className="grid grid-cols-2 gap-4">
+            <h3 className="text-gray-200 text-lg font-semibold">Interview Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Campus and Job Type */}
               <div>
                 <label className={labelClassName}>Campus Type</label>
                 <select
@@ -372,7 +369,7 @@ const CreatePost = () => {
           </div>
 
           {/* Interview Rounds */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             {Object.keys(formData.rounds).map((roundType) => (
               <div key={roundType}>
                 <label className={labelClassName}>
@@ -392,7 +389,7 @@ const CreatePost = () => {
           </div>
 
           {/* Compensation */}
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <label className={labelClassName}>Stipend (₹/month)</label>
               <input

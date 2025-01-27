@@ -263,11 +263,11 @@ const InterviewPost = () => {
 
   return (
     <PostDetailWrapper>
-      <div className="p-8">
+      <div className="p-4 sm:p-8">
         {/* Header */}
         <div className="mb-8 space-y-4 border-b border-zinc-700 pb-8">
-          <div className="flex items-start justify-between gap-4">
-            <h1 className="text-3xl font-bold text-white">{post.title}</h1>
+          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">{post.title}</h1>
             <span className="text-gray-400 whitespace-nowrap text-sm">
               {new Date(post.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -310,9 +310,9 @@ const InterviewPost = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid gap-8 md:grid-cols-5">
+        <div className="grid gap-8 grid-cols-1 lg:grid-cols-5">
           {/* Left Column - Main Content */}
-          <div className="space-y-8 md:col-span-3">
+          <div className="space-y-8 lg:col-span-3">
             <div className="prose prose-invert max-w-none">
               {parse(post.content)}
             </div>
@@ -492,7 +492,7 @@ const InterviewPost = () => {
           </div>
 
           {/* Right Column - Interview Details */}
-          <div className="space-y-6 col-span-2">
+          <div className="space-y-6 lg:col-span-2">
             <div className="rounded-lg bg-zinc-800 p-2">
               <div className="mt-2 grid grid-cols-2 gap-4 rounded-lg bg-zinc-800/50 p-4 text-sm">
                 <div className="text-blue-400">Campus Type:</div>

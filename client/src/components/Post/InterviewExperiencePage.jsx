@@ -243,7 +243,8 @@ const InterviewExperiencePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 p-6 md:mx-46 mb-36">
+    <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:mx-auto">
+      {/* Create Post Button */}
       <div className="flex justify-end mb-4">
         <Link
           to="/interview-experiences/create"
@@ -253,145 +254,152 @@ const InterviewExperiencePage = () => {
           Create New Post
         </Link>
       </div>
-      <h2 className="text-3xl font-bold mb-6 text-white">Interview Experiences</h2>
-      <div className="flex flex-wrap gap-4 mb-6">
-        <select 
-          value={companyFilter} 
-          onChange={(e) => setCompanyFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Companies</option>
-          {companies.map((c) => (
-            <option key={c} value={c}>{c}</option>
-          ))}
-        </select>
-        <select 
-          value={tagFilter} 
-          onChange={(e) => setTagFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Tags</option>
-          {tags.map((t) => (
-            <option key={t} value={t}>{t}</option>
-          ))}
-        </select>
-        <input
-          type="text"
-          placeholder="Filter by admission number"
-          value={admissionFilter}
-          onChange={(e) => setAdmissionFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
-        <div className="flex gap-2 items-center">
-          <input
-            type="date"
-            value={startDate}
-            onChange={(e) => setStartDate(e.target.value)}
-            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <span className="text-white">to</span>
-          <input
-            type="date"
-            value={endDate}
-            onChange={(e) => setEndDate(e.target.value)}
-            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-        <select 
-          value={campusTypeFilter} 
-          onChange={(e) => setCampusTypeFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
-        >
-          <option value="">All Campus Types</option>
-          <option value="In Campus">In Campus</option>
-          <option value="Off Campus">Off Campus</option>
-          <option value="Pool Campus">Pool Campus</option>
-        </select>
 
-        <select 
-          value={jobTypeFilter}
-          onChange={(e) => setJobTypeFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
-        >
-          <option value="">All Job Types</option>
-          <option value="2 Month Internship">2 Month Internship</option>
-          <option value="6 Month Internship">6 Month Internship</option>
-          <option value="Full Time">Full Time</option>
-          <option value="6 Month Internship + Full Time">Internship + Full Time</option>
-        </select>
-
-        {/* Salary Range Filters */}
-        <div className="flex gap-2 items-center">
-          <input
-            type="number"
-            placeholder="Min Stipend"
-            value={minStipendFilter}
-            onChange={(e) => setMinStipendFilter(e.target.value)}
-            className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
-          />
-          <span className="text-white">-</span>
-          <input
-            type="number"
-            placeholder="Max Stipend"
-            value={maxStipendFilter}
-            onChange={(e) => setMaxStipendFilter(e.target.value)}
-            className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
-          />
-        </div>
-        <select 
-          value={locationFilter}
-          onChange={(e) => setLocationFilter(e.target.value)}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value="">All Locations</option>
-          {locations.map((loc) => (
-            <option key={loc} value={loc}>{loc}</option>
-          ))}
-        </select>
-        <select
-          value={pageLimit}
-          onChange={(e) => {
-            setCurrentPage(1);
-            setPageLimit(parseInt(e.target.value, 10));
-          }}
-          className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          <option value={10}>10 per page</option>
-          <option value={20}>20 per page</option>
-          <option value={30}>20 per page</option>
-          <option value={50}>50 per page</option>
-        </select>
-        <button 
-          onClick={handleFilter}
-          className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
-        >
-          Filter
-        </button>
-        {(companyFilter || tagFilter || admissionFilter || startDate || endDate || campusTypeFilter || jobTypeFilter || minStipendFilter || maxStipendFilter || locationFilter) && (
-          <button 
-            onClick={handleClearFilters}
-            className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-200"
+      {/* Filters Section */}
+      <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
+          {/* Filter controls */}
+          <select 
+            value={companyFilter} 
+            onChange={(e) => setCompanyFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
-            Clear Filters
+            <option value="">All Companies</option>
+            {companies.map((c) => (
+              <option key={c} value={c}>{c}</option>
+            ))}
+          </select>
+          <select 
+            value={tagFilter} 
+            onChange={(e) => setTagFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Tags</option>
+            {tags.map((t) => (
+              <option key={t} value={t}>{t}</option>
+            ))}
+          </select>
+          <input
+            type="text"
+            placeholder="Filter by admission number"
+            value={admissionFilter}
+            onChange={(e) => setAdmissionFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <div className="flex gap-2 items-center">
+            <input
+              type="date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="text-white">to</span>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          </div>
+          <select 
+            value={campusTypeFilter} 
+            onChange={(e) => setCampusTypeFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+          >
+            <option value="">All Campus Types</option>
+            <option value="In Campus">In Campus</option>
+            <option value="Off Campus">Off Campus</option>
+            <option value="Pool Campus">Pool Campus</option>
+          </select>
+
+          <select 
+            value={jobTypeFilter}
+            onChange={(e) => setJobTypeFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
+          >
+            <option value="">All Job Types</option>
+            <option value="2 Month Internship">2 Month Internship</option>
+            <option value="6 Month Internship">6 Month Internship</option>
+            <option value="Full Time">Full Time</option>
+            <option value="6 Month Internship + Full Time">Internship + Full Time</option>
+          </select>
+
+          {/* Salary Range Filters */}
+          <div className="flex gap-2 items-center">
+            <input
+              type="number"
+              placeholder="Min Stipend"
+              value={minStipendFilter}
+              onChange={(e) => setMinStipendFilter(e.target.value)}
+              className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
+            />
+            <span className="text-white">-</span>
+            <input
+              type="number"
+              placeholder="Max Stipend"
+              value={maxStipendFilter}
+              onChange={(e) => setMaxStipendFilter(e.target.value)}
+              className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
+            />
+          </div>
+          <select 
+            value={locationFilter}
+            onChange={(e) => setLocationFilter(e.target.value)}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="">All Locations</option>
+            {locations.map((loc) => (
+              <option key={loc} value={loc}>{loc}</option>
+            ))}
+          </select>
+          <select
+            value={pageLimit}
+            onChange={(e) => {
+              setCurrentPage(1);
+              setPageLimit(parseInt(e.target.value, 10));
+            }}
+            className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value={10}>10 per page</option>
+            <option value={20}>20 per page</option>
+            <option value={30}>20 per page</option>
+            <option value={50}>50 per page</option>
+          </select>
+          <button 
+            onClick={handleFilter}
+            className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition duration-200"
+          >
+            Filter
           </button>
-        )}
+          {(companyFilter || tagFilter || admissionFilter || startDate || endDate || campusTypeFilter || jobTypeFilter || minStipendFilter || maxStipendFilter || locationFilter) && (
+            <button 
+              onClick={handleClearFilters}
+              className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-200"
+            >
+              Clear Filters
+            </button>
+          )}
+        </div>
       </div>
-      {posts.length === 0 ? (
-        <p className="text-gray-400">
-          No posts available. Be the first to share your experience!
-        </p>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {posts.map((post) => (
+
+      {/* Posts Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {posts.length === 0 ? (
+          <p className="text-gray-400">
+            No posts available. Be the first to share your experience!
+          </p>
+        ) : (
+          posts.map((post) => (
             <InterviewPostCard
               key={post._id}
               post={post}
               handleCompanyClick={handleCompanyClick}
               handleTagClick={handleTagClick}
             />
-          ))}
-        </div>
-      )}
+          ))
+        )}
+      </div>
+
       {/* Pagination Controls */}
       <div className="flex justify-center gap-2 mt-24">
         <button
