@@ -114,9 +114,9 @@ const CustomSidebar = () => {
 
           {/* Toggle Button */}
           <MenuItem
-            icon={collapsed ? <FaBars className="text-2xl" /> : <FaX className="text-2xl" />}
+            icon={collapsed ? <FaBars size={20} /> : <FaX size={20} />}
             onClick={() => setCollapsed(!collapsed)}
-            className="hover:bg-gray-800 rounded-full transition-all duration-200"
+            className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500 hover-icon"
           ></MenuItem>
         </div>
 
@@ -124,9 +124,9 @@ const CustomSidebar = () => {
         {menuList.map((item, index) => {
           return (
             <MenuItem
-              key={index}
-              icon={item.icon}
-              className="hover:bg-gray-800 transition-all duration-200 group relative overflow-visible"
+              icon={React.cloneElement(item.icon, { size: 20, className: "hover-icon" })}
+              className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500"
+              title={item.title}
             >
               {/* Bubble Animation Effect with Blue Color */}
               <div className="absolute left-0 top-0 h-full w-full rounded-full bg-blue-500/30 opacity-0 scale-0 group-hover:opacity-100 group-hover:scale-100 transition-all duration-300"></div>
@@ -146,6 +146,11 @@ const CustomSidebar = () => {
           );
         })}
       </Menu>
+      <style jsx>{`
+          .pro-sidebar > .pro-sidebar-inner{
+            background-color: transparent;
+          }
+        `}</style>
     </ProSidebar>
   );
 };

@@ -7,3 +7,7 @@
 html {
   font-family: "Montserrat", sans-serif, "Segoe UI", Tahoma, Geneva, Verdana;
 }
+
+.pro-sidebar > .pro-sidebar-inner{
+  background-color: transparent;
+}

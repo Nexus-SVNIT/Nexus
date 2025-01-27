@@ -243,7 +243,7 @@ const InterviewExperiencePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:mx-auto">
+    <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:mx-36 mb-36">
       {/* Create Post Button */}
       <div className="flex justify-end mb-4">
         <Link
