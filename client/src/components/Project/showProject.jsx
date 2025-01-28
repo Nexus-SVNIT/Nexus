@@ -59,7 +59,7 @@ const ShowProject = () => {
                 <h1 className="text-4xl font-bold mb-6 text-center">Ongoing Projects</h1>
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                     {projects.map((project) => (
-                        <div key={project._id} className="bg-gray-800 border border-blue-500 p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+                        <div key={project._id} className="bg-gray-800 border border-blue-500 p-8 rounded-lg shadow-lg transition-transform transform hover:scale-[1.01]">
                             <h2 className="text-3xl font-semibold mb-4">{project.title}</h2>
                             <p className="text-gray-300 mb-6">{project.description}</p>
                             <p className="text-blue-400 mb-4">

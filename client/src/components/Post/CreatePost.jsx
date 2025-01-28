@@ -115,7 +115,7 @@ const CreatePost = () => {
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: type === "number" ? Number(value) : value,
+          [child]: type === "number" ? (value === "" ? "" : Number(value)) : value,
         },
       }));
     } else {
@@ -169,14 +169,31 @@ const CreatePost = () => {
       const token = localStorage.getItem("token");
       const tagsArray = formData.tags.split(",").map((tag) => tag.trim());
 
-      // Convert compensation values to numbers
+      // Convert compensation values to numbers, empty strings become null
       const processedData = {
         ...formData,
         tags: tagsArray,
         compensation: {
-          stipend: Number(formData.compensation.stipend) || null,
-          ctc: Number(formData.compensation.ctc) || null,
-          baseSalary: Number(formData.compensation.baseSalary) || null,
+          stipend: formData.compensation.stipend === "" ? null : Number(formData.compensation.stipend),
+          ctc: formData.compensation.ctc === "" ? null : Number(formData.compensation.ctc),
+          baseSalary: formData.compensation.baseSalary === "" ? null : Number(formData.compensation.baseSalary),
+        },
+        rounds: {
+          technical: formData.rounds.technical === "" ? 0 : Number(formData.rounds.technical),
+          hr: formData.rounds.hr === "" ? 0 : Number(formData.rounds.hr),
+          hybrid: formData.rounds.hybrid === "" ? 0 : Number(formData.rounds.hybrid),
+        },
+        cgpaCriteria: {
+          boys: formData.cgpaCriteria.boys === "" ? null : Number(formData.cgpaCriteria.boys),
+          girls: formData.cgpaCriteria.girls === "" ? null : Number(formData.cgpaCriteria.girls),
+        },
+        shortlistedCount: {
+          boys: formData.shortlistedCount.boys === "" ? null : Number(formData.shortlistedCount.boys),
+          girls: formData.shortlistedCount.girls === "" ? null : Number(formData.shortlistedCount.girls),
+        },
+        selectedCount: {
+          boys: formData.selectedCount.boys === "" ? null : Number(formData.selectedCount.boys),
+          girls: formData.selectedCount.girls === "" ? null : Number(formData.selectedCount.girls),
         },
       };
 
@@ -498,7 +515,7 @@ const CreatePost = () => {
             </h3>
 
             {/* CGPA Criteria */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClassName}>CGPA Criteria (Boys)</label>
                 <input
@@ -528,7 +545,7 @@ const CreatePost = () => {
             </div>
 
             {/* Shortlisting Statistics */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClassName}>Shortlisted Boys</label>
                 <input
@@ -554,7 +571,7 @@ const CreatePost = () => {
             </div>
 
             {/* Selected Candidates */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClassName}>Selected Boys</label>
                 <input
@@ -580,7 +597,7 @@ const CreatePost = () => {
             </div>
 
             {/* Work Mode and Location */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className={labelClassName}>Work Mode</label>
                 <select
