@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { Link } from "react-router-dom";
 import InterviewPostCard from './InterviewPostCard';
 import { FaPenToSquare } from "react-icons/fa6";
+import increamentCounter from "../../libs/increamentCounter";
 
 const formatCompensation = (compensation) => {
   if (!compensation) return 'Not disclosed';
@@ -128,6 +129,10 @@ const InterviewExperiencePage = () => {
   useEffect(() => {
     fetchPosts();
   }, [token, currentPage, pageLimit]);
+
+  useEffect(()=>{
+    increamentCounter();
+  },[]);
 
   const handleFilter = () => {
     fetchPosts({ 

@@ -8,8 +8,14 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import "./CreatePost.css";
 import PostDetailWrapper from "./PostDetailWrapper";
+import increamentCounter from "../../libs/increamentCounter";
 
 const CreatePost = () => {
+
+  useEffect(()=>{
+    increamentCounter();
+  },[]);
+
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({

@@ -5,6 +5,7 @@ import { toast } from "react-hot-toast";
 import parse from "html-react-parser";
 import PostDetailWrapper from "./PostDetailWrapper";
 import Loader from "../Loader/Loader";
+import increamentCounter from "../../libs/increamentCounter";
 
 // Utility functions
 const formatCompensation = (compensation) => {
@@ -66,6 +67,10 @@ const InterviewPost = () => {
   const [answers, setAnswers] = useState({});
   const token = localStorage.getItem("token");
 
+  useEffect(()=>{
+    increamentCounter();
+  },[]);
+  
   useEffect(() => {
     const checkAuth = () => {
       if (!token) {
