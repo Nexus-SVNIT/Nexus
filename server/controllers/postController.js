@@ -2,7 +2,7 @@ const Post = require('../models/postModel');
 const Company = require('../models/CompanyModel');
 const User = require('../models/userModel');
 const { sendEmail } = require('../utils/emailUtils');
-const { postVerificationTemplate } = require('../utils/emailTemplates');
+const { postVerificationTemplate, postCreationTemplate } = require('../utils/emailTemplates');
 
 const createPost = async (req, res) => {
   try {
@@ -67,6 +67,16 @@ const createPost = async (req, res) => {
     // Link post to company
     companyRecord.posts.push(savedPost._id);
     await companyRecord.save();
+
+    // Send email notification to author
+    const author = await User.findById(req.user.id);
+    if (author.personalEmail) {
+      const emailContent = postCreationTemplate(author, title, savedPost._id);
+      await sendEmail({
+        to: author.personalEmail,
+        ...emailContent
+      });
+    }
 
     res.status(201).json(savedPost);
   } catch (error) {

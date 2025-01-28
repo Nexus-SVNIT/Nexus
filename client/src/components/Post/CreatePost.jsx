@@ -11,10 +11,9 @@ import PostDetailWrapper from "./PostDetailWrapper";
 import increamentCounter from "../../libs/increamentCounter";
 
 const CreatePost = () => {
-
-  useEffect(()=>{
+  useEffect(() => {
     increamentCounter();
-  },[]);
+  }, []);
 
   const navigate = useNavigate();
 
@@ -73,7 +72,7 @@ const CreatePost = () => {
     location: [], // Initialize as empty array
     offerDetails: {
       receivedOffer: false,
-      acceptedOffer: false
+      acceptedOffer: false,
     },
   });
 
@@ -81,15 +80,24 @@ const CreatePost = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    const checkAuth = () => {
+      if (!token) {
+        toast.error("Please login to view this page");
+        navigate("/login");
+        return false;
+      }
+      return true;
+    };
     const fetchCompanies = async () => {
       try {
+        if (!checkAuth()) return;
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/api/companies`,
           {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+            headers: { Authorization: `Bearer ${token}` },
+          },
         );
-        setCompanies(response.data.map(company => company.name));
+        setCompanies(response.data.map((company) => company.name));
       } catch (error) {
         console.error("Error fetching companies:", error);
       }
@@ -119,7 +127,8 @@ const CreatePost = () => {
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: type === "number" ? (value === "" ? "" : Number(value)) : value,
+          [child]:
+            type === "number" ? (value === "" ? "" : Number(value)) : value,
         },
       }));
     } else {
@@ -178,26 +187,57 @@ const CreatePost = () => {
         ...formData,
         tags: tagsArray,
         compensation: {
-          stipend: formData.compensation.stipend === "" ? null : Number(formData.compensation.stipend),
-          ctc: formData.compensation.ctc === "" ? null : Number(formData.compensation.ctc),
-          baseSalary: formData.compensation.baseSalary === "" ? null : Number(formData.compensation.baseSalary),
+          stipend:
+            formData.compensation.stipend === ""
+              ? null
+              : Number(formData.compensation.stipend),
+          ctc:
+            formData.compensation.ctc === ""
+              ? null
+              : Number(formData.compensation.ctc),
+          baseSalary:
+            formData.compensation.baseSalary === ""
+              ? null
+              : Number(formData.compensation.baseSalary),
         },
         rounds: {
-          technical: formData.rounds.technical === "" ? 0 : Number(formData.rounds.technical),
+          technical:
+            formData.rounds.technical === ""
+              ? 0
+              : Number(formData.rounds.technical),
           hr: formData.rounds.hr === "" ? 0 : Number(formData.rounds.hr),
-          hybrid: formData.rounds.hybrid === "" ? 0 : Number(formData.rounds.hybrid),
+          hybrid:
+            formData.rounds.hybrid === "" ? 0 : Number(formData.rounds.hybrid),
         },
         cgpaCriteria: {
-          boys: formData.cgpaCriteria.boys === "" ? null : Number(formData.cgpaCriteria.boys),
-          girls: formData.cgpaCriteria.girls === "" ? null : Number(formData.cgpaCriteria.girls),
+          boys:
+            formData.cgpaCriteria.boys === ""
+              ? null
+              : Number(formData.cgpaCriteria.boys),
+          girls:
+            formData.cgpaCriteria.girls === ""
+              ? null
+              : Number(formData.cgpaCriteria.girls),
         },
         shortlistedCount: {
-          boys: formData.shortlistedCount.boys === "" ? null : Number(formData.shortlistedCount.boys),
-          girls: formData.shortlistedCount.girls === "" ? null : Number(formData.shortlistedCount.girls),
+          boys:
+            formData.shortlistedCount.boys === ""
+              ? null
+              : Number(formData.shortlistedCount.boys),
+          girls:
+            formData.shortlistedCount.girls === ""
+              ? null
+              : Number(formData.shortlistedCount.girls),
         },
         selectedCount: {
-          boys: formData.selectedCount.boys === "" ? null : Number(formData.selectedCount.boys),
-          girls: formData.selectedCount.girls === "" ? null : Number(formData.selectedCount.girls),
+          boys:
+            formData.selectedCount.boys === ""
+              ? null
+              : Number(formData.selectedCount.boys),
+          girls:
+            formData.selectedCount.girls === ""
+              ? null
+              : Number(formData.selectedCount.girls),
         },
       };
 
@@ -226,10 +266,15 @@ const CreatePost = () => {
   return (
     <PostDetailWrapper>
       <div className="bg-gray-900 mx-auto min-h-screen p-4 sm:p-6">
-        <h2 className="mb-6 text-2xl sm:text-3xl font-bold text-white">Create Post</h2>
-        <form className="rounded-lg bg-zinc-900 p-4 sm:p-6 shadow-lg" onSubmit={handleSubmit}>
+        <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">
+          Create Post
+        </h2>
+        <form
+          className="rounded-lg bg-zinc-900 p-4 shadow-lg sm:p-6"
+          onSubmit={handleSubmit}
+        >
           {/* Grid layouts */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Title */}
             <div className="mb-4">
               <label className={labelClassName}>Title</label>
@@ -252,7 +297,7 @@ const CreatePost = () => {
                   onChange={handleEditorChange}
                   theme="snow"
                   placeholder="Write your interview experience here..."
-                  className="text-white custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800"
+                  className="custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800 text-white"
                 />
               </div>
             </div>
@@ -282,8 +327,10 @@ const CreatePost = () => {
 
           {/* Interview Details Section */}
           <div className="mb-4 space-y-4">
-            <h3 className="text-gray-200 text-lg font-semibold">Interview Details</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <h3 className="text-gray-200 text-lg font-semibold">
+              Interview Details
+            </h3>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               {/* Campus and Job Type */}
               <div>
                 <label className={labelClassName}>Campus Type</label>
@@ -332,7 +379,7 @@ const CreatePost = () => {
                 <h5 className="text-gray-300 text-sm font-medium">
                   Online Assessment
                 </h5>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
                   {Object.entries(
                     formData.selectionProcess.onlineAssessment,
                   ).map(([key, value]) => (
@@ -370,7 +417,9 @@ const CreatePost = () => {
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200" htmlFor="groupDiscussion">Group Discussion</label>
+                  <label className="text-gray-200" htmlFor="groupDiscussion">
+                    Group Discussion
+                  </label>
                 </div>
                 <div className="flex items-center">
                   <input
@@ -381,7 +430,9 @@ const CreatePost = () => {
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200" htmlFor="onlineInterview">Online Interview</label>
+                  <label className="text-gray-200" htmlFor="onlineInterview">
+                    Online Interview
+                  </label>
                 </div>
                 <div className="flex items-center">
                   <input
@@ -392,14 +443,16 @@ const CreatePost = () => {
                     onChange={handleSelectionProcessChange}
                     className="mr-2 rounded border-zinc-600 bg-zinc-700"
                   />
-                  <label className="text-gray-200" htmlFor="offlineInterview">Offline Interview</label>
+                  <label className="text-gray-200" htmlFor="offlineInterview">
+                    Offline Interview
+                  </label>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Interview Rounds */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+          <div className="my-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             {Object.keys(formData.rounds).map((roundType) => (
               <div key={roundType}>
                 <label className={labelClassName}>
@@ -419,7 +472,7 @@ const CreatePost = () => {
           </div>
 
           {/* Compensation */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 my-4">
+          <div className="my-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
             <div>
               <label className={labelClassName}>Stipend (₹/month)</label>
               <input
@@ -453,7 +506,7 @@ const CreatePost = () => {
           </div>
 
           {/* Add Hiring Period before Difficulty Level */}
-          <div className="grid grid-cols-2 gap-4 my-4">
+          <div className="my-4 grid grid-cols-2 gap-4">
             <div>
               <label className={labelClassName}>Hiring Month</label>
               <select
@@ -513,13 +566,13 @@ const CreatePost = () => {
           </div>
 
           {/* Placement Statistics */}
-          <div className="mb-4 space-y-4 my-4">
+          <div className="my-4 mb-4 space-y-4">
             <h3 className="text-gray-200 text-lg font-semibold">
               Placement Statistics
             </h3>
 
             {/* CGPA Criteria */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className={labelClassName}>CGPA Criteria (Boys)</label>
                 <input
@@ -549,7 +602,7 @@ const CreatePost = () => {
             </div>
 
             {/* Shortlisting Statistics */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className={labelClassName}>Shortlisted Boys</label>
                 <input
@@ -575,7 +628,7 @@ const CreatePost = () => {
             </div>
 
             {/* Selected Candidates */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className={labelClassName}>Selected Boys</label>
                 <input
@@ -601,7 +654,7 @@ const CreatePost = () => {
             </div>
 
             {/* Work Mode and Location */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
                 <label className={labelClassName}>Work Mode</label>
                 <select
@@ -636,7 +689,9 @@ const CreatePost = () => {
 
           {/* Offer Status */}
           <div className="mb-4 space-y-4">
-            <h3 className="text-gray-200 text-lg font-semibold">Offer Status</h3>
+            <h3 className="text-gray-200 text-lg font-semibold">
+              Offer Status
+            </h3>
             <div className="flex items-center space-x-4">
               <div className="flex items-center">
                 <input
@@ -647,14 +702,16 @@ const CreatePost = () => {
                   onChange={(e) => {
                     const { checked } = e.target;
                     console.log("Received offer checked:", checked); // Add debug log
-                    setFormData(prev => {
+                    setFormData((prev) => {
                       const newState = {
                         ...prev,
                         offerDetails: {
                           ...prev.offerDetails,
                           receivedOffer: checked,
-                          acceptedOffer: checked ? prev.offerDetails.acceptedOffer : false
-                        }
+                          acceptedOffer: checked
+                            ? prev.offerDetails.acceptedOffer
+                            : false,
+                        },
                       };
                       console.log("New form state:", newState); // Add debug log
                       return newState;
@@ -675,12 +732,12 @@ const CreatePost = () => {
                   checked={formData.offerDetails.acceptedOffer}
                   disabled={!formData.offerDetails.receivedOffer}
                   onChange={(e) => {
-                    setFormData(prev => ({
+                    setFormData((prev) => ({
                       ...prev,
                       offerDetails: {
                         ...prev.offerDetails,
-                        acceptedOffer: e.target.checked
-                      }
+                        acceptedOffer: e.target.checked,
+                      },
                     }));
                   }}
                   className="mr-2 rounded border-zinc-600 bg-zinc-700 disabled:opacity-50"
@@ -730,7 +787,23 @@ const CreatePost = () => {
             color: white;
             background-color: rgb(63 63 70); /* Dark shade of zinc */
           }
-          .custom-quill .ql-picker-options {            min-width: fit-content;            background-color: rgb(63 63 70); /* Dark shade of zinc */          }          .custom-quill .ql-stroke {            stroke: white;          }          .custom-quill .ql-fill {            fill: white;          }          .custom-quill .ql-editor::before {            color: white; /* Placeholder text color */          }        `}</style>      </div>    </PostDetailWrapper>  );
+          .custom-quill .ql-picker-options {
+            min-width: fit-content;
+            background-color: rgb(63 63 70); /* Dark shade of zinc */
+          }
+          .custom-quill .ql-stroke {
+            stroke: white;
+          }
+          .custom-quill .ql-fill {
+            fill: white;
+          }
+          .custom-quill .ql-editor::before {
+            color: white; /* Placeholder text color */
+          }
+        `}</style>{" "}
+      </div>{" "}
+    </PostDetailWrapper>
+  );
 };
 
 export default CreatePost;
