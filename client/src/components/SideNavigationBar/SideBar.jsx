@@ -87,7 +87,7 @@ const CustomSidebar = () => {
   return (
     <ProSidebar
       collapsed={collapsed}
-      className="!bg-slate-950 fixed left-0 top-0 z-9999 h-screen text-white transition-all duration-300 overflow-visible"
+      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-95"
     >
       <Menu iconShape="circle" className="absolute left-0 top-0 overflow-visible">
         {/* Sidebar Toggle and Logo Section */}
