@@ -57,15 +57,38 @@ const getQuestionsByPost = async (req, res) => {
 // Answer a question
 const answerQuestion = async (req, res) => {
   try {
-    const { content, author } = req.body;
-    const question = await Question.findById(req.params.id);
+    const { content } = req.body;
+    const questionId = req.params.id;
+    
+    const question = await Question.findById(questionId)
+      .populate({
+        path: 'postId',
+        select: 'author'
+      });
 
-    if (!question) return res.status(404).json({ error: 'Question not found' });
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
 
-    question.answers.push({ content, author });
+    // Check if current user is the post author
+    if (question.postId.author.toString() !== req.user.id) {
+      return res.status(403).json({ 
+        error: 'Only the original post author can answer questions' 
+      });
+    }
+
+    question.answers.push({ 
+      content, 
+      author: req.user.id 
+    });
+    
     await question.save();
 
-    res.status(200).json(question);
+    // Populate author details in the new answer
+    const populatedQuestion = await Question.findById(questionId)
+      .populate('answers.author', 'fullName linkedInProfile');
+
+    res.status(200).json(populatedQuestion);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }

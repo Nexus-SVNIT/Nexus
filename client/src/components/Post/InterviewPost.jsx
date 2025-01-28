@@ -261,6 +261,9 @@ const InterviewPost = () => {
 
   if (isLoading) return <Loader />;
 
+  // Add isPostAuthor check
+  const isPostAuthor = post.author?._id === JSON.parse(atob(token.split('.')[1])).id;
+
   return (
     <PostDetailWrapper>
       <div className="p-4 sm:p-8">
@@ -464,23 +467,29 @@ const InterviewPost = () => {
                           </div>
                         )}
 
-                        {/* Add answer form */}
-                        <div className="mt-4">
-                          <textarea
-                            className="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                            placeholder="Write an answer..."
-                            value={answers[question._id] || ""}
-                            onChange={(e) =>
-                              handleAnswerChange(question._id, e.target.value)
-                            }
-                          />
-                          <button
-                            className="mt-2 rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
-                            onClick={() => handleAnswerSubmit(question._id)}
-                          >
-                            Submit Answer
-                          </button>
-                        </div>
+                        {/* Add answer form - only for post author */}
+                        {isPostAuthor ? (
+                          <div className="mt-4">
+                            <textarea
+                              className="w-full rounded-lg border border-zinc-700 bg-zinc-800/50 p-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                              placeholder="Write an answer..."
+                              value={answers[question._id] || ""}
+                              onChange={(e) =>
+                                handleAnswerChange(question._id, e.target.value)
+                              }
+                            />
+                            <button
+                              className="mt-2 rounded bg-green-600 px-3 py-1 text-sm text-white hover:bg-green-700"
+                              onClick={() => handleAnswerSubmit(question._id)}
+                            >
+                              Submit Answer
+                            </button>
+                          </div>
+                        ) : (
+                          <p className="mt-4 text-sm text-gray-400 italic">
+                            Only the original post author can answer questions
+                          </p>
+                        )}
                       </div>
                     ))}
                   </div>

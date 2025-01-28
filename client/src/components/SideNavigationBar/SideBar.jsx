@@ -16,6 +16,7 @@ import {
 import {
   FaFileLines,
   FaPeopleGroup,
+  FaRightFromBracket,
   FaRightToBracket,
   FaX,
 } from "react-icons/fa6";
@@ -81,23 +82,32 @@ const CustomSidebar = () => {
       icon: <FaInfo />,
       link: "/about",
     },
-    {
+  ];
+
+  if(localStorage.getItem('token') === null){
+    menuList.push({
       title: "Login",
       icon: <FaRightToBracket />,
       link: "/login",
-    },
-  ];
+    });
+  } else {
+    menuList.push({
+      title: "Logout",
+      icon: <FaRightFromBracket />,
+      link: "/logout",
+    });
+  }
 
   return (
     <ProSidebar
       collapsed={collapsed}
-      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-90"
+      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-95"
     >
       <Menu iconShape="circle" className={`absolute left-0 top-0 text-white`}>
         {/* Sidebar Toggle */}
         <div className="flex justify-evenly">
           {!collapsed && (
-            <MenuItem className="hover:bg-gray-100">
+            <MenuItem className="hover:bg-gray-100" onClick={() => setCollapsed(!collapsed)}>
               <div className="ml-4 flex items-center">
                 <Link to={"/"}>
                   <img
@@ -126,6 +136,7 @@ const CustomSidebar = () => {
               icon={React.cloneElement(item.icon, { size: 20, className: "hover-icon" })}
               className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500"
               title={item.title}
+              onClick={() => setCollapsed(!collapsed)}
             >
               {!collapsed && item.title}
               <Link to={item.link} />
