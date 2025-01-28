@@ -84,20 +84,6 @@ const CustomSidebar = () => {
     },
   ];
 
-  if(localStorage.getItem('token') === null){
-    menuList.push({
-      title: "Login",
-      icon: <FaRightToBracket />,
-      link: "/login",
-    });
-  } else {
-    menuList.push({
-      title: "Logout",
-      icon: <FaRightFromBracket />,
-      link: "/logout",
-    });
-  }
-
   return (
     <ProSidebar
       collapsed={collapsed}
@@ -107,7 +93,10 @@ const CustomSidebar = () => {
         {/* Sidebar Toggle */}
         <div className="flex justify-evenly">
           {!collapsed && (
-            <MenuItem className="hover:bg-gray-100" onClick={() => setCollapsed(!collapsed)}>
+            <MenuItem
+              className="hover:bg-gray-100"
+              onClick={() => setCollapsed(true)}
+            >
               <div className="ml-4 flex items-center">
                 <Link to={"/"}>
                   <img
@@ -125,7 +114,7 @@ const CustomSidebar = () => {
           <MenuItem
             icon={collapsed ? <FaBars size={20} /> : <FaX size={20} />}
             onClick={() => setCollapsed(!collapsed)}
-            className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500 hover-icon"
+            className="hover:bg-gray-100 hover-icon transition-transform duration-200 hover:scale-110 hover:text-blue-500"
           ></MenuItem>
         </div>
 
@@ -133,10 +122,13 @@ const CustomSidebar = () => {
         {menuList.map((item, index) => {
           return (
             <MenuItem
-              icon={React.cloneElement(item.icon, { size: 20, className: "hover-icon" })}
-              className="hover:bg-gray-100 hover:scale-110 transition-transform duration-200 hover:text-blue-500"
+              icon={React.cloneElement(item.icon, {
+                size: 20,
+                className: "hover-icon",
+              })}
+              className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
               title={item.title}
-              onClick={() => setCollapsed(!collapsed)}
+              onClick={() => setCollapsed(true)}
             >
               {!collapsed && item.title}
               <Link to={item.link} />
@@ -148,12 +140,40 @@ const CustomSidebar = () => {
           <MenuItem className="hover:bg-gray-100">Component 1</MenuItem>
           <MenuItem className="hover:bg-gray-100">Component 2</MenuItem>
         </SubMenu> */}
+
+        {localStorage.getItem("token") ? (
+          <MenuItem
+            icon={React.cloneElement(<FaRightFromBracket />, {
+              size: 20,
+              className: "hover-icon",
+            })}
+            className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
+            title={"Logout"}
+            onClick={() => setCollapsed(true)}
+          >
+            {!collapsed && "Logout"}
+            <Link to={"/login"} />
+          </MenuItem>
+        ) : (
+          <MenuItem
+            icon={React.cloneElement(<FaRightToBracket />, {
+              size: 20,
+              className: "hover-icon",
+            })}
+            className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
+            title={"Login"}
+            onClick={() => setCollapsed(true)}
+          >
+            {!collapsed && "Login"}
+            <Link to={"/login"} />
+          </MenuItem>
+        )}
       </Menu>
       <style jsx>{`
-          .pro-sidebar > .pro-sidebar-inner{
-            background-color: transparent;
-          }
-        `}</style>
+        .pro-sidebar > .pro-sidebar-inner {
+          background-color: transparent;
+        }
+      `}</style>
     </ProSidebar>
   );
 };

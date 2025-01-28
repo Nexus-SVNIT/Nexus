@@ -26,7 +26,7 @@ const ProfilePage = () => {
   },[]);
 
   return (
-    <div>
+    <div className="px-6">
       <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
         <Toaster position="top-right" reverseOrder={false} />
         <h2 className="text-gray-800 mb-6 text-2xl font-semibold">Profile</h2>

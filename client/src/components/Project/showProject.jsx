@@ -31,11 +31,11 @@ const ShowProject = () => {
     if (isLoading) {
         return (
             <div className="bg-[#111111] min-h-screen py-6 px-4">
-                <div className="bg-gray-900 text-white p-6 rounded-md shadow-md max-w-4xl mx-auto">
+                <div className="bg-gray-900 text-white md:p-6 p-2  rounded-md shadow-md max-w-4xl mx-auto">
                     <h1 className="text-3xl font-bold mb-4 text-center">Ongoing Projects</h1>
                     <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                         {[...Array(4)].map((_, index) => (
-                            <div key={index} className="bg-gray-800 border border-blue-500 p-8 rounded-lg shadow-lg animate-pulse">
+                            <div key={index} className="bg-gray-800 border border-blue-500 p-2 md:p-8 rounded-lg shadow-lg animate-pulse">
                                 <div className="h-8 bg-gray-700 mb-6 rounded"></div>
                                 <div className="h-4 bg-gray-600 mb-3 rounded"></div>
                                 <div className="h-4 bg-gray-600 mb-3 rounded"></div>
@@ -55,7 +55,7 @@ const ShowProject = () => {
 
     return (
         <div className="min-h-screen py-6 px-4">
-            <div className="bg-gray-900 text-white p-8 rounded-md shadow-md max-w-5xl mx-auto">
+            <div className="bg-gray-900 text-white p-2 md:p-8 rounded-md shadow-md max-w-5xl mx-auto">
                 <h1 className="text-4xl font-bold mb-6 text-center">Ongoing Projects</h1>
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                     {projects.map((project) => (
