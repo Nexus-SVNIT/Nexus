@@ -39,25 +39,36 @@ const RegisterForm = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormResponse((prevResponse) => ({
-      ...prevResponse,
-      [name]: value,
-    }));
+    setFormResponse((prevResponse) => {
+      const updatedResponse = { ...prevResponse, [name]: value };
+      sessionStorage.setItem("formResponse", JSON.stringify(updatedResponse));
+      return updatedResponse;
+    });
   };
 
   const handleTeamMemberChange = (index, value) => {
     setTeamMembers((prevMembers) => {
       const newMembers = [...prevMembers];
       newMembers[index] = value.trim().toUpperCase();
+      sessionStorage.setItem("teamMembers", JSON.stringify(newMembers));
       return newMembers;
     });
+  };
+
+  const handleTeamNameChange = (e) => {
+    const value = e.target.value;
+    setTeamName(value);
+    sessionStorage.setItem("teamName", value);
   };
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     setFormResponse((prev) => ({ ...prev, file: file }));
     const reader = new FileReader();
-    reader.onload = () => setFiles(reader.result);
+    reader.onload = () => {
+      setFiles(reader.result);
+      sessionStorage.setItem("file", reader.result);
+    };
     reader.readAsDataURL(file);
   };
 
@@ -155,6 +166,12 @@ const RegisterForm = () => {
           setFlag(true);
           setLink(res.data.WaLink);
           toast.success("Form submitted successfully!");
+
+          // Clear sessionStorage on successful submission
+          sessionStorage.removeItem("formResponse");
+          sessionStorage.removeItem("teamMembers");
+          sessionStorage.removeItem("teamName");
+          sessionStorage.removeItem("file");
         } else {
           handleFormError(res.data);
         }
@@ -194,8 +211,24 @@ const RegisterForm = () => {
           acc[field.questionText] = ""; // Initialize with empty strings
           return acc;
         }, {});
-        setFormResponse(initialResponse);
-        setTeamMembers(Array(form.teamSize || 0).fill(""));
+
+        // Retrieve form response from sessionStorage
+        const savedFormResponse = JSON.parse(sessionStorage.getItem("formResponse")) || initialResponse;
+        setFormResponse(savedFormResponse);
+
+        // Retrieve team members from sessionStorage
+        const savedTeamMembers = JSON.parse(sessionStorage.getItem("teamMembers")) || Array(form.teamSize || 0).fill("");
+        setTeamMembers(savedTeamMembers);
+
+        // Retrieve team name from sessionStorage
+        const savedTeamName = sessionStorage.getItem("teamName") || "";
+        setTeamName(savedTeamName);
+
+        // Retrieve file data from sessionStorage
+        const savedFile = sessionStorage.getItem("file");
+        if (savedFile) {
+          setFiles(savedFile);
+        }
       })
       .catch((e) => {
         console.error(e);
@@ -262,16 +295,17 @@ const RegisterForm = () => {
                 </div>
               </p>
             )}
-            { formData.extraLink && formData.extraLinkName && 
+            {formData.extraLink && formData.extraLinkName && (
               <p className="text-md px-4 text-slate-500 md:py-2">
-              <a
-                href={formData.extraLink}
-                target="_blank"
-                className="font-bold italic text-blue-700 hover:underline"
-              >
-                {formData.extraLinkName}
-              </a>
-            </p>}
+                <a
+                  href={formData.extraLink}
+                  target="_blank"
+                  className="font-bold italic text-blue-700 hover:underline"
+                >
+                  {formData.extraLinkName}
+                </a>
+              </p>
+            )}
             <p className="text-md px-4 text-slate-700 md:py-2">
               <strong>Deadline:</strong> {formData.deadline}
             </p>
@@ -297,17 +331,8 @@ const RegisterForm = () => {
                   questionType: "text",
                 }}
                 inputValue={teamName || ""}
-                onInputChange={(e) => setTeamName(e.target.value)}
+                onInputChange={handleTeamNameChange}
               />
-              {/* <input
-                  key={-1}
-                  type="text"
-                  value={teamName || ""}
-                  onChange={(e) => setTeamName(e.target.value)}
-                  placeholder={`Team Name`}
-                  className="my-2 w-full text-black rounded-md border border-gray-300 p-2"
-                  required
-                /> */}
               {[...Array(formData.teamSize)].map((_, index) => (
                 <QuestionBox
                   key={100 + index}
@@ -332,7 +357,7 @@ const RegisterForm = () => {
               <input
                 type="file"
                 accept="image/*"
-                onChange={(e) => setFiles(e.target.files[0])}
+                onChange={handleImageChange}
                 className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
                 required
               />

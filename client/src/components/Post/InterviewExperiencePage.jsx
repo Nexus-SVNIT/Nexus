@@ -54,26 +54,37 @@ const InterviewExperiencePage = () => {
   const [posts, setPosts] = useState([]);
   const [comments, setComments] = useState({});
   const [questions, setQuestions] = useState({});
-  const [companyFilter, setCompanyFilter] = useState("");
-  const [tagFilter, setTagFilter] = useState("");
   const [companies, setCompanies] = useState([]);
   const [tags, setTags] = useState([]);
-  const [admissionFilter, setAdmissionFilter] = useState("");
-  const [startDate, setStartDate] = useState("");
-  const [endDate, setEndDate] = useState("");
-  const [campusTypeFilter, setCampusTypeFilter] = useState("");
-  const [jobTypeFilter, setJobTypeFilter] = useState("");
-  const [minStipendFilter, setMinStipendFilter] = useState("");
-  const [maxStipendFilter, setMaxStipendFilter] = useState("");
-  const [minCTCFilter, setMinCTCFilter] = useState("");
-  const [maxCTCFilter, setMaxCTCFilter] = useState("");
-  const [difficultyFilter, setDifficultyFilter] = useState("");
-  const [locationFilter, setLocationFilter] = useState("");
-  const [locations, setLocations] = useState([]); // New state for locations
+  const [locations, setLocations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageLimit, setPageLimit] = useState(5); // New limit state
+  const [pageLimit, setPageLimit] = useState(5);
   const token = localStorage.getItem("token");
+
+  const [formState, setFormState] = useState({
+    companyFilter: "",
+    tagFilter: "",
+    admissionFilter: "",
+    startDate: "",
+    endDate: "",
+    campusTypeFilter: "",
+    jobTypeFilter: "",
+    minStipendFilter: "",
+    maxStipendFilter: "",
+    locationFilter: "",
+  });
+
+  // Load saved form state from localStorage on component mount
+  useEffect(() => {
+    const savedFormState = JSON.parse(localStorage.getItem("formState")) || {};
+    setFormState(savedFormState);
+  }, []);
+
+  // Save form state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("formState", JSON.stringify(formState));
+  }, [formState]);
 
   const fetchPosts = async (filters = {}) => {
     try {
@@ -81,7 +92,7 @@ const InterviewExperiencePage = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`, {
           headers: {
-            Authorization: `Bearer ${token}`, // Include Bearer token in headers
+            Authorization: `Bearer ${token}`,
           },
           params: {
             companyName: filters.companyName || "",
@@ -102,20 +113,20 @@ const InterviewExperiencePage = () => {
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
       const uniqueCompanies = [...new Set(response.data.posts.map((p) => p.company))]
-        .filter(Boolean)  // Remove any null/undefined values
-        .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
       
       const uniqueTags = [...new Set(response.data.posts.flatMap((p) => p.tags))]
-        .filter(Boolean)  // Remove any null/undefined values
-        .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
 
       const uniqueLocations = [...new Set(response.data.posts.flatMap((p) => p.location))]
-        .filter(Boolean)  // Remove any null/undefined values
-        .sort((a, b) => a.localeCompare(b));  // Sort alphabetically
+        .filter(Boolean)
+        .sort((a, b) => a.localeCompare(b));
       
       setCompanies(uniqueCompanies);
       setTags(uniqueTags);
-      setLocations(uniqueLocations); // Set unique locations
+      setLocations(uniqueLocations);
       toast.dismiss();
       toast.success("Posts loaded successfully!");
     } catch (error) {
@@ -130,36 +141,45 @@ const InterviewExperiencePage = () => {
     fetchPosts();
   }, [token, currentPage, pageLimit]);
 
-  useEffect(()=>{
+  useEffect(() => {
     increamentCounter();
-  },[]);
+  }, []);
+
+  const handleFilterChange = (key, value) => {
+    setFormState((prevState) => ({
+      ...prevState,
+      [key]: value,
+    }));
+  };
 
   const handleFilter = () => {
     fetchPosts({ 
-      companyName: companyFilter, 
-      tag: tagFilter,
-      admissionNumber: admissionFilter,
-      startDate,
-      endDate,
-      campusType: campusTypeFilter,
-      jobType: jobTypeFilter,
-      minStipend: minStipendFilter,
-      maxStipend: maxStipendFilter,
-      location: locationFilter,
+      companyName: formState.companyFilter, 
+      tag: formState.tagFilter,
+      admissionNumber: formState.admissionFilter,
+      startDate: formState.startDate,
+      endDate: formState.endDate,
+      campusType: formState.campusTypeFilter,
+      jobType: formState.jobTypeFilter,
+      minStipend: formState.minStipendFilter,
+      maxStipend: formState.maxStipendFilter,
+      location: formState.locationFilter,
     });
   };
 
   const handleClearFilters = () => {
-    setCompanyFilter("");
-    setTagFilter("");
-    setAdmissionFilter("");
-    setStartDate("");
-    setEndDate("");
-    setCampusTypeFilter("");
-    setJobTypeFilter("");
-    setMinStipendFilter("");
-    setMaxStipendFilter("");
-    setLocationFilter("");
+    setFormState({
+      companyFilter: "",
+      tagFilter: "",
+      admissionFilter: "",
+      startDate: "",
+      endDate: "",
+      campusTypeFilter: "",
+      jobTypeFilter: "",
+      minStipendFilter: "",
+      maxStipendFilter: "",
+      locationFilter: "",
+    });
     fetchPosts({});
   };
 
@@ -190,7 +210,6 @@ const InterviewExperiencePage = () => {
         }
       );
       alert("Comment submitted successfully!");
-      // Update the local state instead of re-fetching
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post._id === postId
@@ -218,7 +237,6 @@ const InterviewExperiencePage = () => {
         }
       );
       alert("Question submitted successfully!");
-      // Update the local state instead of re-fetching
       setPosts((prevPosts) =>
         prevPosts.map((post) =>
           post._id === postId
@@ -234,13 +252,13 @@ const InterviewExperiencePage = () => {
   };
 
   const handleCompanyClick = (companyName) => {
-    setCompanyFilter(companyName);
-    fetchPosts({ companyName, tag: tagFilter });
+    setFormState((prev) => ({ ...prev, companyFilter: companyName }));
+    fetchPosts({ companyName, tag: formState.tagFilter });
   };
 
   const handleTagClick = (tag) => {
-    setTagFilter(tag);
-    fetchPosts({ companyName: companyFilter, tag });
+    setFormState((prev) => ({ ...prev, tagFilter: tag }));
+    fetchPosts({ companyName: formState.companyFilter, tag });
   };
 
   const handlePageChange = (newPage) => {
@@ -265,8 +283,8 @@ const InterviewExperiencePage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
           {/* Filter controls */}
           <select 
-            value={companyFilter} 
-            onChange={(e) => setCompanyFilter(e.target.value)}
+            value={formState.companyFilter} 
+            onChange={(e) => handleFilterChange("companyFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Companies</option>
@@ -275,8 +293,8 @@ const InterviewExperiencePage = () => {
             ))}
           </select>
           <select 
-            value={tagFilter} 
-            onChange={(e) => setTagFilter(e.target.value)}
+            value={formState.tagFilter} 
+            onChange={(e) => handleFilterChange("tagFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Tags</option>
@@ -287,28 +305,28 @@ const InterviewExperiencePage = () => {
           <input
             type="text"
             placeholder="Filter by admission number"
-            value={admissionFilter}
-            onChange={(e) => setAdmissionFilter(e.target.value)}
+            value={formState.admissionFilter}
+            onChange={(e) => handleFilterChange("admissionFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex gap-2 items-center">
             <input
               type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
+              value={formState.startDate}
+              onChange={(e) => handleFilterChange("startDate", e.target.value)}
               className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <span className="text-white">to</span>
             <input
               type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
+              value={formState.endDate}
+              onChange={(e) => handleFilterChange("endDate", e.target.value)}
               className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <select 
-            value={campusTypeFilter} 
-            onChange={(e) => setCampusTypeFilter(e.target.value)}
+            value={formState.campusTypeFilter} 
+            onChange={(e) => handleFilterChange("campusTypeFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
           >
             <option value="">All Campus Types</option>
@@ -318,8 +336,8 @@ const InterviewExperiencePage = () => {
           </select>
 
           <select 
-            value={jobTypeFilter}
-            onChange={(e) => setJobTypeFilter(e.target.value)}
+            value={formState.jobTypeFilter}
+            onChange={(e) => handleFilterChange("jobTypeFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700"
           >
             <option value="">All Job Types</option>
@@ -334,22 +352,22 @@ const InterviewExperiencePage = () => {
             <input
               type="number"
               placeholder="Min Stipend"
-              value={minStipendFilter}
-              onChange={(e) => setMinStipendFilter(e.target.value)}
+              value={formState.minStipendFilter}
+              onChange={(e) => handleFilterChange("minStipendFilter", e.target.value)}
               className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
             />
             <span className="text-white">-</span>
             <input
               type="number"
               placeholder="Max Stipend"
-              value={maxStipendFilter}
-              onChange={(e) => setMaxStipendFilter(e.target.value)}
+              value={formState.maxStipendFilter}
+              onChange={(e) => handleFilterChange("maxStipendFilter", e.target.value)}
               className="bg-zinc-800 text-white px-4 py-2 rounded-lg w-32"
             />
           </div>
           <select 
-            value={locationFilter}
-            onChange={(e) => setLocationFilter(e.target.value)}
+            value={formState.locationFilter}
+            onChange={(e) => handleFilterChange("locationFilter", e.target.value)}
             className="bg-zinc-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             <option value="">All Locations</option>
@@ -367,7 +385,7 @@ const InterviewExperiencePage = () => {
           >
             <option value={10}>10 per page</option>
             <option value={20}>20 per page</option>
-            <option value={30}>20 per page</option>
+            <option value={30}>30 per page</option>
             <option value={50}>50 per page</option>
           </select>
           <button 
@@ -376,7 +394,7 @@ const InterviewExperiencePage = () => {
           >
             Filter
           </button>
-          {(companyFilter || tagFilter || admissionFilter || startDate || endDate || campusTypeFilter || jobTypeFilter || minStipendFilter || maxStipendFilter || locationFilter) && (
+          {(formState.companyFilter || formState.tagFilter || formState.admissionFilter || formState.startDate || formState.endDate || formState.campusTypeFilter || formState.jobTypeFilter || formState.minStipendFilter || formState.maxStipendFilter || formState.locationFilter) && (
             <button 
               onClick={handleClearFilters}
               className="bg-red-600 text-white px-6 py-2 rounded-lg hover:bg-red-700 transition duration-200"

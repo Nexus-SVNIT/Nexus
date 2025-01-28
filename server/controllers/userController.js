@@ -122,6 +122,7 @@ const verifyEmail = async (req, res) => {
 
     try {
         const userData = await user.findOne({ verificationToken: token });
+        console.log(userData);
         if (!userData) {
             return res.status(400).json({ message: 'Invalid token' });
         }

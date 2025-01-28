@@ -16,8 +16,21 @@ function SignUpForm() {
     codeforcesProfile: "",
     codechefProfile: "",
     password: "",
-    shareCodingProfile: false, // Added shareCodingProfile field
+    shareCodingProfile: false,
   });
+
+  // Load form data from localStorage when the component mounts
+  useEffect(() => {
+    const savedFormData = localStorage.getItem("signupFormData");
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData));
+    }
+  }, []);
+
+  // Save form data to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem("signupFormData", JSON.stringify(formData));
+  }, [formData]);
 
   const handleChange = (e) => {
     if (e.target.name === "admissionNumber") {
@@ -112,6 +125,7 @@ function SignUpForm() {
           "Sign up successful! Please check your email to verify your account.",
           { id: toastId },
         );
+        localStorage.removeItem("signupFormData"); // Clear saved form data on successful signup
         setTimeout(() => {
           window.location.href = "/login"; // Change this to your desired route
         }, 2000);
