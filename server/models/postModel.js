@@ -86,9 +86,28 @@ const PostSchema = new mongoose.Schema({
   verifiedAt: {
     type: Date,
     default: null
+  },
+  offerDetails: {
+    receivedOffer: {
+      type: Boolean,
+      default: false
+    },
+    acceptedOffer: {
+      type: Boolean,
+      default: false
+    }
   }
 }, {
   timestamps: true,
+});
+
+// Add a pre-save middleware to enforce offer logic
+PostSchema.pre('save', function(next) {
+  if (this.offerDetails.acceptedOffer && !this.offerDetails.receivedOffer) {
+    const err = new Error('Cannot accept an offer that has not been received');
+    next(err);
+  }
+  next();
 });
 
 module.exports = mongoose.model('Post', PostSchema);

@@ -598,6 +598,20 @@ const InterviewPost = () => {
                         ? post.location.join(", ")
                         : "Not specified"}
                     </div>
+
+                    <div className="text-blue-400">Offer Status:</div>
+                    <div className="text-gray-300">
+                      {post.offerDetails.receivedOffer ? (
+                        <>
+                          Received offer{" "}
+                          {post.offerDetails.acceptedOffer ? 
+                            "- Accepted" : 
+                            "- Not accepted"}
+                        </>
+                      ) : (
+                        "No offer received"
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>

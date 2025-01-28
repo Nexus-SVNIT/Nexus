@@ -71,6 +71,10 @@ const CreatePost = () => {
     },
     workMode: "",
     location: [], // Initialize as empty array
+    offerDetails: {
+      receivedOffer: false,
+      acceptedOffer: false
+    },
   });
 
   const [companies, setCompanies] = useState([]);
@@ -630,6 +634,64 @@ const CreatePost = () => {
             </div>
           </div>
 
+          {/* Offer Status */}
+          <div className="mb-4 space-y-4">
+            <h3 className="text-gray-200 text-lg font-semibold">Offer Status</h3>
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="receivedOffer"
+                  name="offerDetails.receivedOffer"
+                  checked={formData.offerDetails.receivedOffer}
+                  onChange={(e) => {
+                    const { checked } = e.target;
+                    console.log("Received offer checked:", checked); // Add debug log
+                    setFormData(prev => {
+                      const newState = {
+                        ...prev,
+                        offerDetails: {
+                          ...prev.offerDetails,
+                          receivedOffer: checked,
+                          acceptedOffer: checked ? prev.offerDetails.acceptedOffer : false
+                        }
+                      };
+                      console.log("New form state:", newState); // Add debug log
+                      return newState;
+                    });
+                  }}
+                  className="mr-2 rounded border-zinc-600 bg-zinc-700"
+                />
+                <label htmlFor="receivedOffer" className="text-gray-200">
+                  Received Offer
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="acceptedOffer"
+                  name="offerDetails.acceptedOffer"
+                  checked={formData.offerDetails.acceptedOffer}
+                  disabled={!formData.offerDetails.receivedOffer}
+                  onChange={(e) => {
+                    setFormData(prev => ({
+                      ...prev,
+                      offerDetails: {
+                        ...prev.offerDetails,
+                        acceptedOffer: e.target.checked
+                      }
+                    }));
+                  }}
+                  className="mr-2 rounded border-zinc-600 bg-zinc-700 disabled:opacity-50"
+                />
+                <label htmlFor="acceptedOffer" className="text-gray-200">
+                  Accepted Offer
+                </label>
+              </div>
+            </div>
+          </div>
+
           {/* Tags */}
           <div className="mb-4">
             <label className={labelClassName}>Tags (comma-separated)</label>
@@ -668,23 +730,7 @@ const CreatePost = () => {
             color: white;
             background-color: rgb(63 63 70); /* Dark shade of zinc */
           }
-          .custom-quill .ql-picker-options {
-            min-width: fit-content;
-            background-color: rgb(63 63 70); /* Dark shade of zinc */
-          }
-          .custom-quill .ql-stroke {
-            stroke: white;
-          }
-          .custom-quill .ql-fill {
-            fill: white;
-          }
-          .custom-quill .ql-editor::before {
-            color: white; /* Placeholder text color */
-          }
-        `}</style>
-      </div>
-    </PostDetailWrapper>
-  );
+          .custom-quill .ql-picker-options {            min-width: fit-content;            background-color: rgb(63 63 70); /* Dark shade of zinc */          }          .custom-quill .ql-stroke {            stroke: white;          }          .custom-quill .ql-fill {            fill: white;          }          .custom-quill .ql-editor::before {            color: white; /* Placeholder text color */          }        `}</style>      </div>    </PostDetailWrapper>  );
 };
 
 export default CreatePost;

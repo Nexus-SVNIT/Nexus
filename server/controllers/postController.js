@@ -15,7 +15,7 @@ const createPost = async (req, res) => {
       rounds, compensation, difficultyLevel,
       hiringPeriod, cgpaCriteria, shortlistCriteria,
       shortlistedCount, selectedCount,
-      workMode, location 
+      workMode, location, offerDetails // Add offerDetails to destructuring
     } = req.body;
 
     // Basic validation
@@ -55,7 +55,11 @@ const createPost = async (req, res) => {
       shortlistedCount,
       selectedCount,
       workMode,
-      location
+      location,
+      offerDetails: {  // Add offerDetails explicitly
+        receivedOffer: offerDetails?.receivedOffer,
+        acceptedOffer: offerDetails?.acceptedOffer
+      }
     });
 
     const savedPost = await post.save();
