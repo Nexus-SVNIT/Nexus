@@ -1,7 +1,5 @@
-// src/pages/CreatePost.jsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import ReactQuill from "react-quill";
@@ -17,7 +15,8 @@ const CreatePost = () => {
 
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
+  // Load form data from localStorage on component mount
+  const initialFormData = JSON.parse(localStorage.getItem("formData")) || {
     title: "",
     content: "",
     company: "",
@@ -74,7 +73,15 @@ const CreatePost = () => {
       receivedOffer: false,
       acceptedOffer: false,
     },
-  });
+  };
+
+  const [formData, setFormData] = useState(initialFormData);
+
+  // Save form data to localStorage whenever it changes
+  console.log(localStorage.getItem("formData"));
+  useEffect(() => {
+    localStorage.setItem("formData", JSON.stringify(formData));
+  }, [formData]);
 
   const [companies, setCompanies] = useState([]);
   const token = localStorage.getItem("token");
@@ -250,6 +257,9 @@ const CreatePost = () => {
       toast.dismiss();
       toast.success("Post created successfully!");
       navigate("/interview-experiences");
+
+      // Clear form data from localStorage after successful submission
+      localStorage.removeItem("formData");
     } catch (error) {
       toast.dismiss();
       toast.error("Failed to create the post.");
