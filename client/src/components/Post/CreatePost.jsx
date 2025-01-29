@@ -21,6 +21,7 @@ const CreatePost = () => {
     title: "",
     content: "",
     company: "",
+    role: "", // Add role to initial state
     tags: "",
     campusType: "",
     jobType: "",
@@ -322,6 +323,29 @@ const CreatePost = () => {
                   </option>
                 ))}
               </datalist>
+            </div>
+
+            {/* Role */}
+            <div className="mb-4">
+              <label className={labelClassName}>Role</label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleChange}
+                className={selectClassName}
+                required
+              >
+                <option value="">Select Role</option>
+                <option value="Software Developer">Software Developer</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Full Stack Developer">
+                  Full Stack Developer
+                </option>
+                <option value="DevOps Engineer">DevOps Engineer</option>
+                <option value="Data Scientist">Data Scientist</option>
+                <option value="Other">Other</option>
+              </select>
             </div>
           </div>
 

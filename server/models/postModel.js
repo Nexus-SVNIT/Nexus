@@ -96,6 +96,10 @@ const PostSchema = new mongoose.Schema({
       type: Boolean,
       default: false
     }
+  },
+  role: {
+    type: String,
+    required: true
   }
 }, {
   timestamps: true,

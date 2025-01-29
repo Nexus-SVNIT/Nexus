@@ -249,6 +249,9 @@ const InterviewExperiencePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:mx-36 mb-36">
+      <h1 className="text-4xl md:text-5xl font-bold text-white text-center mb-8 tracking-tight">
+        Interview Experiences
+      </h1>
       {/* Create Post Button */}
       <div className="flex justify-end mb-4">
         <Link

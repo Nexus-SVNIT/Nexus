@@ -166,6 +166,7 @@ const AdminPostDetail = () => {
             <DetailRow label="Hiring Period" value={`${new Date(0, post.hiringPeriod?.month - 1).toLocaleString('default', { month: 'long' })} ${post.hiringPeriod?.year}`} />
             <DetailRow label="Selection Process" value={formatSelectionProcess(post.selectionProcess)} />
             <DetailRow label="Compensation" value={formatCompensation(post.compensation)} />
+            <DetailRow label="Role" value={post.role} />
             <DetailRow 
               label="Offer Status" 
               value={post.offerDetails.receivedOffer ? 

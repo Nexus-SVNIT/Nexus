@@ -51,6 +51,8 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
 
       {/* Quick Stats - Modified */}
       <div className="mt-3 flex flex-wrap gap-2 text-sm text-gray-400">
+        <span>{post.role}</span>
+        <span>•</span>
         <span>{post.jobType}</span>
         <span>•</span>
         <span>{post.campusType}</span>

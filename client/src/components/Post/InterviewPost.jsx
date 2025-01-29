@@ -67,10 +67,10 @@ const InterviewPost = () => {
   const [answers, setAnswers] = useState({});
   const token = localStorage.getItem("token");
 
-  useEffect(()=>{
+  useEffect(() => {
     increamentCounter();
-  },[]);
-  
+  }, []);
+
   useEffect(() => {
     const checkAuth = () => {
       if (!token) {
@@ -86,29 +86,28 @@ const InterviewPost = () => {
         if (!checkAuth()) return;
 
         toast.loading("Loading post...");
-        const [postResponse, questionsResponse,commentResponse] = await Promise.all([
-          axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          ),
-          axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          ),
-          axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          ),
-        ]);
+        const [postResponse, questionsResponse, commentResponse] =
+          await Promise.all([
+            axios.get(
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            ),
+            axios.get(
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${id}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            ),
+            axios.get(
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              },
+            ),
+          ]);
 
-
-        
         setPost(postResponse.data);
         setQuestionsWithAnswers(questionsResponse.data);
         setComments(commentResponse.data);
@@ -158,22 +157,22 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-      
+
       toast.dismiss(loadingToast);
       toast.success("Comment submitted successfully!");
       console.log(response.data);
-      
+
       // Update the local state with populated comment data
       const populatedComment = {
         ...response.data,
         author: {
           fullName: response.data.author.fullName,
-          linkedInProfile: response.data.author.linkedInProfile
-        }
+          linkedInProfile: response.data.author.linkedInProfile,
+        },
       };
-      
+
       setPost((prevPost) => ({
         ...prevPost,
         comments: [...prevPost.comments, populatedComment],
@@ -204,9 +203,9 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
-      
+
       toast.dismiss(loadingToast);
       toast.success("Question submitted successfully!");
 
@@ -216,12 +215,12 @@ const InterviewPost = () => {
         answers: [],
         askedBy: {
           fullName: response.data.askedBy.fullName,
-          linkedInProfile: response.data.askedBy.linkedInProfile
+          linkedInProfile: response.data.askedBy.linkedInProfile,
         },
-        createdAt: new Date()
+        createdAt: new Date(),
       };
 
-      setQuestionsWithAnswers(prev => [newQuestion, ...prev]);
+      setQuestionsWithAnswers((prev) => [newQuestion, ...prev]);
       setQuestions((prev) => ({ ...prev, [postId]: "" }));
     } catch (error) {
       toast.dismiss();
@@ -247,7 +246,7 @@ const InterviewPost = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
 
       toast.dismiss(loadingToast);
@@ -259,11 +258,11 @@ const InterviewPost = () => {
           if (q._id === questionId) {
             return {
               ...q,
-              answers: [...q.answers, response.data]
+              answers: [...q.answers, response.data],
             };
           }
           return q;
-        })
+        }),
       );
 
       setAnswers((prev) => ({ ...prev, [questionId]: "" }));
@@ -277,15 +276,18 @@ const InterviewPost = () => {
   if (isLoading) return <Loader />;
 
   // Add isPostAuthor check
-  const isPostAuthor = post.author?._id === JSON.parse(atob(token.split('.')[1])).id;
+  const isPostAuthor =
+    post.author?._id === JSON.parse(atob(token.split(".")[1])).id;
 
   return (
     <PostDetailWrapper>
       <div className="p-4 sm:p-8">
         {/* Header */}
         <div className="mb-8 space-y-4 border-b border-zinc-700 pb-8">
-          <div className="flex flex-col sm:flex-row items-start justify-between gap-4">
-            <h1 className="text-2xl sm:text-3xl font-bold text-white">{post.title}</h1>
+          <div className="flex flex-col items-start justify-between gap-4 sm:flex-row">
+            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+              {post.title}
+            </h1>
             <span className="text-gray-400 whitespace-nowrap text-sm">
               {new Date(post.createdAt).toLocaleDateString("en-US", {
                 year: "numeric",
@@ -328,9 +330,9 @@ const InterviewPost = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid gap-8 grid-cols-1 lg:grid-cols-5">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
           {/* Left Column - Main Content */}
-          <div className="space-y-8 lg:col-span-3">
+          <div className="order-2 space-y-8 lg:order-1 lg:col-span-3 ">
             <div className="prose prose-invert max-w-none">
               {parse(post.content)}
             </div>
@@ -380,7 +382,7 @@ const InterviewPost = () => {
                         <p key={comment._id} className="">
                           {comment.content}
                         </p>
-                        <p className="text-gray-400 flex items-center justify-between text-xs mt-2">
+                        <p className="text-gray-400 mt-2 flex items-center justify-between text-xs">
                           {comment.author?.linkedInProfile ? (
                             <a
                               href={comment.author.linkedInProfile}
@@ -421,7 +423,7 @@ const InterviewPost = () => {
                       >
                         <div className="mb-2">
                           <p className="text-gray-300">{question.question}</p>
-                          <p className="text-gray-400 flex items-center justify-between text-xs mt-2">
+                          <p className="text-gray-400 mt-2 flex items-center justify-between text-xs">
                             {question.askedBy?.linkedInProfile ? (
                               <a
                                 href={question.askedBy.linkedInProfile}
@@ -452,11 +454,14 @@ const InterviewPost = () => {
                               Answers:
                             </h5>
                             {question.answers.map((answer, index) => (
-                              <div key={index} className="mb-2 text-sm bg-zinc-700 p-2 rounded-md">
+                              <div
+                                key={index}
+                                className="mb-2 rounded-md bg-zinc-700 p-2 text-sm"
+                              >
                                 <p className="text-gray-300">
                                   {answer.content}
                                 </p>
-                                <p className="text-gray-400 text-xs flex justify-between items-center mt-2">
+                                <p className="text-gray-400 mt-2 flex items-center justify-between text-xs">
                                   {answer.author?.linkedInProfile ? (
                                     <a
                                       href={answer.author.linkedInProfile}
@@ -501,7 +506,7 @@ const InterviewPost = () => {
                             </button>
                           </div>
                         ) : (
-                          <p className="mt-4 text-sm text-gray-400 italic">
+                          <p className="text-gray-400 mt-4 text-sm italic">
                             Only the original post author can answer questions
                           </p>
                         )}
@@ -516,9 +521,13 @@ const InterviewPost = () => {
           </div>
 
           {/* Right Column - Interview Details */}
-          <div className="space-y-6 lg:col-span-2">
+          <div className="order-1 space-y-6 lg:order-2 lg:col-span-2">
             <div className="rounded-lg bg-zinc-800 p-2">
               <div className="mt-2 grid grid-cols-2 gap-4 rounded-lg bg-zinc-800/50 p-4 text-sm">
+                <div className="text-blue-400">Role:</div>
+                <div className="text-gray-300">
+                  {post.role || "Not specified"}
+                </div>
                 <div className="text-blue-400">Campus Type:</div>
                 <div className="text-gray-300">
                   {post.campusType || "Not specified"}
@@ -569,17 +578,20 @@ const InterviewPost = () => {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="text-blue-400">CGPA Criteria:</div>
                     <div className="text-gray-300">
-                      Boys: {post.cgpaCriteria?.boys || 'N/A'} | Girls: {post.cgpaCriteria?.girls || 'N/A'}
+                      Boys: {post.cgpaCriteria?.boys || "N/A"} | Girls:{" "}
+                      {post.cgpaCriteria?.girls || "N/A"}
                     </div>
 
                     <div className="text-blue-400">Shortlisted Count:</div>
                     <div className="text-gray-300">
-                      Boys: {post.shortlistedCount?.boys || '0'} | Girls: {post.shortlistedCount?.girls || '0'}
+                      Boys: {post.shortlistedCount?.boys || "0"} | Girls:{" "}
+                      {post.shortlistedCount?.girls || "0"}
                     </div>
 
                     <div className="text-blue-400">Selected Count:</div>
                     <div className="text-gray-300">
-                      Boys: {post.selectedCount?.boys || '0'} | Girls: {post.selectedCount?.girls || '0'}
+                      Boys: {post.selectedCount?.boys || "0"} | Girls:{" "}
+                      {post.selectedCount?.girls || "0"}
                     </div>
 
                     <div className="text-blue-400">Shortlist Criteria:</div>
@@ -614,9 +626,9 @@ const InterviewPost = () => {
                       {post.offerDetails.receivedOffer ? (
                         <>
                           Received offer{" "}
-                          {post.offerDetails.acceptedOffer ? 
-                            "- Accepted" : 
-                            "- Not accepted"}
+                          {post.offerDetails.acceptedOffer
+                            ? "- Accepted"
+                            : "- Not accepted"}
                         </>
                       ) : (
                         "No offer received"
