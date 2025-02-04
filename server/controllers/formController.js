@@ -303,7 +303,7 @@ const createForm = async (req, res) => {
                 values.push(field.questionText);
             });
             const res = await sheets.spreadsheets.values.append({
-                spreadsheetId: form.sheetId,
+                spreadsheetId: sheetId,
                 range: 'Sheet1',
                 valueInputOption: 'RAW',
                 resource: {
