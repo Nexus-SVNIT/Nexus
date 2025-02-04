@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import axios from "axios";
 
 const IssueModal = ({ isOpen, onClose }) => {
-  const [issueType, setIssueType] = useState("");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -14,10 +13,16 @@ const IssueModal = ({ isOpen, onClose }) => {
 
     const token = localStorage.getItem("token"); // Retrieve token from local storage
 
+    if (!token) {
+      setError("You must be logged in to submit an issue.");
+      setLoading(false);
+      return;
+    }
+
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/issue/create`,
-        { issueType, description },
+        { issueType: "Website Issue", description },
         {
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in headers
@@ -41,27 +46,6 @@ const IssueModal = ({ isOpen, onClose }) => {
         <h2 className="text-2xl font-bold mb-4 text-black">Create New Issue</h2>
 
         <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <label className="block text-black font-semibold mb-2" htmlFor="issueType">
-              Issue Type
-            </label>
-            <select
-              id="issueType"
-              value={issueType}
-              onChange={(e) => setIssueType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
-              required
-            >
-              <option value="">Select Issue Type</option>
-              <option value="Website Issue">Website Issue</option>
-              <option value="AI/ML Issue">AI/ML Issue</option>
-              <option value="Finance Issue">Finance Issue</option>
-              <option value="Design Issue">Design Issue</option>
-              <option value="Media Issue">Media Issue</option>
-              <option value="Alumni Issue">Alumni Issue</option>
-            </select>
-          </div>
-
           <div className="mb-4">
             <label className="block text-black font-semibold mb-2" htmlFor="description">
               Description
