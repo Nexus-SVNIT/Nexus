@@ -83,8 +83,10 @@ const CodingProfile = ({
   // if (!leetcodeData || !codeforcesData || !codechefData) {
   //   return <div className="text-white">Data not found.</div>;
   // }
-
-  const leetcodeUser = leetcodeData?.data?.matchedUser;
+console.log(leetcodeData);
+  const leetcodeUser = leetcodeData?.matchedUser;
+  console.log("-------");
+  console.log(leetcodeUser);
   const leetcodeStats = leetcodeUser?.submitStats?.acSubmissionNum;
   const leetcodeLanguages = leetcodeUser?.languageProblemCount;
 
@@ -113,16 +115,16 @@ const CodingProfile = ({
           <p>Streak: {leetcodeUser?.userCalendar?.streak} days</p>
           <p>
             Contests Attended:{" "}
-            {leetcodeData?.data?.userContestRanking?.attendedContestsCount}
+            {leetcodeData?.userContestRanking?.attendedContestsCount}
           </p>
           <p>
-            Global Ranking: {leetcodeData?.data?.userContestRanking?.globalRanking}
+            Global Ranking: {leetcodeData?.userContestRanking?.globalRanking}
           </p>
           <p>
-            Rating: {leetcodeData?.data?.userContestRanking?.rating.toFixed(2)}
+            Rating: {leetcodeData?.userContestRanking?.rating.toFixed(2)}
           </p>
           <p>
-            Top Percentage: {leetcodeData?.data?.userContestRanking?.topPercentage}
+            Top Percentage: {leetcodeData?.userContestRanking?.topPercentage}
           </p>
 
           {/* Submission stats */}
