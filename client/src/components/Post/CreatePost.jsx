@@ -79,7 +79,6 @@ const CreatePost = () => {
   const [formData, setFormData] = useState(initialFormData);
 
   // Save form data to localStorage whenever it changes
-  console.log(localStorage.getItem("formData"));
   useEffect(() => {
     localStorage.setItem("formData", JSON.stringify(formData));
   }, [formData]);
@@ -735,7 +734,6 @@ const CreatePost = () => {
                   checked={formData.offerDetails.receivedOffer}
                   onChange={(e) => {
                     const { checked } = e.target;
-                    console.log("Received offer checked:", checked); // Add debug log
                     setFormData((prev) => {
                       const newState = {
                         ...prev,
@@ -747,7 +745,6 @@ const CreatePost = () => {
                             : false,
                         },
                       };
-                      console.log("New form state:", newState); // Add debug log
                       return newState;
                     });
                   }}

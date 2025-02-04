@@ -59,20 +59,22 @@ export const faculty_advisors = [
       googleScholar: 'https://scholar.google.com/citations?user=PyzHYDMAAAAJ&hl=en',
       googleSite: 'https://sites.google.com/coed.svnit.ac.in/bhavesh-gohil'
 
-    }
+    },
+    email:'bng@coed.svnit.ac.in'
   },
   {
     name: 'Dr. Sankita J. Patel',
     role: 'Associate Professor',
     image: 'https://www.svnit.ac.in/sjp/assets/images/propic.png',
     socialLinks: {
-      googleScholar: 'https://scholar.google.co.in/citations?user=uhsQTk0AAAAJ&hl=en',
-      googleSite: ''
-
-    }
+      googleScholar: 'https://scholar.google.com/citations?hl=en&user=uhsQTk0AAAAJ&view_op=list_works&authuser=1&sortby=pubdate',
+      googleSite: 'https://www.svnit.ac.in/sjp/'
+      
+    },
+    email:'sjp@coed.svnit.ac.in'
   },
   // {
-  //   name: 'Dr. Dipti P. Rana',
+    //   name: 'Dr. Dipti P. Rana',
   //   role: 'Associate Professor',
   //   image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
   //   socialLinks: {
@@ -89,7 +91,8 @@ export const faculty_advisors = [
       googleScholar: 'https://scholar.google.com/citations?user=86mYpqgAAAAJ&hl=en',
       
       googleSite: 'https://svnit.ac.in/facup/tanmoyhazracv_latestest.pdf'
-
-    }
+      
+    },
+    email:'tanmoyhazra@aid.svnit.ac.in'
   }
 ]

@@ -7,7 +7,6 @@ const { postVerificationTemplate, postCreationTemplate } = require('../utils/ema
 const createPost = async (req, res) => {
   try {
     // Log incoming data
-    console.log("Request Body:", req.body);
 
     const { 
       title, content, company, tags, 

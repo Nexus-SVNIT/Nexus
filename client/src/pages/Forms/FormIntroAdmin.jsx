@@ -91,7 +91,6 @@ function FormIntroAdmin(props) {
         console.error("Failed to notify subscribers");
         toast.error("Failed to notify subscribers", { id: toastId });
       } else {
-        console.log("Subscribers notified successfully");
         toast.success("Subscribers notified successfully", { id: toastId });
       }
     } catch (error) {

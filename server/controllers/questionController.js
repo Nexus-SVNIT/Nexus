@@ -7,7 +7,6 @@ const User = require('../models/userModel');
 // Create a new question
 const createQuestion = async (req, res) => {
   try {
-    console.log(req.body);
     const { question, postId } = req.body;
     const author = req.user.id;
 

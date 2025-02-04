@@ -15,7 +15,6 @@ const LoginForm = () => {
 
       // Send the login details to the backend for authentication
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/login`, { admissionNumber, password });
-      console.log('Login successful:', response.data);
 
       // Update the loading toast to a success message
       toast.success('Login successful! Redirecting...', { id: toastId });

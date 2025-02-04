@@ -17,14 +17,12 @@ const Events = () => {
 
       try {
         const response = await fetch(url);
-        console.log("Response status:", response.status); // Log response status
         
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const result = await response.json();
-        console.log("Fetched data:", result); // Log fetched data
         setData(result);
       } catch (err) {
         console.error("Fetch error:", err); // Log the error details

@@ -148,7 +148,6 @@ const RegisterForm = () => {
     }
 
     const token = localStorage.getItem("token");
-    console.log(finalResponse, submissionData);
 
     await axios
       .post(

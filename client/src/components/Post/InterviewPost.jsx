@@ -162,7 +162,6 @@ const InterviewPost = () => {
 
       toast.dismiss(loadingToast);
       toast.success("Comment submitted successfully!");
-      console.log(response.data);
 
       // Update the local state with populated comment data
       const populatedComment = {

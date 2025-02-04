@@ -24,7 +24,6 @@ const Teams = () => {
     const fetchYears = async () => {
       try {
         const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/team/unique-years`);
-        console.log(response.data);
         setYears(response.data.years); // Assuming 'years' is returned in the API response
         setSelectedYear(response.data.years[0]); // Default to the first available year
       } catch (err) {

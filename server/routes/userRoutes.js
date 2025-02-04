@@ -25,7 +25,6 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:token', verifyPasswordResetEmail);
 
 router.post('/notify-subscribers', coreAuthMiddleware, async (req, res) => {
-    console.log(req.body);
     const { subject, message } = req.body;
 
     try {

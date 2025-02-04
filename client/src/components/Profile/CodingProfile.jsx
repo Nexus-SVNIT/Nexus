@@ -28,7 +28,6 @@ const CodingProfile = ({
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/leetcode/${leetcodeProfile}`,
           );
           const data = await response.json();
-          console.log(data)
           setLeetcodeData(data.data);
         } else {
           setLeetcodeData(null);

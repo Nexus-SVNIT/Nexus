@@ -55,7 +55,6 @@ exports.createPanels = async (req, res) => {
             // Sending emails to interviewers
             for (let interviewer of interviewers) {
                 if (!existingPanel.emailsSent.interviewers.includes(interviewer.email)) {
-                    console.log(`Sending email to interviewer: ${interviewer.email}`);
                     await sendEmail({
                         to: interviewer.email,
                         subject: `Interview Panel ${panelNumber}`,
@@ -78,7 +77,6 @@ exports.createPanels = async (req, res) => {
                 }
 
                 if (!existingPanel.emailsSent.candidates.includes(candidateEmail)) {
-                    console.log(`Sending email to candidate: ${candidateEmail}`);
                     await sendEmail({
                         to: candidateEmail,
                         subject: `Interview Scheduled for Panel ${panelNumber}`,
@@ -154,7 +152,6 @@ const sendEmail = async ({ to, subject, text }) => {
             text
         });
 
-        console.log(`Email sent to ${to}`);
     } catch (error) {
         console.error('Error sending email:', error);
     }
