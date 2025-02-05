@@ -398,7 +398,7 @@ const submitResponse = async (req, res) => {
         const currentDate = Date.now();
 
         // Check if the deadline has been missed
-        if (deadlineDate < currentDate) {
+        if (deadlineDate < currentDate || !formDetails.publish) {
             return res.status(400).json({
                 success: false,
                 message: "The deadline has passed. Your response was not saved.",

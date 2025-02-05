@@ -193,6 +193,8 @@ const RegisterForm = () => {
       setFormResponse({});
     } else if (res.message === "Team Name already exists.") {
       toast.error("Team Name already exists.");
+    } else if (res.message.startsWith("The deadline has")) {
+      toast.error(res.message);
     } else if (res.message.startsWith("Team member with admission number")) {
       toast.error(res.message);
     } else if (res.message.startsWith("You are not allowed")) {
