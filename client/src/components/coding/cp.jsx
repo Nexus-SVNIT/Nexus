@@ -19,6 +19,10 @@ const Cp = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true); // Loader state
   const [activePlatform, setActivePlatform] = useState('codeforces'); // Add this new state
+  const [branchFilter, setBranchFilter] = useState('all');
+  const [yearFilter, setYearFilter] = useState('all');
+  const [tempBranchFilter, setTempBranchFilter] = useState('all');
+  const [tempYearFilter, setTempYearFilter] = useState('all');
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -181,13 +185,37 @@ const Cp = () => {
   };
 
   const filterData = (data) => {
-    if (!searchTerm) return data;
-    
-    return data.filter((user) =>
-      Object.values(user).some((val) =>
-        String(val).toLowerCase().includes(searchTerm.toLowerCase()),
-      ),
-    );
+    return data.filter((user) => {
+      // Branch and Year filtering
+      const userBranch = user.admissionNumber?.substring(4, 6) || '';
+      const userYear = user.admissionNumber?.substring(1, 3) || '';
+      
+      const matchesBranch = branchFilter === 'all' || userBranch === branchFilter;
+      const matchesYear = yearFilter === 'all' || userYear === yearFilter;
+      const matchesSearch = !searchTerm || 
+        Object.values(user).some(val => 
+          String(val).toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+      return matchesBranch && matchesYear && matchesSearch;
+    });
+  };
+
+  const addRanksToFilteredData = (data) => {
+    const filteredData = data.filter((user) => {
+      const userBranch = user.admissionNumber?.substring(4, 6) || '';
+      const userYear = user.admissionNumber?.substring(1, 3) || '';
+      
+      const matchesBranch = branchFilter === 'all' || userBranch === branchFilter;
+      const matchesYear = yearFilter === 'all' || userYear === yearFilter;
+
+      return matchesBranch && matchesYear;
+    });
+
+    return filteredData.map((item, index) => ({
+      ...item,
+      tableRank: index + 1
+    }));
   };
 
   const columns = {
@@ -282,6 +310,18 @@ const Cp = () => {
     } : null;
   };
 
+  const handleApplyFilters = () => {
+    setBranchFilter(tempBranchFilter);
+    setYearFilter(tempYearFilter);
+  };
+
+  const handleClearFilters = () => {
+    setTempBranchFilter('all');
+    setTempYearFilter('all');
+    setBranchFilter('all');
+    setYearFilter('all');
+  };
+
   return (
     <div className="App text-gray-200 min-h-screen p-8 md:mx-24">
       {loading ? (
@@ -356,6 +396,50 @@ const Cp = () => {
               </button>
             </div>
 
+            {/* Add filter controls after the search bar */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-6">
+              <div className="flex flex-wrap gap-4">
+                <select
+                  value={tempBranchFilter}
+                  onChange={(e) => setTempBranchFilter(e.target.value)}
+                  className="bg-zinc-900 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500"
+                >
+                  <option value="all" className="bg-gray-900">All Branches</option>
+                  <option value="CS" className="bg-gray-900">CS</option>
+                  <option value="AI" className="bg-gray-900">AI</option>
+                  {/* Add more branches as needed */}
+                </select>
+
+                <select
+                  value={tempYearFilter}
+                  onChange={(e) => setTempYearFilter(e.target.value)}
+                  className="bg-zinc-900 text-white px-4 py-2 rounded-lg border border-gray-700 focus:outline-none focus:border-blue-500"
+                >
+                  <option value="all" className="bg-gray-900">All Years</option>
+                  <option value="21" className="bg-gray-900">2021</option>
+                  <option value="22" className="bg-gray-900">2022</option>
+                  <option value="23" className="bg-gray-900">2023</option>
+                  <option value="24" className="bg-gray-900">2024</option>
+                  {/* Add more years as needed */}
+                </select>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={handleApplyFilters}
+                  className="px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+                >
+                  Apply Filters
+                </button>
+                <button
+                  onClick={handleClearFilters}
+                  className="px-4 py-2 bg-gray-700 rounded-lg hover:bg-gray-600 transition-colors"
+                >
+                  Clear Filters
+                </button>
+              </div>
+            </div>
+
             {/* Conditional Table Rendering */}
             {activePlatform === 'codeforces' && (
               <>
@@ -364,7 +448,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.codeforces}
-                  data={filterData(addRanksToData(codeforcesLeaderboard))}
+                  data={filterData(addRanksToFilteredData(codeforcesLeaderboard))}
                 />
               </>
             )}
@@ -376,7 +460,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.leetcode}
-                  data={filterData(addRanksToData(leetcodeLeaderboard))}
+                  data={filterData(addRanksToFilteredData(leetcodeLeaderboard))}
                 />
               </>
             )}
@@ -388,7 +472,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.codechef}
-                  data={filterData(addRanksToData(codechefLeaderboard))}
+                  data={filterData(addRanksToFilteredData(codechefLeaderboard))}
                 />
               </>
             )}
