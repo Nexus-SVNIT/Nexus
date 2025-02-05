@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js'); // Assuming you have an auth middleware
-const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail,generalNotification } = require('../controllers/userController.js')
+const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail, generalNotification, getUserStats } = require('../controllers/userController.js')
 
 router.post('/login', (req, res) => {
     loginUser(req, res);
@@ -36,5 +36,6 @@ router.post('/notify-subscribers', coreAuthMiddleware, async (req, res) => {
     }
 });
 
+router.get('/stats', coreAuthMiddleware, getUserStats);
 
 module.exports = router

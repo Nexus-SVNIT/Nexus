@@ -467,6 +467,88 @@ const generalNotification = async (subject, message) => {
     }
 };
 
+const getUserStats = async (req, res) => {
+    try {
+        const totalUsers = await user.countDocuments({ emailVerified: true });
+        
+        // Get branch-wise stats
+        const branchStats = await user.aggregate([
+            { $match: { emailVerified: true } },
+            { $group: { _id: "$branch", count: { $sum: 1 } } },
+            { $sort: { count: -1 } }
+        ]);
+
+        // Get year-wise stats
+        const yearStats = await user.aggregate([
+            { $match: { emailVerified: true } },
+            {
+                $project: {
+                    year: {
+                        $substr: ["$admissionNumber", 1, 2]
+                    }
+                }
+            },
+            { $group: { _id: "$year", count: { $sum: 1 } } },
+            { $sort: { _id: -1 } }
+        ]);
+
+        // Calculate month-over-month growth
+        const today = new Date();
+        const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
+        
+        const currentMonthUsers = await user.countDocuments({
+            emailVerified: true,
+            createdAt: { $gte: lastMonth }
+        });
+
+        const growthRate = ((currentMonthUsers / totalUsers) * 100).toFixed(2);
+
+        // Get profile completion stats
+        const profileStats = await user.aggregate([
+            { $match: { emailVerified: true } },
+            {
+                $project: {
+                    completionRate: {
+                        $multiply: [
+                            {
+                                $divide: [
+                                    {
+                                        $add: [
+                                            { $cond: [{ $gt: ["$githubProfile", ""] }, 1, 0] },
+                                            { $cond: [{ $gt: ["$linkedInProfile", ""] }, 1, 0] },
+                                            { $cond: [{ $gt: ["$leetcodeProfile", ""] }, 1, 0] },
+                                            { $cond: [{ $gt: ["$codeforcesProfile", ""] }, 1, 0] },
+                                            { $cond: [{ $gt: ["$codechefProfile", ""] }, 1, 0] }
+                                        ]
+                                    },
+                                    5
+                                ]
+                            },
+                            100
+                        ]
+                    }
+                }
+            },
+            {
+                $group: {
+                    _id: null,
+                    avgCompletionRate: { $avg: "$completionRate" }
+                }
+            }
+        ]);
+
+        res.status(200).json({
+            totalUsers,
+            branchStats,
+            yearStats,
+            growthRate,
+            profileCompletionRate: profileStats[0]?.avgCompletionRate.toFixed(2) || 0,
+        });
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching user statistics', error });
+    }
+};
+
 module.exports = {
     getUserProfile,
     updateUserProfile, getAllUsers,
@@ -474,5 +556,6 @@ module.exports = {
     forgotPassword, verifyPasswordResetEmail,
     resetPassword,
     generalNotification,
-    getUsers
+    getUsers,
+    getUserStats,
 };

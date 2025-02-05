@@ -36,7 +36,7 @@ userSchema.pre('save', async function(next) {
     } else {
       return next();
     }
-});
+},{ timestamps: true });
 
 // Method to compare password for login
 userSchema.methods.comparePassword = function(candidatePassword) {
