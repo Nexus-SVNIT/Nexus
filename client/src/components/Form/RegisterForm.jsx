@@ -9,6 +9,7 @@ import axios from "axios";
 import { Navigate } from "react-router-dom";
 import parse from "html-react-parser";
 import increamentCounter from "../../libs/increamentCounter";
+import { FaWhatsapp } from "react-icons/fa";
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -264,12 +265,20 @@ const RegisterForm = () => {
       </h3>
       {flag ? (
         <div className="flex min-h-[50vh] flex-col items-center justify-center p-4">
-          <h4 className="text-lg font-bold">Thank you for registering!</h4>
-          <p className="text-md text-blue-500">
-            <a href={link} target="_blank" rel="noopener noreferrer">
-              Click here to join the WhatsApp group
+          <h4 className="text-lg font-bold mb-4">Thank you for registering!</h4>
+          <div className="bg-zinc-800 rounded-lg shadow-lg p-6 flex flex-col items-center gap-4 border border-zinc-900">
+            <FaWhatsapp className="text-4xl text-green-500" />
+            <p className="text-center">Join our WhatsApp group to stay updated!</p>
+            <a
+              href={link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors flex items-center gap-2"
+            >
+              <FaWhatsapp />
+              Join WhatsApp Group
             </a>
-          </p>
+          </div>
         </div>
       ) : (
         <form
