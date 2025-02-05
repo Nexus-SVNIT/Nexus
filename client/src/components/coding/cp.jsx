@@ -56,23 +56,12 @@ const Cp = () => {
             };
           }
 
-          const userInfo = profile.data[0]; // First object contains user info
-          const contestInfo = profile.data[1]; // Second object contains contest info
-          
-          if (userInfo) {
-            cfLeaderboard.push({
-              fullName: profile.fullName,
-              admissionNumber: profile.admissionNumber,
-              codeforcesProfile: userInfo.handle,
-              rating: userInfo.rating || 0,
-              maxRating: userInfo.maxRating || 0,
-              rank: userInfo.rank || "Unrated",
-              latestContest: contestInfo?.ratings?.[contestInfo.ratings.length - 1]?.contestName || "No contests",
-              contestRanking: contestInfo?.ratings?.[contestInfo.ratings.length - 1]?.rank || "N/A"
-            });
+          const processedData = processCodeforcesData(profile);
+          if (processedData) {
+            cfLeaderboard.push(processedData);
 
-            if (userInfo.rating) {
-              batchWiseData[batch].Codeforces.totalRating += userInfo.rating;
+            if (processedData.rating) {
+              batchWiseData[batch].Codeforces.totalRating += processedData.rating;
               batchWiseData[batch].Codeforces.userCount++;
             }
           }
@@ -184,6 +173,13 @@ const Cp = () => {
     increamentCounter();
   }, []);
 
+  const addRanksToData = (data) => {
+    return data.map((item, index) => ({
+      ...item,
+      tableRank: index + 1 // Changed to tableRank to avoid conflict with CF rank
+    }));
+  };
+
   const filterData = (data) => {
     if (!searchTerm) return data;
     
@@ -196,28 +192,70 @@ const Cp = () => {
 
   const columns = {
     codeforces: [
+      { Header: "Rank", accessor: "tableRank" }, // Changed to avoid confusion with CF rank
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
-      { Header: "Profile", accessor: "codeforcesProfile" },
+      { 
+        Header: "Profile",
+        accessor: "codeforcesProfile",
+        Cell: ({ value }) => (
+          <a
+            href={`https://codeforces.com/profile/${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Link
+          </a>
+        )
+      },
       { Header:"MaxRating",accessor:"maxRating"},
       { Header: "Rating", accessor: "rating" },
-      { Header: "Rank", accessor: "rank" },
+      { Header: "CF Rank", accessor: "rank" }, // This should match the property in processCodeforcesData
       { Header: "Latest Contest", accessor: "latestContest" },
       { Header: "Contest Rank", accessor: "contestRanking" },
     ],
     leetcode: [
+      { Header: "Rank", accessor: "tableRank" }, // Change to use pre-calculated rank
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
-      { Header: "Profile", accessor: "leetcodeProfile" },
+      { 
+        Header: "Profile",
+        accessor: "leetcodeProfile",
+        Cell: ({ value }) => (
+          <a
+            href={`https://leetcode.com/${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Link
+          </a>
+        )
+      },
       { Header: "Global Ranking", accessor: "globalRanking" },
       { Header: "Rating", accessor: "rating" },
       { Header: "Total Solved", accessor: "totalSolved" },
       { Header: "Contest Attended", accessor: "ContestAttended" },
     ],
     codechef: [
+      { Header: "Rank", accessor: "tableRank" }, // Change to use pre-calculated rank
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNumber" },
-      { Header: "Profile", accessor: "codechefProfile" },
+      { 
+        Header: "Profile",
+        accessor: "codechefProfile",
+        Cell: ({ value }) => (
+          <a
+            href={`https://www.codechef.com/users/${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 hover:text-blue-300 underline"
+          >
+            Link
+          </a>
+        )
+      },
       { Header: "rating_number", accessor: "rating_number" },
       { Header: "Rating", accessor: "rating" },
       { Header: "Global Rank", accessor: "globalRank" },
@@ -226,6 +264,22 @@ const Cp = () => {
 
   const getPlatformColor = (platform) => {
     return activePlatform === platform ? 'bg-blue-600' : 'bg-gray-700';
+  };
+
+  const processCodeforcesData = (profile) => {
+    const userInfo = profile.data[0];
+    const contestInfo = profile.data[1];
+    
+    return userInfo ? {
+      fullName: profile.fullName,
+      admissionNumber: profile.admissionNumber,
+      codeforcesProfile: userInfo.handle,
+      rating: userInfo.rating || 0,
+      maxRating: userInfo.maxRating || 0,
+      rank: userInfo.rank || "Unrated", // This should match the accessor in columns
+      latestContest: contestInfo?.ratings?.[contestInfo.ratings.length - 1]?.contestName || "No contests",
+      contestRanking: contestInfo?.ratings?.[contestInfo.ratings.length - 1]?.rank || "N/A"
+    } : null;
   };
 
   return (
@@ -310,7 +364,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.codeforces}
-                  data={filterData(codeforcesLeaderboard)}
+                  data={filterData(addRanksToData(codeforcesLeaderboard))}
                 />
               </>
             )}
@@ -322,7 +376,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.leetcode}
-                  data={filterData(leetcodeLeaderboard)}
+                  data={filterData(addRanksToData(leetcodeLeaderboard))}
                 />
               </>
             )}
@@ -334,7 +388,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.codechef}
-                  data={filterData(codechefLeaderboard)}
+                  data={filterData(addRanksToData(codechefLeaderboard))}
                 />
               </>
             )}

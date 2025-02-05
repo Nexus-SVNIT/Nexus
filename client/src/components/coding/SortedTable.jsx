@@ -54,21 +54,25 @@ const SortableTable = ({ columns, data }) => {
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
               {headerGroup.headers.map((column) => (
                 <th
-                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  {...column.getHeaderProps(
+                    column.id === 'Rank' ? {} : column.getSortByToggleProps()
+                  )}
                   key={column.id}
                   className="p-2 sm:p-4 whitespace-nowrap"
                 >
                   {column.render("Header")}
-                  <span>
-                    {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
-                  </span>
+                  {column.id !== 'Rank' && (
+                    <span>
+                      {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
+                    </span>
+                  )}
                 </th>
               ))}
             </tr>
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row) => {
+          {page.map((row, i) => {
             prepareRow(row);
             return (
               <tr
@@ -78,22 +82,9 @@ const SortableTable = ({ columns, data }) => {
               >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()} key={cell.column.id} className="p-2 sm:p-4">
-                    {cell.column.id === "leetcodeProfile" || cell.column.id === "codeforcesProfile" || cell.column.id === "codechefProfile" ? (
-                      cell.value ? (
-                        <a
-                          href={getPlatformUrl(cell.column.id, cell.value)}
-                          className="text-blue-400 underline"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          Link
-                        </a>
-                      ) : (
-                        "N/A"
-                      )
-                    ) : (
-                      cell.render("Cell")
-                    )}
+                    {cell.column.id === "Rank" 
+                      ? pageSize * pageIndex + i + 1 
+                      : cell.render("Cell")}
                   </td>
                 ))}
               </tr>
