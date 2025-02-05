@@ -20,9 +20,8 @@ const loginUser = async (req, res) => {
         }
 
         const payload = {
-            user: {
-                id: user.id,
-            },
+           id: user._id,
+           isAdmin : true
         };
 
         const token = jwt.sign(payload, process.env.SECRET, { expiresIn: '1h' });
@@ -33,7 +32,25 @@ const loginUser = async (req, res) => {
     }
 };
 
+const verify = async (req, res) => {
+    const token = req.headers.authorization.split(' ')[1];
+
+    try {
+        const decoded = jwt.verify(token, process.env.SECRET); // Use your secret key here
+        if(!decoded.isAdmin) 
+            return res.status(200).json({ success: false, message: 'Unauthorised Access' });
+        const user = coreMember.findById(decoded.id);
+        if(!user) 
+            return res.status(200).json({ success: false, message: 'Unauthorised Access' });
+        
+        return res.status(200).json({ success: true, message: 'OK' });
+    } catch (err) {
+        console.error(err.message);
+        return res.status(500).json({ success: false, message: 'Error Occured' });
+    }
+};
+
 
 module.exports = {
-    loginUser
+    loginUser, verify
 };
