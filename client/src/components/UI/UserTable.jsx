@@ -24,6 +24,7 @@ const UserTable = () => {
     });
     const [branchFilter, setBranchFilter] = useState('all');
     const [yearFilter, setYearFilter] = useState('all');
+    const [limit, setLimit] = useState(10); // Add this line
     const token = localStorage.getItem('core-token');
 
     const fetchUsers = async (page, sortField, sortOrder, search = searchQuery) => {
@@ -31,6 +32,7 @@ const UserTable = () => {
             const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/get/all`, {
                 params: {
                     page,
+                    limit, // Add this line
                     sortBy: sortField,
                     order: sortOrder,
                     search,
@@ -51,7 +53,7 @@ const UserTable = () => {
 
     useEffect(() => {
         fetchUsers(page, sortField, sortOrder, searchQuery);
-    }, [page, sortField, sortOrder, searchQuery, branchFilter, yearFilter]);
+    }, [page, limit, sortField, sortOrder, searchQuery, branchFilter, yearFilter]); // Add limit to dependencies
 
     const handleSort = (field) => {
         const order = sortOrder === "asc" ? "desc" : "asc";
@@ -141,13 +143,28 @@ const UserTable = () => {
     };
 
     return (
-        <div className="p-2 sm:p-4 lg:p-5 bg-slate-800 text-white min-h-screen overflow-scroll">
+        <div className="p-2 sm:p-4 lg:p-5 bg-slate-800 text-white h-fit overflow-auto">
             <h1 className="text-lg sm:text-xl lg:text-2xl font-bold mb-4 sm:mb-6 text-center">
                 User Information ({filteredUsers.length})
             </h1>
 
             {/* Search, Filter, and Download Section */}
             <div className="mb-4 space-y-3 sm:space-y-0 sm:flex sm:flex-row sm:gap-4 flex-wrap">
+                {/* Add this new select element for page limit */}
+                <select
+                    value={limit}
+                    onChange={(e) => {
+                        setLimit(Number(e.target.value));
+                        setPage(1); // Reset to first page when changing limit
+                    }}
+                    className="w-full sm:w-auto rounded-md border p-2 text-black"
+                >
+                    <option value={10}>10 per page</option>
+                    <option value={25}>25 per page</option>
+                    <option value={50}>50 per page</option>
+                    <option value={100}>100 per page</option>
+                </select>
+
                 {/* Search input */}
                 <input
                     type="text"
@@ -267,24 +284,36 @@ const UserTable = () => {
                 </div>
             </div>
 
-            {/* Pagination Section */}
-            <div className="mt-4 flex flex-col xs:flex-row justify-between items-center gap-2 sm:gap-4">
+            {/* Pagination Section - Aligned in one line */}
+            <div className="mt-6 flex justify-center items-center gap-4">
                 <button
                     disabled={page === 1}
                     onClick={() => setPage(page - 1)}
-                    className="w-full xs:w-auto bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 text-white px-3 sm:px-4 py-2 rounded text-sm transition-colors"
+                    className="bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 
+                    disabled:from-slate-800 disabled:to-slate-800 disabled:opacity-50 disabled:cursor-not-allowed
+                    text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 
+                    shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                 >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    </svg>
                     Previous
                 </button>
-                <span className="text-slate-300 text-sm">
+                <span className="text-slate-300 text-sm font-medium bg-slate-700/50 px-4 py-2 rounded-lg">
                     Page {page} of {totalPages}
                 </span>
                 <button
                     disabled={page === totalPages}
                     onClick={() => setPage(page + 1)}
-                    className="w-full xs:w-auto bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 text-white px-3 sm:px-4 py-2 rounded text-sm transition-colors"
+                    className="bg-gradient-to-r from-slate-700 to-slate-600 hover:from-slate-600 hover:to-slate-500 
+                    disabled:from-slate-800 disabled:to-slate-800 disabled:opacity-50 disabled:cursor-not-allowed
+                    text-white px-6 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 
+                    shadow-md hover:shadow-lg flex items-center justify-center gap-2"
                 >
                     Next
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
                 </button>
             </div>
         </div>
