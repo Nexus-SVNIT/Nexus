@@ -143,7 +143,7 @@ function SignUpForm() {
   }, []);
 
   return (
-    <div className="bg-black-2 p-16">
+    <div className="bg-black-2 md:p-16 p-6 pt-10">
       <div className="mb-5 flex justify-center">
         <img
           src="/assets/NEXUStext.png"
@@ -156,7 +156,7 @@ function SignUpForm() {
         <Toaster position="top-center" reverseOrder={false} />
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-800 w-full max-w-lg rounded-lg p-8 shadow-lg"
+          className="bg-gray-800 w-full max-w-lg rounded-lg md:p-8 p-2 shadow-lg"
         >
           <h2 className="mb-6 text-center text-2xl font-semibold text-white">
             Sign Up
