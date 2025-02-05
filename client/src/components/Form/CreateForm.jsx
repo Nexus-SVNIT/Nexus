@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const CreateForm = () => {
   const token = localStorage.getItem("core-token");
@@ -87,7 +89,9 @@ const CreateForm = () => {
       !formData.deadline ||
       !formData.WaLink
     ) {
-      toast.error("Form title, description, deadline, and WhatsApp link are required.");
+      toast.error(
+        "Form title, description, deadline, and WhatsApp link are required.",
+      );
       return;
     }
 
@@ -143,8 +147,32 @@ const CreateForm = () => {
     }
   };
 
+  const modules = {
+    toolbar: [
+      [{ header: [1, 2, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }], // Added color options
+      [{ list: "ordered" }, { list: "bullet" }],
+      ["link"],
+      ["clean"],
+    ],
+  };
+
+  const formats = [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "color",
+    "background", // Added color formats
+    "list",
+    "bullet",
+    "link",
+  ];
+
   return (
-    <div className="flex w-screen flex-col justify-center">
+    <div className="flex w-full flex-col justify-center">
       <h3 className="mb-4 mt-10 text-center text-3xl">
         Admin - Create New Form
       </h3>
@@ -157,12 +185,19 @@ const CreateForm = () => {
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             className="rounded-lg border px-4 py-2 text-2xl text-black"
           />
-          <textarea
-            placeholder="Form Description(HTML allowed)"
-            value={formData.desc}
-            onChange={(e) => setFormData({ ...formData, desc: e.target.value })}
-            className="text-md rounded-lg border px-4 py-2 text-slate-500"
-          />
+          <div className="editor-container mb-24">
+            <ReactQuill
+              theme="snow"
+              value={formData.desc}
+              onChange={(content) =>
+                setFormData({ ...formData, desc: content })
+              }
+              modules={modules}
+              formats={formats}
+              placeholder="Form Description"
+              className="h-48 rounded-lg text-slate-500"
+            />
+          </div>
           <input
             type="text"
             placeholder="Poster Image Drive ID"
@@ -170,7 +205,7 @@ const CreateForm = () => {
             onChange={(e) =>
               setFormData({ ...formData, posterImageDriveId: e.target.value })
             }
-            className="rounded-lg border px-4 py-2 text-lg text-black"
+            className="rounded-lg border px-4 py-2 text-lg text-black mt-10"
           />
           <input
             type="text"
@@ -380,6 +415,27 @@ const CreateForm = () => {
           Create Form
         </button>
       </div>
+      <style jsx>{`
+        .editor-container {
+          min-height: 200px;
+          margin-bottom: 20px;
+        }
+
+        .ql-container {
+          min-height: 150px;
+          border-bottom-left-radius: 0.5rem;
+          border-bottom-right-radius: 0.5rem;
+        }
+
+        .ql-toolbar {
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
+        }
+        .ql-picker-options{
+          width: fit-content;
+          min-width: 150px;
+        }
+      `}</style>
     </div>
   );
 };
