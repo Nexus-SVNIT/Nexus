@@ -215,22 +215,45 @@ const getAllUsers = async (req, res) => {
         const sortField = req.query.sortBy || 'fullName';
         const sortOrder = req.query.order === 'desc' ? -1 : 1;
         const searchQuery = req.query.search || '';
+        const branchFilter = req.query.branch || 'all';
+        const yearFilter = req.query.year || 'all';
 
         // Create search query
         const searchConditions = {
             emailVerified: true,
-            $or: [
+        };
+
+        // Add search conditions
+        if (searchQuery) {
+            searchConditions.$or = [
                 { fullName: { $regex: searchQuery, $options: 'i' } },
                 { admissionNumber: { $regex: searchQuery, $options: 'i' } },
                 { branch: { $regex: searchQuery, $options: 'i' } },
                 { personalEmail: { $regex: searchQuery, $options: 'i' } },
                 { instituteEmail: { $regex: searchQuery, $options: 'i' } }
-            ]
-        };
+            ];
+        }
 
-        const users = await user.find(searchConditions, '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v')
+        // Add branch filter
+        if (branchFilter !== 'all') {
+            searchConditions.branch = { $regex: branchFilter, $options: 'i' };
+        }
+
+        // Add year filter
+        if (yearFilter !== 'all') {
+            const yearPattern = yearFilter.slice(2); // Get last two digits of year
+            searchConditions.admissionNumber = { 
+                $regex: `^[UI]${yearPattern}`, 
+                $options: 'i' 
+            };
+        }
+
+        const users = await user.find(
+            searchConditions,
+            '-password -verificationToken -resetPasswordToken -resetPasswordExpires -emailVerified -subscribed -__v'
+        )
             .sort({ [sortField]: sortOrder })
-            .skip((page - 1) * limit)
+            .skip(limit === 1000000 ? 0 : (page - 1) * limit) // Skip pagination if downloading all
             .limit(limit);
 
         const totalUsers = await user.countDocuments(searchConditions);
