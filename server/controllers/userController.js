@@ -432,7 +432,7 @@ const generalNotification = async (subject, message) => {
     try {
         const subscribers = await user.find({ subscribed: true });
 
-        const linkToApply = 'https://www.nexus-svnit.tech';
+        const linkToApply = 'https://www.nexus-svnit.in';
 
         subscribers.forEach(async (subscriber) => {
             const emailContent = {
