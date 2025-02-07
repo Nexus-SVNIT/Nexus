@@ -14,6 +14,20 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+const validateCodingProfiles = (leetcode, codeforces, codechef) => {
+    const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
+    
+    if (leetcode && urlPattern.test(leetcode)) {
+        throw new Error('Please enter only your LeetCode username, not the full URL');
+    }
+    if (codeforces && urlPattern.test(codeforces)) {
+        throw new Error('Please enter only your Codeforces username, not the full URL');
+    }
+    if (codechef && urlPattern.test(codechef)) {
+        throw new Error('Please enter only your CodeChef username, not the full URL');
+    }
+};
+
 const loginUser = async (req, res) => {
     const { admissionNumber, password } = req.body;
 
@@ -50,6 +64,13 @@ const signupUser = async (req, res) => {
     const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password, shareCodingProfile } = req.body;
 
     try {
+        // Validate coding profile IDs
+        try {
+            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+
         // Step 1: Check if the user already exists
         const existingUser = await user.findOne({ admissionNumber });
         if (existingUser) {
@@ -174,6 +195,13 @@ const updateUserProfile = async (req, res) => {
             shareCodingProfile,  // Include codechefProfile in the request body
             subscribed
         } = req.body;
+
+        // Validate coding profile IDs
+        try {
+            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
 
         // Step 1: Find the user by their ID
         let foundUser = await user.findById(userId);

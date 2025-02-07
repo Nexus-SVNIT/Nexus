@@ -80,15 +80,15 @@ function SignUpForm() {
       toast.error("Invalid Institute Email");
       return false;
     }
-    if (leetcodeProfile.includes("leetcode.com/")) {
+    if (leetcodeProfile.includes("leetcode.com") || leetcodeProfile.includes("http") || leetcodeProfile.includes("/")) {
       toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codeforcesProfile.includes("codeforces.com/")) {
+    if (codeforcesProfile.includes("codeforces.com") || codeforcesProfile.includes("http") || codeforcesProfile.includes("/")) {
       toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codechefProfile.includes("codechef.com/")) {
+    if (codechefProfile.includes("codechef.com") || codechefProfile.includes("http") || codechefProfile.includes("/")) {
       toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }

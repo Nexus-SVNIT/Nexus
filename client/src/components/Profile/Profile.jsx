@@ -90,6 +90,22 @@ const ProfilePage = ({ profile, setProfile }) => {
       return false;
     }
 
+    // Add URL validation for coding profiles
+    const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
+    
+    if (urlPattern.test(leetcodeProfile)) {
+      toast.error("Please enter only your LeetCode username, not the full URL");
+      return false;
+    }
+    if (urlPattern.test(codeforcesProfile)) {
+      toast.error("Please enter only your Codeforces username, not the full URL");
+      return false;
+    }
+    if (urlPattern.test(codechefProfile)) {
+      toast.error("Please enter only your CodeChef username, not the full URL");
+      return false;
+    }
+
     return true;
   };
 
@@ -150,7 +166,7 @@ const ProfilePage = ({ profile, setProfile }) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <Toaster position="top-right" reverseOrder={false} />{" "}
+      <Toaster />{" "}
       {/* Toast notification container */}
       <div>
         <label className="text-gray-700 block">Full Name</label>
