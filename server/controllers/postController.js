@@ -173,6 +173,7 @@ const getAllPosts = async (req, res) => {
       .populate('author', 'fullName linkedInProfile admissionNumber')
       .populate('comments')
       .populate('questions')
+      .select('+views') // Ensure views are included
       .sort({ createdAt: -1 })
       .skip(skipCount)
       .limit(pageSize);
@@ -192,7 +193,8 @@ const getPostById = async (req, res) => {
     const post = await Post.findById(req.params.id)
       .populate('author', 'fullName linkedInProfile admissionNumber')
       .populate('questions.askedBy')
-      .populate('questions');
+      .populate('questions')
+      .select('+views'); // Ensure views are included
     
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });

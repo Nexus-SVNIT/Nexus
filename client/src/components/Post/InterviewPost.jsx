@@ -71,6 +71,19 @@ const InterviewPost = () => {
     increamentCounter();
   }, []);
 
+  // Add incrementView function
+  const incrementView = async () => {
+    try {
+      await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}/increment-view`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+    } catch (error) {
+      console.error('Error incrementing view:', error);
+    }
+  };
+
   useEffect(() => {
     const checkAuth = () => {
       if (!token) {
@@ -111,6 +124,10 @@ const InterviewPost = () => {
         setPost(postResponse.data);
         setQuestionsWithAnswers(questionsResponse.data);
         setComments(commentResponse.data);
+        
+        // Increment view after loading post
+        await incrementView();
+        
         setLoading(false);
         toast.dismiss();
         toast.success("Post loaded successfully!");
@@ -325,6 +342,14 @@ const InterviewPost = () => {
                 </a>
               </div>
             )}
+          </div>
+          {/* Add view count */}
+          <div className="flex items-center gap-2 text-gray-400">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+            </svg>
+            <span>{post?.views || 0} views</span>
           </div>
         </div>
 
