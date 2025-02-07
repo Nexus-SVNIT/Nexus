@@ -17,7 +17,7 @@ const PostSchema = new mongoose.Schema({
   }],
   campusType: {
     type: String,
-    enum: ['In Campus', 'Off Campus', 'Pool Campus'],
+    enum: ['On Campus', 'Off Campus', 'Pool Campus'],
     required: true
   },
   jobType: {

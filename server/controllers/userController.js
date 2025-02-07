@@ -430,14 +430,18 @@ const resetPassword = async (req, res) => {
 };
 const generalNotification = async (subject, message) => {
     try {
-        const subscribers = await user.find({ subscribed: true });
-
+        const subscribers = [{
+            fullName: 'Vaibhav Gupta',
+            instituteEmail: 'u22cs029@coed.svnit.ac.in'
+        }]
+        // const subscribers = await user.find({ emailVerified: true });
         const linkToApply = 'https://www.nexus-svnit.in';
 
-        subscribers.forEach(async (subscriber) => {
+        const emailPromises = subscribers.map((subscriber) => {
+            console.log(subscriber.fullName, subscriber.instituteEmail);
             const emailContent = {
                 from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
-                to: subscriber.personalEmail,
+                to: subscriber.instituteEmail,
                 subject: subject, // Use the subject from the request
                 html: `
                     <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
@@ -459,8 +463,10 @@ const generalNotification = async (subject, message) => {
             };
 
             // Send the email (implementation depends on your email sending setup)
-            await sendEmail(emailContent); // Ensure you have an email sending function
+                return sendEmail(emailContent); // Ensure you have an email sending function
         });
+
+        await Promise.all(emailPromises);
     } catch (err) {
         console.error('Error notifying subscribers:', err);
         throw err;

@@ -14,14 +14,15 @@ const createPost = async (req, res) => {
       rounds, compensation, difficultyLevel,
       hiringPeriod, cgpaCriteria, shortlistCriteria,
       shortlistedCount, selectedCount,
-      workMode, location, offerDetails // Add offerDetails to destructuring
+      workMode, location, offerDetails,
+      role // Ensure role is included in destructuring
     } = req.body;
 
     // Basic validation
-    if (!title || !content || !company || !campusType || !jobType || !workMode || !location) {
+    if (!title || !content || !company || !campusType || !jobType || !workMode || !location || !role) {
       return res.status(400).json({ 
         error: "Missing required fields",
-        required: ["title", "content", "company", "campusType", "jobType", "workMode", "location"]
+        required: ["title", "content", "company", "campusType", "jobType", "workMode", "location", "role"]
       });
     }
 
@@ -58,7 +59,8 @@ const createPost = async (req, res) => {
       offerDetails: {  // Add offerDetails explicitly
         receivedOffer: offerDetails?.receivedOffer,
         acceptedOffer: offerDetails?.acceptedOffer
-      }
+      },
+      role // Ensure role is included in the post creation
     });
 
     const savedPost = await post.save();

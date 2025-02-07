@@ -8,6 +8,37 @@ import "./CreatePost.css";
 import PostDetailWrapper from "./PostDetailWrapper";
 import increamentCounter from "../../libs/increamentCounter";
 
+const modules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [{ align: [] }], // Add alignment options
+    [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+    ["link", ],
+    [{ color: [] }, { background: [] }], // Add color and background options
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "blockquote",
+  "list",
+  "bullet",
+  "indent",
+  "align", // Add align format
+  "link",
+  "color",
+  "background", // Add color and background formats
+];
+
 const CreatePost = () => {
   useEffect(() => {
     increamentCounter();
@@ -20,7 +51,7 @@ const CreatePost = () => {
     title: "",
     content: "",
     company: "",
-    role: "", // Add role to initial state
+    role: "", // Ensure role is included in initial state
     tags: "",
     campusType: "",
     jobType: "",
@@ -308,6 +339,8 @@ const CreatePost = () => {
                   theme="snow"
                   placeholder="Write your interview experience here..."
                   className="custom-quill mt-2 rounded-lg border-zinc-700 bg-zinc-800 text-white"
+                  modules={modules}
+                  formats={formats}
                 />
               </div>
             </div>
@@ -337,24 +370,25 @@ const CreatePost = () => {
             {/* Role */}
             <div className="mb-4">
               <label className={labelClassName}>Role</label>
-              <select
+              <input
+                type="text"
+                list="roles"
                 name="role"
                 value={formData.role}
                 onChange={handleChange}
-                className={selectClassName}
+                className={inputClassName}
                 required
-              >
-                <option value="">Select Role</option>
-                <option value="Software Developer">Software Developer</option>
-                <option value="Frontend Developer">Frontend Developer</option>
-                <option value="Backend Developer">Backend Developer</option>
-                <option value="Full Stack Developer">
-                  Full Stack Developer
-                </option>
-                <option value="DevOps Engineer">DevOps Engineer</option>
-                <option value="Data Scientist">Data Scientist</option>
-                <option value="Other">Other</option>
-              </select>
+                placeholder="Select existing or type new role"
+              />
+              <datalist id="roles">
+                <option value="Software Developer" />
+                <option value="Frontend Developer" />
+                <option value="Backend Developer" />
+                <option value="Full Stack Developer" />
+                <option value="DevOps Engineer" />
+                <option value="Data Scientist" />
+                <option value="Other" />
+              </datalist>
             </div>
           </div>
 
@@ -375,7 +409,7 @@ const CreatePost = () => {
                   required
                 >
                   <option value="">Select Type</option>
-                  <option value="In Campus">In Campus</option>
+                  <option value="On Campus">On Campus</option>
                   <option value="Off Campus">Off Campus</option>
                   <option value="Pool Campus">Pool Campus</option>
                 </select>
