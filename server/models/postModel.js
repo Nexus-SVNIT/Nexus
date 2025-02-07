@@ -79,10 +79,6 @@ const PostSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  verifiedBy: {
-    type: String,
-    default: null
-  },
   verifiedAt: {
     type: Date,
     default: null

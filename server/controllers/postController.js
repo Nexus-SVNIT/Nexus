@@ -218,7 +218,6 @@ const getPendingPosts = async (req, res) => {
 const verifyPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const verifiedBy = req.user.email;
 
     const post = await Post.findById(postId).populate('author');
     if (!post) {
@@ -226,7 +225,6 @@ const verifyPost = async (req, res) => {
     }
 
     post.isVerified = true;
-    post.verifiedBy = verifiedBy;
     post.verifiedAt = new Date();
     await post.save();
 
