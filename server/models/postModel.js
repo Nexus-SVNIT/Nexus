@@ -17,7 +17,7 @@ const PostSchema = new mongoose.Schema({
   }],
   campusType: {
     type: String,
-    enum: ['In Campus', 'Off Campus', 'Pool Campus'],
+    enum: ['On Campus', 'Off Campus', 'Pool Campus'],
     required: true
   },
   jobType: {
@@ -79,10 +79,6 @@ const PostSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  verifiedBy: {
-    type: String,
-    default: null
-  },
   verifiedAt: {
     type: Date,
     default: null
@@ -100,6 +96,10 @@ const PostSchema = new mongoose.Schema({
   role: {
     type: String,
     required: true
+  },
+  views: {
+    type: Number,
+    default: 0
   }
 }, {
   timestamps: true,

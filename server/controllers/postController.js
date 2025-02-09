@@ -14,14 +14,15 @@ const createPost = async (req, res) => {
       rounds, compensation, difficultyLevel,
       hiringPeriod, cgpaCriteria, shortlistCriteria,
       shortlistedCount, selectedCount,
-      workMode, location, offerDetails // Add offerDetails to destructuring
+      workMode, location, offerDetails,
+      role // Ensure role is included in destructuring
     } = req.body;
 
     // Basic validation
-    if (!title || !content || !company || !campusType || !jobType || !workMode || !location) {
+    if (!title || !content || !company || !campusType || !jobType || !workMode || !location || !role) {
       return res.status(400).json({ 
         error: "Missing required fields",
-        required: ["title", "content", "company", "campusType", "jobType", "workMode", "location"]
+        required: ["title", "content", "company", "campusType", "jobType", "workMode", "location", "role"]
       });
     }
 
@@ -58,7 +59,8 @@ const createPost = async (req, res) => {
       offerDetails: {  // Add offerDetails explicitly
         receivedOffer: offerDetails?.receivedOffer,
         acceptedOffer: offerDetails?.acceptedOffer
-      }
+      },
+      role // Ensure role is included in the post creation
     });
 
     const savedPost = await post.save();
@@ -171,6 +173,7 @@ const getAllPosts = async (req, res) => {
       .populate('author', 'fullName linkedInProfile admissionNumber')
       .populate('comments')
       .populate('questions')
+      .select('+views') // Ensure views are included
       .sort({ createdAt: -1 })
       .skip(skipCount)
       .limit(pageSize);
@@ -190,7 +193,8 @@ const getPostById = async (req, res) => {
     const post = await Post.findById(req.params.id)
       .populate('author', 'fullName linkedInProfile admissionNumber')
       .populate('questions.askedBy')
-      .populate('questions');
+      .populate('questions')
+      .select('+views'); // Ensure views are included
     
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
@@ -216,7 +220,6 @@ const getPendingPosts = async (req, res) => {
 const verifyPost = async (req, res) => {
   try {
     const { postId } = req.params;
-    const verifiedBy = req.user.email;
 
     const post = await Post.findById(postId).populate('author');
     if (!post) {
@@ -224,7 +227,6 @@ const verifyPost = async (req, res) => {
     }
 
     post.isVerified = true;
-    post.verifiedBy = verifiedBy;
     post.verifiedAt = new Date();
     await post.save();
 
