@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 import axios from 'axios';
 
-const Counter = () => {
+const Counter = ({ onComplete }) => {
   const [count, setCount] = useState(0);
 
   const fetchCount = async () => {
@@ -26,7 +26,6 @@ const Counter = () => {
   useEffect(() => {
     incrementCount();
     fetchCount();
-    // Increment count when component mounts
   }, []);
 
   return (
@@ -43,6 +42,7 @@ const Counter = () => {
             separator=","
             enableScrollSpy
             scrollSpyOnce
+            onEnd={onComplete}
           />
         </div>
         <p className="text-sm text-gray-500 mt-2">Total Visits</p>
