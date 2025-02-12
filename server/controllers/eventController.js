@@ -31,7 +31,7 @@ const getSingleEvent = wrapAsync(async (req, res) => {
 });
 
 const addEvent = wrapAsync(async (req, res) => {
-    const { eventName, eventDate,eventDescription,eventType,eventPoster,eventStatus } = req.body;
+    const { eventName, eventDate, eventDescription, eventType, eventPoster, eventStatus, eventImages } = req.body;
     const concatEventName = eventName.toLowerCase().replace(/ /g, "");
     const createdEvent = await Event.create({
         eventName,
@@ -41,6 +41,7 @@ const addEvent = wrapAsync(async (req, res) => {
         eventPoster,
         eventStatus,
         eventType,
+        eventImages
     });
     res.status(200).json(createdEvent);
 });
