@@ -2,6 +2,7 @@ import Modal from "@mui/joy/Modal";
 import React from "react";
 
 const AchievementCard = ({ el }) => {
+ 
   const [open, setOpen] = React.useState(false);
   const handleClose = () => setOpen(false);
 
@@ -32,12 +33,18 @@ const AchievementCard = ({ el }) => {
             </div>
 
             <div className="mx-2 flex flex-1 flex-col items-center justify-evenly gap-2 overflow-hidden px-2">
-              <ul className="line-clamp-none w-4/5 text-center text-sm text-[#FFD700]">
-                {el.teamMembersDetails
-                  .map((member) => <li className="italic hover:underline"><a href={member.linkedInProfile} target="_blank">{member.fullName + " (" + member.admissionNumber + ")"}</a></li>)
-                  }{" "}
-                {/* Display full names of team members */}
-              </ul>
+            <ul className="line-clamp-none w-4/5 text-center text-sm text-[#FFD700]">
+  {el.teamMembersDetails?.map((member) => (
+    member ? ( // Ensure member is not null
+      <li key={member._id} className="italic hover:underline">
+        <a href={member.linkedInProfile} target="_blank" rel="noopener noreferrer">
+          {member.fullName} ({member.admissionNumber})
+        </a>
+      </li>
+    ) : null
+  ))}
+</ul>
+
               <p className="line-clamp-none text-sm text-whiter ">
                 {el.desc} {/* Updated to show description */}
               </p>
@@ -61,7 +68,7 @@ const AchievementCard = ({ el }) => {
       >
         <div>
           <img
-            src={`https://lh3.googleusercontent.com/d/${el.image}`} // Update image source based on new data
+            src={`https://lh3.googleusercontent.com/d/${el?.image}`} // Update image source based on new data
             alt="Banner"
             className="h-60 w-full rounded-t-lg object-cover object-center"
           />
@@ -69,7 +76,7 @@ const AchievementCard = ({ el }) => {
 
         <div className="mx-2 flex flex-1 flex-col items-center justify-evenly gap-0 overflow-hidden px-2">
           <p className=" w-4/5 text-center text-sm text-[#FFD700]">
-          - {el.teamMembersDetails.map(member => member.fullName).join(", ")} {/*Display full names of team members*/}
+            - {el.teamMembersDetails?.map((member) => member?.fullName).join(", ")} {/* Display full names of team members */}
           </p>
           <p className="text-gray-400 line-clamp-3 text-sm ">
             {el.desc} {/* Updated to show description */}

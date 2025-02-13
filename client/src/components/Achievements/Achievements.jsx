@@ -27,6 +27,7 @@ const Achievements = () => {
         (res) => res.json(),
       ),
   });
+  console.log(achievements);
   if (error) return <Error />;
   if (loading)
     return (
