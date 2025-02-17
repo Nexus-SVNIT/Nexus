@@ -26,6 +26,9 @@ const eventSchema = new Schema({
     },
     eventStatus: {
         type: String
+    },
+    eventImages: {
+        type: [String]
     }
 });
 

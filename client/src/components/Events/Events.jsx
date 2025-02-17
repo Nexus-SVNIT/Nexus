@@ -10,6 +10,7 @@ const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
+  const [showMore, setShowMore] = useState({});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +37,10 @@ const Events = () => {
     fetchData();
     increamentCounter();
   }, []); // Empty dependency array to run once on mount
+
+  const handleShowMore = (id) => {
+    setShowMore((prev) => ({ ...prev, [id]: !prev[id] }));
+  };
 
   if (error) {
     return <MaintenancePage />;
@@ -72,12 +77,32 @@ const Events = () => {
                         <p>{item.eventDescription}</p>
                         <img
                           src={
-                            item?.eventPoster ??
+                            item?.eventPoster ?? item?.eventImages[0] ?? 
                             "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
                           }
                           alt="Banner"
                           className="mt-4 min-h-[12rem] w-full rounded-md"
                         />
+                        {item.eventImages.length > 1 && (
+                          <button
+                            onClick={() => handleShowMore(item._id)}
+                            className="mt-4 text-blue-500"
+                          >
+                            {showMore[item._id] ? "Show Less" : "Show More"}
+                          </button>
+                        )}
+                        {showMore[item._id] && (
+                          <div className="slideshow mt-4">
+                            {item.eventImages.map((image, index) => (
+                              <img
+                                key={index}
+                                src={image}
+                                alt={`Slide ${index}`}
+                                className="mt-2 min-h-[12rem] w-full rounded-md"
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </li>
                   );

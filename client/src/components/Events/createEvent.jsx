@@ -1,20 +1,37 @@
 import React, { useState } from 'react';
 const token = localStorage.getItem("core-token");
+
 const EventForm = () => {
   const [formData, setFormData] = useState({
     eventName: '',
     eventType: '',
-    
     eventDate: '',
     eventDescription: '',
     eventPoster: '',
     eventStatus: '',
+    eventImages: ['']
   });
 
   const handleChange = (e) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleImageChange = (index, e) => {
+    const newImages = [...formData.eventImages];
+    newImages[index] = e.target.value;
+    setFormData({
+      ...formData,
+      eventImages: newImages
+    });
+  };
+
+  const addImageField = () => {
+    setFormData({
+      ...formData,
+      eventImages: [...formData.eventImages, '']
     });
   };
 
@@ -85,8 +102,6 @@ const EventForm = () => {
           />
         </div>
 
-        
-
         <div className="mb-4">
           <label
             htmlFor="eventDate"
@@ -154,6 +169,32 @@ const EventForm = () => {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
+        </div>
+
+        <div className="mb-6">
+          <label
+            htmlFor="eventImages"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Event Images
+          </label>
+          {formData.eventImages.map((image, index) => (
+            <input
+              key={index}
+              type="text"
+              name={`eventImage${index}`}
+              value={image}
+              onChange={(e) => handleImageChange(index, e)}
+              className="w-full px-4 py-2 mb-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+          ))}
+          <button
+            type="button"
+            onClick={addImageField}
+            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition-colors"
+          >
+            Add Image
+          </button>
         </div>
 
         <button

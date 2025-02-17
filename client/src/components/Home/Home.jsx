@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   FAQs,
@@ -9,17 +9,17 @@ import {
 import Counter from "../Counter/Counter";
 
 const Home = () => {
-  
+
+
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "./SpaceParticlesMain.js";
     document.body.appendChild(script);
   }, []);
-  
+
   return (
     <div className="relative mx-auto overflow-x-hidden transition-all delay-300">
-      <div className=" flex h-screen flex-col items-center ">
-      
+      <div className="flex h-screen flex-col items-center">
         <Three />
         <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
           <div className="mt-10 flex w-fit flex-col items-center justify-center gap-8 md:mt-4">
@@ -37,12 +37,15 @@ const Home = () => {
             <Button to={"#terminal"} isButton={false}>
               Explore More
             </Button>
+            <div className="relative bottom-12 right-4 z-[1000]">
+        <Counter />
+      </div>
           </div>
         </div>
       </div>
 
       <div
-        className="z-100 mx-auto mt-12 w-full sm:mt-52 md:mt-24"
+        className="z-[1000] mx-auto mt-12 w-full sm:mt-52 md:mt-24"
         id="terminal"
       >
         <Terminal />
@@ -53,9 +56,7 @@ const Home = () => {
       <div className="relative my-48 w-full ">
         <WhatPeopleThinkAboutUS />
       </div>
-      <div className="relative my-48 w-full ">
-        <Counter />
-      </div>
+      
     </div>
   );
 };

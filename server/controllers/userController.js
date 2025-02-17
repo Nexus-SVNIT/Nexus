@@ -456,28 +456,30 @@ const resetPassword = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
+
 const generalNotification = async (subject, message) => {
     try {
-        const subscribers = [{
-            fullName: 'Vaibhav Gupta',
-            instituteEmail: 'u22cs029@coed.svnit.ac.in'
-        }]
-        // const subscribers = await user.find({ emailVerified: true });
-        const linkToApply = 'https://www.nexus-svnit.in';
+        const subscribers = await user.find({ subscribed: true });
 
-        const emailPromises = subscribers.map((subscriber) => {
-            console.log(subscriber.fullName, subscriber.instituteEmail);
+        if (!subscribers.length) return;
+
+        const recipientEmails = subscribers.map(subscriber => subscriber.personalEmail);
+        const linkToApply = 'https://www.nexus-svnit.in';
+        const batchSize = 100; // Adjust based on email provider limits
+
+        for (let i = 0; i < recipientEmails.length; i += batchSize) {
+            const batchRecipients = recipientEmails.slice(i, i + batchSize);
+
             const emailContent = {
                 from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
-                to: subscriber.instituteEmail,
-                subject: subject, // Use the subject from the request
+                to: process.env.EMAIL_ID, // Send to yourself (avoid exposing all emails in 'To')
+                bcc: batchRecipients.join(','), // Recipients in BCC to protect privacy
+                subject: subject,
                 html: `
                     <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
                         <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                             <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                            <p>
-                            <h3 style="color: white;">Dear ${subscriber.fullName},</h3>
-                            </p>
+                            <p><h3 style="color: white;">Dear Subscriber,</h3></p>
                             <p style="color: #ccc;">${message}</p>
                             <p style="color: #ccc;">Visit <a href="${linkToApply}" style="color: #1a73e8;">this link</a> for more details.</p>
                             <p>Thanks,<br>Team NEXUS</p>
@@ -490,16 +492,16 @@ const generalNotification = async (subject, message) => {
                 `,
             };
 
-            // Send the email (implementation depends on your email sending setup)
-                return sendEmail(emailContent); // Ensure you have an email sending function
-        });
+            await sendEmail(emailContent); // Send in batches
+        }
 
-        await Promise.all(emailPromises);
     } catch (err) {
         console.error('Error notifying subscribers:', err);
         throw err;
     }
 };
+
+
 
 const getUserStats = async (req, res) => {
     try {
