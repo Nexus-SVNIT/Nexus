@@ -8,6 +8,7 @@ import Loader from "../Loader/Loader";
 import Error from "../Error/Error";
 import { useQuery } from "@tanstack/react-query";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from '../Error/MaintenancePage';
 
 const Connect = () => {
   const {
@@ -45,11 +46,7 @@ const Connect = () => {
   }
 
   if (isError) {
-    return (
-      <div className="flex h-screen w-screen items-center justify-center text-center">
-        {isError ? <Error /> : "No Details available"}
-      </div>
-    );
+    return <MaintenancePage />;
   }
   return (
     <div className="mx-auto mb-20 flex max-w-7xl flex-col items-center justify-center">

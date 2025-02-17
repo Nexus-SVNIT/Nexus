@@ -8,6 +8,7 @@ import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import AchievementCard from "./AchievementCard";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from '../Error/MaintenancePage';
 
 const Achievements = () => {
   const [open, setOpen] = useState(false);
@@ -27,7 +28,9 @@ const Achievements = () => {
         (res) => res.json(),
       ),
   });
-  if (error) return <Error />;
+  if (error) {
+    return <MaintenancePage />;
+  }
   if (loading)
     return (
       <div className="flex h-[70vh] w-full items-center justify-center">

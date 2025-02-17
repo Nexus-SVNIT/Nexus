@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import increamentCounter from '../../libs/increamentCounter';
+import MaintenancePage from '../Error/MaintenancePage';
 
 const ShowProject = () => {
     const [projects, setProjects] = useState([]);
@@ -50,7 +51,7 @@ const ShowProject = () => {
     }
 
     if (isError) {
-        return <div className="text-red-500 text-lg">Error fetching ongoing projects</div>;
+        return <MaintenancePage />
     }
 
     return (

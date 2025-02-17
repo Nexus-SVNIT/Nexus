@@ -4,6 +4,7 @@ import Title from "../Title/Title";
 import "./events.css";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from '../Error/MaintenancePage';
 
 const Events = () => {
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,7 @@ const Events = () => {
   }, []); // Empty dependency array to run once on mount
 
   if (error) {
-    return <Error />;
+    return <MaintenancePage />;
   }
 
   return (

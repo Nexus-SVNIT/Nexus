@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import InterviewPostCard from './InterviewPostCard';
 import { FaPenToSquare } from "react-icons/fa6";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from "../Error/MaintenancePage";
 
 const formatCompensation = (compensation) => {
   if (!compensation) return 'Not disclosed';
@@ -60,6 +61,7 @@ const InterviewExperiencePage = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
+  const [isError, setError] = useState(null);
   const token = localStorage.getItem("token");
 
   const [formState, setFormState] = useState({
@@ -130,6 +132,7 @@ const InterviewExperiencePage = () => {
       toast.dismiss();
       toast.success("Posts loaded successfully!");
     } catch (error) {
+      setError(error);
       toast.dismiss();
       toast.error("Error fetching posts.");
       console.error("Error fetching posts:", error.response?.data || error);
@@ -264,6 +267,10 @@ const InterviewExperiencePage = () => {
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
   };
+
+  if(isError) {
+    return <MaintenancePage />;
+  }
 
   return (
     <div className="min-h-screen bg-gray-900 p-4 sm:p-6 md:mx-36 mb-36">

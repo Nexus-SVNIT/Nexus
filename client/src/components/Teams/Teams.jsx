@@ -7,6 +7,7 @@ import Loader from "../Loader/Loader";
 import { Title } from "../index";
 import TeamCard from "./TeamCard";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from "../Error/MaintenancePage";
 
 const Teams = () => {
   const [selectedYear, setSelectedYear] = useState(""); // Default year set after fetching unique years
@@ -27,7 +28,9 @@ const Teams = () => {
         setYears(response.data.years); // Assuming 'years' is returned in the API response
         setSelectedYear(response.data.years[0]); // Default to the first available year
       } catch (err) {
-        console.error("Error fetching years:", err);
+        setError(err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -57,7 +60,7 @@ const Teams = () => {
     fetchData();
   }, [selectedYear]); // Refetch data when selectedYear changes
 
-  if (error) return <Error />;
+  if (error) return <MaintenancePage />;
   if (loading)
     return (
       <div className="flex h-[70vh] w-full items-center justify-center">

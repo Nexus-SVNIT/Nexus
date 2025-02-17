@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast"; // Import react-hot-toast
 
-const ProfilePage = ({ profile, setProfile }) => {
+const ProfilePage = ({ profile, setProfile, setErr }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false); // New state for button loading
@@ -27,6 +27,8 @@ const ProfilePage = ({ profile, setProfile }) => {
           "Error fetching profile:",
           error.response?.data?.message || error.message,
         );
+        setLoading(false);
+        setErr(true);
         toast.error("Error fetching profile.");
       }
     };

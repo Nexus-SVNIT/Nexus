@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import FormCard from "./FormCard";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from '../Error/MaintenancePage';
 
 const Forms = () => {
   useEffect(()=>{
@@ -37,7 +38,11 @@ const Forms = () => {
     );
   }
 
-  if (isError || !forms || forms.length === 0) {
+  if (isError) {
+    return <MaintenancePage />;
+  }
+
+  if (!forms || forms.length === 0) {
     return (
       <div className="flex h-screen w-screen items-center justify-center text-center">
         {isError ? <Error /> : "No forms available"}

@@ -9,6 +9,7 @@ import UpcomingContests from "./UpcomingContests"; // Import the new component
 import { FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import increamentCounter from "../../libs/increamentCounter";
+import MaintenancePage from '../Error/MaintenancePage';
 
 const Cp = () => {
   const [userData, setUserData] = useState([]);
@@ -23,6 +24,7 @@ const Cp = () => {
   const [yearFilter, setYearFilter] = useState('all');
   const [tempBranchFilter, setTempBranchFilter] = useState('all');
   const [tempYearFilter, setTempYearFilter] = useState('all');
+  const [isError, setIsError] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -168,6 +170,7 @@ const Cp = () => {
         localStorage.setItem('coding-profile-data', JSON.stringify(dataToStore));
       } catch (error) {
         console.error("Error fetching user data:", error);
+        setIsError(true);
       } finally {
         setLoading(false);
       }
@@ -176,6 +179,10 @@ const Cp = () => {
     fetchUsers();
     increamentCounter();
   }, []);
+
+  if (isError) {
+    return <MaintenancePage />;
+  }
 
   const addRanksToData = (data) => {
     return data.map((item, index) => ({
