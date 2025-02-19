@@ -356,21 +356,30 @@ const createForm = async (req, res) => {
 
 const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
     try {
-        if (!req.file) {
+        if (!req.file && !req.files?.file) {
             return { success: false, error: 'No file uploaded.' };
         }
 
+        const uploadFile = req.file || req.files.file;
+
         const fileMetadata = {
-            name: admissionNumber || req.file.originalname,
+            name: `${admissionNumber || 'unnamed'}_${Date.now()}`,
             parents: [driveFolderId || process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID]
         };
 
-        const bufferStream = new Readable();
-        bufferStream.push(req.file.buffer);
-        bufferStream.push(null);
+        let bufferStream;
+        if (uploadFile.buffer) {
+            bufferStream = new Readable();
+            bufferStream.push(uploadFile.buffer);
+            bufferStream.push(null);
+        } else {
+            bufferStream = new Readable();
+            bufferStream.push(uploadFile.data);
+            bufferStream.push(null);
+        }
 
         const media = {
-            mimeType: req.file.mimetype,
+            mimeType: uploadFile.mimetype,
             body: bufferStream,
         };
 
@@ -382,7 +391,7 @@ const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
 
         return { success: true, fileId: file.data.id };
     } catch (error) {
-        console.log('Error uploading file:', error);
+        console.error('Error uploading file:', error);
         return { success: false, error: error.message || 'Unknown error' };
     }
 };
@@ -500,6 +509,9 @@ const submitResponse = async (req, res) => {
 
         // Upload file to Google Drive if file upload is enabled
         if (formDetails.fileUploadEnabled) {
+            if (!req.file && !req.files?.file) {
+                return res.status(400).json({ message: "File upload is required" });
+            }
             const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
@@ -507,10 +519,18 @@ const submitResponse = async (req, res) => {
             req.body.files = uploadResult.fileId;
         }
 
+        const body = req.body;
+
+        for(const key in body){
+            if(body[key][0] === '"' && body[key][body[key].length-1] === '"'){
+                body[key] = body[key].slice(1, body[key].length-1);
+            }
+        }
+
         // Update the form with the new response
         const form = await Forms.findByIdAndUpdate(
             id,
-            { $push: { responses: { ...req.body, admissionNumber } } },
+            { $push: { responses: { ...body, admissionNumber } } },
             { new: true }
         );
 
@@ -523,7 +543,7 @@ const submitResponse = async (req, res) => {
                 mobileNumber: userData.mobileNumber,
                 personalEmail: userData.personalEmail,
                 branch: userData.branch,
-                ...req.body
+                ...body
             });
             const res = await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,

@@ -64,11 +64,21 @@ const RegisterForm = () => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    setFormResponse((prev) => ({ ...prev, file: file }));
+    if (!file) return;
+    
+    setFiles(file);
+    
+    // Update form response without the file
+    setFormResponse((prev) => {
+      const newResponse = { ...prev };
+      delete newResponse.file; // Remove file from form response
+      return newResponse;
+    });
+
+    // Store preview in sessionStorage if needed
     const reader = new FileReader();
     reader.onload = () => {
-      setFiles(reader.result);
-      sessionStorage.setItem("file", reader.result);
+      sessionStorage.setItem("filePreview", reader.result);
     };
     reader.readAsDataURL(file);
   };
@@ -140,46 +150,50 @@ const RegisterForm = () => {
 
     const finalResponse = new FormData();
 
-    for (const key in submissionData) {
-      finalResponse.append(key, JSON.stringify(submissionData[key]));
-    }
+    // Add non-file fields
+    Object.keys(submissionData).forEach(key => {
+      if (key !== 'file') { // Skip the file field
+        finalResponse.append(key, JSON.stringify(submissionData[key]));
+      }
+    });
 
+    // Add file if exists
     if (files) {
-      finalResponse.append("file", files);
+      finalResponse.append("file", files); // Add the actual File object
     }
 
     const token = localStorage.getItem("token");
 
-    await axios
-      .post(
+    try {
+      const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`,
         finalResponse,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`,
           },
-        },
-      )
-      .then((res) => {
-        if (res.data.success === true) {
-          setFlag(true);
-          setLink(res.data.WaLink);
-          toast.success("Form submitted successfully!");
-
-          // Clear sessionStorage on successful submission
-          sessionStorage.removeItem("formResponse");
-          sessionStorage.removeItem("teamMembers");
-          sessionStorage.removeItem("teamName");
-          sessionStorage.removeItem("file");
-        } else {
-          handleFormError(res.data);
         }
-      })
-      .catch((e) => {
-        handleFormError(e.response.data);
-      })
-      .finally(() => setLoading(false));
+      );
+
+      if (response.data.success) {
+        setFlag(true);
+        setLink(response.data.WaLink);
+        toast.success("Form submitted successfully!");
+
+        // Clear storage
+        sessionStorage.removeItem("formResponse");
+        sessionStorage.removeItem("teamMembers");
+        sessionStorage.removeItem("teamName");
+        sessionStorage.removeItem("filePreview");
+      } else {
+        handleFormError(response.data);
+      }
+    } catch (error) {
+      handleFormError(error.response?.data || { message: "Network error" });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleFormError = (res) => {
@@ -208,35 +222,41 @@ const RegisterForm = () => {
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/${formId}`)
       .then((res) => res.json())
       .then((form) => {
+        if (!form) {
+          throw new Error('Form not found');
+        }
         setFormData(form);
-        const initialResponse = form.formFields.reduce((acc, field) => {
-          acc[field.questionText] = ""; // Initialize with empty strings
+        
+        // Initialize form with empty values
+        const initialResponse = form.formFields?.reduce((acc, field) => {
+          acc[field.questionText] = "";
           return acc;
-        }, {});
+        }, {}) || {};
 
-        // Retrieve form response from sessionStorage
-        const savedFormResponse = JSON.parse(sessionStorage.getItem("formResponse")) || initialResponse;
-        setFormResponse(savedFormResponse);
+        // Load saved responses
+        const savedFormResponse = JSON.parse(sessionStorage.getItem("formResponse"));
+        setFormResponse(savedFormResponse || initialResponse);
 
-        // Retrieve team members from sessionStorage
-        const savedTeamMembers = JSON.parse(sessionStorage.getItem("teamMembers")) || Array(form.teamSize || 0).fill("");
-        setTeamMembers(savedTeamMembers);
+        // Load team data if enabled
+        if (form.enableTeams) {
+          const savedTeamMembers = JSON.parse(sessionStorage.getItem("teamMembers"));
+          setTeamMembers(savedTeamMembers || Array(form.teamSize || 0).fill(""));
+          setTeamName(sessionStorage.getItem("teamName") || "");
+        }
 
-        // Retrieve team name from sessionStorage
-        const savedTeamName = sessionStorage.getItem("teamName") || "";
-        setTeamName(savedTeamName);
-
-        // Retrieve file data from sessionStorage
-        const savedFile = sessionStorage.getItem("file");
-        if (savedFile) {
-          setFiles(savedFile);
+        // Load file preview if exists
+        const savedFilePreview = sessionStorage.getItem("filePreview");
+        if (savedFilePreview) {
+          setFiles(null); // Clear actual file object
+          // Optionally show preview if needed
         }
       })
       .catch((e) => {
         console.error(e);
-        toast.error("Something went wrong. Please try again later.");
+        toast.error("Error loading form. Please try again later.");
       })
       .finally(() => setLoading(false));
+    
     increamentCounter();
   }, [formId]);
 
