@@ -22,7 +22,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 // Routes
 router.get('/', getPublicForms);
 router.get('/all', coreAuthMiddleware, getAllForms);
-// router.post('/create', coreAuthMiddleware, createForm);
+router.post('/create', coreAuthMiddleware, createForm);
 router.post('/submit/:id', authMiddleware, upload.single('file'), submitResponse);
 router.get('/get-responses/:id', coreAuthMiddleware, getResponses);
 router.get('/:id', getFormFields);
