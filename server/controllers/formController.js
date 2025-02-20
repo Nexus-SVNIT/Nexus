@@ -302,6 +302,12 @@ const createForm = async (req, res) => {
             formFields.forEach(field => {
                 values.push(field.questionText);
             });
+            values.push('teamMembers');
+            values.push('teamName');
+            if(fileUploadEnabled){
+                values.push('files');
+            }
+            values.push('dateTime');
             const res = await sheets.spreadsheets.values.append({
                 spreadsheetId: sheetId,
                 range: 'Sheet1',
@@ -527,13 +533,14 @@ const submitResponse = async (req, res) => {
             }
         }
 
+        body.dateTime = new Date();
+
         // Update the form with the new response
         const form = await Forms.findByIdAndUpdate(
             id,
             { $push: { responses: { ...body, admissionNumber } } },
             { new: true }
         );
-
         // Add response to Google Sheet
         if (form.sheetId) {
             const userData = await userModel.findOne({admissionNumber});
@@ -543,7 +550,11 @@ const submitResponse = async (req, res) => {
                 mobileNumber: userData.mobileNumber,
                 personalEmail: userData.personalEmail,
                 branch: userData.branch,
-                ...body
+                ...body,
+                files: `https://drive.google.com/file/d/${body.files}/view`,
+                teamMembers: JSON.stringify(body.teamMembers),
+                teamName: body.teamName,
+                dateTime: new Date(body.dateTime).toLocaleString(),
             });
             const res = await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
