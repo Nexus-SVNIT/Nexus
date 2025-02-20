@@ -10,6 +10,7 @@ import { Navigate } from "react-router-dom";
 import parse from "html-react-parser";
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
+import DOMPurify from 'dompurify';
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -260,6 +261,16 @@ const RegisterForm = () => {
     increamentCounter();
   }, [formId]);
 
+  const sanitizeAndRenderHTML = (content) => {
+    const sanitizedContent = DOMPurify.sanitize(content);
+    return (
+      <div 
+        className="prose max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-ul:list-disc prose-ol:list-decimal"
+        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
+      />
+    );
+  };
+
   if (loading)
     return (
       <div>
@@ -311,9 +322,9 @@ const RegisterForm = () => {
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
-            <p className="text-md px-4 text-slate-700 md:py-2">
-              {parse(formData.desc)}
-            </p>
+            <div className="text-md px-4 text-slate-700 md:py-2">
+              {sanitizeAndRenderHTML(formData.desc)}
+            </div>
             {formData.posterImageDriveId && (
               <p className="text-md px-4 text-slate-500 md:py-2 ">
                 <div className="flex flex-col items-center justify-center gap-5 p-5">

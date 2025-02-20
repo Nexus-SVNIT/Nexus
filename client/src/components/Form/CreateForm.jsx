@@ -149,26 +149,42 @@ const CreateForm = () => {
 
   const modules = {
     toolbar: [
-      [{ header: [1, 2, false] }],
-      ["bold", "italic", "underline", "strike"],
-      [{ color: [] }, { background: [] }], // Added color options
-      [{ list: "ordered" }, { list: "bullet" }],
-      ["link"],
-      ["clean"],
-    ],
+      [{ header: [1, 2, 3, 4, 5, 6, false] }],
+      [{ font: [] }],
+      [{ size: ['small', false, 'large', 'huge'] }],
+      ['bold', 'italic', 'underline', 'strike'],
+      [{ 'script': 'sub'}, { 'script': 'super' }],
+      [{ color: [] }, { background: [] }],
+      [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+      [{ align: [] }],
+      [{ direction: 'rtl' }],
+      ['blockquote', 'code-block'],
+      ['link', 'image', 'video'],
+      ['clean']
+    ]
   };
 
   const formats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "color",
-    "background", // Added color formats
-    "list",
-    "bullet",
-    "link",
+    'header',
+    'font',
+    'size',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'script',
+    'blockquote',
+    'code-block',
+    'color',
+    'background',
+    'list',
+    'bullet',
+    'indent',
+    'align',
+    'direction',
+    'link',
+    'image',
+    'video'
   ];
 
   return (
