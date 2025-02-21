@@ -240,6 +240,28 @@ const updateFormDeadline = async (req, res) => {
     }
 };
 
+const updateForm = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    const form = await Forms.findByIdAndUpdate(
+      id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+
+    if (!form) {
+      return res.status(404).json({ message: 'Form not found' });
+    }
+
+    res.status(200).json(form);
+  } catch (error) {
+    console.error('Error updating form:', error);
+    res.status(500).json({ message: 'Error updating form', error: error.message });
+  }
+};
+
 async function createDriveFolder(formTitle) {
     const folderName = `${formTitle} - ${new Date().toLocaleDateString()}`;
     const fileMetadata = {
@@ -686,4 +708,5 @@ module.exports = {
     notifyAllSubscribers,
     temp,
     getLeaderboard,
+    updateForm,
 };

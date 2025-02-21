@@ -13,7 +13,8 @@ const {
   updateFormDeadline,
   notifyAllSubscribers,
   temp,
-  getLeaderboard
+  getLeaderboard,
+  updateForm  // Add this
 } = require('../controllers/formController.js');
 
 const router = express.Router();
@@ -36,6 +37,8 @@ router.patch('/update-status/:id', coreAuthMiddleware, updateFormStatus);
 // Route to update form deadline
 router.patch('/update-deadline/:id', coreAuthMiddleware,updateFormDeadline);
 
+// New route for updating forms
+router.put('/update/:id', coreAuthMiddleware, updateForm);
 
 //Route to notify subscribers
 

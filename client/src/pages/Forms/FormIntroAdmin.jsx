@@ -1,8 +1,10 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 function FormIntroAdmin(props) {
   const token = localStorage.getItem("core-token");
+  const navigate = useNavigate();
 
   const [publishState, setPublishState] = useState(props.form.publish);
   const [isHidden, setIsHidden] = useState(props.form.isHidden); // State for isHidden
@@ -145,6 +147,10 @@ function FormIntroAdmin(props) {
       });
   };
 
+  const handleEditForm = () => {
+    navigate(`/core/admin/forms/edit/${props.form._id}`);
+  };
+
   return (
     <div className="flex w-[20rem] flex-col justify-between rounded-sm border border-stroke bg-white px-7.5 py-6 shadow-default dark:border-strokedark dark:bg-boxdark sm:w-[22rem] md:w-[24rem]">
       <div className="flex text-lg">{props.form.name}</div>
@@ -261,6 +267,16 @@ function FormIntroAdmin(props) {
         </button>
         }
         
+      </div>
+
+      {/* Add Edit button before the last closing div */}
+      <div className="mt-4">
+        <button
+          onClick={handleEditForm}
+          className="w-full rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        >
+          Edit Form
+        </button>
       </div>
     </div>
   );

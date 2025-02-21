@@ -27,6 +27,7 @@ import InterviewPost from '../components/Post/InterviewPost.jsx'
 import AdminPostPage from '../pages/Post/AdminPostPage.jsx'
 import AdminPostDetail from '../pages/Post/AdminPostDetail.jsx'
 import LeaderBoardPage from '../components/Form/LeaderBoardPage.jsx'
+import EditForm from '../components/Form/EditForm.jsx'
 
 export const DefaultRoutes = [
   {
@@ -225,5 +226,10 @@ export const AdminRoutes = [
     path: 'verify-posts/:id',
     title: 'Verify Post',
     component: AdminPostDetail
+  },
+  {
+    path: 'forms/edit/:id',
+    title: 'Edit Form',
+    component: EditForm
   }
 ]

@@ -11,6 +11,7 @@ import parse from "html-react-parser";
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
 import DOMPurify from 'dompurify';
+import "react-quill/dist/quill.snow.css"; // Add this import
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -322,9 +323,10 @@ const RegisterForm = () => {
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
-            <div className="text-md px-4 text-slate-700 md:py-2">
-              {sanitizeAndRenderHTML(formData.desc)}
-            </div>
+            <div 
+              className="form-description ql-editor !p-0" 
+              dangerouslySetInnerHTML={{ __html: formData?.desc }}
+            />
             {formData.posterImageDriveId && (
               <p className="text-md px-4 text-slate-500 md:py-2 ">
                 <div className="flex flex-col items-center justify-center gap-5 p-5">
@@ -416,6 +418,146 @@ const RegisterForm = () => {
           </div>
         </form>
       )}
+      <style jsx global>{`
+        .form-description {
+          font-family: inherit;
+          line-height: 1.5;
+          margin: 1rem 0;
+          color: #4B5563;
+        }
+        
+        .form-description h1 {
+          font-size: 2em;
+          margin: 0.67em 0;
+        }
+        
+        .form-description h2 {
+          font-size: 1.5em;
+          margin: 0.75em 0;
+        }
+        
+        .form-description h3 {
+          font-size: 1.17em;
+          margin: 0.83em 0;
+        }
+        
+        .form-description p {
+          margin: 1em 0;
+          display: flex;
+          flex-direction: column;
+        }
+        
+        .form-description ul, .form-description ol {
+          margin: 1em 0;
+          padding-left: 40px;
+        }
+        
+        .form-description ul {
+          list-style-type: disc;
+        }
+        
+        .form-description ol {
+          list-style-type: decimal;
+        }
+        
+        .form-description blockquote {
+          border-left: 4px solid #ccc;
+          margin: 1.5em 10px;
+          padding: 0.5em 10px;
+        }
+        
+        .form-description pre {
+          background: #f4f4f4;
+          padding: 1em;
+          margin: 1em 0;
+          border-radius: 4px;
+        }
+        
+        .form-description code {
+          font-family: monospace;
+          background: #f4f4f4;
+          padding: 0.2em 0.4em;
+          border-radius: 3px;
+        }
+
+        .form-description img {
+          max-width: 100%;
+          height: auto;
+          margin: 1em auto;
+          display: block;
+        }
+
+        .form-description a {
+          color: #3B82F6;
+          text-decoration: underline;
+        }
+
+        .form-description .ql-align-center {
+          text-align: center;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+
+        .form-description .ql-align-center img {
+          margin: 0 auto;
+        }
+
+        .form-description p:has(img) {
+          text-align: center;
+        }
+
+        .form-description .ql-align-center * {
+          margin-left: auto;
+          margin-right: auto;
+          text-align: center;
+        }
+
+        .form-description .ql-align-right {
+          text-align: right;
+        }
+
+        .form-description .ql-align-justify {
+          text-align: justify;
+        }
+
+        .form-description .ql-size-small {
+          font-size: 0.75em;
+        }
+
+        .form-description .ql-size-large {
+          font-size: 1.5em;
+        }
+
+        .form-description .ql-size-huge {
+          font-size: 2.5em;
+        }
+
+        .form-description .ql-font-serif {
+          font-family: Georgia, Times New Roman, serif;
+        }
+
+        .form-description .ql-font-monospace {
+          font-family: Monaco, Courier New, monospace;
+        }
+
+        .form-description .ql-direction-rtl {
+          direction: rtl;
+          text-align: inherit;
+        }
+
+        .form-description .ql-video {
+          width: 100%;
+          height: 400px;
+          max-width: 100%;
+        }
+
+        @media (max-width: 768px) {
+          .form-description .ql-video {
+            height: 250px;
+          }
+        }
+      `}</style>
     </div>
   );
 };
