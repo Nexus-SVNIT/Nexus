@@ -26,6 +26,7 @@ import InterviewExperiencePage from '../components/Post/InterviewExperiencePage.
 import InterviewPost from '../components/Post/InterviewPost.jsx'
 import AdminPostPage from '../pages/Post/AdminPostPage.jsx'
 import AdminPostDetail from '../pages/Post/AdminPostDetail.jsx'
+import LeaderBoardPage from '../components/Form/LeaderBoardPage.jsx'
 
 export const DefaultRoutes = [
   {
@@ -143,6 +144,11 @@ export const DefaultRoutes = [
     path:'interview-experiences/post/:id',
     title:'Interview Experience',
     component: InterviewPost
+  },
+  {
+    path:'/merch/reference-leaderboard/',
+    title:'Merch Reference LeaderBoard',
+    component: LeaderBoardPage
   },
 
   {

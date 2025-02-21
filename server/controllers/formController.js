@@ -630,6 +630,50 @@ const getFormFields = async (req, res) => {
     }
 };
 
+const getLeaderboard = async (req, res) => {
+    // const formId = req.params.id;
+    const formId = '67b856257a31d0ef7e5465a4';
+    try {
+        const form = await Forms.findById(formId);
+        if (!form) {
+            return res.status(404).json({ message: 'Form not found' });
+        }
+
+        // Get all responses and count references
+        const referenceData = {};
+        form.responses.forEach(response => {
+            const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
+            if (reference) {
+                referenceData[reference] = (referenceData[reference] || 0) + 1;
+            }
+        });
+
+        // Convert to array and sort by count
+        const leaderboard = Object.entries(referenceData)
+            .map(([reference, count]) => ({ reference, count }))
+            .sort((a, b) => b.count - a.count);
+
+        // Fetch user details for each reference
+        const leaderboardWithDetails = await Promise.all(
+            leaderboard.map(async (item) => {
+                const user = await User.findOne(
+                    { admissionNumber: item.reference },
+                    { fullName: 1, admissionNumber: 1 }
+                );
+                return {
+                    ...item,
+                    name: user ? user.fullName : 'Unknown User'
+                };
+            })
+        );
+
+        res.json(leaderboardWithDetails);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     getAllForms,
     getPublicForms,
@@ -640,5 +684,6 @@ module.exports = {
     updateFormStatus,
     updateFormDeadline,
     notifyAllSubscribers,
-    temp
+    temp,
+    getLeaderboard,
 };
