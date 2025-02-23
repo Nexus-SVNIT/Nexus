@@ -96,6 +96,11 @@ const RegisterForm = () => {
       } else {
         trimmedFormResponse[key] = formResponse[key]; // For non-string fields (like arrays or numbers)
       }
+
+      if(key === 'Your Favorite Nexus Member - Reference (Admission No only)'){
+        trimmedFormResponse[key] = trimmedFormResponse[key].toUpperCase();
+        console.log(trimmedFormResponse[key]);
+      }
     }
 
     // Trim team members
