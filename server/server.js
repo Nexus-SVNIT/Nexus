@@ -31,11 +31,7 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
-const corsOptions = {
-    origin: ['http://localhost:3000','https://www.nexus-svnit.in/'],
-}
-
-app.use(cors(corsOptions));
+app.use(cors());
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
