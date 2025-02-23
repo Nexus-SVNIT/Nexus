@@ -25,7 +25,7 @@ const companyRoutes=require("./routes/comapnyRoutes.js");
 const questionRoutes=require("./routes/questionRoutes.js");
 const commentRoutes=require("./routes/commentRoutes.js");
 const answerRoutes=require("./routes/answerRoutes.js");
-
+const rateLimit = require('express-rate-limit');
 
 const app = express()
 const PORT = process.env.PORT
@@ -42,6 +42,16 @@ app.get('/health-check', (req, res) => {
 cloudinary.config({
     secure: true
 })
+
+// Rate limiter middleware
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 50, 
+    message: 'Too many requests from this IP, please try again after 15 minutes'
+});
+
+// Apply the rate limiter to all requests
+app.use(limiter);
 
 app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
@@ -68,7 +78,6 @@ mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 }
     .then(() => {
         app.listen(PORT, (req, res) => {
             console.log('connected to db')
-
             console.log('listening on port', PORT)
         })
     })
