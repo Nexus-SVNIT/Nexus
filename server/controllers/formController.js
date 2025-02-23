@@ -696,6 +696,109 @@ const getLeaderboard = async (req, res) => {
     }
 };
 
+const getAdminLeaderboard = async (req, res) => {
+    const formId = '67b856257a31d0ef7e5465a4';
+    try {
+        const form = await Forms.findById(formId);
+        if (!form) {
+            return res.status(404).json({ message: 'Form not found' });
+        }
+
+        // Get all responses and organize data
+        const referenceData = {};
+        const referrerData = {};
+
+        // First pass: collect references
+        form.responses.forEach(response => {
+            const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
+            const referredBy = response.admissionNumber;
+            
+            if (reference) {
+                // Initialize reference data if doesn't exist
+                if (!referenceData[reference]) {
+                    referenceData[reference] = {
+                        count: 0,
+                        referrals: [],
+                        referredBy: [] // Who this person used as reference
+                    };
+                }
+                referenceData[reference].count += 1;
+                referenceData[reference].referrals.push({
+                    admissionNumber: referredBy,
+                    submittedAt: response.dateTime
+                });
+            }
+
+            // Track who referred this person
+            if (!referrerData[referredBy]) {
+                referrerData[referredBy] = reference;
+            }
+        });
+
+        // Second pass: add referredBy data
+        Object.keys(referenceData).forEach(reference => {
+            if (referrerData[reference]) {
+                referenceData[reference].referredBy.push(referrerData[reference]);
+            }
+        });
+
+        // Convert to array and sort by count
+        const leaderboard = await Promise.all(
+            Object.entries(referenceData)
+                .map(async ([reference, data]) => {
+                    const user = await User.findOne(
+                        { admissionNumber: reference },
+                        { fullName: 1, admissionNumber: 1 }
+                    );
+
+                    // Fetch details for each referral
+                    const referralDetails = await Promise.all(
+                        data.referrals.map(async (referral) => {
+                            const referralUser = await User.findOne(
+                                { admissionNumber: referral.admissionNumber },
+                                { fullName: 1, admissionNumber: 1 }
+                            );
+                            return {
+                                ...referral,
+                                name: referralUser ? referralUser.fullName : 'Unknown User'
+                            };
+                        })
+                    );
+
+                    // Fetch details for each referrer
+                    const referrerDetails = await Promise.all(
+                        data.referredBy.map(async (referrerAdmissionNo) => {
+                            const referrerUser = await User.findOne(
+                                { admissionNumber: referrerAdmissionNo },
+                                { fullName: 1, admissionNumber: 1 }
+                            );
+                            return {
+                                admissionNumber: referrerAdmissionNo,
+                                name: referrerUser ? referrerUser.fullName : 'Unknown User'
+                            };
+                        })
+                    );
+
+                    return {
+                        reference,
+                        count: data.count,
+                        name: user ? user.fullName : 'Unknown User',
+                        referrals: referralDetails,
+                        referredBy: referrerDetails
+                    };
+                })
+        );
+
+        // Sort by count in descending order
+        leaderboard.sort((a, b) => b.count - a.count);
+
+        res.json(leaderboard);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+};
+
 module.exports = {
     getAllForms,
     getPublicForms,
@@ -709,4 +812,5 @@ module.exports = {
     temp,
     getLeaderboard,
     updateForm,
+    getAdminLeaderboard,
 };

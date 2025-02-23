@@ -28,6 +28,7 @@ import AdminPostPage from '../pages/Post/AdminPostPage.jsx'
 import AdminPostDetail from '../pages/Post/AdminPostDetail.jsx'
 import LeaderBoardPage from '../components/Form/LeaderBoardPage.jsx'
 import EditForm from '../components/Form/EditForm.jsx'
+import AdminLeaderBoard from '../components/Form/AdminLeaderBoard.jsx'
 
 export const DefaultRoutes = [
   {
@@ -231,5 +232,10 @@ export const AdminRoutes = [
     path: 'forms/edit/:id',
     title: 'Edit Form',
     component: EditForm
+  },
+  {
+    path: 'merch/reference-leaderboard',
+    title: 'Merch Reference LeaderBoard',
+    component: AdminLeaderBoard
   }
 ]

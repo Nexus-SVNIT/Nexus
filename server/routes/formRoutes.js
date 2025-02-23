@@ -14,7 +14,8 @@ const {
   notifyAllSubscribers,
   temp,
   getLeaderboard,
-  updateForm  // Add this
+  updateForm,  // Add this
+  getAdminLeaderboard
 } = require('../controllers/formController.js');
 
 const router = express.Router();
@@ -29,6 +30,8 @@ router.post('/submit/:id', authMiddleware, upload.single('file'), submitResponse
 router.get('/get-responses/:id', coreAuthMiddleware, getResponses);
 // Add new route for leaderboard
 router.get('/reference/leaderboard/', getLeaderboard);
+// Add new route for admin leaderboard
+router.get('/reference/admin-leaderboard/', coreAuthMiddleware, getAdminLeaderboard);
 router.get('/:id', getFormFields);
 
 // New route for updating form status
