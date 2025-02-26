@@ -653,7 +653,6 @@ const getFormFields = async (req, res) => {
 };
 
 const getLeaderboard = async (req, res) => {
-    // const formId = req.params.id;
     const formId = '67b856257a31d0ef7e5465a4';
     try {
         const form = await Forms.findById(formId);
@@ -661,35 +660,54 @@ const getLeaderboard = async (req, res) => {
             return res.status(404).json({ message: 'Form not found' });
         }
 
-        // Get all responses and count references
         const referenceData = {};
+        // First pass: collect references and track latest referral time
         form.responses.forEach(response => {
             const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
             if (reference) {
-                referenceData[reference] = (referenceData[reference] || 0) + 1;
+                if (!referenceData[reference]) {
+                    referenceData[reference] = {
+                        count: 0,
+                        lastReferralTime: null
+                    };
+                }
+                referenceData[reference].count += 1;
+                const currentTime = new Date(response.dateTime);
+                if (!referenceData[reference].lastReferralTime || 
+                    currentTime > referenceData[reference].lastReferralTime) {
+                    referenceData[reference].lastReferralTime = currentTime;
+                }
             }
         });
 
-        // Convert to array and sort by count
-        const leaderboard = Object.entries(referenceData)
-            .map(([reference, count]) => ({ reference, count }))
-            .sort((a, b) => b.count - a.count);
-
-        // Fetch user details for each reference
-        const leaderboardWithDetails = await Promise.all(
-            leaderboard.map(async (item) => {
-                const user = await User.findOne(
-                    { admissionNumber: item.reference },
-                    { fullName: 1, admissionNumber: 1 }
-                );
-                return {
-                    ...item,
-                    name: user ? user.fullName : 'Unknown User'
-                };
-            })
+        // Convert to array and add user details
+        const leaderboard = await Promise.all(
+            Object.entries(referenceData)
+                .map(async ([reference, data]) => {
+                    const user = await User.findOne(
+                        { admissionNumber: reference },
+                        { fullName: 1, admissionNumber: 1 }
+                    );
+                    return {
+                        reference,
+                        count: data.count,
+                        name: user ? user.fullName : 'Unknown User',
+                        lastReferralTime: data.lastReferralTime
+                    };
+                })
         );
 
-        res.json(leaderboardWithDetails);
+        // Modified sorting logic
+        leaderboard.sort((a, b) => {
+            // First sort by count in descending order
+            if (b.count !== a.count) {
+                return b.count - a.count;
+            }
+            // If counts are equal, sort by last referral time in descending order
+            return a.lastReferralTime - b.lastReferralTime;
+        });
+
+        res.json(leaderboard);
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Server error' });
@@ -704,63 +722,87 @@ const getAdminLeaderboard = async (req, res) => {
             return res.status(404).json({ message: 'Form not found' });
         }
 
-        // Get all responses and organize data
         const referenceData = {};
-        const referrerData = {};
 
-        // First pass: collect references
+        // First pass: collect references and referrals with timestamps
         form.responses.forEach(response => {
             const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
             const referredBy = response.admissionNumber;
+            const submittedAt = response.dateTime;
             
             if (reference) {
-                // Initialize reference data if doesn't exist
                 if (!referenceData[reference]) {
                     referenceData[reference] = {
                         count: 0,
                         referrals: [],
-                        referredBy: [] // Who this person used as reference
+                        referredBy: [],
+                        firstReferralTime: null,
+                        lastReferralTime: null
                     };
                 }
+
+                // Update count and add referral
                 referenceData[reference].count += 1;
                 referenceData[reference].referrals.push({
                     admissionNumber: referredBy,
-                    submittedAt: response.dateTime
+                    submittedAt: new Date(submittedAt)
                 });
+
+                // Update first and last referral times
+                const currentTime = new Date(submittedAt);
+                if (!referenceData[reference].firstReferralTime || 
+                    currentTime < referenceData[reference].firstReferralTime) {
+                    referenceData[reference].firstReferralTime = currentTime;
+                }
+                if (!referenceData[reference].lastReferralTime || 
+                    currentTime > referenceData[reference].lastReferralTime) {
+                    referenceData[reference].lastReferralTime = currentTime;
+                }
             }
 
-            // Track who referred this person
-            if (!referrerData[referredBy]) {
-                referrerData[referredBy] = reference;
+            // Track who used this person as reference
+            if (referredBy && reference) {
+                if (!referenceData[referredBy]) {
+                    referenceData[referredBy] = {
+                        count: 0,
+                        referrals: [],
+                        referredBy: [],
+                        firstReferralTime: null,
+                        lastReferralTime: null
+                    };
+                }
+                if (!referenceData[referredBy].referredBy.includes(reference)) {
+                    referenceData[referredBy].referredBy.push(reference);
+                }
             }
         });
 
-        // Second pass: add referredBy data
-        Object.keys(referenceData).forEach(reference => {
-            if (referrerData[reference]) {
-                referenceData[reference].referredBy.push(referrerData[reference]);
-            }
-        });
-
-        // Convert to array and sort by count
+        // Convert to array and add user details
         const leaderboard = await Promise.all(
             Object.entries(referenceData)
                 .map(async ([reference, data]) => {
+                    // Get user details
                     const user = await User.findOne(
                         { admissionNumber: reference },
                         { fullName: 1, admissionNumber: 1 }
                     );
 
+                    // Sort referrals by submission time
+                    const sortedReferrals = data.referrals.sort((a, b) => 
+                        new Date(b.submittedAt) - new Date(a.submittedAt)
+                    );
+
                     // Fetch details for each referral
                     const referralDetails = await Promise.all(
-                        data.referrals.map(async (referral) => {
+                        sortedReferrals.map(async (referral) => {
                             const referralUser = await User.findOne(
                                 { admissionNumber: referral.admissionNumber },
                                 { fullName: 1, admissionNumber: 1 }
                             );
                             return {
-                                ...referral,
-                                name: referralUser ? referralUser.fullName : 'Unknown User'
+                                admissionNumber: referral.admissionNumber,
+                                name: referralUser ? referralUser.fullName : 'Unknown User',
+                                submittedAt: referral.submittedAt
                             };
                         })
                     );
@@ -781,21 +823,30 @@ const getAdminLeaderboard = async (req, res) => {
 
                     return {
                         reference,
-                        count: data.count,
                         name: user ? user.fullName : 'Unknown User',
+                        count: data.count,
                         referrals: referralDetails,
-                        referredBy: referrerDetails
+                        referredBy: referrerDetails,
+                        firstReferralTime: data.firstReferralTime,
+                        lastReferralTime: data.lastReferralTime
                     };
                 })
         );
 
-        // Sort by count in descending order
-        leaderboard.sort((a, b) => b.count - a.count);
+        // Modified sorting logic for admin leaderboard
+        leaderboard.sort((a, b) => {
+            // Primary sort by count in descending order
+            if (b.count !== a.count) {
+                return b.count - a.count;
+            }
+            // Secondary sort by last referral time in descending order
+            return a.lastReferralTime - b.lastReferralTime;
+        });
 
         res.json(leaderboard);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
+        console.error('Error in getAdminLeaderboard:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 

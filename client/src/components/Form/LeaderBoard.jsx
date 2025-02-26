@@ -18,6 +18,7 @@ import {
     Grid
 } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import increamentCounter from "../../libs/increamentCounter";
 
 const LeaderBoard = () => {
     const [leaderboard, setLeaderboard] = useState([]);
@@ -39,6 +40,7 @@ const LeaderBoard = () => {
         };
 
         fetchLeaderboard();
+        increamentCounter();
     }, []);
 
     if (loading) {
@@ -59,18 +61,16 @@ const LeaderBoard = () => {
 
     const getPositionColor = (position) => {
         switch (position) {
-            case 0: return '#FFD700'; // Gold
-            case 1: return '#C0C0C0'; // Silver
-            case 2: return '#CD7F32'; // Bronze
+            case 0: return '#FFD700';
+            case 1: return '#C0C0C0';
+            case 2: return '#CD7F32';
             default: return 'white';
         }
     };
 
     return (
         <Container maxWidth="lg" sx={{ py: 4 }}>
-            <Box sx={{ 
-                width: '100%', 
-                minHeight: '80vh',
+            <Card sx={{ 
                 backgroundColor: 'black',
                 color: 'white',
                 borderRadius: 2,
@@ -96,7 +96,6 @@ const LeaderBoard = () => {
                 </Box>
 
                 {isMobile ? (
-                    // Mobile view - Card layout
                     <Grid container spacing={2}>
                         {leaderboard.map((item, index) => (
                             <Grid item xs={12} key={item.reference}>
@@ -112,27 +111,29 @@ const LeaderBoard = () => {
                                 }}>
                                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                                         <Typography variant="h6">#{index + 1}</Typography>
-                                        <Typography variant="h6">{item.count} refs</Typography>
+                                        <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                                            {item.count} refs
+                                        </Typography>
                                     </Box>
                                     <Typography variant="body1">{item.name}</Typography>
-                                    <Typography variant="body2" sx={{ opacity: 0.7 }}>{item.reference}</Typography>
+                                    <Typography variant="body2" sx={{ opacity: 0.7 }}>
+                                        Latest: {new Date(item.lastReferralTime).toLocaleString()}
+                                    </Typography>
                                 </Card>
                             </Grid>
                         ))}
                     </Grid>
                 ) : (
-                    // Desktop view - Table layout
-                    <TableContainer component={Paper} sx={{ 
-                        backgroundColor: 'transparent',
-                        boxShadow: 'none'
-                    }}>
+                    <TableContainer component={Paper} sx={{ backgroundColor: 'transparent', boxShadow: 'none' }}>
                         <Table>
                             <TableHead>
                                 <TableRow>
                                     <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Rank</TableCell>
                                     <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Name</TableCell>
-                                    <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Admission Number</TableCell>
-                                    <TableCell align="right" sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>References</TableCell>
+                                    <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold', textAlign: 'center' }}>
+                                        References
+                                    </TableCell>
+                                    <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Latest Reference</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
@@ -154,10 +155,10 @@ const LeaderBoard = () => {
                                             {item.name}
                                         </TableCell>
                                         <TableCell sx={{ color: getPositionColor(index) }}>
-                                            {item.reference}
-                                        </TableCell>
-                                        <TableCell align="right" sx={{ color: getPositionColor(index) }}>
                                             {item.count}
+                                        </TableCell>
+                                        <TableCell sx={{ color: getPositionColor(index) }}>
+                                            {new Date(item.lastReferralTime).toLocaleString()}
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -165,7 +166,7 @@ const LeaderBoard = () => {
                         </Table>
                     </TableContainer>
                 )}
-            </Box>
+            </Card>
         </Container>
     );
 };

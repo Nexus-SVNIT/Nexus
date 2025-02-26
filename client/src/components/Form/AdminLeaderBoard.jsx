@@ -15,10 +15,12 @@ import {
     IconButton,
     Container,
     Card,
+    Tooltip
 } from '@mui/material';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import SwapVertIcon from '@mui/icons-material/SwapVert';
 
 const Row = ({ row, index }) => {
     const [open, setOpen] = useState(false);
@@ -54,21 +56,29 @@ const Row = ({ row, index }) => {
                 <TableCell sx={{ color: getPositionColor(index) }}>{index + 1}</TableCell>
                 <TableCell sx={{ color: getPositionColor(index) }}>{row.name}</TableCell>
                 <TableCell sx={{ color: getPositionColor(index) }}>{row.reference}</TableCell>
-                <TableCell align="right" sx={{ color: getPositionColor(index) }}>{row.count}</TableCell>
+                <TableCell sx={{ color: getPositionColor(index) }}>
+                    Last Reference: {new Date(row.lastReferralTime).toLocaleString()}
+                </TableCell>
+                <TableCell align="right" sx={{ color: getPositionColor(index) }}>
+                    {row.count}
+                </TableCell>
             </TableRow>
             <TableRow>
                 <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
                     <Collapse in={open} timeout="auto" unmountOnExit>
                         <Box sx={{ margin: 1 }}>
-                            <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 2 }}>
-                                <Typography 
-                                    variant="h6" 
-                                    component="div" 
-                                    sx={{ color: '#2ab3ea', cursor: 'pointer' }}
-                                    onClick={() => setShowReferrers(!showReferrers)}
-                                >
+                            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
+                                <Typography variant="h6" component="div" sx={{ color: '#2ab3ea' }}>
                                     {showReferrers ? 'Referenced By' : 'Referrals Made'}
                                 </Typography>
+                                <Tooltip title="Switch View">
+                                    <IconButton 
+                                        onClick={() => setShowReferrers(!showReferrers)}
+                                        sx={{ color: '#2ab3ea' }}
+                                    >
+                                        <SwapVertIcon />
+                                    </IconButton>
+                                </Tooltip>
                             </Box>
                             
                             <Table size="small">
@@ -118,11 +128,14 @@ const AdminLeaderBoard = () => {
     useEffect(() => {
         const fetchLeaderboard = async () => {
             try {
-                const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/reference/admin-leaderboard/`, {
-                    headers: {
-                        Authorization: `Bearer ${localStorage.getItem('core-token')}`
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/reference/admin-leaderboard/`,
+                    {
+                        headers: {
+                            Authorization: `Bearer ${localStorage.getItem('core-token')}`
+                        }
                     }
-                });
+                );
                 setLeaderboard(response.data);
                 setLoading(false);
             } catch (err) {
@@ -185,6 +198,7 @@ const AdminLeaderBoard = () => {
                                 <TableCell sx={{ color: '#2ab3ea' }}>Rank</TableCell>
                                 <TableCell sx={{ color: '#2ab3ea' }}>Name</TableCell>
                                 <TableCell sx={{ color: '#2ab3ea' }}>Admission Number</TableCell>
+                                <TableCell sx={{ color: '#2ab3ea' }}>First Reference Time</TableCell>
                                 <TableCell align="right" sx={{ color: '#2ab3ea' }}>References</TableCell>
                             </TableRow>
                         </TableHead>
