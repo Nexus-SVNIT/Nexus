@@ -82,69 +82,84 @@ const temp = async (req, res) => {
     }
 };
 
-const notifyAllSubscribers = async (formId) => {
+const notifyAllSubscribers = async (req, res) => {
     try {
         // Fetch the form details by ID
+        const formId = req.params.formId;
         const form = await Forms.findById(formId);
         if (!form) {
             console.error(`Form with ID ${formId} not found.`);
-            return;
+            return res.status(404).json({ message: "Form not found" });
         }
 
         // Fetch users who are subscribed
         const subscribers = await User.find({ subscribed: true });
+        if (subscribers.length === 0) {
+            console.log("No subscribers to notify.");
+            return res.status(200).json({ message: "No subscribers to notify" });
+        }
+
+        // Prepare BCC recipient list
+        const bccRecipients = subscribers.map(subscriber => subscriber.personalEmail);
+        
+        console.log(`Total subscribers to notify: ${bccRecipients.length}`);
 
         // Notification link to apply
-        const linkToApply = 'https://www.nexus-svnit.tech/forms';
+        const linkToApply = 'https://www.nexus-svnit.in/forms';
 
-        // Notify each subscriber
-        subscribers.forEach(async (subscriber) => {
-            const emailContent = {
-                to: subscriber.personalEmail,
-                subject: `New Form Realesed: ${form.name}`,
-                text: `New Form Realesed: ${form.name}. Apply before deadline.`,
-                // text: `Hello ${subscriber.fullName},\n\n` +
-                //     `A new form has been realesed:\n` +
-                //     `Name: ${form.name}\n` +
-                //     `Description: ${form.desc}\n` +
-                //     `Deadline: ${form.deadline}\n` +
-                //     `Link to apply: ${linkToApply}\n\n` +
-                //     `Best regards,\nTeam Nexus`,
-                html: `
-            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
-                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
-                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+        // Email content template
+        const emailTemplate = {
+            to: "noreply@nexus-svnit.in",  // Sender's email (can be an official email)
+            subject: `New Form Released: ${form.name}`,
+            text: `New Form Released: ${form.name}. Apply before the deadline.`,
+            html: `
+                <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                    <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
+                        <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+                    </div>
+                    <div>Dear Subscriber,</div>
+                    <p>A new form has been released:</p>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Name:</strong> ${form.name}
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Description:</strong> ${form.desc}
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Deadline:</strong> ${form.deadline}
+                    </div>
+                    <div style="margin-bottom: 20px;">
+                        <strong>Link to apply:</strong> <a href="${linkToApply}" style="color: #1a73e8;">Apply Now</a>
+                    </div>
+                    <p>Thanks,<br>Team NEXUS</p>
                 </div>
-                <div>Dear ${subscriber.fullName},</div>
-                <p>A new form has been released:</p>
-                <div style="margin-bottom: 20px;">
-                    <strong>Name:</strong> ${form.name}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Description:</strong> ${form.desc}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Deadline:</strong> ${form.deadline}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.tech/forms" style="color: #1a73e8;">Apply Now</a>
-                </div>
-                <p>Thanks,<br>Team NEXUS</p>
-            </div>
-        `
-            };
+            `
+        };
+
+        // Send emails in batches (limit to 50 recipients per batch)
+        const batchSize = 50;
+        for (let i = 0; i < bccRecipients.length; i += batchSize) {
+            const batch = bccRecipients.slice(i, i + batchSize);
+            console.log(`Sending batch ${Math.ceil(i / batchSize) + 1}: ${batch.length} recipients`);
 
             try {
-                const temp = await sendEmail(emailContent);
-                // console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
+                await sendEmail({ ...emailTemplate, bcc: batch });
+                console.log(`Batch ${Math.ceil(i / batchSize) + 1} sent successfully`);
             } catch (error) {
-                console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);
+                console.error(`Error sending batch ${Math.ceil(i / batchSize) + 1}:`, error);
             }
-        });
+        }
+
+        console.log("All email batches sent successfully.");
+        return res.status(200).json({ message: `Notification sent to ${subscribers.length} subscribers.` });
+
     } catch (error) {
         console.error(`Error notifying subscribers:`, error);
+        return res.status(500).json({ message: "Error sending notifications", error });
     }
 };
+
+
 
 
 
