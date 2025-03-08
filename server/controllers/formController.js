@@ -65,7 +65,7 @@ const temp = async (req, res) => {
                     <strong>Deadline:</strong> ${form.deadline}
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.tech/forms" style="color: #1a73e8;">Apply Now</a>
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
                 </div>
                 <p>Thanks,<br>Team NEXUS</p>
             </div>
@@ -95,7 +95,7 @@ const notifyAllSubscribers = async (formId) => {
         const subscribers = await User.find({ subscribed: true });
 
         // Notification link to apply
-        const linkToApply = 'https://www.nexus-svnit.tech/forms';
+        const linkToApply = 'https://www.nexus-svnit.in/forms';
 
         // Notify each subscriber
         subscribers.forEach(async (subscriber) => {
@@ -127,7 +127,7 @@ const notifyAllSubscribers = async (formId) => {
                     <strong>Deadline:</strong> ${form.deadline}
                 </div>
                 <div style="margin-bottom: 20px;">
-                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.tech/forms" style="color: #1a73e8;">Apply Now</a>
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
                 </div>
                 <p>Thanks,<br>Team NEXUS</p>
             </div>

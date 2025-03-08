@@ -7,9 +7,9 @@ import {
   WhatPeopleThinkAboutUS,
 } from "../index";
 import Counter from "../Counter/Counter";
+import { Helmet } from "react-helmet";
 
 const Home = () => {
-
 
   useEffect(() => {
     const script = document.createElement("script");
@@ -19,6 +19,18 @@ const Home = () => {
 
   return (
     <div className="relative mx-auto overflow-x-hidden transition-all delay-300">
+      <Helmet>
+        <title>Home | Nexus - NIT Surat</title>
+        <meta
+          name="description"
+          content="A community for the students of Computer Science and Engineering and Artificial Intelligence NIT Surat."
+        />
+        <meta
+          name="keywords"
+          content="Nexus, NIT Surat, Computer Science and Engineering, Artificial Intelligence, NIT Surat"
+        />
+        <meta name="author" content="All Time Nexus Developers, Nexus - NIT Surat" />
+      </Helmet>
       <div className="flex h-screen flex-col items-center">
         <Three />
         <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
