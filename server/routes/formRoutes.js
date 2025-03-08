@@ -44,6 +44,7 @@ router.patch('/update-deadline/:id', coreAuthMiddleware,updateFormDeadline);
 router.put('/update/:id', coreAuthMiddleware, updateForm);
 
 //Route to notify subscribers
+router.post('/notify-subscribers/:formId', coreAuthMiddleware,notifyAllSubscribers);
 
 // router.post('/notify-subscribers/:formId', coreAuthMiddleware, async (req, res) => {
 //   const { formId } = req.params;
