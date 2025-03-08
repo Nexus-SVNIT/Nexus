@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';  // Import the toast functionality
 import increamentCounter from '../../libs/increamentCounter';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import HeadTags from '../HeadTags/HeadTags';
 
 const LoginForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState('');
@@ -59,6 +60,10 @@ const LoginForm = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-black-2 text-white p-6">
+      <HeadTags
+        title="Login - Student Portal | Nexus NIT Surat"
+        description="Login to your NEXUS account to access your dashboard."
+      />
       <Toaster /> {/* Render the toast notifications */}
       <div className="w-full max-w-md p-8 space-y-6 bg-gray-800 rounded-md shadow-card-2 shadow-white">
         <div className="flex justify-center">

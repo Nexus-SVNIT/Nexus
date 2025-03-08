@@ -5,6 +5,7 @@ import CodingProfile from "./CodingProfile";
 import { Toaster } from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
+import HeadTags from "../HeadTags/HeadTags";
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -33,6 +34,10 @@ const ProfilePage = () => {
 
   return (
     <div className="px-6">
+      <HeadTags
+        title="Profile - CodeStrike | Nexus - NIT Surat"
+        description="Update your profile and coding profiles on CodeStrike."
+      />
       <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
         <Toaster position="top-right" reverseOrder={false} />
         <h2 className="text-gray-800 mb-6 text-2xl font-semibold">Profile</h2>

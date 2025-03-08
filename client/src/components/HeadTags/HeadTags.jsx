@@ -1,6 +1,6 @@
 import Helmet from "react-helmet";
 
-const HeadTags = ({ title, description, imageLink }) => {
+const HeadTags = ({ title, description, imageLink, keywords }) => {
   return (
     <Helmet>
       <title>{title}</title>
@@ -15,6 +15,16 @@ const HeadTags = ({ title, description, imageLink }) => {
         }
       />
       <meta name="title" key="title" content={title ?? "Nexus NIT Surat"} />
+      <meta name="robots" content="index, follow" />
+      <meta name="theme-color" content="#000000" />
+      <meta name="mobile-web-app-capable" content="yes" />
+      <meta name="apple-mobile-web-app-capable" content="yes" />
+      <meta name="application-name" content="Nexus NIT Surat" />
+      <meta name="apple-mobile-web-app-title" content="Nexus NIT Surat" />
+      <meta
+        name="keywords"
+        content={keywords ?? "Nexus, SVNIT, Nexus NIT Surat, National Institute of Technology, Surat, Sardar Vallbhbhai National Institute of Technology, Computer Science and Engineering, Artificial Intelligence, Coding, CSE, AI, Departmental Cell Alumni, Club, Events, "+keywords}
+      />
       <meta
         property="og:title"
         key="og:title"
@@ -37,6 +47,25 @@ const HeadTags = ({ title, description, imageLink }) => {
         content={
           imageLink ?? `${process.env.BASE_URL}/public/assets/NEXUStext.png`
         }
+      />
+      <meta
+        property="url"
+        key="url"
+        content={'https://www.nexus-svnit.in'}
+      />
+      <meta
+        property="og:url"
+        key="og:url"
+        content={'https://www.nexus-svnit.in'}
+      />
+      <meta
+        property="og:site_name"
+        key="og:site_name"
+        content="Nexus NIT Surat"
+      />
+      <meta 
+      name="author"
+      content="All Time Nexus Developers, Nexus-NIT Surat"
       />
     </Helmet>
   );

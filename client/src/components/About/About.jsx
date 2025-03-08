@@ -6,13 +6,17 @@ import NexusLogo from "../../data/images/nexus.png";
 import SVNITLogo from "../../data/images/svnit.svg";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
+
 const About = () => {
   useEffect(() => {
     increamentCounter();
   }, []);
   return (
     <div className="mx-auto mb-20 mt-10 flex max-w-7xl flex-col gap-2 text-white/75 sm:px-10 md:p-0">
-      <HeadTags title={"About - Nexus NIT Surat"} />
+      <HeadTags 
+      title={"About | Nexus - NIT Surat"}
+      description={"Welcome to Nexus, the dynamic hub of computer science enthusiasts at Sardar Vallabhbhai National Institute of Technology (SVNIT) Surat. At Nexus, we envision a vibrant community where students passionate about computer science come together to thrive and excel."}
+      />
       <div className="mb-4 flex flex-col-reverse gap-20 md:flex-row">
         <div className="p-6 md:w-2/3 ">
           <h2 className="mb-4 w-3/4  text-3xl font-semibold md:text-4xl ">

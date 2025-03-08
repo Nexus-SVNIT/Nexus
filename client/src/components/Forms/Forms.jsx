@@ -6,18 +6,23 @@ import Loader from "../Loader/Loader";
 import Title from "../Title/Title";
 import FormCard from "./FormCard";
 import increamentCounter from "../../libs/increamentCounter";
-import MaintenancePage from '../Error/MaintenancePage';
+import MaintenancePage from "../Error/MaintenancePage";
+import { Helmet } from "react-helmet";
 
 const Forms = () => {
-  useEffect(()=>{
+  useEffect(() => {
     increamentCounter();
-  })
-  const { isLoading, isError, data: forms } = useQuery({
+  });
+  const {
+    isLoading,
+    isError,
+    data: forms,
+  } = useQuery({
     queryKey: ["forms"],
     queryFn: async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/`,
         );
         if (!response.ok) {
           throw new Error("Failed to fetch forms");
@@ -57,11 +62,19 @@ const Forms = () => {
 
   return (
     <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
-      <HeadTags title={"Forms - Nexus NIT Surat"} />
+      <HeadTags
+        title={"Forms - Nexus NIT Surat"}
+        description={
+          "Forms for various events and activities conducted by Nexus NIT Surat."
+        }
+        keywords={
+          "Nexus NIT Surat, Forms, Events, Activities, Nexus Events, Nexus Activities"
+        }
+      />
       <Title>Forms</Title>
 
       {/* Display active forms */}
-      <h2 className="text-2xl font-semibold text-center">Active Forms</h2>
+      <h2 className="text-center text-2xl font-semibold">Active Forms</h2>
       <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
         {forms
           .filter((form) => form.status === "Active")
@@ -71,7 +84,7 @@ const Forms = () => {
       </div>
 
       {/* Display inactive forms */}
-      <h2 className="text-2xl font-semibold text-center">Inactive Forms</h2>
+      <h2 className="text-center text-2xl font-semibold">Inactive Forms</h2>
       <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
         {forms
           .filter((form) => form.status === "Inactive")

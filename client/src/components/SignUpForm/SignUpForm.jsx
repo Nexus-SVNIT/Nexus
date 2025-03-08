@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
+import HeadTags from "../HeadTags/HeadTags";
 
 function SignUpForm() {
   const [formData, setFormData] = useState({
@@ -80,15 +81,27 @@ function SignUpForm() {
       toast.error("Invalid Institute Email");
       return false;
     }
-    if (leetcodeProfile.includes("leetcode.com") || leetcodeProfile.includes("http") || leetcodeProfile.includes("/")) {
+    if (
+      leetcodeProfile.includes("leetcode.com") ||
+      leetcodeProfile.includes("http") ||
+      leetcodeProfile.includes("/")
+    ) {
       toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codeforcesProfile.includes("codeforces.com") || codeforcesProfile.includes("http") || codeforcesProfile.includes("/")) {
+    if (
+      codeforcesProfile.includes("codeforces.com") ||
+      codeforcesProfile.includes("http") ||
+      codeforcesProfile.includes("/")
+    ) {
       toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codechefProfile.includes("codechef.com") || codechefProfile.includes("http") || codechefProfile.includes("/")) {
+    if (
+      codechefProfile.includes("codechef.com") ||
+      codechefProfile.includes("http") ||
+      codechefProfile.includes("/")
+    ) {
       toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
@@ -143,7 +156,13 @@ function SignUpForm() {
   }, []);
 
   return (
-    <div className="bg-black-2 md:p-16 p-6 pt-10">
+    <div className="bg-black-2 p-6 pt-10 md:p-16">
+      <HeadTags
+        title={"Sign Up - Student Portal| Nexus - NIT Surat"}
+        description={
+          "Sign up to the Nexus Student Portal to get access to all the features."
+        }
+      />
       <div className="mb-5 flex justify-center">
         <img
           src="/assets/NEXUStext.png"
@@ -156,7 +175,7 @@ function SignUpForm() {
         <Toaster position="top-center" reverseOrder={false} />
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-800 w-full max-w-lg rounded-lg md:p-8 p-2 shadow-lg"
+          className="bg-gray-800 w-full max-w-lg rounded-lg p-2 shadow-lg md:p-8"
         >
           <h2 className="mb-6 text-center text-2xl font-semibold text-white">
             Sign Up

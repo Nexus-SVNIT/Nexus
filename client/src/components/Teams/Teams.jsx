@@ -8,7 +8,6 @@ import { Title } from "../index";
 import TeamCard from "./TeamCard";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
-import { Helmet } from "react-helmet";
 import { useSearchParams, useLocation } from "react-router-dom";
 
 const Teams = () => {
@@ -33,11 +32,11 @@ const Teams = () => {
         );
         setYears(response.data.years); // Assuming 'years' is returned in the API response
         setSelectedYear(response.data.years[0]); // Default to the first available year
-        if(searchParams.has("year")) {
+        if (searchParams.has("year")) {
           setSelectedYear(searchParams.get("year"));
         } else {
           setSelectedYear(response.data.years[0]);
-          console.log(response.data.years, response.data)
+          console.log(response.data.years, response.data);
           setSearchParams((prev) => {
             prev.set("year", response.data.years[0]);
             return prev;
@@ -49,9 +48,9 @@ const Teams = () => {
         setLoading(false);
       }
     };
-    
+
     fetchYears();
-    console.log(location.search)
+    console.log(location.search);
     increamentCounter();
   }, []);
 
@@ -113,22 +112,11 @@ const Teams = () => {
 
   return (
     <div className="mx-auto mb-20 flex h-full max-w-7xl flex-col items-center justify-center md:my-10">
-      <Helmet>
-        <title>Core Team {selectedYear} | Nexus - NIT Surat </title>
-        <meta
-          name="description"
-          content="Meet the core team of Nexus, the technical society of NIT Surat."
-        />
-        <meta
-          name="keywords"
-          content="Nexus, NIT Surat, Core Team, Developer, Event Manager, Media Head, Design Head, AI/ML Head, Documentation Head, Coordinator, Faculty Advisors, Think Tank Head, Alma Relation Head, Treasurer, Chair Person, Vice Chair Person, Professor, Mentor"
-        />
-        <meta
-          name="author"
-          content="All Time Nexus Developers, Nexus - NIT Surat"
-        />
-      </Helmet>
-
+      <HeadTags
+        title={`Core Team ${selectedYear} | Nexus - NIT Surat`}
+        description="Meet the core team of Nexus, the technical society of NIT Surat."
+        keywords="Nexus, NIT Surat, Core Team, Developer, Event Manager, Media Head, Design Head, AI/ML Head, Documentation Head, Coordinator, Faculty Advisors, Think Tank Head, Alma Relation Head, Treasurer, Chair Person, Vice Chair Person, Professor, Mentor"
+      />
       <Title>Faculty Advisors</Title>
       <TeamCard data={faculty_advisors} isFaculty={true} />
       <Title>
