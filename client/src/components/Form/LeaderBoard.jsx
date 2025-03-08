@@ -116,6 +116,9 @@ const LeaderBoard = () => {
                                         </Typography>
                                     </Box>
                                     <Typography variant="body1">{item.name}</Typography>
+                                    <Typography variant="body2" color="text.secondary">
+                                        {item.reference}
+                                    </Typography>
                                     <Typography variant="body2" sx={{ opacity: 0.7 }}>
                                         Latest: {new Date(item.lastReferralTime).toLocaleString()}
                                     </Typography>
@@ -130,6 +133,7 @@ const LeaderBoard = () => {
                                 <TableRow>
                                     <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Rank</TableCell>
                                     <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Name</TableCell>
+                                    <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold' }}>Admission No.</TableCell>
                                     <TableCell sx={{ color: '#2ab3ea', fontWeight: 'bold', textAlign: 'center' }}>
                                         References
                                     </TableCell>
@@ -153,6 +157,9 @@ const LeaderBoard = () => {
                                         </TableCell>
                                         <TableCell sx={{ color: getPositionColor(index) }}>
                                             {item.name}
+                                        </TableCell>
+                                        <TableCell sx={{ color: getPositionColor(index) }}>
+                                            {item.reference}
                                         </TableCell>
                                         <TableCell sx={{ color: getPositionColor(index) }}>
                                             {item.count}

@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
 import Header from "../components/UI/Header";
 import Sidebar from "../components/UI/Sidebar";
-import { Navigate, Outlet } from "react-router-dom";
 import axios from "axios";
 
 const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const location = useLocation();
+
   if (
     localStorage.getItem("core-token-exp") &&
     localStorage.getItem("core-token-exp") < Date.now()
@@ -13,19 +15,32 @@ const AdminLayout = () => {
     localStorage.removeItem("core-token");
     localStorage.removeItem("core-token-exp");
   }
+  
   const token = localStorage.getItem("core-token");
-  if (!token) return <Navigate to={"/core/admin/login"} replace />;
+  if (!token) {
+    const currentPath = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/core/admin/login?redirect_to=${currentPath}`} replace />;
+  }
+
   const verifyAdmin = async () => {
-    const res = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL + '/api/core/verify', {
-      headers: {
-        Authorization: "Bearer " + token,
-      },
-    });
-    if (!res.data.success){
-		window.location.href = '/core/admin/login'
-	}
+    try {
+      const res = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL + '/api/core/verify', {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      if (!res.data.success) {
+        const currentPath = encodeURIComponent(location.pathname + location.search);
+        window.location.href = `/core/admin/login?redirect_to=${currentPath}`;
+      }
+    } catch (error) {
+      const currentPath = encodeURIComponent(location.pathname + location.search);
+      window.location.href = `/core/admin/login?redirect_to=${currentPath}`;
+    }
   };
-    verifyAdmin();
+
+  verifyAdmin();
+
   return (
     <div className="dark:bg-boxdark-2 dark:text-bodydark">
       <div className="flex h-screen overflow-hidden">

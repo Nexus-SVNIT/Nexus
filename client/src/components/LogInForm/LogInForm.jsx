@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';  // Import the toast functionality
 import increamentCounter from '../../libs/increamentCounter';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const LoginForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -24,7 +27,11 @@ const LoginForm = () => {
 
       // Redirect user after a short delay
       setTimeout(() => {
-        window.location.href = '/';  // Change this to your desired route
+        if(searchParams.get('redirect_to')) {
+          navigate(searchParams.get('redirect_to'));
+        } else {
+          navigate('/');
+        }
       }, 2000);  // 2-second delay for redirect
 
     } catch (error) {

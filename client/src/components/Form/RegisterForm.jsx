@@ -226,6 +226,11 @@ const RegisterForm = () => {
   };
 
   useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      toast.error("First login to register!");
+      const currentPath = encodeURIComponent(window.location.pathname);
+      setGotoLogin(`/login?redirect_to=${currentPath}`);
+    }
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/${formId}`)
       .then((res) => res.json())
       .then((form) => {
@@ -290,7 +295,7 @@ const RegisterForm = () => {
     );
 
   if (gotoLogin) {
-    return <Navigate to="/login" />;
+    return <Navigate to={gotoLogin} />;
   }
 
   return (

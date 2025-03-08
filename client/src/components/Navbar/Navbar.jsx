@@ -1,13 +1,20 @@
 import React, { useState } from "react";
 import { NavList } from "../../data";
-import { Link, Navigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CgClose, CgMenuLeftAlt } from "react-icons/cg";
 import Logo from "../../data/images/nexus.png";
 import { Button } from "@mui/joy";
 const Navbar = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
   const token = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate(`/login?redirect_to=${encodeURIComponent(pathname)}`);
+  };
+
   return (
     <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full">
       <div className="ml-4 flex items-center">
@@ -18,25 +25,9 @@ const Navbar = () => {
       </div>
       <div className="relative flex items-center">
         <ul className="mr-5 hidden items-center gap-[3vw] text-sm md:flex lg:gap-12 lg:text-base">
-          {/* {NavList.map((item) => {
-            return (
-              <Link to={item.path} key={item.path}>
-                <li
-                  key={item.path}
-                  className={`${item.path === pathname
-                    ? "text-[#3586ff] underline underline-offset-8"
-                    : "text-white"
-                    } transition-colors`}
-                >
-                  {item.label}
-                </li>
-              </Link>
-            );
-
-          })} */}
           {
             token ?
-              <Button onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}>Logout</Button>
+              <Button onClick={handleLogout}>Logout</Button>
               : <Button ><a href="/login">Login</a></Button>
           }
         </ul>
@@ -84,7 +75,7 @@ const Navbar = () => {
             }
             {
               token ?
-                <Button onClick={() => { localStorage.removeItem('token'); window.location.href = '/login'; }}>Logout</Button>
+                <Button onClick={handleLogout}>Logout</Button>
                 : <Button ><a href="/login">Login</a></Button>
             }
           </ul>

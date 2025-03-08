@@ -56,11 +56,9 @@ const Row = ({ row, index }) => {
                 <TableCell sx={{ color: getPositionColor(index) }}>{index + 1}</TableCell>
                 <TableCell sx={{ color: getPositionColor(index) }}>{row.name}</TableCell>
                 <TableCell sx={{ color: getPositionColor(index) }}>{row.reference}</TableCell>
+                <TableCell sx={{ color: getPositionColor(index) }}>{row.count}</TableCell>
                 <TableCell sx={{ color: getPositionColor(index) }}>
-                    Last Reference: {new Date(row.lastReferralTime).toLocaleString()}
-                </TableCell>
-                <TableCell align="right" sx={{ color: getPositionColor(index) }}>
-                    {row.count}
+                    {new Date(row.lastReferralTime).toLocaleString()}
                 </TableCell>
             </TableRow>
             <TableRow>
@@ -197,9 +195,9 @@ const AdminLeaderBoard = () => {
                                 <TableCell sx={{ color: '#2ab3ea' }}></TableCell>
                                 <TableCell sx={{ color: '#2ab3ea' }}>Rank</TableCell>
                                 <TableCell sx={{ color: '#2ab3ea' }}>Name</TableCell>
-                                <TableCell sx={{ color: '#2ab3ea' }}>Admission Number</TableCell>
-                                <TableCell sx={{ color: '#2ab3ea' }}>First Reference Time</TableCell>
-                                <TableCell align="right" sx={{ color: '#2ab3ea' }}>References</TableCell>
+                                <TableCell sx={{ color: '#2ab3ea' }}>Admission No.</TableCell>
+                                <TableCell sx={{ color: '#2ab3ea' }}>References</TableCell>
+                                <TableCell sx={{ color: '#2ab3ea' }}>Last Reference</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>

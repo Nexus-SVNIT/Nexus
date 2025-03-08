@@ -2,13 +2,14 @@ import React, { useEffect } from "react";
 import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { Link } from "react-router-dom";
-import Logo from "../../data/images/nexus.png";
+import NexusLogo from "../../data/images/nexus.png";
+import SVNITLogo from "../../data/images/svnit.svg";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
 const About = () => {
   useEffect(() => {
     increamentCounter();
-},[])
+  }, []);
   return (
     <div className="mx-auto mb-20 mt-10 flex max-w-7xl flex-col gap-2 text-white/75 sm:px-10 md:p-0">
       <HeadTags title={"About - Nexus NIT Surat"} />
@@ -31,16 +32,24 @@ const About = () => {
           </div>
         </div>
         <div className=" flex flex-col items-center justify-center  md:w-1/3 ">
-          <img
-            src={Logo}
-            alt=""
-            className="h-[15rem] w-[15rem] object-cover md:h-[16rem]  md:w-[16rem] "
-          />
+          <div className="flex justify-center items-center gap-5">
+            <img
+              src={NexusLogo}
+              alt="Nexus Logo"
+              className="h-[8rem] w-[8rem] object-cover md:h-[10rem]  md:w-[10rem] "
+            />
+            <img
+              src={SVNITLogo}
+              alt="SVNIT Logo"
+              className="h-[8rem] w-[8rem] object-cover md:h-[10rem]  md:w-[10rem] "
+            />
+          </div>
           <h3 className="my-8 font-mono text-3xl  font-bold text-white md:my-4">
             NEXUS NIT Surat
           </h3>
           <p className="w-[50%] text-center text-sm md:w-[75%] ">
-            Departmental Cell of Computer Science And Engineering Department and Artificial Intelligence Department{" "}
+            Departmental Cell of Computer Science And Engineering Department and
+            Artificial Intelligence Department{" "}
           </p>
 
           <div className="my-4 flex gap-4 ">
@@ -93,8 +102,8 @@ const About = () => {
           <p className="flex items-center gap-4 text-xs md:w-[35vw] md:text-sm">
             <GoGoal className="h-44 w-44" />
             Building a Supportive Network: Establish a strong support system
-            within the CSE & AI community, creating mentorship programs to bridge the
-            gap between seniors and juniors.
+            within the CSE & AI community, creating mentorship programs to
+            bridge the gap between seniors and juniors.
           </p>
           <p className="flex items-center gap-4 text-xs md:w-[35vw] md:text-sm">
             <GoGoal className="h-44 w-44" />

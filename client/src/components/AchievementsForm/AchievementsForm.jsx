@@ -25,7 +25,8 @@ const AchievementsForm = () => {
     toast.error("You need to login first!", { id: "loginToast" });
     toast.loading("Redirecting to login page...", { id: "a" });
     setTimeout(() => {
-      window.location.href = "/login";
+      const currentPath = encodeURIComponent(window.location.pathname);
+      window.location.href = `/login?redirect_to=${currentPath}`;
     }, 2000);
   }
 

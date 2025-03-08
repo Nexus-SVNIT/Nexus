@@ -1,53 +1,69 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { toast, Toaster } from "react-hot-toast";
 import axios from "axios";
 import Cookies from "js-cookie";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useState({
     email: "",
     password: "",
   });
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   if (
-  //     loginInfo.email === "u21cs047@coed.svnit.ac.in" &&
-  //     loginInfo.password === "u21cs047"
-  //   ) {
-  //     localStorage.setItem("token", "you are permitted");
-  //     navigate("/admin");
-  //   } else {
-  //     toast.error("Please provide correct credentials.");
-  //   }
-  // };
+
+  // Add new effect to handle initial auth check
+  useEffect(() => {
+    const token = Cookies.get("token");
+    if (token) {
+      const redirectTo = validateRedirectPath(searchParams.get('redirect_to'));
+      navigate(redirectTo);
+    }
+  }, []);
+
+  // Add new utility function for path validation
+  const validateRedirectPath = (path) => {
+    if (!path) return '/core/admin';
+    // Only allow relative paths starting with /
+    if (!path.startsWith('/')) return '/core/admin';
+    // Remove any potential harmful characters
+    return path.replace(/[^\w\-\/]/g, '');
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
+    if (!loginInfo.email || !loginInfo.password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    setIsLoading(true);
+    const loadingToast = toast.loading("Logging in...");
+
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/core/login`, {
-        email: loginInfo.email,
-        password: loginInfo.password,
-      });
-  
-      // If login is successful, store the token in cookies
-      const token = response.data.token;
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/core/login`, loginInfo);
       
-      // Store the token in a cookie that expires in 1 hour
+      const token = response.data.token;
       Cookies.set("token", token, { expires: 1 / 24 });
       localStorage.setItem('core-token', token);
-      localStorage.setItem('core-token-exp', Date.now()+3600000);
-  
-      // Navigate to the admin page
-      navigate("/core/admin");
+      localStorage.setItem('core-token-exp', Date.now() + 3600000);
+      
+      toast.dismiss(loadingToast);
+      toast.success("Login successful!");
+      
+      const redirectTo = validateRedirectPath(searchParams.get('redirect_to'));
+      navigate(redirectTo);
     } catch (error) {
-      if (error.response && error.response.status === 400) {
-        toast.error("Please provide correct credentials.");
-      } else {
-        toast.error("An error occurred. Please try again.");
-      }
+      toast.dismiss(loadingToast);
+      const errorMessage = error.response?.status === 400 ? "Invalid email or password" :
+                          error.response?.status === 429 ? "Too many attempts. Please try again later" :
+                          !navigator.onLine ? "No internet connection" :
+                          "An error occurred. Please try again";
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,72 +149,27 @@ const Login = () => {
                 </Link>
               </div>
 
-              <button className="bg-primary text-gray flex w-full justify-center rounded p-3 font-medium">
-                Sign In
+              <button 
+                disabled={isLoading}
+                className={`bg-primary text-gray flex w-full justify-center rounded p-3 font-medium ${
+                  isLoading ? 'opacity-70 cursor-not-allowed' : ''
+                }`}
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Logging in...
+                  </div>
+                ) : (
+                  'Sign In'
+                )}
               </button>
             </div>
           </form>
         </div>
-
-        {/* <!-- Sign Up Form --> */}
-        {/* <div className="border-stroke shadow-default dark:border-strokedark dark:bg-boxdark rounded-sm border bg-white">
-        <div className="border-stroke px-6.5 dark:border-strokedark border-b py-4">
-          <h3 className="font-medium text-black dark:text-white">
-            Sign Up Form
-          </h3>
-        </div>
-        <form action="#">
-          <div className="p-6.5">
-            <div className="mb-4.5">
-              <label className="mb-2.5 block text-black dark:text-white">
-                Name
-              </label>
-              <input
-                type="text"
-                placeholder="Enter your full name"
-                className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium outline-none transition disabled:cursor-default"
-              />
-            </div>
-
-            <div className="mb-4.5">
-              <label className="mb-2.5 block text-black dark:text-white">
-                Email
-              </label>
-              <input
-                type="email"
-                placeholder="Enter your email address"
-                className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium outline-none transition disabled:cursor-default"
-              />
-            </div>
-
-            <div className="mb-4.5">
-              <label className="mb-2.5 block text-black dark:text-white">
-                Password
-              </label>
-              <input
-                type="password"
-                placeholder="Enter password"
-                className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium outline-none transition disabled:cursor-default"
-              />
-            </div>
-
-            <div className="mb-5.5">
-              <label className="mb-2.5 block text-black dark:text-white">
-                Re-type Password
-              </label>
-              <input
-                type="password"
-                placeholder="Re-enter password"
-                className="border-stroke focus:border-primary active:border-primary disabled:bg-whiter dark:border-form-strokedark dark:bg-form-input dark:focus:border-primary w-full rounded border-[1.5px] bg-transparent px-5 py-3 font-medium outline-none transition disabled:cursor-default"
-              />
-            </div>
-
-            <button className="bg-primary text-gray flex w-full justify-center rounded p-3 font-medium">
-              Sign Up
-            </button>
-          </div>
-        </form>
-      </div> */}
       </div>
     </div>
   );
