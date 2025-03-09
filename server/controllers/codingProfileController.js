@@ -48,46 +48,87 @@ const getProfiles = async (req, res) => {
 const getPlatformProfile = async (req, res) => {
     const { platform } = req.params;
     try {
-        const users = await user.find({}, { fullName: 1, admissionNumber: 1, [platform + 'Profile']: 1 });
-        const profiles = [];
-        const currentDateTime = new Date();
-        await Promise.all(users.map(async (userDoc) => {
-            if (!userDoc[platform + 'Profile']) return;
-            const userId = userDoc[platform + "Profile"];
-            const profile = await codingProfileModel.findOne({ platform, userId });
-            if (profile && currentDateTime - profile.updatedAt < 86400000) {
-                profiles.push({
-                    ...profile.toObject(),
-                    fullName: userDoc.fullName,
-                    admissionNumber: userDoc.admissionNumber
-                });
-            } else {
-                const response = await axios.get(`${CODING_PROFILE_API}/user/${platform}/${userId}`);
-                const data = response.data?.data || response.data;
-                if (profile) {
-                    const newProfile = await codingProfileModel.findOneAndUpdate
-                        ({ platform, userId }, { data, updatedAt: currentDateTime });
+        const docCheck = await codingProfileModel.findOne({ platform });
+        let doc = docCheck;
+        if(!docCheck){
+            doc = await codingProfileModel.create({ platform, data: [], updatedAt: new Date() });
+        }
+        if(doc?.updatedAt && new Date() - doc.updatedAt > 86400000){
+            const users = await user.find({}, { fullName: 1, admissionNumber: 1, [platform + 'Profile']: 1 });
+            const profiles = [];
+            await Promise.all(users.map(async (userDoc) => {
+                try{
+
+                    if (!userDoc[platform + 'Profile']) return;
+                    const userId = userDoc[platform + "Profile"];
+                    const response = await axios.get(`${CODING_PROFILE_API}/user/${platform}/${userId}`);
+                    const data = response.data?.data || response.data;
                     profiles.push({
-                        ...newProfile.toObject(),
+                        data,
+                        userId,
+                        _id: userDoc._id,
                         fullName: userDoc.fullName,
                         admissionNumber: userDoc.admissionNumber
                     });
-                } else {
-                    const newProfile = await codingProfileModel.create({ platform, userId, data });
-                    profiles.push({
-                        ...newProfile.toObject(),
-                        fullName: userDoc.fullName,
-                        admissionNumber: userDoc.admissionNumber
-                    });
+                }catch(e){
+                    console.log(e);
                 }
-            }
-        }));
-        res.json(profiles);
+            }));
+            doc.data = profiles;
+            await doc.save();
+            res.json(doc);
+        } else {
+            res.json(doc);
+        }
     } catch (error) {
         console.log(error)
         res.status(500).json({ error: "Failed to fetch user data" });
     }   
 };
+
+// const getPlatformProfile = async (req, res) => {
+//     const { platform } = req.params;
+//     try {
+//         const users = await user.find({}, { fullName: 1, admissionNumber: 1, [platform + 'Profile']: 1 });
+//         const profiles = [];
+//         const currentDateTime = new Date();
+//         await Promise.all(users.map(async (userDoc) => {
+//             if (!userDoc[platform + 'Profile']) return;
+//             const userId = userDoc[platform + "Profile"];
+//             const profile = await codingProfileModel.findOne({ platform, userId });
+//             if (profile && currentDateTime - profile.updatedAt < 86400000) {
+//                 profiles.push({
+//                     ...profile.toObject(),
+//                     fullName: userDoc.fullName,
+//                     admissionNumber: userDoc.admissionNumber
+//                 });
+//             } else {
+//                 const response = await axios.get(`${CODING_PROFILE_API}/user/${platform}/${userId}`);
+//                 const data = response.data?.data || response.data;
+//                 if (profile) {
+//                     const newProfile = await codingProfileModel.findOneAndUpdate
+//                         ({ platform, userId }, { data, updatedAt: currentDateTime });
+//                     profiles.push({
+//                         ...newProfile.toObject(),
+//                         fullName: userDoc.fullName,
+//                         admissionNumber: userDoc.admissionNumber
+//                     });
+//                 } else {
+//                     const newProfile = await codingProfileModel.create({ platform, userId, data });
+//                     profiles.push({
+//                         ...newProfile.toObject(),
+//                         fullName: userDoc.fullName,
+//                         admissionNumber: userDoc.admissionNumber
+//                     });
+//                 }
+//             }
+//         }));
+//         res.json(profiles);
+//     } catch (error) {
+//         console.log(error)
+//         res.status(500).json({ error: "Failed to fetch user data" });
+//     }   
+// };
 
 const getContest = async (req, res) => {
     try {

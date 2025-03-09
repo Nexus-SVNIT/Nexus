@@ -54,13 +54,13 @@ const Cp = () => {
         const [cfProfiles, lcProfiles, ccProfiles] = await Promise.all([
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/codeforces`,
-          ).then((res) => res.json()),
+          ).then((res) => res.json()).then((data => data.data)),
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/leetcode`,
-          ).then((res) => res.json()),
+          ).then((res) => res.json()).then((data => data.data)),
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/codechef`,
-          ).then((res) => res.json()),
+          ).then((res) => res.json()).then((data => data.data)),
         ]);
 
         // Process Codeforces data
