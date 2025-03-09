@@ -116,7 +116,7 @@ const LeaderBoard = () => {
                                         </Typography>
                                     </Box>
                                     <Typography variant="body1">{item.name}</Typography>
-                                    <Typography variant="body2" color="text.secondary">
+                                    <Typography variant="body2" sx={{width:'full'}}>
                                         {item.reference}
                                     </Typography>
                                     <Typography variant="body2" sx={{ opacity: 0.7 }}>
