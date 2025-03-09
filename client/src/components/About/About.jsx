@@ -57,24 +57,17 @@ const About = () => {
           </p>
 
           <div className="my-4 flex gap-4 ">
-            <Link to={"#"} target="_blank">
+            <Link to={"https://www.linkedin.com/company/nexus-svnit/"} target="_blank">
               <FaLinkedinIn
                 className="duration-400 h-10 w-10 rounded-full  border bg-[#0077b5]  
                         p-2 text-white transition-all hover:border-[#0077b5] hover:bg-transparent hover:text-[#0077b5]"
                 size={24}
               />
             </Link>
-            <Link to={"#"} target="_blank">
+            <Link to={"https://www.instagram.com/nexus_svnit/"} target="_blank">
               <FaInstagram
                 className="duration-400 h-10 w-10 rounded-full border bg-[#cd486b]  
                         p-2 text-white transition-all hover:border-[#cd486b] hover:bg-transparent hover:text-[#cd486b]"
-                size={24}
-              />
-            </Link>
-            <Link to={"#"} target="_blank">
-              <FaFacebookF
-                className="duration-400 h-10 w-10 rounded-full border bg-[#316FF6]  
-                        p-2 text-white transition-all hover:border-[#316FF6] hover:bg-transparent hover:text-[#316FF6]"
                 size={24}
               />
             </Link>

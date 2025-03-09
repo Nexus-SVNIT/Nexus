@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import "./footer.css";
 import Logo from "../../data/images/nexus.png";
+
 const Footer = () => {
   return (
     <div className="container-footer  relative flex flex-col flex-wrap justify-between gap-y-10  bg-gradient-to-b from-[#153666] via-[#060e1c] to-[#1a2f4d] px-4 py-10 md:px-32 ">
@@ -28,10 +29,11 @@ const Footer = () => {
             <img
               src={Logo}
               alt="Nexus"
-              className="mx-8 my-4 h-10 w-10 md:h-12 md:w-12 "
+              className="mx-4 my-4 h-10 w-10 md:h-16 md:w-16 "
             />
             NEXUS <br />
-            Departmental Cell of DoCSE and DoAI{" "}
+            Departmental Cell of DoCSE and DoAI{" "}<br />
+            National Institute of Technology, Surat{" "}
           </h2>
 
           <p className="mt-8 font-mono text-xs md:mt-0 md:pl-6">
@@ -48,13 +50,17 @@ const Footer = () => {
             </h4>
             <div className="flex gap-10 md:gap-8">
               <ul className="flex flex-col gap-2 text-left text-blue-400">
-                <Link to={"/events"}>Events</Link>
-                <Link to={"/achievements"}>Achievements</Link>
-                <Link to={"/connect"}>Connect</Link>
-              </ul>
-              <ul className="flex flex-col gap-2 text-blue-400">
+                <Link to={"/"}>Home</Link>
                 <Link to={"/team"}>Team</Link>
+                <Link to={"/achievements"}>Achievements</Link>
+                <Link to={"/events"}>Events</Link>
                 <Link to={"/forms"}>Forms</Link>
+              </ul>
+              <ul className="flex flex-col gap-2 text-left text-blue-400">
+                <Link to={"/connect"}>Connect</Link>
+                <Link to={"/projects"}>Projects</Link>
+                <Link to={"/coding"}>Coding Profile LeaderBoard</Link>
+                <Link to={"/interview-experiences"}>Interview Experience Posts</Link>
                 <Link to={"/about"}>About</Link>
               </ul>
             </div>
@@ -82,13 +88,9 @@ const Footer = () => {
         </div>
       </div>
       <div className="border-t-2 border-blue-800 pt-2 text-center font-mono text-xs md:text-base">
-        Made with <span className="animate-pulse">❤️</span> by NEXUS NIT Surat •
-        © 2024
+        Made with <span className="animate-pulse">❤️</span> by All Time Developers, NEXUS - NIT Surat •
+        © {new Date().getFullYear()}
       </div>
-
-      {
-        // Just for commit
-      }
     </div>
   );
 };
