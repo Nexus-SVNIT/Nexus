@@ -6,6 +6,7 @@ import NexusLogo from "../../data/images/nexus.png";
 import SVNITLogo from "../../data/images/svnit.svg";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
+import Contributors from "../Contributors/Contributors";
 
 const About = () => {
   useEffect(() => {
@@ -110,6 +111,11 @@ const About = () => {
             individuals.
           </p>
         </div>
+      </div>
+      
+      {/* Contributors Section */}
+      <div className="p-6">
+        <Contributors />
       </div>
     </div>
   );
