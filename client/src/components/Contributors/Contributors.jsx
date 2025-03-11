@@ -3,7 +3,7 @@ import axios from 'axios';
 import { FaGithub } from 'react-icons/fa';
 
 const Contributors = () => {
-    const [contributors, setContributors] = useState([]);
+    const [contributorsByYear, setContributorsByYear] = useState({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -12,7 +12,7 @@ const Contributors = () => {
                 const response = await axios.get(
                     `${process.env.REACT_APP_BACKEND_BASE_URL}/api/contributors/get`
                 );
-                setContributors(response.data);
+                setContributorsByYear(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching contributors:', error);
@@ -27,41 +27,80 @@ const Contributors = () => {
         return (
             <div className="my-10 text-center">
                 <h2 className="mb-8 text-4xl font-semibold text-white">Our Contributors</h2>
-                <p className="text-white/60">Loading contributors...</p>
+                <div className="flex justify-center space-x-3">
+                    {[1,2,3].map(i => (
+                        <div key={i} className={`w-2 h-2 rounded-full bg-blue-500 animate-bounce`} 
+                             style={{ animationDelay: `${i * 0.15}s` }} />
+                    ))}
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="my-10 px-4">
-            <h2 className="mb-8 text-4xl font-semibold text-white text-center">Our Contributors</h2>
-            <div className="max-w-3xl mx-auto">
-                <div className="space-y-4">
-                    {contributors.map((contributor) => (
-                        <div key={contributor.id} 
-                             className="flex items-center justify-between p-4 
-                                      bg-gray-800/50 rounded-lg hover:bg-gray-700/50 
-                                      transition-colors">
-                            <div className="flex items-center gap-3">
-                                <img src={contributor.avatar_url} 
-                                     alt={contributor.login}
-                                     className="w-10 h-10 rounded-full" />
-                                <a href={contributor.html_url}
-                                   target="_blank"
-                                   rel="noopener noreferrer"
-                                   className="flex items-center gap-2 text-white 
-                                            hover:text-blue-400 transition-colors">
-                                    <FaGithub className="text-lg" />
-                                    <span className="font-medium">{contributor.login}</span>
-                                </a>
+        <div className="my-16 px-6">
+            <h2 className="mb-16 text-4xl font-semibold text-white text-center">
+                Our Contributors
+            </h2>
+            <div className="max-w-4xl mx-auto relative">
+                {/* Vertical Timeline Line */}
+                <div className="absolute left-4 top-0 bottom-0 w-[2px] bg-gradient-to-b from-blue-500/50 via-purple-500/30 to-transparent"></div>
+
+                {Object.entries(contributorsByYear)
+                    .sort(([yearA], [yearB]) => yearB - yearA)
+                    .map(([year, yearData], index) => (
+                    <div key={year} className="mb-16 relative group">
+                        {/* Year Marker */}
+                        <div className="absolute left-4 -translate-x-1/2 w-3 h-3 bg-blue-500 rounded-full 
+                                      ring-4 ring-blue-500/20 transition-all duration-300 group-hover:ring-8"></div>
+
+                        <div className="ml-12">
+                            {/* Year Header */}
+                            <div className="flex items-baseline gap-4 mb-6">
+                                <h3 className="text-2xl font-bold text-white/90">{year}</h3>
+                                <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
+                                    <span className="text-sm font-medium text-blue-400">
+                                        {yearData.total} commits
+                                    </span>
+                                </div>
                             </div>
-                            <span className="text-sm text-white/70 bg-gray-700/50 
-                                           px-3 py-1 rounded-full">
-                                {contributor.contributions} {contributor.contributions === 1 ? 'contribution' : 'contributions'}
-                            </span>
+                            
+                            {/* Contributors Grid */}
+                            <div className="grid gap-3 md:grid-cols-2">
+                                {Object.entries(yearData.contributors)
+                                    .sort(([,a], [,b]) => b.contributions - a.contributions)
+                                    .map(([username, data]) => (
+                                    <div key={username} 
+                                         className="group/card flex items-center justify-between p-4 
+                                                  bg-white/[0.02] backdrop-blur-sm border border-white/5 
+                                                  rounded-lg hover:bg-white/[0.04] hover:border-blue-500/20 
+                                                  transition-all duration-300">
+                                        <div className="flex items-center gap-3 min-w-0">
+                                            {data.avatar_url && (
+                                                <img src={data.avatar_url} 
+                                                     alt={username}
+                                                     className="w-8 h-8 rounded-full ring-2 ring-white/10" />
+                                            )}
+                                            <a href={data.html_url}
+                                               target="_blank"
+                                               rel="noopener noreferrer"
+                                               className="flex items-center gap-2 text-white/80 
+                                                        hover:text-blue-400 transition-colors truncate">
+                                                <FaGithub className="flex-shrink-0 opacity-50 
+                                                                   group-hover/card:opacity-100" />
+                                                <span className="font-medium truncate">{username}</span>
+                                            </a>
+                                        </div>
+                                        <span className="text-sm font-medium px-2.5 py-1 rounded-full 
+                                                       bg-white/5 text-white/60 border border-white/5">
+                                            {data.contributions}
+                                        </span>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
             </div>
         </div>
     );
