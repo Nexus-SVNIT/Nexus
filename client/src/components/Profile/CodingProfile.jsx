@@ -60,7 +60,8 @@ const CodingProfile = ({
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codechef/${codechefProfile}`,
           );
           const data = await response.json();
-          setCodechefData(data);
+          console.log(data);
+          setCodechefData(data.data);
         } else {
           setCodechefData(null);
         }
@@ -93,7 +94,7 @@ const CodingProfile = ({
     newRating: rating.newRating,
   })) : [];
 
-  const codechefUser = codechefData?.[0]?.data;
+  const codechefUser = codechefData[0];
 
   return (
     <div className="rounded-lg p-6 text-white">
