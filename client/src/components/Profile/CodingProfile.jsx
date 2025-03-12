@@ -17,7 +17,7 @@ const CodingProfile = ({
 }) => {
   const [leetcodeData, setLeetcodeData] = useState(null);
   const [codeforcesData, setCodeforcesData] = useState(null);
-  const [codechefData, setCodechefData] = useState(null); // State for CodeChef data
+  const [codechefData, setCodechefData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -80,15 +80,10 @@ const CodingProfile = ({
     return <div className="text-white">Loading...</div>;
   }
 
-  // if (!leetcodeData || !codeforcesData || !codechefData) {
-  //   return <div className="text-white">Data not found.</div>;
-  // }
-console.log(leetcodeData);
-  const leetcodeUser = leetcodeData?.matchedUser;
-  console.log("-------");
-  console.log(leetcodeUser);
+  const leetcodeUser = leetcodeData?.[0]?.data?.matchedUser;
   const leetcodeStats = leetcodeUser?.submitStats?.acSubmissionNum;
   const leetcodeLanguages = leetcodeUser?.languageProblemCount;
+  const leetcodeContestRanking = leetcodeData?.[0]?.data?.userContestRanking;
 
   const codeforcesProfileData = codeforcesData ? codeforcesData?.data[0] : null;
   const codeforcesRatings = codeforcesData ? codeforcesData?.data[1]?.ratings?.map((rating) => ({
@@ -98,7 +93,7 @@ console.log(leetcodeData);
     newRating: rating.newRating,
   })) : [];
 
-  const codechefUser = codechefData?.data; // Assuming the API response structure is correct
+  const codechefUser = codechefData?.[0]?.data;
 
   return (
     <div className="rounded-lg p-6 text-white">
@@ -114,17 +109,16 @@ console.log(leetcodeData);
           <p>Username: {leetcodeUser?.username}</p>
           <p>Streak: {leetcodeUser?.userCalendar?.streak} days</p>
           <p>
-            Contests Attended:{" "}
-            {leetcodeData?.userContestRanking?.attendedContestsCount}
+            Contests Attended: {leetcodeContestRanking?.attendedContestsCount}
           </p>
           <p>
-            Global Ranking: {leetcodeData?.userContestRanking?.globalRanking}
+            Global Ranking: {leetcodeContestRanking?.globalRanking}
           </p>
           <p>
-            Rating: {leetcodeData?.userContestRanking?.rating.toFixed(2)}
+            Rating: {leetcodeContestRanking?.rating?.toFixed(2)}
           </p>
           <p>
-            Top Percentage: {leetcodeData?.userContestRanking?.topPercentage}
+            Top Percentage: {leetcodeContestRanking?.topPercentage}
           </p>
 
           {/* Submission stats */}
@@ -282,8 +276,6 @@ console.log(leetcodeData);
           <p>Country Rank: {codechefUser?.country_rank}</p>
           <p>Max Rank: {codechefUser?.max_rank}</p>
           <p>Country: {codechefUser?.country}</p>
-
-          {/* Note: Add more CodeChef statistics if available and desired */}
         </div>
       )}
     </div>
