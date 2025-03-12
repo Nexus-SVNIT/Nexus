@@ -40,6 +40,9 @@ const formats = [
 ];
 
 const EditPost = () => {
+    useEffect(() => {
+        increamentCounter();
+      }, []);
   const { id } = useParams();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
