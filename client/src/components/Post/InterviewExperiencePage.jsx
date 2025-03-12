@@ -66,6 +66,7 @@ const InterviewExperiencePage = () => {
   const [pageLimit, setPageLimit] = useState(5);
   const [isError, setError] = useState(null);
   const token = localStorage.getItem("token");
+  const [currentUserId, setCurrentUserId] = useState("");
 
   const [formState, setFormState] = useState({
     companyFilter: "",
@@ -116,6 +117,8 @@ const InterviewExperiencePage = () => {
           },
         },
       );
+      
+      setCurrentUserId(response.data.currentUser);
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
       const uniqueCompanies = [
@@ -490,6 +493,7 @@ const InterviewExperiencePage = () => {
               post={post}
               handleCompanyClick={handleCompanyClick}
               handleTagClick={handleTagClick}
+              currentUserId={currentUserId}
             />
           ))
         )}

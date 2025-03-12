@@ -168,6 +168,9 @@ const getAllPosts = async (req, res) => {
     const skipCount = (pageNumber - 1) * pageSize;
     const totalCount = await Post.countDocuments(filter); 
     const totalPages = Math.ceil(totalCount / pageSize);
+    
+    const currentUser = req.user;
+   
 
     const posts = await Post.find(filter)
       .populate('author', 'fullName linkedInProfile admissionNumber')
@@ -182,6 +185,7 @@ const getAllPosts = async (req, res) => {
       posts,
       totalPages,
       currentPage: pageNumber,
+      currentUser: currentUser ? currentUser.id : null
     });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -249,10 +253,34 @@ const verifyPost = async (req, res) => {
   }
 };
 
+const updatePost = async (req, res) => {
+  try {
+    
+    
+    const  postId  = req.body._id;
+    
+    
+    const post = await Post.findById(postId);
+    
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    if(post.author.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'You are not authorized to update this post' });
+    }
+    const updatedPost = await Post.findByIdAndUpdate(postId, req.body, { new: true });
+    res.status(200).json(updatedPost);
+  }
+  catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = { 
   createPost, 
   getAllPosts, 
   getPostById,
   getPendingPosts,
-  verifyPost
+  verifyPost,
+  updatePost
 };
