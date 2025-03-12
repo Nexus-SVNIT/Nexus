@@ -60,7 +60,7 @@ const CodingProfile = ({
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codechef/${codechefProfile}`,
           );
           const data = await response.json();
-          console.log(data);
+          
           setCodechefData(data.data);
         } else {
           setCodechefData(null);
