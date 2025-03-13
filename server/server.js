@@ -44,11 +44,11 @@ cloudinary.config({
 })
 
 // Rate limiter middleware
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 50, 
-    message: 'Too many requests from this IP, please try again after 15 minutes'
-});
+// const limiter = rateLimit({
+//     windowMs: 15 * 60 * 1000, // 15 minutes
+//     max: 50, 
+//     message: 'Too many requests from this IP, please try again after 15 minutes'
+// });
 
 // Apply the rate limiter to all requests
 app.use(limiter);
