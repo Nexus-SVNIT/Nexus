@@ -52,7 +52,7 @@ cloudinary.config({
 // });
 
 // Apply the rate limiter to all requests
-app.use(limiter);
+// app.use(limiter);
 
 app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
