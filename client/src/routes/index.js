@@ -29,6 +29,7 @@ import AdminPostDetail from '../pages/Post/AdminPostDetail.jsx'
 import LeaderBoardPage from '../components/Form/LeaderBoardPage.jsx'
 import EditForm from '../components/Form/EditForm.jsx'
 import AdminLeaderBoard from '../components/Form/AdminLeaderBoard.jsx'
+import EditPost from '../components/Post/EditPost.jsx'
 
 export const DefaultRoutes = [
   {
@@ -147,6 +148,13 @@ export const DefaultRoutes = [
     title:'Interview Experience',
     component: InterviewPost
   },
+  
+  {
+    path:'post/edit/:id',
+    title:'edit your post',
+    component:EditPost
+  },
+
   {
     path:'/merch/reference-leaderboard/',
     title:'Merch Reference LeaderBoard',
