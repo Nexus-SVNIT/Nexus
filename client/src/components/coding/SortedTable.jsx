@@ -43,7 +43,48 @@ const SortableTable = ({ columns, data }) => {
     }
   };
 
-  const getRatingBadge = (row) => {
+  const getRatingButtonStyle = (row, value) => {
+    let style = '';
+    
+    // For Codeforces - only maxRating
+    if (row.original.maxRating !== undefined) {
+      if (row.original.maxRating >= 2400) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
+      else if (row.original.maxRating >= 2100) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
+      else if (row.original.maxRating >= 1900) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
+      else if (row.original.maxRating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
+      else if (row.original.maxRating >= 1400) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
+      else if (row.original.maxRating >= 1200) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
+      else if (row.original.maxRating > 0) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+    }
+    
+    // For LeetCode - rating
+    if (row.original.globalRanking !== undefined && row.original.rating !== undefined) {
+      if (row.original.rating >= 2800) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
+      else if (row.original.rating >= 2400) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
+      else if (row.original.rating >= 2000) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
+      else if (row.original.rating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
+      else if (row.original.rating > 0) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
+    }
+    
+    // For CodeChef - only rating (stars)
+    if (row.original.rating !== undefined && row.original.rating_number !== undefined) {
+      if (row.original.rating.includes('7★')) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
+      else if (row.original.rating.includes('6★')) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
+      else if (row.original.rating.includes('5★')) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
+      else if (row.original.rating.includes('4★')) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
+      else if (row.original.rating.includes('3★')) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
+      else if (row.original.rating.includes('2★')) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
+      else if (row.original.rating.includes('1★')) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+    }
+
+    return (
+      <span className={`inline-block px-3 py-1 rounded-full border ${style} transition-all hover:bg-opacity-20`}>
+        {value}
+      </span>
+    );
+  };
+
+  const getRatingBarStyle = (row) => {
     let color = '';
     
     // For Codeforces
@@ -77,49 +118,8 @@ const SortableTable = ({ columns, data }) => {
     }
 
     return color ? (
-      <div className="flex items-center gap-2">
-        <div className={`w-2 h-6 rounded-full ${color} shadow-lg shadow-${color}/50`}></div>
-      </div>
+      <div className={`w-2 h-6 rounded-full ${color} shadow-lg`}></div>
     ) : null;
-  };
-
-  const getRatingButtonStyle = (row, value) => {
-    let style = '';
-    
-    // For Codeforces
-    if (row.original.rating !== undefined) {
-      if (row.original.rating >= 2400) style = 'bg-rose-600 hover:bg-rose-700';
-      else if (row.original.rating >= 2100) style = 'bg-amber-600 hover:bg-amber-700';
-      else if (row.original.rating >= 1900) style = 'bg-violet-600 hover:bg-violet-700';
-      else if (row.original.rating >= 1600) style = 'bg-sky-600 hover:bg-sky-700';
-      else if (row.original.rating >= 1400) style = 'bg-cyan-600 hover:bg-cyan-700';
-      else if (row.original.rating >= 1200) style = 'bg-emerald-600 hover:bg-emerald-700';
-      else if (row.original.rating > 0) style = 'bg-slate-600 hover:bg-slate-700';
-    }
-    
-    // For LeetCode and CodeChef - similar rating ranges as before
-    if (row.original.globalRanking !== undefined) {
-      if (row.original.rating >= 2800) style = 'bg-rose-600 hover:bg-rose-700';
-      else if (row.original.rating >= 2400) style = 'bg-amber-600 hover:bg-amber-700';
-      else if (row.original.rating >= 2000) style = 'bg-violet-600 hover:bg-violet-700';
-      else if (row.original.rating >= 1600) style = 'bg-sky-600 hover:bg-sky-700';
-      else if (row.original.rating > 0) style = 'bg-emerald-600 hover:bg-emerald-700';
-    }
-    
-    if (row.original.rating_number !== undefined) {
-      if (row.original.rating_number >= 2500) style = 'bg-rose-600 hover:bg-rose-700';
-      else if (row.original.rating_number >= 2200) style = 'bg-amber-600 hover:bg-amber-700';
-      else if (row.original.rating_number >= 2000) style = 'bg-violet-600 hover:bg-violet-700';
-      else if (row.original.rating_number >= 1800) style = 'bg-sky-600 hover:bg-sky-700';
-      else if (row.original.rating_number >= 1600) style = 'bg-cyan-600 hover:bg-cyan-700';
-      else if (row.original.rating_number > 0) style = 'bg-emerald-600 hover:bg-emerald-700';
-    }
-
-    return (
-      <span className={`inline-block px-3 py-1 rounded-full text-white font-medium ${style} transition-colors`}>
-        {value}
-      </span>
-    );
   };
 
   return (
@@ -163,10 +163,11 @@ const SortableTable = ({ columns, data }) => {
                   <td {...cell.getCellProps()} key={cell.column.id} className="p-2 sm:p-4">
                     {cell.column.id === "fullName" ? (
                       <div className="flex items-center gap-2">
-                        {getRatingBadge(row)}
+                        {getRatingBarStyle(row)}
                         <span>{cell.value}</span>
                       </div>
-                    ) : cell.column.id === "rating" || cell.column.id === "rating_number" || cell.column.id === "maxRating" ? (
+                    ) : (cell.column.id === "maxRating" && row.original.codeforcesProfile) || 
+                       (cell.column.id === "rating" && (row.original.codechefProfile || row.original.leetcodeProfile)) ? (
                       getRatingButtonStyle(row, cell.value)
                     ) : cell.column.id === "Rank" ? (
                       pageSize * pageIndex + i + 1
