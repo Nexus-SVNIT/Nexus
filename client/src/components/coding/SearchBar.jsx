@@ -1,21 +1,34 @@
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
+import React from 'react';
+import { FaSearch, FaTimes } from 'react-icons/fa';
 
-const SearchBar = ({ placeholder, onChange, initialValue = "" }) => (
-  <div className="relative mb-6 flex items-center justify-center">
-    <div className="w-fit flex items-center justify-center bg-white rounded-full">
-      <FontAwesomeIcon
-        icon={faSearch}
-        className="pointer-events-none left-4 text-black m-3 focus:ring focus:ring-blue-400"
-      />
-      <input
-        type="text"
-        placeholder={placeholder}
-        value={initialValue}
-        onChange={(e) => onChange(e.target.value)}
-        className="w-80 rounded-full py-2 pl-2 pr-4 text-sm text-black outline-none transition-shadow "
-      />
+const SearchBar = ({ placeholder, onChange, initialValue = "" }) => {
+  const handleClear = () => {
+    onChange('');
+  };
+
+  return (
+    <div className="relative w-full max-w-md">
+      <div className="relative flex items-center">
+        <FaSearch className="absolute left-3 text-gray-400 z-10" />
+        <input
+          type="text"
+          value={initialValue}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2 pl-10 pr-12 text-white outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        {initialValue && (
+          <button
+            onClick={handleClear}
+            className="transition-colors z-10 ml-5 bg-zinc-500/20 hover:bg-zinc-500/50 rounded-full p-3 flex items-center justify-center"
+            aria-label="Clear search"
+          >
+            Clear
+          </button>
+        )}
+      </div>
     </div>
-  </div>
-);
+  );
+};
+
 export default SearchBar;

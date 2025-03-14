@@ -6,11 +6,12 @@ import CustomBarChart from "./BarChart";
 import { BatchCard } from "./BatchCard";
 import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
-import { FaInfoCircle } from "react-icons/fa";
+import { FaInfoCircle, FaFilter } from "react-icons/fa"; // Add FaFilter import
 import { Link, useSearchParams } from "react-router-dom";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
+import RatingLegend from "./RatingLegend";
 
 const Cp = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,6 +33,8 @@ const Cp = () => {
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
   const [loading, setLoading] = useState(true); // Loader state
   const [isError, setIsError] = useState(false);
+  // Add new state for filter visibility
+  const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -408,7 +411,7 @@ const Cp = () => {
   };
 
   const getPlatformColor = (platform) => {
-    return activePlatform === platform ? "bg-blue-600" : "bg-gray-700";
+    return activePlatform === platform ? "bg-blue-500" : "bg-white/10";
   };
 
   const processCodeforcesData = (profile) => {
@@ -512,13 +515,91 @@ const Cp = () => {
               Coding Profile Leaderboard
             </h1>
 
-            {/* Search Bar Component */}
-            <div className="mb-6 mt-10">
-              <SearchBar 
-                placeholder="Search..." 
-                onChange={handleSearchChange}
-                initialValue={searchTerm} 
-              />
+            {/* Search and Filter Controls */}
+            <div className="relative mb-6 mt-10">
+              <div className="flex flex-col gap-4">
+                <div className="flex justify-center md:justify-normal items-center gap-4">
+                  <div className="flex-1">
+                    <SearchBar 
+                      placeholder="Search..." 
+                      onChange={handleSearchChange}
+                      initialValue={searchTerm}
+                      />
+                      </div>
+                  <button
+                    onClick={() => setShowFilters(!showFilters)}
+                    className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+                      showFilters ? 'bg-blue-500 hover:bg-blue-600' : 'bg-white/10 hover:bg-white/20'
+                    }`}
+                  >
+                    <FaFilter className={showFilters ? 'text-white' : 'text-gray-300'} />
+                    <span>Filters</span>
+                  </button>
+                </div>
+
+                {/* Filters Section */}
+                <div className={`transition-all duration-300 ${showFilters ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                  <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+                    <div className="flex flex-wrap gap-4">
+                      <select
+                        value={showGlobalRank ? "global" : "filtered"}
+                        onChange={(e) => setShowGlobalRank(e.target.value === "global")}
+                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="global" className="bg-slate-900">Nexus Ranking</option>
+                        <option value="filtered" className="bg-slate-900">Filtered Ranking</option>
+                      </select>
+                      {/* ... existing filter selects ... */}
+                      <select
+                        value={tempBranchFilter}
+                        onChange={(e) => setTempBranchFilter(e.target.value)}
+                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="all" className="bg-slate-900">All Branches</option>
+                        <option value="CS" className="bg-slate-900">CS</option>
+                        <option value="AI" className="bg-slate-900">AI</option>
+                      </select>
+
+                      <select
+                        value={tempYearFilter}
+                        onChange={(e) => setTempYearFilter(e.target.value)}
+                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="all" className="bg-slate-900">All Years</option>
+                        <option value="21" className="bg-slate-900">2021</option>
+                        <option value="22" className="bg-slate-900">2022</option>
+                        <option value="23" className="bg-slate-900">2023</option>
+                        <option value="24" className="bg-slate-900">2024</option>
+                      </select>
+
+                      <select
+                        value={studentStatusFilter}
+                        onChange={(e) => setTempStudentStatusFilter(e.target.value)}
+                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="all" className="bg-slate-900">All Students</option>
+                        <option value="current" className="bg-slate-900">Current Students</option>
+                        <option value="alumni" className="bg-slate-900">Alumni</option>
+                      </select>
+                    </div>
+
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleApplyFilters}
+                        className="rounded-lg bg-blue-500 px-4 py-2 transition-colors hover:bg-blue-600"
+                      >
+                        Apply Filters
+                      </button>
+                      <button
+                        onClick={handleClearFilters}
+                        className="bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 transition-colors"
+                      >
+                        Clear Filters
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Platform Toggle Buttons */}
@@ -549,91 +630,13 @@ const Cp = () => {
               </button>
             </div>
 
-            {/* Add filter controls after the search bar */}
-            <div className="mb-6 flex flex-col items-center justify-center gap-4 sm:flex-row">
-              <div className="flex flex-wrap gap-4">
-                <select
-                  value={showGlobalRank ? "global" : "filtered"}
-                  onChange={(e) => setShowGlobalRank(e.target.value === "global")}
-                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="global" className="bg-gray-900">Nexus Ranking</option>
-                  <option value="filtered" className="bg-gray-900">Filtered Ranking</option>
-                </select>
-
-                <select
-                  value={tempBranchFilter}
-                  onChange={(e) => setTempBranchFilter(e.target.value)}
-                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="all" className="bg-gray-900">
-                    All Branches
-                  </option>
-                  <option value="CS" className="bg-gray-900">
-                    CS
-                  </option>
-                  <option value="AI" className="bg-gray-900">
-                    AI
-                  </option>
-                  {/* Add more branches as needed */}
-                </select>
-
-                <select
-                  value={tempYearFilter}
-                  onChange={(e) => setTempYearFilter(e.target.value)}
-                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="all" className="bg-gray-900">
-                    All Years
-                  </option>
-                  <option value="21" className="bg-gray-900">
-                    2021
-                  </option>
-                  <option value="22" className="bg-gray-900">
-                    2022
-                  </option>
-                  <option value="23" className="bg-gray-900">
-                    2023
-                  </option>
-                  <option value="24" className="bg-gray-900">
-                    2024
-                  </option>
-                  {/* Add more years as needed */}
-                </select>
-
-                <select
-                  value={studentStatusFilter}
-                  onChange={(e) => setTempStudentStatusFilter(e.target.value)}
-                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
-                >
-                  <option value="all" className="bg-gray-900">All Students</option>
-                  <option value="current" className="bg-gray-900">Current Students</option>
-                  <option value="alumni" className="bg-gray-900">Alumni</option>
-                </select>
-              </div>
-
-              <div className="flex gap-2">
-                <button
-                  onClick={handleApplyFilters}
-                  className="rounded-lg bg-blue-600 px-4 py-2 transition-colors hover:bg-blue-700"
-                >
-                  Apply Filters
-                </button>
-                <button
-                  onClick={handleClearFilters}
-                  className="bg-gray-700 hover:bg-gray-600 rounded-lg px-4 py-2 transition-colors"
-                >
-                  Clear Filters
-                </button>
-              </div>
-            </div>
-
             {/* Conditional Table Rendering */}
             {activePlatform === "codeforces" && (
               <>
                 <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
                   Codeforces Leaderboard
                 </h2>
+                <RatingLegend platform="codeforces" />
                 <SortableTable
                   columns={columns.codeforces}
                   data={filterData(
@@ -648,6 +651,7 @@ const Cp = () => {
                 <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
                   LeetCode Leaderboard
                 </h2>
+                <RatingLegend platform="leetcode" />
                 <SortableTable
                   columns={columns.leetcode}
                   data={filterData(getRankData(leetcodeLeaderboard))}
@@ -660,6 +664,7 @@ const Cp = () => {
                 <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
                   CodeChef Leaderboard
                 </h2>
+                <RatingLegend platform="codechef" />
                 <SortableTable
                   columns={columns.codechef}
                   data={filterData(getRankData(codechefLeaderboard))}
