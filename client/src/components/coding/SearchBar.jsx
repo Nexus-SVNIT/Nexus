@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 
-const SearchBar = ({ placeholder, onChange }) => (
+const SearchBar = ({ placeholder, onChange, initialValue = "" }) => (
   <div className="relative mb-6 flex items-center justify-center">
     <div className="w-fit flex items-center justify-center bg-white rounded-full">
       <FontAwesomeIcon
@@ -11,6 +11,7 @@ const SearchBar = ({ placeholder, onChange }) => (
       <input
         type="text"
         placeholder={placeholder}
+        value={initialValue}
         onChange={(e) => onChange(e.target.value)}
         className="w-80 rounded-full py-2 pl-2 pr-4 text-sm text-black outline-none transition-shadow "
       />

@@ -139,8 +139,8 @@ const SortableTable = ({ columns, data }) => {
                   key={column.id}
                   className="p-2 sm:p-4 whitespace-nowrap"
                 >
-                  {column.render("Header")}
-                  {column.id !== 'Rank' && (
+                  {column.id === 'tableRank' ? `#${column.render("Header")}` : column.render("Header")}
+                  {column.id !== 'tableRank' && (
                     <span>
                       {column.isSorted ? (column.isSortedDesc ? " 🔽" : " 🔼") : ""}
                     </span>

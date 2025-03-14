@@ -7,24 +7,30 @@ import { BatchCard } from "./BatchCard";
 import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
 import { FaInfoCircle } from "react-icons/fa";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 
 const Cp = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  // Add new state for rank display preference
+  const [showGlobalRank, setShowGlobalRank] = useState(searchParams.get("globalRank") === "true");
+  // Replace useState initializations with URL params
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [activePlatform, setActivePlatform] = useState(searchParams.get("platform") || "codeforces");
+  const [branchFilter, setBranchFilter] = useState(searchParams.get("branch") || "all");
+  const [yearFilter, setYearFilter] = useState(searchParams.get("year") || "all");
+  const [activeStatusFilter, setActiveStatusFilter] = useState(searchParams.get("status") || "all");
+  const [tempBranchFilter, setTempBranchFilter] = useState(searchParams.get("branch") || "all");
+  const [tempYearFilter, setTempYearFilter] = useState(searchParams.get("year") || "all");
+  const [studentStatusFilter, setTempStudentStatusFilter] = useState(searchParams.get("status") || "all");
   const [userData, setUserData] = useState([]);
   const [batchData, setBatchData] = useState({});
   const [codeforcesLeaderboard, setCodeforcesLeaderboard] = useState([]);
   const [leetcodeLeaderboard, setLeetcodeLeaderboard] = useState([]);
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [loading, setLoading] = useState(true); // Loader state
-  const [activePlatform, setActivePlatform] = useState("codeforces"); // Add this new state
-  const [branchFilter, setBranchFilter] = useState("all");
-  const [yearFilter, setYearFilter] = useState("all");
-  const [tempBranchFilter, setTempBranchFilter] = useState("all");
-  const [tempYearFilter, setTempYearFilter] = useState("all");
   const [isError, setIsError] = useState(false);
 
   useEffect(() => {
@@ -206,6 +212,20 @@ const Cp = () => {
     increamentCounter();
   }, []);
 
+  // Add effect to sync URL with state changes
+  useEffect(() => {
+    const params = new URLSearchParams();
+    
+    if (searchTerm) params.set("search", searchTerm);
+    if (activePlatform !== "codeforces") params.set("platform", activePlatform);
+    if (branchFilter !== "all") params.set("branch", branchFilter);
+    if (yearFilter !== "all") params.set("year", yearFilter);
+    if (activeStatusFilter !== "all") params.set("status", activeStatusFilter);
+    if (showGlobalRank) params.set("globalRank", "true");
+    
+    setSearchParams(params, { replace: true });
+  }, [searchTerm, activePlatform, branchFilter, yearFilter, activeStatusFilter, showGlobalRank]);
+
   if (isError) {
     return <MaintenancePage />;
   }
@@ -217,22 +237,41 @@ const Cp = () => {
     }));
   };
 
+  const isCurrentStudent = (admissionYear) => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JavaScript months are 0-based
+
+    // Calculate academic year
+    const academicYear = currentMonth >= 7 ? currentYear : currentYear - 1;
+    
+    // Calculate years since admission
+    const yearsSinceAdmission = academicYear - (2000 + parseInt(admissionYear));
+    
+    // Student is current if they've been in college for less than 4 years
+    return yearsSinceAdmission < 4;
+  };
+
   const filterData = (data) => {
     return data.filter((user) => {
       // Branch and Year filtering
       const userBranch = user.admissionNumber?.substring(4, 6) || "";
       const userYear = user.admissionNumber?.substring(1, 3) || "";
+      const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
 
       const matchesBranch =
         branchFilter === "all" || userBranch === branchFilter;
       const matchesYear = yearFilter === "all" || userYear === yearFilter;
+      const matchesStatus = activeStatusFilter === "all" || 
+                           (activeStatusFilter === "current" && studentStatus === "current") ||
+                           (activeStatusFilter === "alumni" && studentStatus === "alumni");
       const matchesSearch =
         !searchTerm ||
         Object.values(user).some((val) =>
           String(val).toLowerCase().includes(searchTerm.toLowerCase()),
         );
 
-      return matchesBranch && matchesYear && matchesSearch;
+      return matchesBranch && matchesYear && matchesStatus && matchesSearch;
     });
   };
 
@@ -252,6 +291,48 @@ const Cp = () => {
       ...item,
       tableRank: index + 1,
     }));
+  };
+
+  const getRankData = (data) => {
+    if (showGlobalRank) {
+      // Return data with global ranks for global view
+      return data.map((item, index) => ({
+        ...item,
+        tableRank: index + 1,
+      }));
+    } else {
+      // First apply filters without search
+      const filteredData = data.filter((user) => {
+        const userBranch = user.admissionNumber?.substring(4, 6) || "";
+        const userYear = user.admissionNumber?.substring(1, 3) || "";
+        const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
+
+        const matchesBranch = branchFilter === "all" || userBranch === branchFilter;
+        const matchesYear = yearFilter === "all" || userYear === yearFilter;
+        const matchesStatus = activeStatusFilter === "all" || 
+                           (activeStatusFilter === "current" && studentStatus === "current") ||
+                           (activeStatusFilter === "alumni" && studentStatus === "alumni");
+
+        return matchesBranch && matchesYear && matchesStatus;
+      });
+
+      // Assign ranks based on filtered data (without search)
+      const rankedData = filteredData.map((item, index) => ({
+        ...item,
+        tableRank: index + 1,
+      }));
+
+      // If there's a search term, filter the ranked data but preserve the ranks
+      if (searchTerm) {
+        return rankedData.filter(user => 
+          Object.values(user).some(val => 
+            String(val).toLowerCase().includes(searchTerm.toLowerCase())
+          )
+        );
+      }
+
+      return rankedData;
+    }
   };
 
   const columns = {
@@ -352,16 +433,30 @@ const Cp = () => {
       : null;
   };
 
+  const handleSearchChange = (value) => {
+    setSearchTerm(value);
+  };
+
+  const handlePlatformChange = (platform) => {
+    setActivePlatform(platform);
+  };
+
   const handleApplyFilters = () => {
     setBranchFilter(tempBranchFilter);
     setYearFilter(tempYearFilter);
+    setActiveStatusFilter(studentStatusFilter);
   };
 
   const handleClearFilters = () => {
     setTempBranchFilter("all");
     setTempYearFilter("all");
+    setTempStudentStatusFilter("all");
     setBranchFilter("all");
     setYearFilter("all");
+    setActiveStatusFilter("all");
+    setSearchTerm("");
+    // Clear URL params
+    setSearchParams({});
   };
 
   return (
@@ -419,13 +514,17 @@ const Cp = () => {
 
             {/* Search Bar Component */}
             <div className="mb-6 mt-10">
-              <SearchBar placeholder="Search..." onChange={setSearchTerm} />
+              <SearchBar 
+                placeholder="Search..." 
+                onChange={handleSearchChange}
+                initialValue={searchTerm} 
+              />
             </div>
 
             {/* Platform Toggle Buttons */}
             <div className="mb-8 flex flex-wrap justify-center gap-4">
               <button
-                onClick={() => setActivePlatform("codeforces")}
+                onClick={() => handlePlatformChange("codeforces")}
                 className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
                   "codeforces",
                 )} hover:bg-blue-700`}
@@ -433,7 +532,7 @@ const Cp = () => {
                 Codeforces
               </button>
               <button
-                onClick={() => setActivePlatform("leetcode")}
+                onClick={() => handlePlatformChange("leetcode")}
                 className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
                   "leetcode",
                 )} hover:bg-blue-700`}
@@ -441,7 +540,7 @@ const Cp = () => {
                 LeetCode
               </button>
               <button
-                onClick={() => setActivePlatform("codechef")}
+                onClick={() => handlePlatformChange("codechef")}
                 className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
                   "codechef",
                 )} hover:bg-blue-700`}
@@ -453,6 +552,15 @@ const Cp = () => {
             {/* Add filter controls after the search bar */}
             <div className="mb-6 flex flex-col items-center justify-center gap-4 sm:flex-row">
               <div className="flex flex-wrap gap-4">
+                <select
+                  value={showGlobalRank ? "global" : "filtered"}
+                  onChange={(e) => setShowGlobalRank(e.target.value === "global")}
+                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="global" className="bg-gray-900">Nexus Ranking</option>
+                  <option value="filtered" className="bg-gray-900">Filtered Ranking</option>
+                </select>
+
                 <select
                   value={tempBranchFilter}
                   onChange={(e) => setTempBranchFilter(e.target.value)}
@@ -492,6 +600,16 @@ const Cp = () => {
                   </option>
                   {/* Add more years as needed */}
                 </select>
+
+                <select
+                  value={studentStatusFilter}
+                  onChange={(e) => setTempStudentStatusFilter(e.target.value)}
+                  className="border-gray-700 rounded-lg border bg-zinc-900 px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="all" className="bg-gray-900">All Students</option>
+                  <option value="current" className="bg-gray-900">Current Students</option>
+                  <option value="alumni" className="bg-gray-900">Alumni</option>
+                </select>
               </div>
 
               <div className="flex gap-2">
@@ -519,7 +637,7 @@ const Cp = () => {
                 <SortableTable
                   columns={columns.codeforces}
                   data={filterData(
-                    addRanksToFilteredData(codeforcesLeaderboard),
+                    getRankData(codeforcesLeaderboard)
                   )}
                 />
               </>
@@ -532,7 +650,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.leetcode}
-                  data={filterData(addRanksToFilteredData(leetcodeLeaderboard))}
+                  data={filterData(getRankData(leetcodeLeaderboard))}
                 />
               </>
             )}
@@ -544,7 +662,7 @@ const Cp = () => {
                 </h2>
                 <SortableTable
                   columns={columns.codechef}
-                  data={filterData(addRanksToFilteredData(codechefLeaderboard))}
+                  data={filterData(getRankData(codechefLeaderboard))}
                 />
               </>
             )}
