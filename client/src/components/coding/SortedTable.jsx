@@ -88,13 +88,13 @@ const SortableTable = ({ columns, data }) => {
     
     // For Codeforces
     if (row.original.rating !== undefined) {
-      if (row.original.rating >= 2400) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
-      else if (row.original.rating >= 2100) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
-      else if (row.original.rating >= 1900) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
-      else if (row.original.rating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
-      else if (row.original.rating >= 1400) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
-      else if (row.original.rating >= 1200) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
-      else if (row.original.rating > 0) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+      if (row.original.rating >= 2400) style = 'bg-rose-600 hover:bg-rose-700';
+      else if (row.original.rating >= 2100) style = 'bg-amber-600 hover:bg-amber-700';
+      else if (row.original.rating >= 1900) style = 'bg-violet-600 hover:bg-violet-700';
+      else if (row.original.rating >= 1600) style = 'bg-sky-600 hover:bg-sky-700';
+      else if (row.original.rating >= 1400) style = 'bg-cyan-600 hover:bg-cyan-700';
+      else if (row.original.rating >= 1200) style = 'bg-emerald-600 hover:bg-emerald-700';
+      else if (row.original.rating > 0) style = 'bg-slate-600 hover:bg-slate-700';
     }
     
     // For LeetCode and CodeChef - similar rating ranges as before
@@ -116,7 +116,7 @@ const SortableTable = ({ columns, data }) => {
     }
 
     return (
-      <span className={`inline-block px-3 py-1 rounded-full border ${style} transition-all hover:bg-opacity-20`}>
+      <span className={`inline-block px-3 py-1 rounded-full text-white font-medium ${style} transition-colors`}>
         {value}
       </span>
     );
