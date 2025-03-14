@@ -258,7 +258,7 @@ const Cp = () => {
   const filterData = (data) => {
     return data.filter((user) => {
       // Branch and Year filtering
-      const userBranch = user.admissionNumber?.substring(4, 6) || "";
+      const userBranch = user.admissionNumber?.substring(3, 5) || "";
       const userYear = user.admissionNumber?.substring(1, 3) || "";
       const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
 
@@ -280,7 +280,7 @@ const Cp = () => {
 
   const addRanksToFilteredData = (data) => {
     const filteredData = data.filter((user) => {
-      const userBranch = user.admissionNumber?.substring(4, 6) || "";
+      const userBranch = user.admissionNumber?.substring(3, 5) || "";
       const userYear = user.admissionNumber?.substring(1, 3) || "";
 
       const matchesBranch =
@@ -306,7 +306,7 @@ const Cp = () => {
     } else {
       // First apply filters without search
       const filteredData = data.filter((user) => {
-        const userBranch = user.admissionNumber?.substring(4, 6) || "";
+        const userBranch = user.admissionNumber?.substring(3, 5) || "";
         const userYear = user.admissionNumber?.substring(1, 3) || "";
         const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
 
