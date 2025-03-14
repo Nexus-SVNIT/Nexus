@@ -48,33 +48,33 @@ const SortableTable = ({ columns, data }) => {
     
     // For Codeforces - only maxRating
     if (row.original.maxRating !== undefined) {
-      if (row.original.maxRating >= 2400) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
-      else if (row.original.maxRating >= 2100) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
-      else if (row.original.maxRating >= 1900) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
-      else if (row.original.maxRating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
-      else if (row.original.maxRating >= 1400) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
-      else if (row.original.maxRating >= 1200) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
-      else if (row.original.maxRating > 0) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+      if (row.original.maxRating >= 2400) style = 'border-red-500 text-red-400 bg-red-500/10';
+      else if (row.original.maxRating >= 2100) style = 'border-orange-500 text-orange-400 bg-orange-500/10';
+      else if (row.original.maxRating >= 1900) style = 'border-yellow-500 text-yellow-400 bg-yellow-500/10';
+      else if (row.original.maxRating >= 1600) style = 'border-purple-500 text-purple-400 bg-purple-500/10';
+      else if (row.original.maxRating >= 1400) style = 'border-blue-500 text-blue-400 bg-blue-500/10';
+      else if (row.original.maxRating >= 1200) style = 'border-green-500 text-green-400 bg-green-500/10';
+      else if (row.original.maxRating > 0) style = 'border-gray-500 text-gray-400 bg-gray-500/10';
     }
     
     // For LeetCode - rating
     if (row.original.globalRanking !== undefined && row.original.rating !== undefined) {
-      if (row.original.rating >= 2800) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
-      else if (row.original.rating >= 2400) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
-      else if (row.original.rating >= 2000) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
-      else if (row.original.rating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
-      else if (row.original.rating > 0) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
+      if (row.original.rating >= 2800) style = 'border-red-500 text-red-400 bg-red-500/10';
+      else if (row.original.rating >= 2400) style = 'border-orange-500 text-orange-400 bg-orange-500/10';
+      else if (row.original.rating >= 2000) style = 'border-yellow-500 text-yellow-400 bg-yellow-500/10';
+      else if (row.original.rating >= 1600) style = 'border-purple-500 text-purple-400 bg-purple-500/10';
+      else if (row.original.rating > 0) style = 'border-green-500 text-green-400 bg-green-500/10';
     }
     
     // For CodeChef - only rating (stars)
     if (row.original.rating !== undefined && row.original.rating_number !== undefined) {
-      if (row.original.rating.includes('7★')) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
-      else if (row.original.rating.includes('6★')) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
-      else if (row.original.rating.includes('5★')) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
-      else if (row.original.rating.includes('4★')) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
-      else if (row.original.rating.includes('3★')) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
-      else if (row.original.rating.includes('2★')) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
-      else if (row.original.rating.includes('1★')) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+      if (row.original.rating.includes('7★')) style = 'border-red-500 text-red-400 bg-red-500/10';
+      else if (row.original.rating.includes('6★')) style = 'border-orange-500 text-orange-400 bg-orange-500/10';
+      else if (row.original.rating.includes('5★')) style = 'border-yellow-500 text-yellow-400 bg-yellow-500/10';
+      else if (row.original.rating.includes('4★')) style = 'border-purple-500 text-purple-400 bg-purple-500/10';
+      else if (row.original.rating.includes('3★')) style = 'border-blue-500 text-blue-400 bg-blue-500/10';
+      else if (row.original.rating.includes('2★')) style = 'border-green-500 text-green-400 bg-green-500/10';
+      else if (row.original.rating.includes('1★')) style = 'border-gray-500 text-gray-400 bg-gray-500/10';
     }
 
     return (
@@ -89,32 +89,32 @@ const SortableTable = ({ columns, data }) => {
     
     // For Codeforces
     if (row.original.rating !== undefined) {
-      if (row.original.rating >= 2400) color = 'bg-rose-500';
-      else if (row.original.rating >= 2100) color = 'bg-amber-500';
-      else if (row.original.rating >= 1900) color = 'bg-violet-500';
-      else if (row.original.rating >= 1600) color = 'bg-sky-500';
-      else if (row.original.rating >= 1400) color = 'bg-cyan-400';
-      else if (row.original.rating >= 1200) color = 'bg-emerald-400';
-      else if (row.original.rating > 0) color = 'bg-slate-400';
+      if (row.original.rating >= 2400) color = 'bg-red-500';
+      else if (row.original.rating >= 2100) color = 'bg-orange-500';
+      else if (row.original.rating >= 1900) color = 'bg-yellow-500';
+      else if (row.original.rating >= 1600) color = 'bg-purple-500';
+      else if (row.original.rating >= 1400) color = 'bg-blue-500';
+      else if (row.original.rating >= 1200) color = 'bg-green-500';
+      else if (row.original.rating > 0) color = 'bg-gray-500';
     }
     
     // For LeetCode
     if (row.original.globalRanking !== undefined) {
-      if (row.original.rating >= 2800) color = 'bg-rose-500';
-      else if (row.original.rating >= 2400) color = 'bg-amber-500';
-      else if (row.original.rating >= 2000) color = 'bg-violet-500';
-      else if (row.original.rating >= 1600) color = 'bg-sky-500';
-      else if (row.original.rating > 0) color = 'bg-emerald-400';
+      if (row.original.rating >= 2800) color = 'bg-red-500';
+      else if (row.original.rating >= 2400) color = 'bg-orange-500';
+      else if (row.original.rating >= 2000) color = 'bg-yellow-500';
+      else if (row.original.rating >= 1600) color = 'bg-purple-500';
+      else if (row.original.rating > 0) color = 'bg-green-500';
     }
     
     // For CodeChef
     if (row.original.rating_number !== undefined) {
-      if (row.original.rating_number >= 2500) color = 'bg-rose-500';
-      else if (row.original.rating_number >= 2200) color = 'bg-amber-500';
-      else if (row.original.rating_number >= 2000) color = 'bg-violet-500';
-      else if (row.original.rating_number >= 1800) color = 'bg-sky-500';
-      else if (row.original.rating_number >= 1600) color = 'bg-cyan-400';
-      else if (row.original.rating_number > 0) color = 'bg-emerald-400';
+      if (row.original.rating_number >= 2500) color = 'bg-red-500';
+      else if (row.original.rating_number >= 2200) color = 'bg-orange-500';
+      else if (row.original.rating_number >= 2000) color = 'bg-yellow-500';
+      else if (row.original.rating_number >= 1800) color = 'bg-purple-500';
+      else if (row.original.rating_number >= 1600) color = 'bg-blue-500';
+      else if (row.original.rating_number > 0) color = 'bg-green-500';
     }
 
     return color ? (
