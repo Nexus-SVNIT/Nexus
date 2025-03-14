@@ -463,7 +463,7 @@ const Cp = () => {
   };
 
   return (
-    <div className="App text-gray-200 min-h-screen p-8 md:mx-24">
+    <div className="App text-gray-200 min-h-screen py-8 md:mx-24">
       <HeadTags
         title={"Coding Profile LeaderBoard | Nexus - NIT Surat"}
         description={"Check out the LeaderBoard of Coding Profiles of different plateforms of students of CSE and AI at NIT Surat."}
@@ -518,14 +518,14 @@ const Cp = () => {
             {/* Search and Filter Controls */}
             <div className="relative mb-6 mt-10">
               <div className="flex flex-col gap-4">
-                <div className="flex justify-center md:justify-normal items-center gap-4">
-                  <div className="flex-1">
+                <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+                  <div className="flex-1 w-full md:max-w-fit">
                     <SearchBar 
                       placeholder="Search..." 
                       onChange={handleSearchChange}
                       initialValue={searchTerm}
                       />
-                      </div>
+                  </div>
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
@@ -606,7 +606,7 @@ const Cp = () => {
             <div className="mb-8 flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => handlePlatformChange("codeforces")}
-                className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
                   "codeforces",
                 )} hover:bg-blue-700`}
               >
@@ -614,7 +614,7 @@ const Cp = () => {
               </button>
               <button
                 onClick={() => handlePlatformChange("leetcode")}
-                className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
                   "leetcode",
                 )} hover:bg-blue-700`}
               >
@@ -622,7 +622,7 @@ const Cp = () => {
               </button>
               <button
                 onClick={() => handlePlatformChange("codechef")}
-                className={`rounded-lg px-6 py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
                   "codechef",
                 )} hover:bg-blue-700`}
               >
