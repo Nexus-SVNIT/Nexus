@@ -43,6 +43,85 @@ const SortableTable = ({ columns, data }) => {
     }
   };
 
+  const getRatingBadge = (row) => {
+    let color = '';
+    
+    // For Codeforces
+    if (row.original.rating !== undefined) {
+      if (row.original.rating >= 2400) color = 'bg-rose-500';
+      else if (row.original.rating >= 2100) color = 'bg-amber-500';
+      else if (row.original.rating >= 1900) color = 'bg-violet-500';
+      else if (row.original.rating >= 1600) color = 'bg-sky-500';
+      else if (row.original.rating >= 1400) color = 'bg-cyan-400';
+      else if (row.original.rating >= 1200) color = 'bg-emerald-400';
+      else if (row.original.rating > 0) color = 'bg-slate-400';
+    }
+    
+    // For LeetCode
+    if (row.original.globalRanking !== undefined) {
+      if (row.original.rating >= 2800) color = 'bg-rose-500';
+      else if (row.original.rating >= 2400) color = 'bg-amber-500';
+      else if (row.original.rating >= 2000) color = 'bg-violet-500';
+      else if (row.original.rating >= 1600) color = 'bg-sky-500';
+      else if (row.original.rating > 0) color = 'bg-emerald-400';
+    }
+    
+    // For CodeChef
+    if (row.original.rating_number !== undefined) {
+      if (row.original.rating_number >= 2500) color = 'bg-rose-500';
+      else if (row.original.rating_number >= 2200) color = 'bg-amber-500';
+      else if (row.original.rating_number >= 2000) color = 'bg-violet-500';
+      else if (row.original.rating_number >= 1800) color = 'bg-sky-500';
+      else if (row.original.rating_number >= 1600) color = 'bg-cyan-400';
+      else if (row.original.rating_number > 0) color = 'bg-emerald-400';
+    }
+
+    return color ? (
+      <div className="flex items-center gap-2">
+        <div className={`w-2 h-6 rounded-full ${color} shadow-lg shadow-${color}/50`}></div>
+      </div>
+    ) : null;
+  };
+
+  const getRatingButtonStyle = (row, value) => {
+    let style = '';
+    
+    // For Codeforces
+    if (row.original.rating !== undefined) {
+      if (row.original.rating >= 2400) style = 'border-rose-500 text-rose-400 bg-rose-500/10';
+      else if (row.original.rating >= 2100) style = 'border-amber-500 text-amber-400 bg-amber-500/10';
+      else if (row.original.rating >= 1900) style = 'border-violet-500 text-violet-400 bg-violet-500/10';
+      else if (row.original.rating >= 1600) style = 'border-sky-500 text-sky-400 bg-sky-500/10';
+      else if (row.original.rating >= 1400) style = 'border-cyan-500 text-cyan-400 bg-cyan-500/10';
+      else if (row.original.rating >= 1200) style = 'border-emerald-500 text-emerald-400 bg-emerald-500/10';
+      else if (row.original.rating > 0) style = 'border-slate-500 text-slate-400 bg-slate-500/10';
+    }
+    
+    // For LeetCode and CodeChef - similar rating ranges as before
+    if (row.original.globalRanking !== undefined) {
+      if (row.original.rating >= 2800) style = 'bg-rose-600 hover:bg-rose-700';
+      else if (row.original.rating >= 2400) style = 'bg-amber-600 hover:bg-amber-700';
+      else if (row.original.rating >= 2000) style = 'bg-violet-600 hover:bg-violet-700';
+      else if (row.original.rating >= 1600) style = 'bg-sky-600 hover:bg-sky-700';
+      else if (row.original.rating > 0) style = 'bg-emerald-600 hover:bg-emerald-700';
+    }
+    
+    if (row.original.rating_number !== undefined) {
+      if (row.original.rating_number >= 2500) style = 'bg-rose-600 hover:bg-rose-700';
+      else if (row.original.rating_number >= 2200) style = 'bg-amber-600 hover:bg-amber-700';
+      else if (row.original.rating_number >= 2000) style = 'bg-violet-600 hover:bg-violet-700';
+      else if (row.original.rating_number >= 1800) style = 'bg-sky-600 hover:bg-sky-700';
+      else if (row.original.rating_number >= 1600) style = 'bg-cyan-600 hover:bg-cyan-700';
+      else if (row.original.rating_number > 0) style = 'bg-emerald-600 hover:bg-emerald-700';
+    }
+
+    return (
+      <span className={`inline-block px-3 py-1 rounded-full border ${style} transition-all hover:bg-opacity-20`}>
+        {value}
+      </span>
+    );
+  };
+
   return (
     <div className="overflow-x-auto mb-16"> {/* Added margin-bottom for table spacing */}
       <table
@@ -78,13 +157,22 @@ const SortableTable = ({ columns, data }) => {
               <tr
                 {...row.getRowProps()}
                 key={row.id}
-                className="transition duration-200 ease-in-out hover:bg-cyan-900"
+                className="transition duration-200 ease-in-out hover:bg-gray-700/50 text-gray-200"
               >
                 {row.cells.map((cell) => (
                   <td {...cell.getCellProps()} key={cell.column.id} className="p-2 sm:p-4">
-                    {cell.column.id === "Rank" 
-                      ? pageSize * pageIndex + i + 1 
-                      : cell.render("Cell")}
+                    {cell.column.id === "fullName" ? (
+                      <div className="flex items-center gap-2">
+                        {getRatingBadge(row)}
+                        <span>{cell.value}</span>
+                      </div>
+                    ) : cell.column.id === "rating" || cell.column.id === "rating_number" || cell.column.id === "maxRating" ? (
+                      getRatingButtonStyle(row, cell.value)
+                    ) : cell.column.id === "Rank" ? (
+                      pageSize * pageIndex + i + 1
+                    ) : (
+                      cell.render("Cell")
+                    )}
                   </td>
                 ))}
               </tr>
