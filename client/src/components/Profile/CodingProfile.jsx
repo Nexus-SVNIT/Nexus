@@ -94,7 +94,7 @@ const CodingProfile = ({
     newRating: rating.newRating,
   })) : [];
 
-  const codechefUser = codechefData[0];
+  const codechefUser = codechefData;
 
   return (
     <div className="rounded-lg p-6 text-white">
