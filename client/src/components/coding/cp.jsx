@@ -278,24 +278,6 @@ const Cp = () => {
     });
   };
 
-  const addRanksToFilteredData = (data) => {
-    const filteredData = data.filter((user) => {
-      const userBranch = user.admissionNumber?.substring(3, 5) || "";
-      const userYear = user.admissionNumber?.substring(1, 3) || "";
-
-      const matchesBranch =
-        branchFilter === "all" || userBranch === branchFilter;
-      const matchesYear = yearFilter === "all" || userYear === yearFilter;
-
-      return matchesBranch && matchesYear;
-    });
-
-    return filteredData.map((item, index) => ({
-      ...item,
-      tableRank: index + 1,
-    }));
-  };
-
   const getRankData = (data) => {
     if (showGlobalRank) {
       // Return data with global ranks for global view
@@ -511,7 +493,7 @@ const Cp = () => {
               ))}
             </div>
 
-            <h1 className="mb-4 border-b border-blue-600 pb-2 text-center text-3xl font-semibold  text-blue-400">
+            <h1 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold  text-blue-400">
               Coding Profile Leaderboard
             </h1>
 
@@ -633,9 +615,6 @@ const Cp = () => {
             {/* Conditional Table Rendering */}
             {activePlatform === "codeforces" && (
               <>
-                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-                  Codeforces Leaderboard
-                </h2>
                 <RatingLegend platform="codeforces" />
                 <SortableTable
                   columns={columns.codeforces}
