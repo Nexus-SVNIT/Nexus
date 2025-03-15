@@ -28,14 +28,26 @@ function CheckIcon() {
 
 export function BatchCard({ batch, avgCodeforcesRating, avgLeetcodeRating, avgLeetcodeSolved, avgCodechefRating }) {
   return (
-    <Card color="blue-gray" className="w-full max-w-[20rem] p-8 shadow-lg hover:shadow-xl transition-shadow">
+    <Card color="gray" variant="gradient" className="w-full max-w-[20rem] p-8 relative transform -translate-y-2 overflow-hidden border-2 border-white">
+      <style>
+        {`
+          @keyframes moveLight {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          .animate-moveLight {
+            animation: moveLight 3s linear infinite;
+          }
+        `}
+      </style>
+      <div className="absolute top-0 left-0 w-full h-full border-2 border-transparent bg-gradient-to-r from-transparent via-white/20 to-transparent animate-moveLight"></div>
       <CardHeader
         floated={false}
         shadow={false}
         color="transparent"
-        className="m-0 mb-8 rounded-none border-b border-blue-gray-100 pb-8 text-center"
+        className="m-0 mb-8 rounded-none border-b border-white pb-8 text-center"
       >
-        <Typography variant="h5" color="blue-gray" className="font-bold">
+        <Typography variant="small" color="white" className="font-bold uppercase">
           Batch {batch}
         </Typography>
       </CardHeader>
@@ -43,19 +55,19 @@ export function BatchCard({ batch, avgCodeforcesRating, avgLeetcodeRating, avgLe
         <ul className="flex flex-col gap-4">
           <li className="flex items-center gap-4">
             <CheckIcon />
-            <Typography className="font-normal text-blue-gray-800">Codeforces Avg Rating: {avgCodeforcesRating}</Typography>
+            <Typography className="font-bold">Codeforces Avg Rating: {avgCodeforcesRating}</Typography>
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon />
-            <Typography className="font-normal text-blue-gray-800">LeetCode Avg Rating: {avgLeetcodeRating}</Typography>
+            <Typography className="font-bold">LeetCode Avg Rating: {avgLeetcodeRating}</Typography>
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon />
-            <Typography className="font-normal text-blue-gray-800">LeetCode Avg Solved: {avgLeetcodeSolved}</Typography>
+            <Typography className="font-bold">LeetCode Avg Solved: {avgLeetcodeSolved}</Typography>
           </li>
           <li className="flex items-center gap-4">
             <CheckIcon />
-            <Typography className="font-normal text-blue-gray-800">CodeChef Avg Rating: {avgCodechefRating}</Typography>
+            <Typography className="font-bold">CodeChef Avg Rating: {avgCodechefRating}</Typography>
           </li>
         </ul>
       </CardBody>
