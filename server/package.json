@@ -31,7 +31,8 @@
     "nexus_official_backend": "file:",
     "nodemailer": "^6.9.14",
     "path": "^0.12.7",
-    "validator": "^13.11.0"
+    "validator": "^13.11.0",
+    "yallist": "^5.0.0"
   },
   "repository": {
     "type": "git",
