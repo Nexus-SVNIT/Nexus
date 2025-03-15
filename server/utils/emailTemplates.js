@@ -157,11 +157,38 @@ const postCreationTemplate = (author, postTitle, id) => ({
     `
 });
 
+const postEditTemplate = (user, postTitle, postId) => ({
+  subject: 'Your Interview Experience Post Has Been Updated',
+  html: `
+  <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+            <p>
+            <h2>Post Update Under Review</h2>
+            <h3 style="color: white;">Dear ${author.fullName},</h3>
+            </p>
+            <p style="color: #ccc;">
+                Your edited interview experience post "${postTitle}" has been submitted for review. You will be notified once it is verified.F            </p>
+            <p style="color: #ccc;">
+                Your post will be visible to others after verification by our team.
+            </p>
+            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${postId}" style="color: #1a73e8;">this link</a> to view your post after verification.</p>
+            <p>Thanks,<br>Team NEXUS</p>
+        </div>
+        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+        </div>
+    </div>
+  `
+});
+
 module.exports = { 
     newPostTemplate, 
     newQuestionTemplate, 
     newCommentTemplate,
     newAnswerTemplate,
     postVerificationTemplate,
-    postCreationTemplate
+    postCreationTemplate,
+    postEditTemplate
 };

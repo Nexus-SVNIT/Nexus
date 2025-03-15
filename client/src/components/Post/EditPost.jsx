@@ -40,11 +40,9 @@ const formats = [
 ];
 
 const EditPost = () => {
-    useEffect(() => {
-        increamentCounter();
-      }, []);
   const { id } = useParams();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(true); // Add loading state
   const [formData, setFormData] = useState({
     title: "",
     content: "",
@@ -109,18 +107,95 @@ const EditPost = () => {
   const token = localStorage.getItem("token");
 
   useEffect(() => {
+    increamentCounter();
+  }, []);
+
+  useEffect(() => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        
+        const postData = response.data;
+        console.log('Fetched post data:', postData); // Debug log
+
+        // Directly set most of the fields
+        setFormData(prev => ({
+          ...prev,
+          _id: postData._id,
+          title: postData.title,
+          content: postData.content,
+          company: postData.company,
+          role: postData.role,
+          campusType: postData.campusType,
+          jobType: postData.jobType,
+          workMode: postData.workMode,
+          difficultyLevel: postData.difficultyLevel,
+          tags: Array.isArray(postData.tags) ? postData.tags.join(', ') : '',
+          location: Array.isArray(postData.location) ? postData.location.join(', ') : '',
+          
+          // Nested objects need careful handling
+          selectionProcess: {
+            onlineAssessment: {
+              aptitude: Boolean(postData.selectionProcess?.onlineAssessment?.aptitude),
+              coreSubject: Boolean(postData.selectionProcess?.onlineAssessment?.coreSubject),
+              codingRound: Boolean(postData.selectionProcess?.onlineAssessment?.codingRound),
+              english: Boolean(postData.selectionProcess?.onlineAssessment?.english),
+              communication: Boolean(postData.selectionProcess?.onlineAssessment?.communication)
             },
-          )
-        setFormData(response.data);
+            groupDiscussion: Boolean(postData.selectionProcess?.groupDiscussion),
+            onlineInterview: Boolean(postData.selectionProcess?.onlineInterview),
+            offlineInterview: Boolean(postData.selectionProcess?.offlineInterview),
+            others: postData.selectionProcess?.others || []
+          },
+          
+          rounds: {
+            technical: postData.rounds?.technical ?? 0,
+            hr: postData.rounds?.hr ?? 0,
+            hybrid: postData.rounds?.hybrid ?? 0
+          },
+          
+          compensation: {
+            stipend: postData.compensation?.stipend ?? '',
+            ctc: postData.compensation?.ctc ?? '',
+            baseSalary: postData.compensation?.baseSalary ?? ''
+          },
+          
+          hiringPeriod: {
+            month: postData.hiringPeriod?.month || new Date().getMonth() + 1,
+            year: postData.hiringPeriod?.year || new Date().getFullYear()
+          },
+          
+          cgpaCriteria: {
+            boys: postData.cgpaCriteria?.boys ?? '',
+            girls: postData.cgpaCriteria?.girls ?? ''
+          },
+          
+          shortlistedCount: {
+            boys: postData.shortlistedCount?.boys ?? '',
+            girls: postData.shortlistedCount?.girls ?? ''
+          },
+          
+          selectedCount: {
+            boys: postData.selectedCount?.boys ?? '',
+            girls: postData.selectedCount?.girls ?? ''
+          },
+          
+          offerDetails: {
+            receivedOffer: Boolean(postData.offerDetails?.receivedOffer),
+            acceptedOffer: Boolean(postData.offerDetails?.acceptedOffer)
+          }
+        }));
+        setLoading(false); // Set loading to false after data is processed
+
       } catch (error) {
-        console.error("Error fetching post:", error.message);
+        console.error("Error fetching post:", error);
         toast.error("Failed to fetch post data.");
+        setLoading(false);
       }
     };
 
@@ -138,6 +213,8 @@ const EditPost = () => {
       }
     };
 
+    // Reset loading state when fetching starts
+    setLoading(true);
     fetchPost();
     fetchCompanies();
   }, [id, token]);
@@ -206,7 +283,7 @@ const EditPost = () => {
     const value = e.target.value;
     setFormData((prev) => ({
       ...prev,
-      location: value.split(",").map((loc) => loc.trim()),
+      location: value // Store as string in form state
     }));
   };
 
@@ -220,7 +297,9 @@ const EditPost = () => {
 
       const processedData = {
         ...formData,
-        tags: tagsArray,
+        tags: formData.tags.split(',').map(tag => tag.trim()).filter(tag => tag),
+        // Convert location string to array before sending
+        location: formData.location.split(',').map(loc => loc.trim()).filter(loc => loc),
         compensation: {
           stipend: formData.compensation.stipend === "" ? null : Number(formData.compensation.stipend),
           ctc: formData.compensation.ctc === "" ? null : Number(formData.compensation.ctc),
@@ -252,7 +331,7 @@ const EditPost = () => {
       );
 
       toast.dismiss();
-      toast.success("Post updated successfully!");
+      toast.success("Post updated successfully! It will be visible after admin verification.");
       navigate("/interview-experiences");
     } catch (error) {
       toast.dismiss();
@@ -264,6 +343,21 @@ const EditPost = () => {
   const inputClassName = "w-full p-2 bg-zinc-800 text-white border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
   const selectClassName = "w-full p-2 bg-zinc-800 text-white border border-zinc-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500";
   const labelClassName = "block text-sm font-medium mb-2 text-gray-200";
+
+  // Add loading state check in render
+  if (loading) {
+    return (
+      <PostDetailWrapper>
+        <div className="min-h-screen bg-gray-900 p-4 sm:p-6">
+          <div className="animate-pulse space-y-4">
+            <div className="h-8 w-1/4 rounded bg-zinc-800"></div>
+            <div className="h-96 rounded bg-zinc-800"></div>
+            {/* Add more skeleton loading elements as needed */}
+          </div>
+        </div>
+      </PostDetailWrapper>
+    );
+  }
 
   return (
     <PostDetailWrapper>
@@ -676,7 +770,7 @@ const EditPost = () => {
                 <input
                   type="text"
                   name="location"
-                  value={formData.location.join(", ")}
+                  value={formData.location || ''} // Add fallback empty string
                   onChange={handleLocationChange}
                   className={inputClassName}
                   required

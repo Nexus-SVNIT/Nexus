@@ -65,8 +65,6 @@ const InterviewExperiencePage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
   const [isError, setError] = useState(null);
-  const token = localStorage.getItem("token");
-  const [currentUserId, setCurrentUserId] = useState("");
 
   const [formState, setFormState] = useState({
     companyFilter: "",
@@ -98,9 +96,6 @@ const InterviewExperiencePage = () => {
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`,
         {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
           params: {
             companyName: filters.companyName || "",
             tag: filters.tag || "",
@@ -115,10 +110,9 @@ const InterviewExperiencePage = () => {
             page: currentPage,
             limit: pageLimit,
           },
-        },
+        }
       );
       
-      setCurrentUserId(response.data.currentUser);
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
       const uniqueCompanies = [
@@ -155,7 +149,7 @@ const InterviewExperiencePage = () => {
   // Fetch all posts on component mount
   useEffect(() => {
     fetchPosts();
-  }, [token, currentPage, pageLimit]);
+  }, [currentPage, pageLimit]);
 
   useEffect(() => {
     increamentCounter();
@@ -197,86 +191,6 @@ const InterviewExperiencePage = () => {
       locationFilter: "",
     });
     fetchPosts({});
-  };
-
-  const handleCommentChange = (postId, value) => {
-    setComments((prev) => ({
-      ...prev,
-      [postId]: value,
-    }));
-  };
-
-  const handleQuestionChange = (postId, value) => {
-    setQuestions((prev) => ({
-      ...prev,
-      [postId]: value,
-    }));
-  };
-
-  const handleCommentSubmit = async (postId) => {
-    try {
-      const payload = { content: comments[postId], postId };
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      alert("Comment submitted successfully!");
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                comments: [...post.comments, { content: comments[post._id] }],
-              }
-            : post,
-        ),
-      );
-      setComments((prev) => ({ ...prev, [postId]: "" }));
-    } catch (error) {
-      console.error("Error submitting comment:", error.response?.data || error);
-      alert("Error submitting comment. Please try again.");
-    }
-  };
-
-  const handleQuestionSubmit = async (postId) => {
-    try {
-      const payload = { question: questions[postId], postId };
-      await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/`,
-        payload,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-      alert("Question submitted successfully!");
-      setPosts((prevPosts) =>
-        prevPosts.map((post) =>
-          post._id === postId
-            ? {
-                ...post,
-                questions: [
-                  ...post.questions,
-                  { question: questions[post._id] },
-                ],
-              }
-            : post,
-        ),
-      );
-      setQuestions((prev) => ({ ...prev, [postId]: "" }));
-    } catch (error) {
-      console.error(
-        "Error submitting question:",
-        error.response?.data || error,
-      );
-      alert("Error submitting question. Please try again.");
-    }
   };
 
   const handleCompanyClick = (companyName) => {
@@ -493,7 +407,6 @@ const InterviewExperiencePage = () => {
               post={post}
               handleCompanyClick={handleCompanyClick}
               handleTagClick={handleTagClick}
-              currentUserId={currentUserId}
             />
           ))
         )}

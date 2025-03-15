@@ -87,8 +87,9 @@ const InterviewPost = () => {
   useEffect(() => {
     const checkAuth = () => {
       if (!token) {
+        const currentPath = window.location.pathname;
         toast.error("Please login to view this page");
-        navigate("/login");
+        navigate(`/login?redirect_to=${encodeURIComponent(currentPath)}`);
         return false;
       }
       return true;
@@ -144,7 +145,7 @@ const InterviewPost = () => {
     fetchPost();
   }, [id, token, navigate]); // Add navigate to dependencies
 
-  if (loading) return <div className="text-white">Loading...</div>;
+  if (loading) return <div className="text-white min-h-screen minw-full"><Loader/></div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!post) return <div className="text-white">Post not found</div>;
 

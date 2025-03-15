@@ -1,14 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick, currentUserId }) => {
-  // Check if the current user is the author of the post
-  const isAuthor = post.author && post.author._id === currentUserId;
- 
-
-
+const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
   return (
-    <div className="bg-zinc-900 rounded-lg shadow-zinc-800 shadow-lg p-4 hover:shadow-xl transition duration-200">
+    <div className="bg-zinc-900 hover:bg-zinc-800 rounded-lg hover:shadow-zinc-700 p-4 hover:shadow-md transition duration-200">
       {/* Title and Date */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
         <Link 
@@ -95,19 +90,6 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick, currentUs
           <span>{post.comments?.length || 0} comments</span>
           <span>{post.questions?.length || 0} questions</span>
         </div>
-
-        {/* Edit Button (Visible only to the author) */}
-        {isAuthor && (
-          <Link
-          to={`/post/edit/${post._id}`}
-            className="inline-flex items-center gap-2 px-4 py-2 bg-yellow-600/20 text-yellow-400 rounded-lg hover:bg-yellow-600/30 transition-all duration-200"
-          >
-            Edit
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-            </svg>
-          </Link>
-        )}
 
         {/* Show More Button */}
         <Link 

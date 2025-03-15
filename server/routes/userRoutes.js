@@ -3,6 +3,7 @@ const router = express.Router()
 const authMiddleware = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js'); // Assuming you have an auth middleware
 const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail, generalNotification, getUserStats } = require('../controllers/userController.js')
+const Post = require('../models/postModel'); // Add at the top with other imports
 
 router.post('/login', (req, res) => {
     loginUser(req, res);
@@ -37,5 +38,16 @@ router.post('/notify-subscribers', coreAuthMiddleware, async (req, res) => {
 });
 
 router.get('/stats', coreAuthMiddleware, getUserStats);
+
+router.get('/posts', authMiddleware, async (req, res) => {
+    try {
+        const posts = await Post.find({ author: req.user.id })
+            .sort({ createdAt: -1 })
+            .select('title company role createdAt');
+        res.json(posts);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
 
 module.exports = router

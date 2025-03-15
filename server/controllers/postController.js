@@ -2,7 +2,7 @@ const Post = require('../models/postModel');
 const Company = require('../models/CompanyModel');
 const User = require('../models/userModel');
 const { sendEmail } = require('../utils/emailUtils');
-const { postVerificationTemplate, postCreationTemplate } = require('../utils/emailTemplates');
+const { postVerificationTemplate, postCreationTemplate, postEditTemplate } = require('../utils/emailTemplates');
 
 const createPost = async (req, res) => {
   try {
@@ -255,11 +255,7 @@ const verifyPost = async (req, res) => {
 
 const updatePost = async (req, res) => {
   try {
-    
-    
-    const  postId  = req.body._id;
-    
-    
+    const postId = req.body._id;
     const post = await Post.findById(postId);
     
     if (!post) {
@@ -268,7 +264,26 @@ const updatePost = async (req, res) => {
     if(post.author.toString() !== req.user.id) {
       return res.status(403).json({ error: 'You are not authorized to update this post' });
     }
-    const updatedPost = await Post.findByIdAndUpdate(postId, req.body, { new: true });
+
+    // Set isVerified to false when post is updated
+    const updatedData = {
+      ...req.body,
+      isVerified: false,
+      verifiedAt: null
+    };
+
+    const updatedPost = await Post.findByIdAndUpdate(postId, updatedData, { new: true });
+
+    // Send email notification about post update
+    const author = await User.findById(req.user.id);
+    if (author.personalEmail) {
+      const emailContent = postEditTemplate(author, updatedPost.title, updatedPost._id);
+      await sendEmail({
+        to: author.personalEmail,
+        ...emailContent
+      });
+    }
+
     res.status(200).json(updatedPost);
   }
   catch (error) {

@@ -10,30 +10,30 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchProfile = async () => {
+    const fetchUserData = async () => {
       try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
-        setProfile(response.data);
+        const [profileResponse, postsResponse] = await Promise.all([
+          axios.get(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
+            {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+              },
+            }
+          )
+        ]);
+        
+        setProfile(profileResponse.data);
         setLoading(false);
       } catch (error) {
-        console.error(
-          "Error fetching profile:",
-          error.response?.data?.message || error.message,
-        );
+        console.error("Error fetching data:", error);
         setLoading(false);
         setErr(true);
-        toast.error("Error fetching profile.");
+        toast.error("Error fetching profile data.");
       }
     };
 
-    fetchProfile();
+    fetchUserData();
   }, []);
 
   const handleChange = (e) => {
@@ -167,196 +167,202 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <Toaster />{" "}
-      {/* Toast notification container */}
-      <div>
-        <label className="text-gray-700 block">Full Name</label>
-        <input
-          type="text"
-          name="fullName"
-          value={profile.fullName}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Admission Number</label>
-        <input
-          type="text"
-          name="admissionNumber"
-          value={profile.admissionNumber}
-          disabled
-          className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Mobile Number</label>
-        <input
-          type="text"
-          name="mobileNumber"
-          value={profile.mobileNumber}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Personal Email</label>
-        <input
-          type="email"
-          name="personalEmail"
-          value={profile.personalEmail}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Institute Email</label>
-        <input
-          type="email"
-          name="instituteEmail"
-          value={profile.instituteEmail}
-          disabled
-          className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Branch</label>
-        <input
-          type="text"
-          name="branch"
-          value={profile.branch}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">LinkedIn Profile (Link)</label>
-        <input
-          type="url"
-          name="linkedInProfile"
-          value={profile.linkedInProfile}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">GitHub Profile (Link)</label>
-        <input
-          type="url"
-          name="githubProfile"
-          value={profile.githubProfile}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">LeetCode Profile (Only ID not Link)</label>
-        <input
-          name="leetcodeProfile"
-          value={profile.leetcodeProfile}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">Codeforces Profile (Only ID not Link)</label>
-        <input
-          name="codeforcesProfile"
-          value={profile.codeforcesProfile}
-          onChange={handleChange}
-          disabled={!isEditing}
-          required
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>{" "}
-        {/* Added CodeChef Profile field */}
-        <input
-          name="codechefProfile"
-          value={profile.codechefProfile}
-          onChange={handleChange}
-          disabled={!isEditing}
-          className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-        />
-      </div>
-      <div>
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            name="subscribed" // Corrected to subscribed field
-            checked={profile.subscribed}
-            onChange={handleChange}
-            disabled={!isEditing}
-            className="mr-2"
-          />
-          Subscribe to newsletters
-        </label>
-      </div>
-      <div>
-        <label className="flex items-center">
-          <input
-            type="checkbox"
-            name="shareCodingProfile" // New checkbox for shareCodingProfile
-            checked={profile.shareCodingProfile}
-            onChange={handleChange}
-            disabled={!isEditing}
-            className="mr-2"
-          />
-          Share Coding Profile
-        </label>
-      </div>
-      <div className="flex items-center justify-between">
-        {isEditing ? (
-          <>
-            <button
-              type="submit"
-              className="rounded-md bg-blue-500 px-4 py-2 text-white"
-              disabled={buttonLoading} // Disable button while loading
-            >
-              {buttonLoading ? "Saving..." : "Save"} {/* Show loading text */}
-            </button>
+    <div className="space-y-8">
+      {/* Profile Form Box */}
+      <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-6 backdrop-blur-sm">
+        <h3 className="text-xl font-semibold text-gray-200 mb-6">Personal Information</h3>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <Toaster />{" "}
+          {/* Toast notification container */}
+          <div>
+            <label className="text-gray-700 block">Full Name</label>
+            <input
+              type="text"
+              name="fullName"
+              value={profile.fullName}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Admission Number</label>
+            <input
+              type="text"
+              name="admissionNumber"
+              value={profile.admissionNumber}
+              disabled
+              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Mobile Number</label>
+            <input
+              type="text"
+              name="mobileNumber"
+              value={profile.mobileNumber}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Personal Email</label>
+            <input
+              type="email"
+              name="personalEmail"
+              value={profile.personalEmail}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Institute Email</label>
+            <input
+              type="email"
+              name="instituteEmail"
+              value={profile.instituteEmail}
+              disabled
+              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Branch</label>
+            <input
+              type="text"
+              name="branch"
+              value={profile.branch}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">LinkedIn Profile (Link)</label>
+            <input
+              type="url"
+              name="linkedInProfile"
+              value={profile.linkedInProfile}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">GitHub Profile (Link)</label>
+            <input
+              type="url"
+              name="githubProfile"
+              value={profile.githubProfile}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">LeetCode Profile (Only ID not Link)</label>
+            <input
+              name="leetcodeProfile"
+              value={profile.leetcodeProfile}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">Codeforces Profile (Only ID not Link)</label>
+            <input
+              name="codeforcesProfile"
+              value={profile.codeforcesProfile}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>{" "}
+            {/* Added CodeChef Profile field */}
+            <input
+              name="codechefProfile"
+              value={profile.codechefProfile}
+              onChange={handleChange}
+              disabled={!isEditing}
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+            />
+          </div>
+          <div>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="subscribed" // Corrected to subscribed field
+                checked={profile.subscribed}
+                onChange={handleChange}
+                disabled={!isEditing}
+                className="mr-2"
+              />
+              Subscribe to newsletters
+            </label>
+          </div>
+          <div>
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                name="shareCodingProfile" // New checkbox for shareCodingProfile
+                checked={profile.shareCodingProfile}
+                onChange={handleChange}
+                disabled={!isEditing}
+                className="mr-2"
+              />
+              Share Coding Profile
+            </label>
+          </div>
+          <div className="flex items-center justify-between">
+            {isEditing ? (
+              <>
+                <button
+                  type="submit"
+                  className="rounded-md bg-blue-500 px-4 py-2 text-white"
+                  disabled={buttonLoading} // Disable button while loading
+                >
+                  {buttonLoading ? "Saving..." : "Save"} {/* Show loading text */}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setIsEditing(false)}
+                  className="bg-gray-500 rounded-md px-4 py-2 text-white"
+                >
+                  Cancel
+                </button>
+              </>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setIsEditing(true)}
+                className="rounded-md bg-blue-500 px-4 py-2 text-white"
+              >
+                Edit Profile
+              </button>
+            )}
             <button
               type="button"
-              onClick={() => setIsEditing(false)}
-              className="bg-gray-500 rounded-md px-4 py-2 text-white"
+              onClick={handleForgotPassword}
+              className="rounded-md bg-red-500 px-4 py-2 text-white"
             >
-              Cancel
+              Forgot Password
             </button>
-          </>
-        ) : (
-          <button
-            type="button"
-            onClick={() => setIsEditing(true)}
-            className="rounded-md bg-blue-500 px-4 py-2 text-white"
-          >
-            Edit Profile
-          </button>
-        )}
-        <button
-          type="button"
-          onClick={handleForgotPassword}
-          className="rounded-md bg-red-500 px-4 py-2 text-white"
-        >
-          Forgot Password
-        </button>
+          </div>
+        </form>
       </div>
-    </form>
+    </div>
   );
 };
 

@@ -6,20 +6,15 @@ const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware');
 const { updateEvent } = require('../controllers/eventController');
 const router = express.Router();
 
-// Create a new post
-router.post('/',authMiddleware, createPost);
+// Public routes
+router.get('/', getAllPosts); // Remove authMiddleware
+router.get('/:id', getPostById); // Remove authMiddleware
 
-// Fetch all posts
-router.get('/',authMiddleware, getAllPosts);
-
-// Admin routes with core auth middleware
+// Protected routes
+router.post('/', authMiddleware, createPost);
 router.get('/pending', coreAuthMiddleware, getPendingPosts);
 router.post('/:postId/verify', coreAuthMiddleware, verifyPost);
-
-// Fetch individual post
-router.get('/:id',authMiddleware, getPostById);
-
-router.put('/:id',authMiddleware,updatePost);
+router.put('/:id', authMiddleware, updatePost);
       
 
 // Add before module.exports
@@ -31,6 +26,23 @@ router.post('/:id/increment-view', async (req, res) => {
       { new: true }
     );
     res.json({ views: post.views });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Add delete route before module.exports
+router.delete('/:id', authMiddleware, async (req, res) => {
+  try {
+    const post = await Post.findById(req.params.id);
+    if (!post) {
+      return res.status(404).json({ error: 'Post not found' });
+    }
+    if (post.author.toString() !== req.user.id) {
+      return res.status(403).json({ error: 'Not authorized to delete this post' });
+    }
+    await Post.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Post deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

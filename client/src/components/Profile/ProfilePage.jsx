@@ -6,6 +6,7 @@ import { Toaster } from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
+import PostProfile from "./PostProfile"; // Assuming you have a PostProfile component
 
 const ProfilePage = () => {
   const [profile, setProfile] = useState({
@@ -23,12 +24,12 @@ const ProfilePage = () => {
     subscribed: false, // Corrected to subscribed field
   });
   const [err, setErr] = useState(null);
-  
-  useEffect(()=>{
-    increamentCounter();
-  },[]);
 
-  if(err){
+  useEffect(() => {
+    increamentCounter();
+  }, []);
+
+  if (err) {
     return <MaintenancePage />;
   }
 
@@ -43,6 +44,9 @@ const ProfilePage = () => {
         <h2 className="text-gray-800 mb-6 text-2xl font-semibold">Profile</h2>
 
         <Profile profile={profile} setProfile={setProfile} setErr={setErr} />
+      </div>
+      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
+        <PostProfile /> {/* Assuming you have a PostProfile component */}
       </div>
       <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
         <h2 className="text-gray-800 mb-6 text-2xl font-semibold">
