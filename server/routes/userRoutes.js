@@ -2,7 +2,7 @@ const express = require('express')
 const router = express.Router()
 const authMiddleware = require('../middlewares/authMiddleware'); // Assuming you have an auth middleware
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js'); // Assuming you have an auth middleware
-const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail, generalNotification, getUserStats } = require('../controllers/userController.js')
+const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail, generalNotification, getUserStats, getPendingAlumni, verifyAlumni, rejectAlumni } = require('../controllers/userController.js')
 const Post = require('../models/postModel'); // Add at the top with other imports
 
 router.post('/login', (req, res) => {
@@ -49,5 +49,9 @@ router.get('/posts', authMiddleware, async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+
+router.get('/alumni/pending', coreAuthMiddleware, getPendingAlumni);
+router.post('/alumni/verify/:id', coreAuthMiddleware, verifyAlumni);
+router.post('/alumni/reject/:id', coreAuthMiddleware, rejectAlumni);
 
 module.exports = router

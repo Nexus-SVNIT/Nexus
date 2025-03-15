@@ -2,6 +2,10 @@ const { google } = require('googleapis');
 const fs = require('fs');
 const AlumniDetails = require('../models/alumniDetailModel');
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const user = require('../models/userModel.js');
+const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
+const { isAlumni } = require('../utils/validateAlumni.js');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -152,4 +156,111 @@ const toggleVerification = async (req, res) => {
     }
 };
 
-module.exports = { allAlumniDetails, addAlumniDetails, allVerifiedAlumniDetails, allPendingAlumniDetails, toggleVerification };
+const signupAlumni = async (req, res) => {
+    const { 
+        fullName, admissionNumber, mobileNumber, personalEmail, 
+        branch, linkedInProfile, githubProfile, leetcodeProfile, 
+        codeforcesProfile, codechefProfile, password, shareCodingProfile 
+    } = req.body;
+
+    try {
+        // Check if the user is actually an alumni
+        if (!isAlumni(admissionNumber)) {
+            return res.status(400).json({ 
+                message: 'You are not eligible for alumni registration yet. Please use regular student signup.' 
+            });
+        }
+
+        // Validate coding profile IDs
+        try {
+            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
+        } catch (error) {
+            return res.status(400).json({ message: error.message });
+        }
+
+        // Check if alumni already exists
+        const existingUser = await user.findOne({ admissionNumber });
+        if (existingUser) {
+            return res.status(400).json({ message: 'User already exists' });
+        }
+
+        // Generate verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+
+        // Create new alumni user
+        const newUser = new user({
+            fullName,
+            admissionNumber,
+            mobileNumber,
+            personalEmail,
+            branch,
+            linkedInProfile,
+            githubProfile,
+            leetcodeProfile,
+            codeforcesProfile,
+            codechefProfile,
+            shareCodingProfile,
+            password,
+            verificationToken,
+            isAlumni: true // Add this field to distinguish alumni
+        });
+
+        await newUser.save();
+
+        // Send verification email to personal email
+        const verificationUrl = `${req.headers.referer}auth/alumni/verify/${verificationToken}`;
+        const mailOptions = {
+            from: process.env.EMAIL_ID,
+            to: personalEmail,
+            subject: 'Verify your Alumni Account',
+            html: `
+                <div style="background-color: black; color:white; font-size:12px; padding:20px;">
+                    <div style="margin-bottom: 25px; display:flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
+                    </div>
+                    <div>Dear ${fullName},</div>
+                    <p>Thank you for registering on NEXUS portal as an alumni. Please verify your email using following link.</p>
+                    <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;">
+                        <a href="${verificationUrl}" style="color:black">Verify Your Email</a>
+                    </button>
+                    <p>Thanks,<br>Team NEXUS</p>
+                </div>
+            `
+        };
+
+        await transporter.sendMail(mailOptions);
+        res.status(201).json({ message: 'Alumni registered. Verification email sent!' });
+
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+const verifyAlumniEmail = async (req, res) => {
+    const { token } = req.params;
+
+    try {
+        const userData = await user.findOne({ verificationToken: token });
+        if (!userData) {
+            return res.status(400).json({ message: 'Invalid token' });
+        }
+
+        userData.emailVerified = true;
+        userData.verificationToken = undefined; // Remove the token after verification
+        await userData.save();
+
+        res.status(200).json({ message: 'Email verified successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+};
+
+module.exports = { 
+    allAlumniDetails, 
+    addAlumniDetails, 
+    allVerifiedAlumniDetails, 
+    allPendingAlumniDetails, 
+    toggleVerification, 
+    signupAlumni,
+    verifyAlumniEmail 
+};

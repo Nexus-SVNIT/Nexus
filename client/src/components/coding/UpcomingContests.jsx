@@ -7,16 +7,20 @@ const UpcomingContests = () => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const localData = localStorage.getItem('upcoming-contests')
-        if(localData && localData.lastUpdated && new Date() - new Date(localData.lastUpdated) < 1000 * 60 * 60 * 24){
+        const localData = JSON.parse(localStorage.getItem('upcoming-contests'))
+        if(localData && localData.lastUpdated && (new Date() - new Date(localData.lastUpdated)) < 86400000){
           setContests(localData.data);
           return;
         }
 
         const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
         const data = await response.json();
-        setContests(data);
-        localStorage.setItem('upcoming-contests', JSON.stringify({data: data, lastUpdated: new Date()}));
+        if(!data || data.success === false){
+          setContests([]);
+        } else {
+          setContests(data.data);
+          localStorage.setItem('upcoming-contests', JSON.stringify({data: data.data, lastUpdated: new Date()}));
+        }
       } catch (error) {
         console.error("Error fetching contests:", error);
       } finally {

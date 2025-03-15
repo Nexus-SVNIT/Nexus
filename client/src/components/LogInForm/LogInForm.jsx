@@ -44,6 +44,8 @@ const LoginForm = () => {
           toast.error('User not found. Please check your admission number.');
         } else if (error.response.data.message === 'Invalid credentials') {
           toast.error('Invalid credentials. Please try again.');
+        } else if (error.response.data.message === 'Your alumni account is pending verification. Please wait for admin approval.') {
+          toast.error('Alumni Verification Pending. Please wait for approval.');
         } else if (error.response.data.message === 'Please verify your email before logging in.') {
           toast.error('Please verify your email before logging in.');
         }else {

@@ -183,6 +183,42 @@ const postEditTemplate = (user, postTitle, postId) => ({
   `
 });
 
+const alumniVerificationTemplate = (name) => ({
+    subject: 'Alumni Status Verified',
+    html: `
+    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+            <p>
+            <h3 style="color: white;">Dear ${name},</h3>
+            </p>
+            <p style="color: #ccc;">
+                Your alumni status has been verified by the NEXUS team. You now have full access to the alumni features on the platform.
+            </p>
+            <p>Thanks,<br>Team NEXUS</p>
+        </div>
+    </div>
+    `
+});
+
+const alumniRejectionTemplate = (name) => ({
+    subject: 'Alumni Status Update',
+    html: `
+    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+            <p>
+            <h3 style="color: white;">Dear ${name},</h3>
+            </p>
+            <p style="color: #ccc;">
+                Your alumni verification request has been reviewed and could not be verified at this time. Please ensure you meet all eligibility criteria and try again.
+            </p>
+            <p>Thanks,<br>Team NEXUS</p>
+        </div>
+    </div>
+    `
+});
+
 module.exports = { 
     newPostTemplate, 
     newQuestionTemplate, 
@@ -190,5 +226,7 @@ module.exports = {
     newAnswerTemplate,
     postVerificationTemplate,
     postCreationTemplate,
-    postEditTemplate
+    postEditTemplate,
+    alumniVerificationTemplate,
+    alumniRejectionTemplate
 };

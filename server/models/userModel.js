@@ -21,6 +21,8 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: Date,  // Expiration date for password reset token
     subscribed: { type: Boolean, default: true }, // New field for subscription status
     shareCodingProfile: { type: Boolean, default: true }, // New field for subscription status
+    isAlumni: { type: Boolean, default: false }, // Add this field
+    isVerifiedAlumni: { type: Boolean, default: false }, // Add this field
 });
 
 // Hash the password before saving

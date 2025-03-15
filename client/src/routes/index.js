@@ -30,6 +30,8 @@ import LeaderBoardPage from '../components/Form/LeaderBoardPage.jsx'
 import EditForm from '../components/Form/EditForm.jsx'
 import AdminLeaderBoard from '../components/Form/AdminLeaderBoard.jsx'
 import EditPost from '../components/Post/EditPost.jsx'
+import AlumniSignUpForm from '../components/AlumniSignUpForm/AlumniSignUpForm.jsx'
+import AlumniUserVerification from '../components/Admin/AlumniVerification';
 
 export const DefaultRoutes = [
   {
@@ -162,6 +164,12 @@ export const DefaultRoutes = [
   },
 
   {
+    path:'/alumni/signup',
+    title:'Alumni SignUp',
+    component: AlumniSignUpForm
+  },
+
+  {
     path: '*',
     title: 'Not Found',
     component: NotFound
@@ -245,5 +253,10 @@ export const AdminRoutes = [
     path: 'merch/reference-leaderboard',
     title: 'Merch Reference LeaderBoard',
     component: AdminLeaderBoard
-  }
+  },
+  {
+    title: 'Alumni Verification',
+    path: '/core/admin/alumni-verification',
+    component: AlumniUserVerification
+  },
 ]

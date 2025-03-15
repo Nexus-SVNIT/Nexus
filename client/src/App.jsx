@@ -18,6 +18,7 @@ import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEma
 import ShowProject from "./components/Project/showProject";
 import IssueModal from "./components/Issue/issue";
 import { useState } from "react";
+import VerifyAlumni from './components/VerifyAlumni/VerifyAlumni';
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -77,6 +78,7 @@ function App() {
                 <Route key={title} path={path} element={<Component />} />
               ))}
             </Route>
+            <Route path="/auth/alumni/verify/:token" element={<VerifyAlumni />} />
           </Routes>
           <Toaster />
         </Router>

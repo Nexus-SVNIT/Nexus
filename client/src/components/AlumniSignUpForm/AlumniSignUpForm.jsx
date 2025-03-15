@@ -3,13 +3,12 @@ import toast, { Toaster } from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
 
-function SignUpForm() {
+function AlumniSignUpForm() {
   const [formData, setFormData] = useState({
     fullName: "",
     admissionNumber: "",
     mobileNumber: "",
     personalEmail: "",
-    instituteEmail: "",
     branch: "",
     linkedInProfile: "",
     githubProfile: "",
@@ -20,17 +19,16 @@ function SignUpForm() {
     shareCodingProfile: false,
   });
 
-  // Load form data from localStorage when the component mounts
+  // Same useEffect hooks as SignUpForm
   useEffect(() => {
-    const savedFormData = localStorage.getItem("signupFormData");
+    const savedFormData = localStorage.getItem("alumniSignupFormData");
     if (savedFormData) {
       setFormData(JSON.parse(savedFormData));
     }
   }, []);
 
-  // Save form data to localStorage whenever it changes
   useEffect(() => {
-    localStorage.setItem("signupFormData", JSON.stringify(formData));
+    localStorage.setItem("alumniSignupFormData", JSON.stringify(formData));
   }, [formData]);
 
   const handleChange = (e) => {
@@ -51,7 +49,6 @@ function SignUpForm() {
       admissionNumber,
       mobileNumber,
       personalEmail,
-      instituteEmail,
       branch,
       password,
       leetcodeProfile,
@@ -60,8 +57,6 @@ function SignUpForm() {
     } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const instituteEmailPattern =
-      /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
     if (
       !admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)
@@ -77,16 +72,12 @@ function SignUpForm() {
       toast.error("Invalid Personal Email");
       return false;
     }
-    if (!instituteEmail.match(instituteEmailPattern)) {
-      toast.error("Invalid Institute Email");
-      return false;
-    }
     if (
       leetcodeProfile.includes("leetcode.com") ||
       leetcodeProfile.includes("http") ||
       leetcodeProfile.includes("/")
     ) {
-      toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
+      toast.error("Invalid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
     if (
@@ -94,7 +85,7 @@ function SignUpForm() {
       codeforcesProfile.includes("http") ||
       codeforcesProfile.includes("/")
     ) {
-      toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
     if (
@@ -102,7 +93,7 @@ function SignUpForm() {
       codechefProfile.includes("http") ||
       codechefProfile.includes("/")
     ) {
-      toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
 
@@ -111,7 +102,7 @@ function SignUpForm() {
       return false;
     }
 
-    // Add check to prevent alumni from using regular signup
+    // Add alumni validation
     const currentDate = new Date();
     const academicYear = currentDate.getMonth() >= 6 ? 
         currentDate.getFullYear() : 
@@ -121,9 +112,9 @@ function SignUpForm() {
     const programType = formData.admissionNumber.charAt(0);
     const yearsSinceAdmission = academicYear - admissionYear;
 
-    if ((programType === 'U' && yearsSinceAdmission >= 4) || 
-        (programType === 'I' && yearsSinceAdmission >= 5)) {
-        toast.error("Please use the alumni signup form if you have graduated");
+    if ((programType === 'U' && yearsSinceAdmission < 4) || 
+        (programType === 'I' && yearsSinceAdmission < 5)) {
+        toast.error("You are not eligible for alumni registration yet");
         return false;
     }
 
@@ -138,25 +129,25 @@ function SignUpForm() {
     try {
       const toastId = toast.loading("Signing up...");
       const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/signup`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/alumni/signup`,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
-        },
+        }
       );
 
       const result = await res.json();
       if (res.ok) {
         toast.success(
-          "Sign up successful! Please check your email to verify your account.",
-          { id: toastId },
+          "Sign up successful! Please check your personal email to verify your account.",
+          { id: toastId }
         );
-        localStorage.removeItem("signupFormData"); // Clear saved form data on successful signup
+        localStorage.removeItem("alumniSignupFormData");
         setTimeout(() => {
-          window.location.href = "/login"; // Change this to your desired route
+          window.location.href = "/login";
         }, 2000);
       } else {
         toast.error(result.message || "Sign up failed", { id: toastId });
@@ -174,9 +165,9 @@ function SignUpForm() {
   return (
     <div className="bg-black-2 p-6 pt-10 md:p-16">
       <HeadTags
-        title={"Sign Up - Student Portal| Nexus - NIT Surat"}
+        title={"Alumni Sign Up - Student Portal| Nexus - NIT Surat"}
         description={
-          "Sign up to the Nexus Student Portal to get access to all the features."
+          "Sign up to the Nexus Alumni Portal to get access to all the features."
         }
       />
       <div className="mb-5 flex justify-center">
@@ -194,7 +185,7 @@ function SignUpForm() {
           className="bg-gray-800 w-full max-w-lg rounded-lg p-2 shadow-lg md:p-8"
         >
           <h2 className="mb-6 text-center text-2xl font-semibold text-white">
-            Sign Up
+            Alumni Sign Up
           </h2>
 
           <div className="mb-4">
@@ -269,26 +260,6 @@ function SignUpForm() {
               value={formData.personalEmail}
               onChange={handleChange}
               placeholder="Your Personal Email"
-              required
-            />
-          </div>
-
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm text-white"
-              htmlFor="instituteEmail"
-            >
-              Institute Email <span className="text-red-500">*</span>
-            </label>
-            <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
-              type="email"
-              id="instituteEmail"
-              name="instituteEmail"
-              pattern="^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$"
-              value={formData.instituteEmail}
-              onChange={handleChange}
-              placeholder="(u|i)XX(cs|ai)XXX@(coed|aid).svnit.ac.in"
               required
             />
           </div>
@@ -456,4 +427,4 @@ function SignUpForm() {
   );
 }
 
-export default SignUpForm;
+export default AlumniSignUpForm;

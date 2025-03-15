@@ -5,6 +5,8 @@ const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
 const bcrypt = require('bcrypt')
 const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
+const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js'); // Adjust the path to your validation utility
+const { alumniVerificationTemplate, alumniRejectionTemplate } = require('../utils/emailTemplates.js');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -13,20 +15,6 @@ const transporter = nodemailer.createTransport({
         pass: process.env.EMAIL_PASSWORD
     }
 });
-
-const validateCodingProfiles = (leetcode, codeforces, codechef) => {
-    const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
-    
-    if (leetcode && urlPattern.test(leetcode)) {
-        throw new Error('Please enter only your LeetCode username, not the full URL');
-    }
-    if (codeforces && urlPattern.test(codeforces)) {
-        throw new Error('Please enter only your Codeforces username, not the full URL');
-    }
-    if (codechef && urlPattern.test(codechef)) {
-        throw new Error('Please enter only your CodeChef username, not the full URL');
-    }
-};
 
 const loginUser = async (req, res) => {
     const { admissionNumber, password } = req.body;
@@ -40,6 +28,13 @@ const loginUser = async (req, res) => {
         // Check if the user is verified
         if (!foundUser.emailVerified) {
             return res.status(400).json({ message: 'Please verify your email before logging in.' });
+        }
+
+        // Check if alumni is verified by admin
+        if (foundUser.isAlumni && !foundUser.isVerifiedAlumni) {
+            return res.status(400).json({ 
+                message: 'Your alumni account is pending verification. Please wait for admin approval.' 
+            });
         }
 
         const isMatch = await foundUser.comparePassword(password);
@@ -585,6 +580,67 @@ const getUserStats = async (req, res) => {
     }
 };
 
+const getPendingAlumni = async (req, res) => {
+    try {
+        const pendingAlumni = await user.find({ 
+            isAlumni: true, 
+            emailVerified: true,
+            isVerifiedAlumni: false 
+        });
+        res.status(200).json(pendingAlumni);
+    } catch (error) {
+        res.status(500).json({ message: 'Error fetching pending alumni', error });
+    }
+};
+
+const verifyAlumni = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const alumniUser = await user.findById(id);
+
+        if (!alumniUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        alumniUser.isVerifiedAlumni = true;
+        await alumniUser.save();
+
+        // Send verification email
+        const emailContent = alumniVerificationTemplate(alumniUser.fullName);
+        await transporter.sendMail({
+            ...emailContent,
+            to: alumniUser.personalEmail
+        });
+
+        res.status(200).json({ message: 'Alumni verified successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error verifying alumni', error });
+    }
+};
+
+const rejectAlumni = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const alumniUser = await user.findById(id);
+
+        if (!alumniUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Send rejection email
+        const emailContent = alumniRejectionTemplate(alumniUser.fullName);
+        await transporter.sendMail({
+            ...emailContent,
+            to: alumniUser.personalEmail
+        });
+
+        await user.findByIdAndDelete(id);
+        res.status(200).json({ message: 'Alumni rejected successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error rejecting alumni', error });
+    }
+};
+
 module.exports = {
     getUserProfile,
     updateUserProfile, getAllUsers,
@@ -594,4 +650,7 @@ module.exports = {
     generalNotification,
     getUsers,
     getUserStats,
+    getPendingAlumni,
+    verifyAlumni,
+    rejectAlumni
 };
