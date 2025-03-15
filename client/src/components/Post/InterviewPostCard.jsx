@@ -2,15 +2,24 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
+  // Add truncate helper function
+  const truncateText = (text, limit) => {
+    if (!text) return '';
+    return text.length > limit ? text.substring(0, limit) + '...' : text;
+  };
+
   return (
     <div className="bg-zinc-900 hover:bg-zinc-800 rounded-lg hover:shadow-zinc-700 p-4 hover:shadow-md transition duration-200">
       {/* Title and Date */}
       <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
         <Link 
           to={`/interview-experiences/post/${post._id}`}
-          className="text-xl font-bold text-white hover:text-blue-400 transition-colors"
+          className="text-xl font-bold text-white hover:text-blue-400 transition-colors max-w-[500px]"
+          title={post.title}
         >
-          {post.title}
+          <div className="truncate">
+            {truncateText(post.title, 40)}
+          </div>
         </Link>
         <span className="text-sm text-gray-400 whitespace-nowrap">
           {new Date(post.createdAt).toLocaleDateString('en-US', {
@@ -49,9 +58,11 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
         )}
       </div>
 
-      {/* Quick Stats */}
+      {/* Quick Stats - Modified */}
       <div className="mt-3 flex flex-wrap gap-2 text-sm text-gray-400">
-        <span>{post.role}</span>
+        <span title={post.role} className="max-w-[200px] truncate">
+          {truncateText(post.role, 15)}
+        </span>
         <span>•</span>
         <span>{post.jobType}</span>
         <span>•</span>
@@ -59,8 +70,8 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
         <span>•</span>
         <span>{post.workMode}</span>
         <span>•</span>
-        <span className="break-all">
-          {Array.isArray(post.location) ? post.location.join(', ') : post.location}
+        <span title={Array.isArray(post.location) ? post.location.join(', ') : post.location} className="max-w-[200px] truncate">
+          {truncateText(Array.isArray(post.location) ? post.location.join(', ') : post.location, 15)}
         </span>
       </div>
 

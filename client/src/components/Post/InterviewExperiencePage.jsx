@@ -1,63 +1,16 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import InterviewPostCard from "./InterviewPostCard";
 import { FaPenToSquare } from "react-icons/fa6";
+import { FaFilter, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 
-const formatCompensation = (compensation) => {
-  if (!compensation) return "Not disclosed";
-  const parts = [];
-  if (compensation.stipend)
-    parts.push(`Stipend: ₹${compensation.stipend}/month`);
-  if (compensation.ctc) parts.push(`CTC: ₹${compensation.ctc} LPA`);
-  if (compensation.baseSalary)
-    parts.push(`Base: ₹${compensation.baseSalary} LPA`);
-  return parts.length ? parts.join(" | ") : "Not disclosed";
-};
-
-const formatSelectionProcess = (process) => {
-  if (!process) return "Not specified";
-  const steps = [];
-
-  if (process.onlineAssessment) {
-    const assessments = Object.entries(process.onlineAssessment)
-      .filter(([_, value]) => value)
-      .map(([key]) => key.replace(/([A-Z])/g, " $1").toLowerCase());
-    if (assessments.length) steps.push(...assessments);
-  }
-
-  if (process.groupDiscussion) steps.push("group discussion");
-  if (process.onlineInterview) steps.push("online interview");
-  if (process.offlineInterview) steps.push("offline interview");
-  if (process.others?.length) steps.push(...process.others);
-
-  return steps.length ? steps.join(", ") : "Not specified";
-};
-
-const formatRounds = (rounds) => {
-  if (!rounds) return "Not specified";
-  const { technical = 0, hr = 0, hybrid = 0 } = rounds;
-  return `${technical} Tech, ${hr} HR, ${hybrid} Hybrid`;
-};
-
-const formatCGPA = (cgpa) => {
-  if (!cgpa) return "Not specified";
-  return `Boys: ${cgpa.boys || "N/A"} | Girls: ${cgpa.girls || "N/A"}`;
-};
-
-const formatCount = (count) => {
-  if (!count) return "Not specified";
-  return `Boys: ${count.boys || 0} | Girls: ${count.girls || 0}`;
-};
-
 const InterviewExperiencePage = () => {
   const [posts, setPosts] = useState([]);
-  const [comments, setComments] = useState({});
-  const [questions, setQuestions] = useState({});
   const [companies, setCompanies] = useState([]);
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -65,6 +18,7 @@ const InterviewExperiencePage = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [pageLimit, setPageLimit] = useState(5);
   const [isError, setError] = useState(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   const [formState, setFormState] = useState({
     companyFilter: "",
@@ -78,6 +32,41 @@ const InterviewExperiencePage = () => {
     maxStipendFilter: "",
     locationFilter: "",
   });
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+
+  // New function to sync form state to URL
+  const updateURLParams = (newFormState) => {
+    const params = new URLSearchParams();
+    Object.entries(newFormState).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+    setSearchParams(params);
+  };
+
+  // New function to load filters from URL
+  const loadFiltersFromURL = () => {
+    const params = Object.fromEntries(searchParams.entries());
+    const initialState = {
+      companyFilter: params.companyFilter || "",
+      tagFilter: params.tagFilter || "",
+      admissionFilter: params.admissionFilter || "",
+      startDate: params.startDate || "",
+      endDate: params.endDate || "",
+      campusTypeFilter: params.campusTypeFilter || "",
+      jobTypeFilter: params.jobTypeFilter || "",
+      minStipendFilter: params.minStipendFilter || "",
+      maxStipendFilter: params.maxStipendFilter || "",
+      locationFilter: params.locationFilter || "",
+    };
+    setFormState(initialState);
+    
+    // Apply filters if any params exist
+    if (Object.values(params).some(value => value)) {
+      fetchPosts(params);
+    }
+  };
 
   // Load saved form state from localStorage on component mount
   useEffect(() => {
@@ -155,11 +144,14 @@ const InterviewExperiencePage = () => {
     increamentCounter();
   }, []);
 
+  // Modified handleFilterChange to update URL
   const handleFilterChange = (key, value) => {
-    setFormState((prevState) => ({
-      ...prevState,
+    const newFormState = {
+      ...formState,
       [key]: value,
-    }));
+    };
+    setFormState(newFormState);
+    updateURLParams(newFormState);
   };
 
   const handleFilter = () => {
@@ -177,8 +169,9 @@ const InterviewExperiencePage = () => {
     });
   };
 
+  // Modified handleClearFilters to clear URL
   const handleClearFilters = () => {
-    setFormState({
+    const emptyState = {
       companyFilter: "",
       tagFilter: "",
       admissionFilter: "",
@@ -189,17 +182,24 @@ const InterviewExperiencePage = () => {
       minStipendFilter: "",
       maxStipendFilter: "",
       locationFilter: "",
-    });
+    };
+    setFormState(emptyState);
+    setSearchParams(new URLSearchParams());
     fetchPosts({});
   };
 
+  // Modified handleCompanyClick and handleTagClick
   const handleCompanyClick = (companyName) => {
-    setFormState((prev) => ({ ...prev, companyFilter: companyName }));
+    const newState = { ...formState, companyFilter: companyName };
+    setFormState(newState);
+    updateURLParams(newState);
     fetchPosts({ companyName, tag: formState.tagFilter });
   };
 
   const handleTagClick = (tag) => {
-    setFormState((prev) => ({ ...prev, tagFilter: tag }));
+    const newState = { ...formState, tagFilter: tag };
+    setFormState(newState);
+    updateURLParams(newState);
     fetchPosts({ companyName: formState.companyFilter, tag });
   };
 
@@ -225,8 +225,20 @@ const InterviewExperiencePage = () => {
       <h1 className="mb-8 text-center text-4xl font-bold tracking-tight text-white md:text-5xl">
         Interview Experiences
       </h1>
-      {/* Create Post Button */}
-      <div className="mb-4 flex justify-end">
+      {/* Controls Row */}
+      <div className="mb-4 flex justify-between items-center">
+        <button
+          onClick={() => setShowFilters(!showFilters)}
+          className={`flex items-center gap-2 rounded-lg px-4 py-2 text-white transition duration-200 ${
+            showFilters 
+            ? 'bg-blue-600 hover:bg-blue-700' 
+            : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+        >
+          <FaFilter className={`${showFilters ? 'text-white' : 'text-gray-300'}`} />
+          <span>Filters</span>
+          {showFilters ? <FaChevronUp /> : <FaChevronDown />}
+        </button>
         <Link
           to="/interview-experiences/create"
           className="flex items-center justify-center gap-2 rounded-lg bg-green-600 px-4 py-2 text-white transition duration-200 hover:bg-green-700"
@@ -237,162 +249,164 @@ const InterviewExperiencePage = () => {
       </div>
 
       {/* Filters Section */}
-      <div className="mb-6 flex flex-col flex-wrap gap-4 sm:flex-row">
-        <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {/* Filter controls */}
-          <select
-            value={formState.companyFilter}
-            onChange={(e) =>
-              handleFilterChange("companyFilter", e.target.value)
-            }
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Companies</option>
-            {companies.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          <select
-            value={formState.tagFilter}
-            onChange={(e) => handleFilterChange("tagFilter", e.target.value)}
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Tags</option>
-            {tags.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-          <input
-            type="text"
-            placeholder="Filter by admission number"
-            value={formState.admissionFilter}
-            onChange={(e) =>
-              handleFilterChange("admissionFilter", e.target.value)
-            }
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          <div className="flex items-center gap-2">
-            <input
-              type="date"
-              value={formState.startDate}
-              onChange={(e) => handleFilterChange("startDate", e.target.value)}
-              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <span className="text-white">to</span>
-            <input
-              type="date"
-              value={formState.endDate}
-              onChange={(e) => handleFilterChange("endDate", e.target.value)}
-              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-          <select
-            value={formState.campusTypeFilter}
-            onChange={(e) =>
-              handleFilterChange("campusTypeFilter", e.target.value)
-            }
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white"
-          >
-            <option value="">All Campus Types</option>
-            <option value="In Campus">In Campus</option>
-            <option value="Off Campus">Off Campus</option>
-            <option value="Pool Campus">Pool Campus</option>
-          </select>
-
-          <select
-            value={formState.jobTypeFilter}
-            onChange={(e) =>
-              handleFilterChange("jobTypeFilter", e.target.value)
-            }
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white"
-          >
-            <option value="">All Job Types</option>
-            <option value="2 Month Internship">2 Month Internship</option>
-            <option value="6 Month Internship">6 Month Internship</option>
-            <option value="Full Time">Full Time</option>
-            <option value="6 Month Internship + Full Time">
-              Internship + Full Time
-            </option>
-          </select>
-
-          {/* Salary Range Filters */}
-          <div className="flex items-center gap-2">
-            <input
-              type="number"
-              placeholder="Min Stipend"
-              value={formState.minStipendFilter}
+      {showFilters && (
+        <div className="mb-6 flex flex-col flex-wrap gap-4 sm:flex-row">
+          <div className="grid w-full grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            {/* Filter controls */}
+            <select
+              value={formState.companyFilter}
               onChange={(e) =>
-                handleFilterChange("minStipendFilter", e.target.value)
+                handleFilterChange("companyFilter", e.target.value)
               }
-              className="w-32 rounded-lg bg-zinc-800 px-4 py-2 text-white"
-            />
-            <span className="text-white">-</span>
-            <input
-              type="number"
-              placeholder="Max Stipend"
-              value={formState.maxStipendFilter}
-              onChange={(e) =>
-                handleFilterChange("maxStipendFilter", e.target.value)
-              }
-              className="w-32 rounded-lg bg-zinc-800 px-4 py-2 text-white"
-            />
-          </div>
-          <select
-            value={formState.locationFilter}
-            onChange={(e) =>
-              handleFilterChange("locationFilter", e.target.value)
-            }
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="">All Locations</option>
-            {locations.map((loc) => (
-              <option key={loc} value={loc}>
-                {loc}
-              </option>
-            ))}
-          </select>
-          <select
-            value={pageLimit}
-            onChange={(e) => {
-              setCurrentPage(1);
-              setPageLimit(parseInt(e.target.value, 10));
-            }}
-            className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value={10}>10 per page</option>
-            <option value={20}>20 per page</option>
-            <option value={30}>30 per page</option>
-            <option value={50}>50 per page</option>
-          </select>
-          <button
-            onClick={handleFilter}
-            className="rounded-lg bg-blue-600 px-6 py-2 text-white transition duration-200 hover:bg-blue-700"
-          >
-            Filter
-          </button>
-          {(formState.companyFilter ||
-            formState.tagFilter ||
-            formState.admissionFilter ||
-            formState.startDate ||
-            formState.endDate ||
-            formState.campusTypeFilter ||
-            formState.jobTypeFilter ||
-            formState.minStipendFilter ||
-            formState.maxStipendFilter ||
-            formState.locationFilter) && (
-            <button
-              onClick={handleClearFilters}
-              className="rounded-lg bg-red-600 px-6 py-2 text-white transition duration-200 hover:bg-red-700"
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              Clear Filters
+              <option value="">All Companies</option>
+              {companies.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            <select
+              value={formState.tagFilter}
+              onChange={(e) => handleFilterChange("tagFilter", e.target.value)}
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Tags</option>
+              {tags.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+            <input
+              type="text"
+              placeholder="Filter by admission number"
+              value={formState.admissionFilter}
+              onChange={(e) =>
+                handleFilterChange("admissionFilter", e.target.value)
+              }
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <div className="flex items-center gap-2">
+              <input
+                type="date"
+                value={formState.startDate}
+                onChange={(e) => handleFilterChange("startDate", e.target.value)}
+                className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <span className="text-white">to</span>
+              <input
+                type="date"
+                value={formState.endDate}
+                onChange={(e) => handleFilterChange("endDate", e.target.value)}
+                className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <select
+              value={formState.campusTypeFilter}
+              onChange={(e) =>
+                handleFilterChange("campusTypeFilter", e.target.value)
+              }
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white"
+            >
+              <option value="">All Campus Types</option>
+              <option value="In Campus">In Campus</option>
+              <option value="Off Campus">Off Campus</option>
+              <option value="Pool Campus">Pool Campus</option>
+            </select>
+
+            <select
+              value={formState.jobTypeFilter}
+              onChange={(e) =>
+                handleFilterChange("jobTypeFilter", e.target.value)
+              }
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white"
+            >
+              <option value="">All Job Types</option>
+              <option value="2 Month Internship">2 Month Internship</option>
+              <option value="6 Month Internship">6 Month Internship</option>
+              <option value="Full Time">Full Time</option>
+              <option value="6 Month Internship + Full Time">
+                Internship + Full Time
+              </option>
+            </select>
+
+            {/* Salary Range Filters */}
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                placeholder="Min Stipend"
+                value={formState.minStipendFilter}
+                onChange={(e) =>
+                  handleFilterChange("minStipendFilter", e.target.value)
+                }
+                className="w-32 rounded-lg bg-zinc-800 px-4 py-2 text-white"
+              />
+              <span className="text-white">-</span>
+              <input
+                type="number"
+                placeholder="Max Stipend"
+                value={formState.maxStipendFilter}
+                onChange={(e) =>
+                  handleFilterChange("maxStipendFilter", e.target.value)
+                }
+                className="w-32 rounded-lg bg-zinc-800 px-4 py-2 text-white"
+              />
+            </div>
+            <select
+              value={formState.locationFilter}
+              onChange={(e) =>
+                handleFilterChange("locationFilter", e.target.value)
+              }
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">All Locations</option>
+              {locations.map((loc) => (
+                <option key={loc} value={loc}>
+                  {loc}
+                </option>
+              ))}
+            </select>
+            <select
+              value={pageLimit}
+              onChange={(e) => {
+                setCurrentPage(1);
+                setPageLimit(parseInt(e.target.value, 10));
+              }}
+              className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={10}>10 per page</option>
+              <option value={20}>20 per page</option>
+              <option value={30}>30 per page</option>
+              <option value={50}>50 per page</option>
+            </select>
+            <button
+              onClick={handleFilter}
+              className="rounded-lg bg-blue-600 px-6 py-2 text-white transition duration-200 hover:bg-blue-700"
+            >
+              Filter
             </button>
-          )}
+            {(formState.companyFilter ||
+              formState.tagFilter ||
+              formState.admissionFilter ||
+              formState.startDate ||
+              formState.endDate ||
+              formState.campusTypeFilter ||
+              formState.jobTypeFilter ||
+              formState.minStipendFilter ||
+              formState.maxStipendFilter ||
+              formState.locationFilter) && (
+              <button
+                onClick={handleClearFilters}
+                className="rounded-lg bg-red-600 px-6 py-2 text-white transition duration-200 hover:bg-red-700"
+              >
+                Clear Filters
+              </button>
+            )}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Posts Grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">

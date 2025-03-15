@@ -393,7 +393,7 @@ const Cp = () => {
   };
 
   const getPlatformColor = (platform) => {
-    return activePlatform === platform ? "bg-blue-500" : "bg-white/10";
+    return activePlatform === platform ? "bg-blue-600 hover:bg-blue-500" : "bg-white/10 hover:bg-white/20";
   };
 
   const processCodeforcesData = (profile) => {
@@ -511,7 +511,7 @@ const Cp = () => {
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-                      showFilters ? 'bg-blue-500 hover:bg-blue-600' : 'bg-white/10 hover:bg-white/20'
+                      showFilters ? 'bg-blue-600 hover:bg-blue-500' : 'bg-white/10 hover:bg-white/20'
                     }`}
                   >
                     <FaFilter className={showFilters ? 'text-white' : 'text-gray-300'} />
@@ -568,7 +568,7 @@ const Cp = () => {
                     <div className="flex gap-2">
                       <button
                         onClick={handleApplyFilters}
-                        className="rounded-lg bg-blue-500 px-4 py-2 transition-colors hover:bg-blue-600"
+                        className="rounded-lg bg-blue-600 px-4 py-2 transition-colors hover:bg-blue-500"
                       >
                         Apply Filters
                       </button>
@@ -588,25 +588,25 @@ const Cp = () => {
             <div className="mb-8 flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => handlePlatformChange("codeforces")}
-                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
                   "codeforces",
-                )} hover:bg-blue-700`}
+                )} hover:bg-blue-500`}
               >
                 Codeforces
               </button>
               <button
                 onClick={() => handlePlatformChange("leetcode")}
-                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
                   "leetcode",
-                )} hover:bg-blue-700`}
+                )} hover:bg-blue-500`}
               >
                 LeetCode
               </button>
               <button
                 onClick={() => handlePlatformChange("codechef")}
-                className={`rounded-lg px-3 py-2 md:px-6 md:py-3 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
                   "codechef",
-                )} hover:bg-blue-700`}
+                )} hover:bg-blue-500`}
               >
                 CodeChef
               </button>
