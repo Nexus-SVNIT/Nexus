@@ -152,33 +152,31 @@ const CustomSidebar = () => {
               <MenuItem className="hover:bg-gray-100">Component 2</MenuItem>
             </SubMenu> */}
 
-            {localStorage.getItem("token") ? (
-              <MenuItem
-                icon={React.cloneElement(<FaRightFromBracket />, {
-                  size: 16,
-                  className: "hover-icon text-white",
-                })}
-                className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500 my-2"
-                title={"Logout"}
-                onClick={() => setCollapsed(true)}
-              >
-                {!collapsed && "Logout"}
-                <Link to={"/login"} />
-              </MenuItem>
-            ) : (
-              <MenuItem
-                icon={React.cloneElement(<FaRightToBracket />, {
-                  size: 16,
-                  className: "hover-icon text-white",
-                })}
-                className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500 my-2"
-                title={"Login"}
-                onClick={() => setCollapsed(true)}
-              >
-                {!collapsed && "Login"}
-                <Link to={"/login"} />
-              </MenuItem>
-            )}
+{localStorage.getItem("token") ? (
+  <MenuItem
+    icon={<FaRightFromBracket className="hover-icon text-white" />}
+    className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500 my-2"
+    title={"Logout"}
+    onClick={() => {
+      localStorage.removeItem("token"); // Remove token from storage
+      window.location.href = "/login"; // Redirect to login page
+      setCollapsed(true);
+    }}
+  >
+    {!collapsed && "Logout"}
+  </MenuItem>
+) : (
+  <MenuItem
+    icon={<FaRightToBracket className="hover-icon text-white" />}
+    className="hover:bg-gray-100 transition-transform duration-200 hover:scale-110 hover:text-blue-500 my-2"
+    title={"Login"}
+    onClick={() => setCollapsed(true)}
+  >
+    {!collapsed && "Login"}
+    <Link to={"/login"} />
+  </MenuItem>
+)}
+
           </Menu>
         </div>
       </div>
