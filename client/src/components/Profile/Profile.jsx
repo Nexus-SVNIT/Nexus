@@ -59,7 +59,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     const instituteEmailPattern =
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
-    if (!admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)) {
+    if (!admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }

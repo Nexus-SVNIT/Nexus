@@ -64,7 +64,7 @@ function SignUpForm() {
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
     if (
-      !admissionNumber.match(/(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}/)
+      !admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)
     ) {
       toast.error("Invalid Admission Number");
       return false;
@@ -225,10 +225,10 @@ function SignUpForm() {
               type="text"
               id="admissionNumber"
               name="admissionNumber"
-              pattern="(((I|U)\d{2}(CS|AI))|(P\d{2}(CS|DS|IS)))\d{3}"
+              pattern="[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
-              placeholder="IXXCSXXX or UXXAIXXX"
+              placeholder="[UYYCSXXX, UYYAIXXX, IYYAIXXX,  PYYCSXXX, PYYDSXXX, PYYISXXX]"
               required
             />
           </div>

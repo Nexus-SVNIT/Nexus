@@ -157,17 +157,17 @@ const toggleVerification = async (req, res) => {
 };
 
 const signupAlumni = async (req, res) => {
-    const { 
-        fullName, admissionNumber, mobileNumber, personalEmail, 
-        branch, linkedInProfile, githubProfile, leetcodeProfile, 
-        codeforcesProfile, codechefProfile, password, shareCodingProfile 
+    const {
+        fullName, admissionNumber, mobileNumber, personalEmail,
+        branch, linkedInProfile, githubProfile, leetcodeProfile,
+        codeforcesProfile, codechefProfile, password, shareCodingProfile
     } = req.body;
 
     try {
         // Check if the user is actually an alumni
         if (!isAlumni(admissionNumber)) {
-            return res.status(400).json({ 
-                message: 'You are not eligible for alumni registration yet. Please use regular student signup.' 
+            return res.status(400).json({
+                message: 'You are not eligible for alumni registration yet. Please use regular student signup.'
             });
         }
 
@@ -249,18 +249,38 @@ const verifyAlumniEmail = async (req, res) => {
         userData.verificationToken = undefined; // Remove the token after verification
         await userData.save();
 
+        const mailOptions = {
+            from: process.env.EMAIL_ID,
+            to: userData.personalEmail,
+            subject: 'Email Verified - Alumni Account Under Review',
+            html: `
+                            <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+                                <div style="margin-bottom: 25px; display:flex; justify-content: center;">
+                                    <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
+                                </div>
+                                <div>Dear ${userData.fullName},</div>
+                                <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
+                                <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
+                                <p>We will notify you via email once the verification is complete.</p>
+                                <p>Thanks,<br>Team NEXUS</p>
+                            </div>
+                        `
+        };
+
+        await transporter.sendMail(mailOptions);
+
         res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Server error', error });
     }
 };
 
-module.exports = { 
-    allAlumniDetails, 
-    addAlumniDetails, 
-    allVerifiedAlumniDetails, 
-    allPendingAlumniDetails, 
-    toggleVerification, 
+module.exports = {
+    allAlumniDetails,
+    addAlumniDetails,
+    allVerifiedAlumniDetails,
+    allPendingAlumniDetails,
+    toggleVerification,
     signupAlumni,
-    verifyAlumniEmail 
+    verifyAlumniEmail
 };
