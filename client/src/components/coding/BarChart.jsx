@@ -10,14 +10,16 @@ import {
 } from "recharts";
 
 const CustomBarChart = ({ batchData }) => {
-  
-  const data = Object.keys(batchData).map((batch) => ({
-    batch,
-    Codeforces: batchData[batch].Codeforces?.userCount || 0,
-    LeetCode: batchData[batch].LeetCode?.userCount || 0,
-    CodeChef: batchData[batch].CodeChef?.userCount || 0,
-    
-  }));
+  const allowedBatches = ["22", "23", "24"];
+
+  const data = Object.keys(batchData)
+    .filter((batch) => allowedBatches.includes(batch)) // Filter only U22, U23, U24
+    .map((batch) => ({
+      batch,
+      Codeforces: batchData[batch].Codeforces?.userCount || 0,
+      LeetCode: batchData[batch].LeetCode?.userCount || 0,
+      CodeChef: batchData[batch].CodeChef?.userCount || 0,
+    }));
 
   const legendPayload = [
     { value: "Codeforces", color: "rgba(75, 192, 192, 0.6)" },
@@ -70,3 +72,4 @@ const CustomBarChart = ({ batchData }) => {
 };
 
 export default CustomBarChart;
+
