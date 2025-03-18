@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
+import { FaInfoCircle } from "react-icons/fa";
+import { Link } from "react-router-dom";
 
 function AlumniSignUpForm() {
   const [formData, setFormData] = useState({
@@ -50,17 +52,13 @@ function AlumniSignUpForm() {
       mobileNumber,
       personalEmail,
       branch,
+      linkedInProfile,
       password,
-      leetcodeProfile,
-      codeforcesProfile,
-      codechefProfile,
     } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-    if (
-      !admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)
-    ) {
+    if (!admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }
@@ -72,28 +70,8 @@ function AlumniSignUpForm() {
       toast.error("Invalid Personal Email");
       return false;
     }
-    if (
-      leetcodeProfile.includes("leetcode.com") ||
-      leetcodeProfile.includes("http") ||
-      leetcodeProfile.includes("/")
-    ) {
-      toast.error("Invalid LeetCode ID. Enter Only ID NOT URL!");
-      return false;
-    }
-    if (
-      codeforcesProfile.includes("codeforces.com") ||
-      codeforcesProfile.includes("http") ||
-      codeforcesProfile.includes("/")
-    ) {
-      toast.error("Invalid Codeforces ID. Enter Only ID NOT URL!");
-      return false;
-    }
-    if (
-      codechefProfile.includes("codechef.com") ||
-      codechefProfile.includes("http") ||
-      codechefProfile.includes("/")
-    ) {
-      toast.error("Invalid Codechef ID. Enter Only ID NOT URL!");
+    if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
+      toast.error("LinkedIn Profile URL is required");
       return false;
     }
 
@@ -104,18 +82,22 @@ function AlumniSignUpForm() {
 
     // Add alumni validation
     const currentDate = new Date();
-    const academicYear = currentDate.getMonth() >= 6 ? 
-        currentDate.getFullYear() : 
-        currentDate.getFullYear() - 1;
-    
-    const admissionYear = 2000 + parseInt(formData.admissionNumber.substring(1, 3));
+    const academicYear =
+      currentDate.getMonth() >= 6
+        ? currentDate.getFullYear()
+        : currentDate.getFullYear() - 1;
+
+    const admissionYear =
+      2000 + parseInt(formData.admissionNumber.substring(1, 3));
     const programType = formData.admissionNumber.charAt(0);
     const yearsSinceAdmission = academicYear - admissionYear;
 
-    if ((programType === 'U' && yearsSinceAdmission < 4) || 
-        (programType === 'I' && yearsSinceAdmission < 5)) {
-        toast.error("You are not eligible for alumni registration yet");
-        return false;
+    if (
+      (programType === "U" && yearsSinceAdmission < 4) ||
+      (programType === "I" && yearsSinceAdmission < 5)
+    ) {
+      toast.error("You are not eligible for alumni registration yet");
+      return false;
     }
 
     return true;
@@ -136,14 +118,14 @@ function AlumniSignUpForm() {
             "Content-Type": "application/json",
           },
           body: JSON.stringify(formData),
-        }
+        },
       );
 
       const result = await res.json();
       if (res.ok) {
         toast.success(
           "Sign up successful! Please check your personal email to verify your account.",
-          { id: toastId }
+          { id: toastId },
         );
         localStorage.removeItem("alumniSignupFormData");
         setTimeout(() => {
@@ -177,7 +159,14 @@ function AlumniSignUpForm() {
           className="flex w-[20rem] items-center object-cover"
         />
       </div>
-
+      <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
+        <FaInfoCircle size={42} className="h-auto text-yellow-500" />
+        <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
+          Welcome to the Alumni Sign Up Page! Shine a Spotlight on Your Success !!
+          <br/>Please provide all profile links/usernames to help us in building a
+          better <Link to="/coding" target="_blank" className="text-blue-400 hover:underline">coding profile leaderboard.</Link>{" "}
+        </p>
+      </div>
       <div className="flex min-h-screen items-center justify-center bg-black-2">
         <Toaster position="top-center" reverseOrder={false} />
         <form
@@ -187,7 +176,6 @@ function AlumniSignUpForm() {
           <h2 className="mb-6 text-center text-2xl font-semibold text-white">
             Alumni Sign Up
           </h2>
-
           <div className="mb-4">
             <label className="mb-2 block text-sm text-white" htmlFor="fullName">
               Full Name <span className="text-red-500">*</span>
@@ -216,7 +204,7 @@ function AlumniSignUpForm() {
               type="text"
               id="admissionNumber"
               name="admissionNumber"
-              pattern="[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}"
+              // pattern="[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
               placeholder="[UYYCSXXX, UYYAIXXX, UYYCOXXX, IYYAIXXX,  PYYCSXXX, PYYDSXXX, PYYISXXX]"
@@ -282,7 +270,7 @@ function AlumniSignUpForm() {
             </select>
           </div>
 
-          {/* Optional Fields */}
+          {/* Profile input fields */}
           <div className="mb-4">
             <label
               className="mb-2 block text-sm text-white"
@@ -308,7 +296,7 @@ function AlumniSignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="githubProfile"
             >
-              GitHub Profile <span className="text-red-500">*</span>
+              GitHub Profile
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
@@ -319,7 +307,6 @@ function AlumniSignUpForm() {
               value={formData.githubProfile}
               onChange={handleChange}
               placeholder="GitHub Profile URL"
-              required
             />
           </div>
 
@@ -328,7 +315,7 @@ function AlumniSignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="leetcodeProfile"
             >
-              LeetCode Profile <span className="text-red-500">*</span>
+              LeetCode Profile
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
@@ -337,7 +324,6 @@ function AlumniSignUpForm() {
               value={formData.leetcodeProfile}
               onChange={handleChange}
               placeholder="LeetCode ID (e.g. neal_wu)"
-              required
             />
           </div>
 
@@ -346,7 +332,7 @@ function AlumniSignUpForm() {
               className="mb-2 block text-sm text-white"
               htmlFor="codeforcesProfile"
             >
-              Codeforces Profile <span className="text-red-500">*</span>
+              Codeforces Profile
             </label>
             <input
               className="w-full rounded bg-gray-2 p-2 text-black"
@@ -355,7 +341,6 @@ function AlumniSignUpForm() {
               value={formData.codeforcesProfile}
               onChange={handleChange}
               placeholder="Codeforces ID (e.g. tourist)"
-              required
             />
           </div>
 
