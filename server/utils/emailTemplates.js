@@ -165,7 +165,7 @@ const postEditTemplate = (user, postTitle, postId) => ({
             <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
             <p>
             <h2>Post Update Under Review</h2>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
+            <h3 style="color: white;">Dear ${user.fullName},</h3>
             </p>
             <p style="color: #ccc;">
                 Your edited interview experience post "${postTitle}" has been submitted for review. You will be notified once it is verified.F            </p>

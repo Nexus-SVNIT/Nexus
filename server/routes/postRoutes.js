@@ -6,13 +6,10 @@ const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware');
 const { updateEvent } = require('../controllers/eventController');
 const router = express.Router();
 
-// Public routes
 router.get('/', getAllPosts); // Remove authMiddleware
-router.get('/:id', getPostById); // Remove authMiddleware
-
-// Protected routes
 router.post('/', authMiddleware, createPost);
 router.get('/pending', coreAuthMiddleware, getPendingPosts);
+router.get('/:id', authMiddleware, getPostById); // Remove authMiddleware
 router.post('/:postId/verify', coreAuthMiddleware, verifyPost);
 router.put('/:id', authMiddleware, updatePost);
       
