@@ -27,6 +27,12 @@ function CheckIcon() {
 }
 
 export function BatchCard({ batch, avgCodeforcesRating, avgLeetcodeRating, avgLeetcodeSolved, avgCodechefRating }) {
+  const allowedBatches = ["22", "23", "24"];
+  console.log(batch);
+
+  // Only render if batch is in allowedBatches
+  if (!allowedBatches.includes(batch)) return null;
+
   return (
     <Card color="gray" variant="gradient" className="w-full max-w-[20rem] p-8 relative transform -translate-y-2 overflow-hidden border-2 border-white">
       <style>
