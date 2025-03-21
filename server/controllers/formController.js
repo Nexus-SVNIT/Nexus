@@ -317,7 +317,7 @@ async function createGoogleSheet(formTitle, folderId) {
 }
 
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, isHidden } = req.body;
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, isHidden, isOpenForAll } = req.body;
     const _event = "none";  // Set a default value for _event if it's not provided
 
     let driveFolderId = null;
@@ -329,7 +329,7 @@ const createForm = async (req, res) => {
         sheetId = await createGoogleSheet(name, driveFolderId); // Create Google Sheet and get sheet ID
 
         if (sheetId) {
-            const values = [
+            const values = isOpenForAll ? [] : [
                 'admissionNumber',
                 'name',
                 'mobileNumber',
@@ -339,8 +339,10 @@ const createForm = async (req, res) => {
             formFields.forEach(field => {
                 values.push(field.questionText);
             });
-            values.push('teamMembers');
-            values.push('teamName');
+            if(enableTeams){
+                values.push('teamName');
+                values.push('teamMembers');
+            }
             if(fileUploadEnabled){
                 values.push('files');
             }
@@ -390,6 +392,7 @@ const createForm = async (req, res) => {
             extraLinkName,
             extraLink,
             isHidden,
+            isOpenForAll,
         });
         res.status(200).json(createdForm);
     } catch (err) {
@@ -441,8 +444,8 @@ const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
 
 const submitResponse = async (req, res) => {
     const id = req.params.id;
-    const admissionNumber = req.user?.admissionNumber;
-    // console.log(req.body)
+    let admissionNumber = null;
+
     try {
         // Retrieve form details
         const formDetails = await Forms.findById(id).select();
@@ -456,20 +459,23 @@ const submitResponse = async (req, res) => {
                 message: "The deadline has passed. Your response was not saved.",
             });
         }
-        // if(admissionNumber.substring(1, 3) !== "23" || admissionNumber[0] === "P"){
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "You are not allowed to submit the form.",
-        //     });
-        // }
 
+        if (!formDetails.isOpenForAll) {
+            // If the form is not open to all, ensure the user is authenticated
+            if (!req.user?.admissionNumber) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You must be logged in to submit this form.",
+                });
+            }
+            admissionNumber = req.user.admissionNumber;
+        }
 
         // Check if the user has already submitted the form
         const existingForm = await Forms.findOne({
             _id: id,
             "responses.admissionNumber": admissionNumber
         });
-
 
         if (!existingForm && formDetails.enableTeams) {
             const teamMembers = JSON.parse(req.body.teamMembers);
@@ -578,21 +584,228 @@ const submitResponse = async (req, res) => {
             { $push: { responses: { ...body, admissionNumber } } },
             { new: true }
         );
+
+        const resTeamName = body.teamName;
+        delete body.teamName;
+        
+        const resTeamMembers = body.teamMembers;
+        delete body.teamMembers;
+
+        const resFiles = body.files;
+        delete body.files;
+        
+        const resDate = body.dateTime;
+        delete body.dateTime;
+
         // Add response to Google Sheet
         if (form.sheetId) {
-            const userData = await userModel.findOne({admissionNumber});
+            let userData = null;
+            if(admissionNumber){
+                userData = await userModel.findOne({admissionNumber});
+            }
             const values = Object.values({
                 admissionNumber,
-                name: userData.fullName,
-                mobileNumber: userData.mobileNumber,
-                personalEmail: userData.personalEmail,
-                branch: userData.branch,
+                name: userData?.fullName || 'Guest User',
+                mobileNumber: userData?.mobileNumber || 'N/A',
+                personalEmail: userData?.personalEmail || 'N/A',
+                branch: userData?.branch || 'N/A',
                 ...body,
-                files: `https://drive.google.com/file/d/${body.files}/view`,
-                teamMembers: JSON.stringify(body.teamMembers),
-                teamName: body.teamName,
-                dateTime: new Date(body.dateTime).toLocaleString(),
             });
+            if(form.enableTeams){
+                values.push(resTeamName)
+                values.push(JSON.stringify(resTeamMembers))
+            }
+            if(form.fileUploadEnabled){
+                values.push(`https://drive.google.com/file/d/${resFiles}/view`)
+            }
+            
+            values.push(new Date(resDate).toLocaleString())
+
+            const res = await sheets.spreadsheets.values.append({
+                spreadsheetId: form.sheetId,
+                range: 'Sheet1',
+                valueInputOption: 'RAW',
+                resource: {
+                    values: [values],
+                },
+            });
+        }
+
+        const responseMessage = {
+            success: true,
+            message: "Your response has been successfully saved.",
+            WaLink: form?.WaLink,
+        };
+
+        res.status(200).json(responseMessage);
+    } catch (err) {
+        console.log(err)
+        handleError(res, err);
+    }
+};
+
+const submitOpenResponse = async (req, res) => {
+    const id = req.params.id;
+    const admissionNumber = null; // No admission number for open forms
+
+    try {
+        // Retrieve form details
+        const formDetails = await Forms.findById(id).select();
+        const deadlineDate = formDetails.deadline;
+        const currentDate = Date.now();
+
+        // Check if the deadline has been missed
+        if (deadlineDate < currentDate || !formDetails.publish) {
+            return res.status(400).json({
+                success: false,
+                message: "The deadline has passed. Your response was not saved.",
+            });
+        }
+
+        if (!formDetails.isOpenForAll) {
+            return res.status(400).json({
+                success: false,
+                message: "This form is not open for public submission.",
+            });
+        }
+
+        // Check if the user has already submitted the form
+        // const existingForm = await Forms.findOne({
+        //     _id: id,
+        //     "responses.admissionNumber": admissionNumber
+        // });
+
+        // if (!existingForm && formDetails.enableTeams) {
+        //     const teamMembers = JSON.parse(req.body.teamMembers);
+        //     req.body.teamMembers = teamMembers;
+        //     for (const admissionNumber of teamMembers) {
+        //         const existingMemberForm = await Forms.findOne({
+        //             _id: id,
+        //             "responses.teamMembers": admissionNumber
+        //         });
+
+        //         if (existingMemberForm) {
+        //             return res.status(400).json({
+        //                 success: false,
+        //                 message: `Team member with admission number ${admissionNumber} has already registered.`,
+        //             });
+        //         }
+
+        //         const existingMember = await User.findOne({ admissionNumber });
+        //         if (!existingMember) {
+        //             return res.status(400).json({
+        //                 success: false,
+        //                 message: `Team member with admission number ${admissionNumber} does not exist.`,
+        //             });
+        //         }
+
+
+        //     }
+        // }
+
+        // if (existingForm) {
+        //     return res.status(400).json({
+        //         success: false,
+        //         message: "Already Registered.",
+        //     }); // User has already submitted
+        // }
+
+        if (formDetails.enableTeams) {
+            const { teamName } = req.body;
+            const existingTeam = await Forms.findOne({
+                _id: id,
+                "responses.teamName": teamName
+            });
+            if (existingTeam) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Team Name already exists.",
+                }); // Team Name already exists
+            }
+        }
+
+        // Payment validation if required
+        if (formDetails.receivePayment) {
+            const paymentData = JSON.parse(req.body.Payments); // Parse Payments if it's a string
+            const { paymentId, screenshotUrl } = paymentData;
+
+            // Check if paymentId and screenshotUrl are provided
+            if (!paymentId || !screenshotUrl) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Payment ID and screenshot URL are required for this form."
+                });
+            }
+
+            // Ensure unique paymentId in payments array
+            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
+            if (existingPayment) {
+                return res.status(200).json({
+                    success: false,
+                    message: "This payment ID has already been used.",
+                });
+            }
+
+            // Add payment details to request body for tracking
+            req.body.paymentDetails = {
+                paymentId,
+                screenshotUrl,
+                paymentStatus: "Pending"
+            };
+        }
+
+        // Upload file to Google Drive if file upload is enabled
+        if (formDetails.fileUploadEnabled) {
+            if (!req.file && !req.files?.file) {
+                return res.status(400).json({ message: "File upload is required" });
+            }
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
+            if (!uploadResult.success) {
+                return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
+            }
+            req.body.files = uploadResult.fileId;
+        }
+
+        const body = req.body;
+
+        for(const key in body){
+            if(body[key][0] === '"' && body[key][body[key].length-1] === '"'){
+                body[key] = body[key].slice(1, body[key].length-1);
+            }
+        }
+
+        body.dateTime = new Date();
+
+        // Update the form with the new response
+        const form = await Forms.findByIdAndUpdate(
+            id,
+            { $push: { responses: { ...body, admissionNumber } } },
+            { new: true }
+        );
+
+        const resTeamName = body.teamName;
+        delete body.teamName;
+        
+        const resTeamMembers = body.teamMember;
+        delete body.teamMembers;
+
+        const resFiles = body.files;
+        delete body.files;
+
+        const resDate = body.dateTime;
+        delete body.dateTime;
+
+        // Add response to Google Sheet
+        if (form.sheetId) {
+            const values = Object.values(body);
+            if(form.enableTeams){
+                values.push(resTeamName)
+                values.push(JSON.stringify(resTeamMembers))
+            }
+            if(form.fileUploadEnabled){
+                values.push(`https://drive.google.com/file/d/${resFiles}/view`)
+            }
+            values.push(new Date(resDate).toLocaleString())
             const res = await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
                 range: 'Sheet1',
@@ -879,4 +1092,5 @@ module.exports = {
     getLeaderboard,
     updateForm,
     getAdminLeaderboard,
+    submitOpenResponse
 };

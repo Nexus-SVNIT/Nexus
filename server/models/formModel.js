@@ -101,6 +101,10 @@ const formSchema = new Schema({
         type: Boolean,
         default: false
     },
+    isOpenForAll: {
+        type: Boolean,
+        default: false
+    },
     sheetId: {
         type: String,
         required: true

@@ -15,7 +15,8 @@ const {
   temp,
   getLeaderboard,
   updateForm,  // Add this
-  getAdminLeaderboard
+  getAdminLeaderboard,
+  submitOpenResponse // Add this
 } = require('../controllers/formController.js');
 
 const router = express.Router();
@@ -27,6 +28,7 @@ router.get('/', getPublicForms);
 router.get('/all', coreAuthMiddleware, getAllForms);
 router.post('/create', coreAuthMiddleware, createForm);
 router.post('/submit/:id', authMiddleware, upload.single('file'), submitResponse);
+router.post('/submit/open/:id', upload.single('file'), submitOpenResponse);
 router.get('/get-responses/:id', coreAuthMiddleware, getResponses);
 // Add new route for leaderboard
 router.get('/reference/leaderboard/', getLeaderboard);
