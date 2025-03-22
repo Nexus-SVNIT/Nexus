@@ -15,6 +15,7 @@ const CreateForm = () => {
     extraLinkName: "",
     extraLink: "",
     isHidden: false,
+    isOpenForAll: false,
   });
 
   const [questions, setQuestions] = useState([]);
@@ -112,6 +113,7 @@ const CreateForm = () => {
       extraLinkName: formData.extraLinkName,
       extraLink: formData.extraLink,
       isHidden: formData.isHidden,
+      isOpenForAll: formData.isOpenForAll
     };
 
     const toastId = toast.loading("Creating form...");
@@ -361,6 +363,17 @@ const CreateForm = () => {
             checked={formData.isHidden}
             onChange={(e) =>
               setFormData({ ...formData, isHidden: e.target.checked })
+            }
+          />
+        </div>
+
+        <div className="my-4 flex items-center gap-2">
+          <label>Is Open For All:</label>
+          <input
+            type="checkbox"
+            checked={formData.isOpenForAll}
+            onChange={(e) =>
+              setFormData({ ...formData, isOpenForAll: e.target.checked })
             }
           />
         </div>

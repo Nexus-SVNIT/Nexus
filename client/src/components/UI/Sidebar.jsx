@@ -58,6 +58,11 @@ const navigationLinks = [
     label: "Verify Post"
   },
   {
+    path: "/core/admin/alumni-verification",
+    icon: faUserGraduate,
+    label: "Verify Alumni Account"
+  },
+  {
     path: "/core/admin/verify-alumni",
     icon: faUserGraduate,
     label: "Verify Alumni"

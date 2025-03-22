@@ -10,7 +10,7 @@ import { Navigate } from "react-router-dom";
 import parse from "html-react-parser";
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
-import DOMPurify from 'dompurify';
+import DOMPurify from "dompurify";
 import "react-quill/dist/quill.snow.css"; // Add this import
 
 const RegisterForm = () => {
@@ -34,11 +34,13 @@ const RegisterForm = () => {
     extraLinkName: "",
     extraLink: "",
   });
+
   const [formResponse, setFormResponse] = useState({});
   const [teamMembers, setTeamMembers] = useState([]);
   const [teamName, setTeamName] = useState("");
   const [files, setFiles] = useState(null);
   const [gotoLogin, setGotoLogin] = useState(false);
+  const [isOpenForAll, setOpenForAll] = useState(true);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -67,9 +69,9 @@ const RegisterForm = () => {
   const handleImageChange = (event) => {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     setFiles(file);
-    
+
     // Update form response without the file
     setFormResponse((prev) => {
       const newResponse = { ...prev };
@@ -97,7 +99,9 @@ const RegisterForm = () => {
         trimmedFormResponse[key] = formResponse[key]; // For non-string fields (like arrays or numbers)
       }
 
-      if(key === 'Your Favorite Nexus Member - Reference (Admission No only)'){
+      if (
+        key === "Your Favorite Nexus Member - Reference (Admission No only)"
+      ) {
         trimmedFormResponse[key] = trimmedFormResponse[key].toUpperCase();
         console.log(trimmedFormResponse[key]);
       }
@@ -158,8 +162,9 @@ const RegisterForm = () => {
     const finalResponse = new FormData();
 
     // Add non-file fields
-    Object.keys(submissionData).forEach(key => {
-      if (key !== 'file') { // Skip the file field
+    Object.keys(submissionData).forEach((key) => {
+      if (key !== "file") {
+        // Skip the file field
         finalResponse.append(key, JSON.stringify(submissionData[key]));
       }
     });
@@ -173,14 +178,14 @@ const RegisterForm = () => {
 
     try {
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${formId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/submit/${isOpenForAll ? 'open/'+formId : formId}`,
         finalResponse,
         {
           headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+            Authorization: token ? `Bearer ${token}` : "",
           },
-        }
+        },
       );
 
       if (response.data.success) {
@@ -226,33 +231,36 @@ const RegisterForm = () => {
   };
 
   useEffect(() => {
-    if (!localStorage.getItem("token")) {
-      toast.error("First login to register!");
-      const currentPath = encodeURIComponent(window.location.pathname);
-      setGotoLogin(`/login?redirect_to=${currentPath}`);
-    }
     fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/forms/${formId}`)
       .then((res) => res.json())
       .then((form) => {
         if (!form) {
-          throw new Error('Form not found');
+          throw new Error("Form not found");
         }
         setFormData(form);
-        
+        setOpenForAll(form.isOpenForAll);
+
         // Initialize form with empty values
-        const initialResponse = form.formFields?.reduce((acc, field) => {
-          acc[field.questionText] = "";
-          return acc;
-        }, {}) || {};
+        const initialResponse =
+          form.formFields?.reduce((acc, field) => {
+            acc[field.questionText] = "";
+            return acc;
+          }, {}) || {};
 
         // Load saved responses
-        const savedFormResponse = JSON.parse(sessionStorage.getItem("formResponse"));
+        const savedFormResponse = JSON.parse(
+          sessionStorage.getItem("formResponse"),
+        );
         setFormResponse(savedFormResponse || initialResponse);
 
         // Load team data if enabled
         if (form.enableTeams) {
-          const savedTeamMembers = JSON.parse(sessionStorage.getItem("teamMembers"));
-          setTeamMembers(savedTeamMembers || Array(form.teamSize || 0).fill(""));
+          const savedTeamMembers = JSON.parse(
+            sessionStorage.getItem("teamMembers"),
+          );
+          setTeamMembers(
+            savedTeamMembers || Array(form.teamSize || 0).fill(""),
+          );
           setTeamName(sessionStorage.getItem("teamName") || "");
         }
 
@@ -268,15 +276,23 @@ const RegisterForm = () => {
         toast.error("Error loading form. Please try again later.");
       })
       .finally(() => setLoading(false));
-    
+
     increamentCounter();
   }, [formId]);
+
+  useEffect(() => {
+    if (!isOpenForAll && !localStorage.getItem("token")) {
+      toast.error("First login to register!");
+      const currentPath = encodeURIComponent(window.location.pathname);
+      setGotoLogin(`/login?redirect_to=${currentPath}`);
+    }
+  }, [isOpenForAll]);
 
   const sanitizeAndRenderHTML = (content) => {
     const sanitizedContent = DOMPurify.sanitize(content);
     return (
-      <div 
-        className="prose max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic prose-ul:list-disc prose-ol:list-decimal"
+      <div
+        className="prose-blockquote:border-gray-300 prose max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-ol:list-decimal prose-ul:list-disc"
         dangerouslySetInnerHTML={{ __html: sanitizedContent }}
       />
     );
@@ -309,15 +325,17 @@ const RegisterForm = () => {
       </h3>
       {flag ? (
         <div className="flex min-h-[50vh] flex-col items-center justify-center p-4">
-          <h4 className="text-lg font-bold mb-4">Thank you for registering!</h4>
-          <div className="bg-zinc-800 rounded-lg shadow-lg p-6 flex flex-col items-center gap-4 border border-zinc-900">
+          <h4 className="mb-4 text-lg font-bold">Thank you for registering!</h4>
+          <div className="flex flex-col items-center gap-4 rounded-lg border border-zinc-900 bg-zinc-800 p-6 shadow-lg">
             <FaWhatsapp className="text-4xl text-green-500" />
-            <p className="text-center">Join our WhatsApp group to stay updated!</p>
+            <p className="text-center">
+              Join our WhatsApp group to stay updated!
+            </p>
             <a
               href={link}
               target="_blank"
               rel="noopener noreferrer"
-              className="bg-green-500 text-white px-6 py-2 rounded-full hover:bg-green-600 transition-colors flex items-center gap-2"
+              className="flex items-center gap-2 rounded-full bg-green-500 px-6 py-2 text-white transition-colors hover:bg-green-600"
             >
               <FaWhatsapp />
               Join WhatsApp Group
@@ -333,8 +351,8 @@ const RegisterForm = () => {
             <p className="px-2 py-2 text-2xl text-black md:px-4 md:text-4xl">
               {formData.name}
             </p>
-            <div 
-              className="form-description ql-editor !p-0" 
+            <div
+              className="form-description ql-editor !p-0"
               dangerouslySetInnerHTML={{ __html: formData?.desc }}
             />
             {formData.posterImageDriveId && (
@@ -433,56 +451,57 @@ const RegisterForm = () => {
           font-family: inherit;
           line-height: 1.5;
           margin: 1rem 0;
-          color: #4B5563;
+          color: #4b5563;
         }
-        
+
         .form-description h1 {
           font-size: 2em;
           margin: 0.67em 0;
         }
-        
+
         .form-description h2 {
           font-size: 1.5em;
           margin: 0.75em 0;
         }
-        
+
         .form-description h3 {
           font-size: 1.17em;
           margin: 0.83em 0;
         }
-        
+
         .form-description p {
           margin: 1em 0;
           display: flex;
           flex-direction: column;
         }
-        
-        .form-description ul, .form-description ol {
+
+        .form-description ul,
+        .form-description ol {
           margin: 1em 0;
           padding-left: 40px;
         }
-        
+
         .form-description ul {
           list-style-type: disc;
         }
-        
+
         .form-description ol {
           list-style-type: decimal;
         }
-        
+
         .form-description blockquote {
           border-left: 4px solid #ccc;
           margin: 1.5em 10px;
           padding: 0.5em 10px;
         }
-        
+
         .form-description pre {
           background: #f4f4f4;
           padding: 1em;
           margin: 1em 0;
           border-radius: 4px;
         }
-        
+
         .form-description code {
           font-family: monospace;
           background: #f4f4f4;
@@ -498,7 +517,7 @@ const RegisterForm = () => {
         }
 
         .form-description a {
-          color: #3B82F6;
+          color: #3b82f6;
           text-decoration: underline;
         }
 
@@ -544,11 +563,17 @@ const RegisterForm = () => {
         }
 
         .form-description .ql-font-serif {
-          font-family: Georgia, Times New Roman, serif;
+          font-family:
+            Georgia,
+            Times New Roman,
+            serif;
         }
 
         .form-description .ql-font-monospace {
-          font-family: Monaco, Courier New, monospace;
+          font-family:
+            Monaco,
+            Courier New,
+            monospace;
         }
 
         .form-description .ql-direction-rtl {

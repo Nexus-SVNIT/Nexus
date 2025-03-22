@@ -468,7 +468,8 @@ const Cp = () => {
               >
                 Profile Page
               </Link>
-              and turn on "Share Your Coding Profile" feature.
+              and turn on "Share Your Coding Profile" feature.<br/>
+              It may take upto <span className="font-bold italic">24 hours</span> to reflect your data here.
             </p>
           </div>
           <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">

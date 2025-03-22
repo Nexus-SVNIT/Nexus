@@ -19,6 +19,7 @@ import ShowProject from "./components/Project/showProject";
 import IssueModal from "./components/Issue/issue";
 import { useState } from "react";
 import VerifyAlumni from './components/VerifyAlumni/VerifyAlumni';
+import AlumniSignUpForm from "./components/AlumniSignUpForm/AlumniSignUpForm";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -58,6 +59,7 @@ function App() {
                   element={<Navigate to={"/login"}></Navigate>}
                 />
                 <Route path="/signup" element={<SignUpForm />} />
+                <Route path="/alumni/signup" element={<AlumniSignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />
                 <Route
                   path="/auth/reset-password/:token"

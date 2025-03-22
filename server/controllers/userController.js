@@ -331,7 +331,7 @@ const forgotPassword = async (req, res) => {
         const resetUrl = `${req.headers.referer}auth/reset-password/${resetToken}`;
         const mailOptions = {
             from: process.env.EMAIL_ID,
-            to: foundUser.instituteEmail,
+            to: foundUser.personalEmail,
             subject: 'Password Reset Request',
             html: `
                 <div style="background-color: black; color:white; font-size:12px; padding:20px;">
