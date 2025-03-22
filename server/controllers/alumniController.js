@@ -3,7 +3,7 @@ const fs = require('fs');
 const AlumniDetails = require('../models/alumniDetailModel');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const user = require('../models/userModel.js');
+
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
 const { isAlumni } = require('../utils/validateAlumni.js');
 
@@ -60,7 +60,6 @@ const uploadImageToDrive = async (imagePath, imageName) => {
     }
 };
 
-
 const allAlumniDetails = async (req, res) => {
     const alumniDetails = await AlumniDetails.find({}).sort({ createdAt: 1 }).select('-isVerified');
     return res.status(200).json(alumniDetails);
@@ -78,37 +77,75 @@ const allPendingAlumniDetails = async (req, res) => {
 
 const addAlumniDetails = async (req, res) => {
     try {
-        if (!req.file) {
-            return res.status(400).json({ message: "Image file is required" });
+        console.log("🔹 Received request to add alumni details.");
+        console.log("🔹 Request Body:", req.body);
+
+        let file = null;
+
+        // Step 1: Handle File Upload
+        if (req.file) {
+            console.log("📤 Uploading image to Google Drive...");
+            file = await uploadImageToDrive(req.file.path, req.file.originalname);
+            if (!file) {
+                console.error("❌ Failed to upload image.");
+                return res.status(500).json({ message: "Failed to upload image" });
+            }
+            console.log("✅ Image uploaded successfully. File ID:", file.id);
         }
 
-        // Upload the image to Google Drive
-        const file = await uploadImageToDrive(req.file.path, req.file.originalname);
+        // Step 2: Check if Admission Number is valid for Alumni
+        console.log("🔍 Checking if admission number is eligible for alumni registration...");
+        if (!isAlumni(req.body['Admission No'])) {
+            console.warn("⚠️ Admission number is not eligible for alumni registration.");
+            return res.status(400).json({
+                message: 'You are not eligible for alumni registration yet. Please use regular student signup.'
+            });
+        }
+        console.log("✅ Admission number is valid for alumni registration.");
 
-        if (!file) {
-            return res.status(500).json({ message: "Failed to upload image" });
+        // Step 3: Validate Coding Profiles (Leetcode, Codeforces, CodeChef)
+        try {
+            console.log("🔎 Validating coding profiles...");
+            if (req.body['LeetcodeId'] || req.body['LeetcodeId'].includes) {
+                validateCodingProfiles(req.body['LeetcodeId'], req.body['codeforcesId'], req.body['codechefId']);
+            }
+            console.log("✅ Coding profiles validated successfully.");
+        } catch (error) {
+            console.error("❌ Error validating coding profiles:", error.message);
+            return res.status(400).json({ message: error.message });
         }
 
+        // Step 4: Check if Alumni Already Exists
+        console.log("🔍 Checking if alumni already exists with admission number:", req.body['Admission No']);
+        const existingAlumni = await AlumniDetails.findOne({ "Admission No": req.body['Admission No'] });
+        if (existingAlumni) {
+            console.warn("⚠️ Alumni already exists.");
+            return res.status(400).json({ message: 'User already exists' });
+        }
+        console.log("✅ No existing alumni found. Proceeding with new entry.");
+
+        // Step 5: Prepare Alumni Data for Saving
         const alumniDetail = {
             ...req.body,
-            ImageLink: `https://lh3.googleusercontent.com/d/${file.id}` // Store the Google Drive link in the database
+            ImageLink: file ? `https://lh3.googleusercontent.com/d/${file.id}` : undefined,
+            isVerified: false
         };
+        console.log("📝 Preparing to save alumni details:", alumniDetail);
 
-        await AlumniDetails.create(alumniDetail);
+        // Step 6: Save Alumni Details to Database
+        try {
+            console.log("💾 Saving alumni details to database...");
+            await AlumniDetails.create(alumniDetail);
+            console.log("✅ Alumni details saved successfully.");
+        } catch (err) {
+            console.error("❌ Error saving alumni details:", err);
+            return res.status(500).json({ message: "Error saving alumni details", error: err.message });
+        }
 
-        // Set up nodemailer transporter
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: process.env.EMAIL_ID,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
-
-        // Set up mail options
+        // Step 7: Prepare and Send Verification Email
         const mailOptions = {
             from: process.env.EMAIL_ID,
-            to: req.body['E-Mail'], // Assuming instituteEmail is provided in the form data
+            to: req.body['E-Mail'],
             subject: 'Alumni Details Submission Under Review',
             html: `
                 <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
@@ -124,15 +161,18 @@ const addAlumniDetails = async (req, res) => {
             `
         };
 
-        // Send mail
+        console.log("📧 Sending verification email...");
         await transporter.sendMail(mailOptions);
+        console.log("✅ Verification email sent successfully.");
 
         return res.status(200).json({ message: "Waiting for Review" });
+
     } catch (err) {
-        console.error('Error adding alumni details:', err.message);
+        console.error('❌ Error adding alumni details:', err);
         return res.status(500).json({ message: "Error adding alumni details", error: err.message });
     }
 };
+
 
 const toggleVerification = async (req, res) => {
     try {
@@ -156,86 +196,6 @@ const toggleVerification = async (req, res) => {
     }
 };
 
-const signupAlumni = async (req, res) => {
-    const {
-        fullName, admissionNumber, mobileNumber, personalEmail,
-        branch, linkedInProfile, githubProfile, leetcodeProfile,
-        codeforcesProfile, codechefProfile, password, shareCodingProfile
-    } = req.body;
-
-    try {
-        // Check if the user is actually an alumni
-        if (!isAlumni(admissionNumber)) {
-            return res.status(400).json({
-                message: 'You are not eligible for alumni registration yet. Please use regular student signup.'
-            });
-        }
-
-        // Validate coding profile IDs
-        try {
-            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
-        } catch (error) {
-            return res.status(400).json({ message: error.message });
-        }
-
-        // Check if alumni already exists
-        const existingUser = await user.findOne({ admissionNumber });
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-
-        // Generate verification token
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-
-        // Create new alumni user
-        const newUser = new user({
-            fullName,
-            admissionNumber,
-            mobileNumber,
-            personalEmail,
-            branch,
-            linkedInProfile,
-            githubProfile,
-            leetcodeProfile,
-            codeforcesProfile,
-            codechefProfile,
-            shareCodingProfile,
-            password,
-            verificationToken,
-            isAlumni: true // Add this field to distinguish alumni
-        });
-
-        await newUser.save();
-
-        // Send verification email to personal email
-        const verificationUrl = `${req.headers.referer}auth/alumni/verify/${verificationToken}`;
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: personalEmail,
-            subject: 'Verify your Alumni Account',
-            html: `
-                <div style="background-color: black; color:white; font-size:12px; padding:20px;">
-                    <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-                    </div>
-                    <div>Dear ${fullName},</div>
-                    <p>Thank you for registering on NEXUS portal as an alumni. Please verify your email using following link.</p>
-                    <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;">
-                        <a href="${verificationUrl}" style="color:black">Verify Your Email</a>
-                    </button>
-                    <p>Thanks,<br>Team NEXUS</p>
-                </div>
-            `
-        };
-
-        await transporter.sendMail(mailOptions);
-        res.status(201).json({ message: 'Alumni registered. Verification email sent!' });
-
-    } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
-    }
-};
-
 const verifyAlumniEmail = async (req, res) => {
     const { token } = req.params;
 
@@ -254,17 +214,17 @@ const verifyAlumniEmail = async (req, res) => {
             to: userData.personalEmail,
             subject: 'Email Verified - Alumni Account Under Review',
             html: `
-                            <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-                                <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-                                    <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-                                </div>
-                                <div>Dear ${userData.fullName},</div>
-                                <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
-                                <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
-                                <p>We will notify you via email once the verification is complete.</p>
-                                <p>Thanks,<br>Team NEXUS</p>
-                            </div>
-                        `
+                <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+                    <div style="margin-bottom: 25px; display:flex; justify-content: center;">
+                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
+                    </div>
+                    <div>Dear ${userData.fullName},</div>
+                    <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
+                    <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
+                    <p>We will notify you via email once the verification is complete.</p>
+                    <p>Thanks,<br>Team NEXUS</p>
+                </div>
+            `
         };
 
         await transporter.sendMail(mailOptions);
@@ -281,6 +241,5 @@ module.exports = {
     allVerifiedAlumniDetails,
     allPendingAlumniDetails,
     toggleVerification,
-    signupAlumni,
     verifyAlumniEmail
 };

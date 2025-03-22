@@ -1,4 +1,6 @@
 function isAlumni(admissionNumber) {
+   
+    admissionNumber = admissionNumber.trim().toUpperCase()
     const currentDate = new Date();
     const academicYear = currentDate.getMonth() >= 6 ? 
         currentDate.getFullYear() : 

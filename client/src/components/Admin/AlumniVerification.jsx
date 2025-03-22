@@ -16,7 +16,7 @@ function AlumniVerification() {
                     'Authorization': `Bearer ${localStorage.getItem('core-token')}`
                 }
             });
-            const data = await response.json();
+           const data = await response.json();
             setAlumni(data);
             setLoading(false);
         } catch (error) {

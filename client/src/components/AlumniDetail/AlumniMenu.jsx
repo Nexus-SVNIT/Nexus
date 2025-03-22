@@ -1,10 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Loader from '../Loader/Loader';
 import { Link } from 'react-router-dom';
 import Modal from '@mui/joy/Modal/Modal';
 import { toast } from 'react-hot-toast'; // Import toast
-import increamentCounter from '../../libs/increamentCounter';
 
 const AlumniMenu = () => {
   const [open, setOpen] = useState(false);
@@ -14,48 +13,71 @@ const AlumniMenu = () => {
     'Admission No': '',
     'Expertise': '',
     'Current Role': '',
+    'Company Name': '',
     'Mobile Number': '',
     'Passing Year': '',
     'LinkedIn': '',
+    'codeforcesId': '',
+    'LeetcodeId': '',
+    'shareCodingProfile': false,
   });
-  const [image, setImage] = useState(null);
+  const [file, setFile] = useState(null); // Use 'file' instead of 'image'
+
+  // File input handler
+  const handleImageChange = (event) => {
+    const file = event?.target?.files?.[0];
+    if (file) {
+      setFile(file); // Set the file state
+    }
+  };
+
   const formFields = [
     { 'label': 'Name', 'value': '', 'placeholder': 'Enter your name' },
     { 'label': 'E-Mail', 'value': '', 'placeholder': 'Enter your email' },
     { 'label': 'Admission No', 'value': '', 'placeholder': 'U2XCSXXX' },
     { 'label': 'Expertise', 'value': '', 'placeholder': 'React,AWS,MicroServices' },
     { 'label': 'Current Role', 'value': '', 'placeholder': 'Software Developer Engineer @ xyz' },
+    { 'label': 'Company Name', 'value': '', 'placeholder': 'Enter your company name' },
     { 'label': 'Mobile Number', 'value': '', 'placeholder': 'Enter your mobile number' },
     { 'label': 'Passing Year', 'value': '', 'placeholder': 'Enter your passing year' },
-    { 'label': 'LinkedIn', 'value': '', 'placeholder': 'Enter your LinkedIn profile' }
+    { 'label': 'LinkedIn', 'value': '', 'placeholder': 'Enter your LinkedIn profile' },
+    { 'label': 'codeforcesId', 'value': '', 'placeholder': 'Enter your Codeforces ID' },
+    { 'label': 'LeetcodeId', 'value': '', 'placeholder': 'Enter your Leetcode ID' },
+    { 'label': 'shareCodingProfile', 'value': false, 'placeholder': '' },
   ];
 
   const handleChange = (e) => {
-    setAlumniDetails({ ...AlumniDetails, [e.target.name]: e.target.value });
-  };
-
-  const handleImageChange = (event) => {
-    const file = event?.target?.files?.[0];
-    if (file) {
-      setImage(file);
-    }
+    const { name, value, type, checked } = e.target;
+    setAlumniDetails({ ...AlumniDetails, [name]: type === 'checkbox' ? checked : value });
   };
 
   const mutation = useMutation({
-    mutationFn: (formData) => {
-      return fetch(
+    mutationFn: async (formData) => {
+      const response = await fetch(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/add`,
         {
           method: "POST",
           body: formData,
         },
       );
+      if (!response.ok) {
+        let errorMessage = 'Something went wrong';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (error) {
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
+      }
+      return response.json();
     },
     onSuccess: () => {
       toast.success("Your details have been submitted successfully!");
+      setOpen(false);
     },
-    onError: () => {
-      toast.error("Something went wrong! Please try again.");
+    onError: (error) => {
+      toast.error(`Something went wrong! ${error.message}`);
       setOpen(false);
     },
   });
@@ -63,21 +85,31 @@ const AlumniMenu = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setOpen(true);
-  
+
     const formData = new FormData();
     formData.append('Name', AlumniDetails['Name']);
     formData.append('E-Mail', AlumniDetails['E-Mail']);
     formData.append('Admission No', AlumniDetails['Admission No']);
     formData.append('Expertise', AlumniDetails['Expertise']);
     formData.append('Current Role', AlumniDetails['Current Role']);
+    formData.append('Company Name', AlumniDetails['Company Name']);
     formData.append('Mobile Number', AlumniDetails['Mobile Number']);
     formData.append('Passing Year', AlumniDetails['Passing Year']);
     formData.append('LinkedIn', AlumniDetails['LinkedIn']);
-    formData.append('ImageLink', image);
+    if (AlumniDetails['codeforcesId']) {
+      formData.append('codeforcesId', AlumniDetails['codeforcesId']);
+    }
+    if (AlumniDetails['LeetcodeId']) {
+      formData.append('LeetcodeId', AlumniDetails['LeetcodeId']);
+    }
+    formData.append('shareCodingProfile', AlumniDetails['shareCodingProfile']);
+    if (file) {
+      formData.append('file', file); // Append the file with the key 'file'
+    }
 
     mutation.mutate(formData);
   };
-  
+
   return (
     <section className='mx-auto mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10'>
       <Modal
@@ -127,31 +159,41 @@ const AlumniMenu = () => {
         <h4 className="mb-6 text-xl font-bold">Alumni Information</h4>
         <div className="flex flex-col items-center justify-center p-2">
           <div className="flex flex-col items-center justify-center md:w-3/4">
-            <label htmlFor="image" className="cursor-pointer" title="Select an image">
+            <label htmlFor="file" className="cursor-pointer" title="Select a file">
               <img
-                src={image ? URL.createObjectURL(image) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmrO6oGyxrMasnTJFJSt86C3Ecac3kTHtrbQ&usqp=CAU"}
+                src={file ? URL.createObjectURL(file) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmrO6oGyxrMasnTJFJSt86C3Ecac3kTHtrbQ&usqp=CAU"}
                 alt="profile"
                 className="h-40 w-40 rounded-full object-cover object-center md:h-52 md:w-52"
               />
             </label>
-            <input type="file" accept="image/*" name="image" id="image" hidden required onChange={handleImageChange} />
-            <p className="mt-4 text-xs text-gray-400">Note: Your image will be shown as above*</p>
+            <input type="file" accept="image/*" name="file" id="file" hidden onChange={handleImageChange} />
+            <p className="mt-4 text-xs text-gray-400">Note: Your file will be shown as above*</p>
           </div>
           <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-8">
             {formFields.map((field) => (
               <div key={field.label} className="m-4 flex w-full flex-col gap-2 md:w-fit">
                 <label htmlFor={field.label} className="uppercase">
-                  {field.label} <span className="text-red-800">{" *"}</span>
+                  {field.label} {field.label !== 'codeforcesId' && field.label !== 'LeetcodeId' && <span className="text-red-800">{" *"}</span>}
                 </label>
-                <input
-                  type="text"
-                  id={field.label}
-                  placeholder={field.placeholder}
-                  name={field.label}
-                  onChange={handleChange}
-                  required
-                  className="w-full border-b border-blue-600 bg-transparent outline-none md:w-[20rem]"
-                />
+                {field.label === 'shareCodingProfile' ? (
+                  <input
+                    type="checkbox"
+                    id={field.label}
+                    name={field.label}
+                    onChange={handleChange}
+                    className="w-full border-b border-blue-600 bg-transparent outline-none md:w-[20rem]"
+                  />
+                ) : (
+                  <input
+                    type="text"
+                    id={field.label}
+                    placeholder={field.placeholder}
+                    name={field.label}
+                    onChange={handleChange}
+                    required={field.label !== 'codeforcesId' && field.label !== 'LeetcodeId'}
+                    className="w-full border-b border-blue-600 bg-transparent outline-none md:w-[20rem]"
+                  />
+                )}
               </div>
             ))}
           </div>
