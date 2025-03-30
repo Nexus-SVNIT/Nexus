@@ -127,12 +127,12 @@ const AlumniMenu = () => {
           className="mx-4 flex min-h-[10rem] flex-col items-center justify-center rounded-lg border-none bg-black/70 pb-8 transition-all w-[18rem] md:w-[16rem] md:gap-4"
         >
           {mutation.isPending ? (
-            <>
+            <div className='h-16'>
               <Loader />
               <p className='flex items-center justify-center md:w-full text-white'>
                 Uploading Your Details...
               </p>
-            </>
+            </div >
           ) : mutation.isSuccess ? (
             <div className="flex flex-col items-center justify-center gap-4 text-white">
               <p className="w-3/4 text-center text-sm text-white">
