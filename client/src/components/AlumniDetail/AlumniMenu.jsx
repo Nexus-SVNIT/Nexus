@@ -104,7 +104,7 @@ const AlumniMenu = () => {
     }
     formData.append('shareCodingProfile', AlumniDetails['shareCodingProfile']);
     if (file) {
-      formData.append('file', file); // Append the file with the key 'file'
+      formData.append('ImageLink', file); // Append the file with the key 'file'
     }
 
     mutation.mutate(formData);
