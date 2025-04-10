@@ -49,7 +49,8 @@ const Cp = () => {
         );
         if (
           localData &&
-          Date.now() - localData.lastUpdate < 1000 * 60 * 60 * 24
+          Date.now() - localData.lastUpdate < 1000 * 60 * 60 * 8
+
         ) {
           setBatchData(localData.batchData);
           setCodeforcesLeaderboard(localData.codeforcesLeaderboard);
