@@ -9,7 +9,8 @@ const router = express.Router();
 router.get('/', getAllPosts); // Remove authMiddleware
 router.post('/', authMiddleware, createPost);
 router.get('/pending', coreAuthMiddleware, getPendingPosts);
-router.get('/:id', authMiddleware, getPostById); // Remove authMiddleware
+router.get('/:id', getPostById); // Remove authMiddleware
+// router.get('/:id', authMiddleware, getPostById); // Remove authMiddleware
 router.post('/:postId/verify', coreAuthMiddleware, verifyPost);
 router.put('/:id', authMiddleware, updatePost);
       
