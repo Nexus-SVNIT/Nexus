@@ -216,7 +216,7 @@ const addAlumniDetails = async (req, res) => {
         // 8. Send confirmation email
         console.log("📧 Sending verification email...");
         const mailOptions = {
-            from: `NEXUS Alumni <${process.env.EMAIL_ID}>`,
+            from: `${process.env.EMAIL_ID}`,
             to: req.body['E-Mail'],
             subject: 'Your Alumni Submission is Under Review',
             html: generateVerificationEmailTemplate(req.body)

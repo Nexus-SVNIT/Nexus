@@ -1,6 +1,8 @@
 const express = require('express');
 const requireAuth = require('../middlewares/requireAuth.js');
 const { allAlumniDetails, addAlumniDetails, allPendingAlumniDetails, allVerifiedAlumniDetails, toggleVerification } = require('../controllers/alumniController.js');
+const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js');
+const authMiddleware = require('../middlewares/authMiddleware.js');
 const router = express.Router();
 
 const multer = require('multer');
@@ -20,9 +22,9 @@ const upload = multer({ storage: storage });
 
 // Define routes
 router.get('/', allVerifiedAlumniDetails);
-router.get('/pending', allPendingAlumniDetails);
-router.post('/add', upload.single('ImageLink'), addAlumniDetails);
+router.get('/pending',coreAuthMiddleware, allPendingAlumniDetails);
+router.post('/add',authMiddleware, upload.single('ImageLink'), addAlumniDetails);
 router.get('/all', allAlumniDetails);
-router.patch('/:id', toggleVerification);
+router.patch('/:id',coreAuthMiddleware, toggleVerification);
 
 module.exports = router;

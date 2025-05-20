@@ -58,7 +58,12 @@ const AlumniMenu = () => {
         {
           method: "POST",
           body: formData,
+          headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
         },
+        
+
       );
       if (!response.ok) {
         let errorMessage = 'Something went wrong';

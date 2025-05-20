@@ -12,8 +12,16 @@ const AlumniVerification = () => {
         const fetchAlumni = async () => {
             try {
                 const [verifiedResponse, pendingResponse] = await Promise.all([
-                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/alumni`),
-                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/pending`)
+                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/alumni`,{
+                        headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('core-token')}`
+                }
+                    }),
+                    axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/pending`,{
+                        headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('core-token')}`
+                }
+                    })
                 ]);
 
                 setVerifiedAlumni(verifiedResponse.data);
@@ -33,6 +41,10 @@ const AlumniVerification = () => {
         try {
             await axios.patch(`${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/${alumniId}`, {
                 isVerified: !currentStatus,
+            },{
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('core-token')}`
+                }
             });
             if (isPending) {
                 setPendingAlumni((prev) => prev.filter((alumnus) => alumnus._id !== alumniId));
