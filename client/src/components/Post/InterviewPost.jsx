@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom"; // Add useNavigate
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import parse from "html-react-parser";
@@ -56,12 +56,12 @@ const formatCount = (count) => {
 
 const InterviewPost = () => {
   const { id } = useParams();
-  const navigate = useNavigate(); // Add navigate hook
+  const navigate = useNavigate();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [comments, setComments] = useState({});
-  const [questions, setQuestions] = useState({});
+  const [comments, setComments] = useState([]);
+  const [questions, setQuestions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [questionsWithAnswers, setQuestionsWithAnswers] = useState([]);
   const [answers, setAnswers] = useState({});
@@ -71,13 +71,10 @@ const InterviewPost = () => {
     increamentCounter();
   }, []);
 
-  // Add incrementView function
   const incrementView = async () => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}/increment-view`,
-        {},
-        { headers: { Authorization: `Bearer ${token}` } }
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}/increment-view`
       );
     } catch (error) {
       console.error('Error incrementing view:', error);
@@ -85,40 +82,19 @@ const InterviewPost = () => {
   };
 
   useEffect(() => {
-    const checkAuth = () => {
-      if (!token) {
-        const currentPath = window.location.pathname;
-        toast.error("Please login to view this page");
-        navigate(`/login?redirect_to=${encodeURIComponent(currentPath)}`);
-        return false;
-      }
-      return true;
-    };
-
     const fetchPost = async () => {
       try {
-        if (!checkAuth()) return;
-
         toast.loading("Loading post...");
         const [postResponse, questionsResponse, commentResponse] =
           await Promise.all([
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              },
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`
             ),
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${id}`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              },
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${id}`
             ),
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`,
-              {
-                headers: { Authorization: `Bearer ${token}` },
-              },
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`
             ),
           ]);
 
@@ -126,7 +102,6 @@ const InterviewPost = () => {
         setQuestionsWithAnswers(questionsResponse.data);
         setComments(commentResponse.data);
         
-        // Increment view after loading post
         await incrementView();
         
         setLoading(false);
@@ -143,7 +118,7 @@ const InterviewPost = () => {
     };
 
     fetchPost();
-  }, [id, token, navigate]); // Add navigate to dependencies
+  }, [id]);
 
   if (loading) return <div className="text-white min-h-screen minw-full"><Loader/></div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -166,6 +141,12 @@ const InterviewPost = () => {
 
   const handleCommentSubmit = async (postId) => {
     try {
+      if (!token) {
+        toast.error("Please login to comment");
+        navigate('/login');
+        return;
+      }
+
       const loadingToast = toast.loading("Submitting comment...");
       const payload = { content: comments[postId], postId };
       const response = await axios.post(
@@ -181,7 +162,6 @@ const InterviewPost = () => {
       toast.dismiss(loadingToast);
       toast.success("Comment submitted successfully!");
 
-      // Update the local state with populated comment data
       const populatedComment = {
         ...response.data,
         author: {
@@ -211,6 +191,12 @@ const InterviewPost = () => {
 
   const handleQuestionSubmit = async (postId) => {
     try {
+      if (!token) {
+        toast.error("Please login to ask a question");
+        navigate('/login');
+        return;
+      }
+
       const loadingToast = toast.loading("Submitting question...");
       const payload = { question: questions[postId], postId };
       const response = await axios.post(
@@ -226,7 +212,6 @@ const InterviewPost = () => {
       toast.dismiss(loadingToast);
       toast.success("Question submitted successfully!");
 
-      // Add the new question to questionsWithAnswers array
       const newQuestion = {
         ...response.data,
         answers: [],
@@ -255,6 +240,12 @@ const InterviewPost = () => {
 
   const handleAnswerSubmit = async (questionId) => {
     try {
+      if (!token) {
+        toast.error("Please login to answer questions");
+        navigate('/login');
+        return;
+      }
+
       const loadingToast = toast.loading("Submitting answer...");
       const response = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${questionId}/answers`,
@@ -269,7 +260,6 @@ const InterviewPost = () => {
       toast.dismiss(loadingToast);
       toast.success("Answer submitted successfully!");
 
-      // Update questions with the new answer
       setQuestionsWithAnswers((prev) =>
         prev.map((q) => {
           if (q._id === questionId) {
@@ -292,8 +282,7 @@ const InterviewPost = () => {
 
   if (isLoading) return <Loader />;
 
-  // Add isPostAuthor check
-  const isPostAuthor =
+  const isPostAuthor = token && 
     post.author?._id === JSON.parse(atob(token.split(".")[1])).id;
 
   return (
@@ -344,7 +333,6 @@ const InterviewPost = () => {
               </div>
             )}
           </div>
-          {/* Add view count */}
           <div className="flex items-center gap-2 text-gray-400">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -364,39 +352,52 @@ const InterviewPost = () => {
 
             {/* Comments and Questions */}
             <div className="space-y-6 border-t border-zinc-700 pt-8">
-              <div className="mt-6">
-                <textarea
-                  className="border-gray-600 w-full rounded-lg border bg-zinc-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Write a comment..."
-                  value={comments[post._id] || ""}
-                  onChange={(e) =>
-                    handleCommentChange(post._id, e.target.value)
-                  }
-                />
-                <button
-                  className="mt-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition duration-200 hover:bg-blue-700"
-                  onClick={() => handleCommentSubmit(post._id)}
-                >
-                  Submit Comment
-                </button>
-              </div>
+              {token ? (
+                <>
+                  <div className="mt-6">
+                    <textarea
+                      className="border-gray-600 w-full rounded-lg border bg-zinc-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Write a comment..."
+                      value={comments[post._id] || ""}
+                      onChange={(e) =>
+                        handleCommentChange(post._id, e.target.value)
+                      }
+                    />
+                    <button
+                      className="mt-2 rounded-lg bg-blue-600 px-4 py-2 text-white transition duration-200 hover:bg-blue-700"
+                      onClick={() => handleCommentSubmit(post._id)}
+                    >
+                      Submit Comment
+                    </button>
+                  </div>
 
-              <div className="mt-6">
-                <textarea
-                  className="border-gray-600 w-full rounded-lg border bg-zinc-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  placeholder="Ask a question..."
-                  value={questions[post._id] || ""}
-                  onChange={(e) =>
-                    handleQuestionChange(post._id, e.target.value)
-                  }
-                />
-                <button
-                  className="mt-2 rounded-lg bg-green-600 px-4 py-2 text-white transition duration-200 hover:bg-green-700"
-                  onClick={() => handleQuestionSubmit(post._id)}
-                >
-                  Submit Question
-                </button>
-              </div>
+                  <div className="mt-6">
+                    <textarea
+                      className="border-gray-600 w-full rounded-lg border bg-zinc-800 p-3 text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      placeholder="Ask a question..."
+                      value={questions[post._id] || ""}
+                      onChange={(e) =>
+                        handleQuestionChange(post._id, e.target.value)
+                      }
+                    />
+                    <button
+                      className="mt-2 rounded-lg bg-green-600 px-4 py-2 text-white transition duration-200 hover:bg-green-700"
+                      onClick={() => handleQuestionSubmit(post._id)}
+                    >
+                      Submit Question
+                    </button>
+                  </div>
+                </>
+              ) : (
+                <div className="text-center text-gray-400">
+                  <button 
+                    onClick={() => navigate('/login')}
+                    className="text-blue-400 hover:underline"
+                  >
+                    Login
+                  </button> to comment or ask questions
+                </div>
+              )}
 
               <div className="mt-6">
                 <h4 className="mb-2 font-semibold text-white">Comments:</h4>
@@ -531,9 +532,11 @@ const InterviewPost = () => {
                             </button>
                           </div>
                         ) : (
-                          <p className="text-gray-400 mt-4 text-sm italic">
-                            Only the original post author can answer questions
-                          </p>
+                          token && (
+                            <p className="text-gray-400 mt-4 text-sm italic">
+                              Only the original post author can answer questions
+                            </p>
+                          )
                         )}
                       </div>
                     ))}
