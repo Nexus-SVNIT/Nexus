@@ -9,7 +9,7 @@ import Sheet from "@mui/joy/Sheet";
 import ProfileDetail from "./ProfileDetail";
 
 const Profile = ({ profile }) => {
-  console.log(profile);
+  
   const [open, setOpen] = useState(false);
   const toggleOpen = () => {
     setOpen((state) => !state);
