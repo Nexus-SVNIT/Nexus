@@ -53,7 +53,7 @@ const FormCard = ({ form }) => {
         <div className="w-fit rounded-full bg-black/25 px-2 py-2 text-xs font-bold text-white md:px-4 md:text-base">
           {form.status === "Active" ? "Started" : "Completed"}
         </div>
-        <div className="font-mono text-xs text-green-800 md:text-lg">
+        <div className="font-mono text-xs text-sky-700 md:text-lg">
           {form.responseCount} Registered
         </div>
       </div>

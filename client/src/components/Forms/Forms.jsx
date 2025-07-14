@@ -110,11 +110,9 @@ const Forms = () => {
         </div>
       ) : (
         <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
-          {forms
-            .filter((form) => form.status === "Inactive")
-            .map((form) => (
-              <FormCard key={form._id} form={form} />
-            ))}
+          {inactiveForms.map((form) => (
+            <FormCard key={form._id} form={form} />
+          ))}
         </div>
       )}
     </div>
