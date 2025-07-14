@@ -12,8 +12,29 @@ const Terminal = () => {
   };
 
   const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit", "register"];
-  const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
+  // const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
+  const pagesOfNexus = [
+    "home",
+    "team",
+    "achievements",
+    "events",
+    "forms",
+    "connect",
+    "projects",
+    "coding",
+    "interview-experiences",
+    "about",
+  ];
   const nexusCommands = ["--help", "about"];
+  const codingPlatforms = ["codeforces", "codechef", "leetcode"];
+  const branches = ["CS", "AI"];
+  let codingProfile = {
+    user: undefined,
+    year: undefined,
+    branch: undefined,
+    platform: undefined,
+    status: undefined,
+  };
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
 
@@ -53,6 +74,72 @@ const Terminal = () => {
       case commandsOfTerminal[0]: // case for the cd
         // check if the command has less or more words
         if (
+          arrayOfInputWords.length % 2 === 0 &&
+          arrayOfInputWords[1] === "coding"
+        ) {
+          if (arrayOfInputWords.length === 2) {
+            navigate("/" + arrayOfInputWords[1]);
+            return <div className="mt-0.5"></div>;
+          }
+          for (let i = 2; i < arrayOfInputWords.length; i += 2) {
+            if (arrayOfInputWords[i] === "-s") {
+              codingProfile.user = arrayOfInputWords[i + 1];
+            } else if (arrayOfInputWords[i] === "-y") {
+              codingProfile.year = parseInt(arrayOfInputWords[i + 1]) % 2000;
+            } else if (arrayOfInputWords[i] === "-p") {
+              if (
+                codingPlatforms.includes(arrayOfInputWords[i + 1].toLowerCase())
+              ) {
+                codingProfile.platform = arrayOfInputWords[i + 1].toLowerCase();
+              } else {
+                return (
+                  <div className="mt-0.5 text-red-900">
+                    <p>
+                      Platform does not exist. Select among codeforces, leetcode
+                      or codechef.
+                    </p>
+                  </div>
+                );
+              }
+            } else if (arrayOfInputWords[i] === "-b") {
+              if (branches.includes(arrayOfInputWords[i + 1].toUpperCase())) {
+                codingProfile.branch = arrayOfInputWords[i + 1].toUpperCase();
+              } else {
+                return (
+                  <div className="mt-0.5 text-red-900">
+                    <p>Branch does not exist. Select between CS or AI.</p>
+                  </div>
+                );
+              }
+            } else if (arrayOfInputWords[i] === "-a") {
+              if (arrayOfInputWords[i + 1] == "0") {
+                codingProfile.status = "current";
+              } else if (arrayOfInputWords[i + 1] == "1") {
+                codingProfile.status = "alumni";
+              }
+            }
+          }
+          let path = "/coding?";
+          if (codingProfile.user !== undefined) {
+            path = path + "search=" + codingProfile.user + "&";
+          }
+          if (codingProfile.branch !== undefined) {
+            path = path + "branch=" + codingProfile.branch + "&";
+          }
+          if (codingProfile.platform !== undefined) {
+            path = path + "platform=" + codingProfile.platform + "&";
+          }
+          if (codingProfile.year !== undefined) {
+            path = path + "year=" + codingProfile.year + "&";
+          }
+          if (codingProfile.status !== undefined) {
+            path = path + "status=" + codingProfile.status + "&";
+          }
+          path = path.slice(0, -1);
+          console.log(path);
+          navigate(path);
+          return <div className="mt-0.5"></div>;
+        } else if (
           arrayOfInputWords.length === 2 &&
           pagesOfNexus.includes(arrayOfInputWords[1])
         ) {
@@ -96,17 +183,56 @@ const Terminal = () => {
                   <div>Redirect to ContactUs Page</div>
                   <div>List all the pages available</div>
                 </div> */}
-
+                <div className="mt-0.5">
+                  <p>
+                    The Nexus Terminal allows you to navigate around this
+                    website while giving you the joy of using command line
+                    interface. To get help with the commands, use the following:
+                  </p>
+                </div>
                 <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
                   <span className="text-teal-300">cd home</span>
-                  <span>Redirect to Home Page</span>
+                  <span>: Redirect to Home Page</span>
                 </div>
-                <div>cd team</div>
-                <div>cd events</div>
-                <div>cd about</div>
-                <div>cd forms</div>
-                <div>cd contactus</div>
-                <div>ls</div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span>cd {`[page]`}</span>
+                  <span>: Redirect to a particular page</span>
+                </div>
+                <div>cd coding</div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span></span>
+                  <span>-s: Search user.</span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span></span>
+                  <span>-b: Filter for branch. Use CS or AI.</span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span></span>
+                  <span>
+                    -a: Filter for status. Use 0 for alumni or 1 for current
+                    student.
+                  </span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span></span>
+                  <span>
+                    -p: Filter for platform. Use codeforces, codechef or
+                    leetcode.
+                  </span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span></span>
+                  <span>-y: Filter for batch.</span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span>cls</span>
+                  <span>: Clear Terminal</span>
+                </div>
+                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                  <span>ls</span>
+                  <span>: List of pages</span>
+                </div>
               </div>
             );
             break;
@@ -130,8 +256,20 @@ const Terminal = () => {
         // check if the command has more words other than ls
         if (arrayOfInputWords.length === 1) {
           return (
-            <div className="mt-0.5">
-              <p>List of Pages Soon....</p>
+            <div className="mt-0.5 flex w-full flex-col gap-2 text-xs md:text-sm">
+              <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
+                <span className="text-teal-300">cd home</span>
+                <span>: You are here</span>
+              </div>
+              <div>cd team</div>
+              <div>cd achievements</div>
+              <div>cd events</div>
+              <div>cd forms</div>
+              <div>cd connect</div>
+              <div>cd projects</div>
+              <div>cd coding</div>
+              <div>cd interview-experiences</div>
+              <div>cd about</div>
             </div>
           );
           // list all the pages of nexus
@@ -190,7 +328,7 @@ const Terminal = () => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 ">
       <h2 className="text-2xl font-semibold">$ Nexus Terminal</h2>
-      <p className="text-base text-gray-400 md:text-[1.25rem]">
+      <p className="text-gray-400 text-base md:text-[1.25rem]">
         Interact to know more about Nexus...
       </p>
       <div className="flex h-[50vh] w-[90%] flex-col overflow-y-auto rounded-2xl bg-white/95 text-black md:h-[75vh] md:w-[70vw] ">
@@ -205,10 +343,10 @@ const Terminal = () => {
           {prevCommands.map((command, index) => (
             <div
               key={index}
-              className="px-4 py-2 font-semibold text-orange-500"
+              className="text-orange-500 px-4 py-2 font-semibold"
             >
               <div className="mb-0.5">
-                <p className="text-xs text-orange-500 md:text-base">
+                <p className="text-orange-500 text-xs md:text-base">
                   SVNIT/DoCSE \& DoAI/Nexus/User:~${command.input}
                 </p>
               </div>
@@ -219,8 +357,8 @@ const Terminal = () => {
 
           {/* Form for new input */}
           <form onSubmit={handleTerminalSubmit}>
-            <div className="flex px-4 py-2 font-semibold text-orange-500 ">
-              <p className="text-xs text-orange-500 md:text-base">
+            <div className="text-orange-500 flex px-4 py-2 font-semibold ">
+              <p className="text-orange-500 text-xs md:text-base">
                 SVNIT/DoCSE \& DoAI/Nexus/User:~$
               </p>
               <input
