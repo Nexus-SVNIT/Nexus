@@ -16,11 +16,13 @@ const RatingLegend = ({ platform }) => {
         ];
       case "leetcode":
         return [
-          // { color: "rose", label: "Elite (≥2800)" },
-          // { color: "amber", label: "Expert (≥2400)" },
-          { color: "yellow", label: "Advanced (≥2000)" },
-          { color: "violet", label: "Intermediate (≥1600)" },
-          { color: "emerald", label: "Beginner (<1600)" },
+          // Can think of more names  like "supreme", "legend" etc. however not needed for now.
+          { color: "rose", label: "Elite (≥2100)" },
+          { color: "amber", label: "Expert (≥1900)" },
+          { color: "yellow", label: "Advanced (≥1700)" },
+          { color: "violet", label: "Intermediate (≥1500)" },
+          { color: "emerald", label: "Beginner (<1500)" },
+          { color: "zinc", label: "Unrated (0)" },
         ];
       case "codechef":
         return [

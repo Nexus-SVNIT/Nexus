@@ -69,16 +69,17 @@ const SortableTable = ({ columns, data }) => {
       row.original.globalRanking !== undefined &&
       row.original.rating !== undefined
     ) {
-      if (row.original.rating >= 2800)
+      if (row.original.rating >= 2100)
         style = "border-rose-400 text-rose-300 bg-rose-500/20";
-      else if (row.original.rating >= 2400)
+      else if (row.original.rating >= 1900)
         style = "border-amber-400 text-amber-300 bg-amber-500/20";
-      else if (row.original.rating >= 2000)
+      else if (row.original.rating >= 1700)
         style = "border-yellow-400 text-yellow-300 bg-yellow-500/20";
-      else if (row.original.rating >= 1600)
+      else if (row.original.rating >= 1500)
         style = "border-violet-400 text-violet-300 bg-violet-500/20";
       else if (row.original.rating > 0)
         style = "border-emerald-400 text-emerald-300 bg-emerald-500/20";
+      else style = "border-zinc-400 text-zinc-300 bg-zinc-500/20";
     }
 
     // For CodeChef - only rating (stars)
