@@ -25,6 +25,7 @@ import Logo from "../../data/images/nexus.png";
 
 const CustomSidebar = () => {
   const [collapsed, setCollapsed] = useState(true); // State to toggle sidebar
+  const [ignoreHover, setIgnoreHover] = useState(false); // Prevents hover expand after X
 
   const menuList = [
     {
@@ -84,33 +85,54 @@ const CustomSidebar = () => {
     },
   ];
 
+  // Handlers for hover logic
+  const handleMouseEnter = () => {
+    if (!ignoreHover) setCollapsed(false);
+  };
+  const handleMouseLeave = () => {
+    setCollapsed(true);
+    setIgnoreHover(false); // Reset ignoreHover on mouse leave
+  };
+
   return (
     <ProSidebar
       collapsed={collapsed}
       className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-95"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between">
-          {/* Logo and Nexus Text (Visible when sidebar is expanded) */}
-          {!collapsed && (
-            <div className="ml-4 flex items-center">
-              <Link to={"/"}>
-                <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
-              </Link>
-              <span className="mx-2 text-xl uppercase text-white/80">
-                Nexus
-              </span>
-            </div>
+        <div className="flex items-center justify-between px-4 py-3">
+          {collapsed ? (
+            <button
+              onClick={() => setCollapsed(false)}
+              className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-full bg-[#232323] my-4"
+              aria-label="Open sidebar"
+            >
+              <FaBars size={16} className="text-white" />
+            </button>
+          ) : (
+            <>
+              <div className="flex items-center">
+                <Link to={"/"}>
+                  <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
+                </Link>
+                <span className="mx-2 text-xl uppercase text-white/80">
+                  Nexus
+                </span>
+              </div>
+              <button
+                onClick={() => {
+                  setCollapsed(true);
+                  setIgnoreHover(true); // Prevent hover expand until mouse leaves
+                }}
+                className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-full bg-[#232323] ml-auto hover:bg-gray-100 my-2 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
+                aria-label="Close sidebar"
+              >
+                <FaX size={16} className="text-white" />
+              </button>
+            </>
           )}
-
-          {/* Toggle Button */}
-          <Menu iconShape="circle" className="overflow-visible">
-            <MenuItem
-              icon={collapsed ? <FaBars size={16} /> : <FaX size={16} />}
-              onClick={() => setCollapsed(!collapsed)}
-              className="hover:bg-gray-100 bg-transparent hover:scale-110 hover:text-blue-500"
-            ></MenuItem>
-          </Menu>
         </div>
 
         <div className="flex-1 overflow-y-auto">
@@ -146,11 +168,10 @@ const CustomSidebar = () => {
                 </MenuItem>
               );
             })}
-            {/* SubMenu */}
-            {/* <SubMenu title={!collapsed ? "Components" : ""} icon={<FaHeart />}>
-              <MenuItem className="hover:bg-gray-100">Component 1</MenuItem>
-              <MenuItem className="hover:bg-gray-100">Component 2</MenuItem>
-            </SubMenu> */}
+            {/* <SubMenu title={!collapsed ? "Components" : ""} icon={<FaHeart />}> */}
+            {/*   <MenuItem className="hover:bg-gray-100">Component 1</MenuItem> */}
+            {/*   <MenuItem className="hover:bg-gray-100">Component 2</MenuItem> */}
+            {/* </SubMenu> */}
 
             {localStorage.getItem("token") ? (
               <MenuItem
