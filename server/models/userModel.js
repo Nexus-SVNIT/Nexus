@@ -22,8 +22,14 @@ const userSchema = new mongoose.Schema({
     subscribed: { type: Boolean, default: true }, // New field for subscription status
     shareCodingProfile: { type: Boolean, default: true }, // New field for subscription status
     isAlumni: { type: Boolean, default: false }, // Add this field
-    isVerifiedAlumni: { type: Boolean, default: false }, // Add this field
-});
+    isVerified: { type: Boolean, default: false }, // Add this field
+    program: { type: String, default: '' }, // btech/mtech/phd
+    currentCompany:{type: String, default: ''}, 
+    currentDesignation: {type: String, default: ''}, 
+    pastCompanies: { type: [String], default: [] }, // New field for past companies
+    expertise: { type: [String], default: [] },
+    passingYear: { type: String, default: '' }, // New field for passing year
+}, { timestamps: true });
 
 // Hash the password before saving
 userSchema.pre('save', async function(next) {

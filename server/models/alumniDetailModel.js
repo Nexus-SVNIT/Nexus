@@ -15,6 +15,7 @@ const AlumniDetailsSchema = new mongoose.Schema({
   'Expertise': {
     type: String
   },
+ 
   'Admission No': {
     type: String,required: true
   },
