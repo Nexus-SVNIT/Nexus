@@ -1,21 +1,27 @@
-import React, { useState } from "react";
-import { useRef, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 const Terminal = () => {
   const [input, setInput] = useState("");
-  const [prevCommands, setTerminalCommands] = useState([]);
+  const [prevCommands, setPrevCommands] = useState([]);
   const [count, setCount] = useState(0);
-
-  const incrementCount = () => {
-    setCount(count + 1);
-  };
-
-  const commandsOfTerminal = ["cd", "nexus", "ls", "cls", "exit", "register"];
-  const pagesOfNexus = ["home", "events", "team", "forms", "about", "contact"];
-  const nexusCommands = ["--help", "about"];
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
+
+  // const commands = ["cd", "nexus", "ls", "cls", "exit", "register"];
+  const nexusPages = [
+    "home",
+    "team",
+    "achievements",
+    "events",
+    "forms",
+    "connect",
+    "projects",
+    "coding",
+    "interview-experiences",
+    "about",
+  ];
+  // const nexusSubcommands = ["--help", "about"];
 
   useEffect(() => {
     // Scroll to the bottom when the component mounts or when new content is added
@@ -23,166 +29,150 @@ const Terminal = () => {
       scrollContainerRef.current.scrollHeight;
   }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
 
-  const handleInputChange = (e) => {
-    setInput(e.target.value);
-  };
+  const handleInputChange = (e) => setInput(e.target.value);
 
   const handleTerminalSubmit = (e) => {
     e.preventDefault();
     const output = terminalFunction(input);
-    incrementCount();
+    setCount(count + 1);
+
     if (output === 0) {
-      setTerminalCommands([]);
+      setPrevCommands([]);
     } else {
-      setTerminalCommands((prevCommands) => [
-        ...prevCommands,
-        { input, output },
-      ]);
+      setPrevCommands((prev) => [...prev, { input, output }]);
     }
+
     setInput("");
   };
 
-  const terminalFunction = (input) => {
+  const codingValidate = (args) => {
+    const platforms = ["codeforces", "codechef", "leetcode"];
+    const branches = ["CS", "AI"];
+    const codingProfile = {
+      search: undefined,
+      year: undefined,
+      branch: undefined,
+      platform: undefined,
+      status: undefined,
+    };
+
+    if (args.length === 2) return "/coding";
+
+    for (let i = 2; i < args.length; i += 2) {
+      const flag = args[i];
+      const value = args[i + 1];
+
+      switch (flag) {
+        case "-s":
+          codingProfile.search = value;
+          break;
+        case "-y":
+          codingProfile.year = parseInt(value) % 2000;
+          break;
+        case "-p":
+          if (!platforms.includes(value.toLowerCase()))
+            return "platformUndefined";
+          codingProfile.platform = value.toLowerCase();
+          break;
+        case "-b":
+          if (!branches.includes(value.toUpperCase())) return "branchUndefined";
+          codingProfile.branch = value.toUpperCase();
+          break;
+        case "-a":
+          codingProfile.status =
+            value === "0" ? "current" : value === "1" ? "alumni" : undefined;
+          break;
+        default:
+          return "filterUndefined";
+      }
+    }
+
+    const params = new URLSearchParams();
+    for (const key in codingProfile) {
+      if (codingProfile[key] !== undefined) {
+        params.append(key, codingProfile[key]);
+      }
+    }
+
+    return `/coding?${params.toString()}`;
+  };
+
+  const terminalFunction = (inputStr) => {
     // splitting the input with to check whether it is correct command or not
-    let arrayOfInputWords = input.split(" ");
+    const args = inputStr.trim().split(" ");
+    const [command, ...rest] = args;
 
     // iterating through commands whether it matches any of the commands in the list
-    switch (arrayOfInputWords[0]) {
-      case "": // no input given
-        break;
-      case commandsOfTerminal[0]: // case for the cd
-        // check if the command has less or more words
-        if (
-          arrayOfInputWords.length === 2 &&
-          pagesOfNexus.includes(arrayOfInputWords[1])
-        ) {
-          navigate("/" + arrayOfInputWords[1]);
-          return <div className="mt-0.5"></div>;
-          // redirect to the arrayOfInputWords[1] page
-        } else if (arrayOfInputWords.length === 2) {
-          return (
-            <div className="mt-0.5 text-red-900">
-              <p>Page {arrayOfInputWords[1]} Doesn't exists</p>
-            </div>
-          );
+    switch (command) {
+      case "": //no input given
+        return;
+
+      case "cd":
+        if (args.length % 2 === 0 && args[1] === "coding") {
+          //particularly if its coding page, using seperate flags on it
+          const path = codingValidate(args);
+          switch (path) {
+            case "platformUndefined": //when -p tag is used incorrectly
+              return (
+                <ErrorMsg text="Platform does not exist. Use codeforces, leetcode or codechef." />
+              );
+            case "branchUndefined": //when -b tag is used incorrectly
+              return <ErrorMsg text="Branch does not exist. Use CS or AI." />;
+            case "filterUndefined": //if an invalid tag is used
+              return (
+                <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
+              );
+            default:
+              navigate(path); //redirect to the coding page with query params
+              return <div className="mt-0.5" />;
+          }
+        } else if (args.length === 2 && nexusPages.includes(args[1])) {
+          navigate(`/${args[1]}`); // redirect to the args[1] page
+          return <div className="mt-0.5" />;
+        } else if (args.length === 2) {
+          return <ErrorMsg text={`Page ${args[1]} doesn't exist.`} />;
         } else {
           return (
-            <div className="mt-0.5 text-red-900">
-              <p>Wrong Command ask "nexus --help" for commands</p>
-            </div>
+            <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
           );
         }
 
-      case commandsOfTerminal[1]: // case for the nexus commands
-        switch (arrayOfInputWords[1]) {
-          case nexusCommands[0]: // nexus --help
-            return (
-              <div className="mt-0.5 flex w-full flex-col gap-2 text-xs md:text-sm">
-                {/* <div className="text-xs md:text-sm">
-                  <div className="text-teal-300">cd home</div>
-                  <div className="text-teal-300">cd team</div>
-                  <div className="text-teal-300">cd events</div>
-                  <div className="text-teal-300">cd about</div>
-                  <div className="text-teal-300">cd forms</div>
-                  <div className="text-teal-300">cd contactus</div>
-                  <div className="text-teal-300">ls</div>
-                </div>
-                <div className="text-xs md:text-sm">
-                  <div>Redirect to Home Page</div>
-                  <div>Redirect to Team Page</div>
-                  <div>Redirect to Events Page</div>
-                  <div>Redirect to About Page</div>
-                  <div>Redirect to Forms Page</div>
-                  <div>Redirect to ContactUs Page</div>
-                  <div>List all the pages available</div>
-                </div> */}
-
-                <div className="lg:ga flex w-full gap-4 text-xs md:gap-6 md:text-sm">
-                  <span className="text-teal-300">cd home</span>
-                  <span>Redirect to Home Page</span>
-                </div>
-                <div>cd team</div>
-                <div>cd events</div>
-                <div>cd about</div>
-                <div>cd forms</div>
-                <div>cd contactus</div>
-                <div>ls</div>
-              </div>
-            );
-            break;
-          case nexusCommands[1]: // nexus about
-            return (
-              <div className="mt-0.5">
-                <p>Nexus About</p>
-              </div>
-            );
-            break;
+      case "nexus":
+        switch (args[1]) {
+          case "--help":
+            return <HelpMessage />;
+          case "about":
+            return <SimpleMsg text="Nexus About" />;
           default:
             return (
-              <div className="mt-0.5 text-red-900">
-                <p>Wrong Command ask "nexus --help" for commands</p>
-              </div>
+              <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
             );
-            break;
         }
-        break;
-      case commandsOfTerminal[2]: // case for the ls
-        // check if the command has more words other than ls
-        if (arrayOfInputWords.length === 1) {
-          return (
-            <div className="mt-0.5">
-              <p>List of Pages Soon....</p>
-            </div>
-          );
-          // list all the pages of nexus
-        } else {
-          return (
-            <div className="mt-0.5 text-red-900">
-              Wrong Command ask "nexus --help" for commands
-            </div>
-          );
-        }
-        break;
-      case commandsOfTerminal[3]: // case for the cls
-        // check if the command has more words other than cls
-        if (arrayOfInputWords.length === 1) {
-          return 0;
-        } else {
-          return (
-            <div className="mt-0.5 text-red-900">
-              <p>Wrong Command ask "nexus --help" for commands</p>
-            </div>
-          );
-        }
-        break;
-      case commandsOfTerminal[5]: // case for the register
-        // check if the command is correct
-        if (arrayOfInputWords.length == 2) {
-          // check if the event name exists in the database or not
-          // else if the event is there but not accepting registrations
-          return (
-            <div className="mt-0.5 text-red-900">
-              <p>Event ${arrayOfInputWords[1]} is not accepting</p>
-            </div>
-          );
-          // else if the event is not found
-          return (
-            <div className="mt-0.5 text-red-900">
-              <p>Event ${arrayOfInputWords[1]} is not found</p>
-            </div>
-          );
-        } else {
-          return (
-            <div className="mt-0.5 text-red-900">
-              <p>Wrong Command ask "nexus --help" for commands</p>
-            </div>
-          );
-        }
+
+      case "ls":
+        return args.length === 1 ? (
+          <PageList />
+        ) : (
+          <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
+        );
+
+      case "cls":
+        return args.length === 1 ? (
+          0
+        ) : (
+          <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
+        );
+
+      case "register":
+        return args.length === 2 ? (
+          <ErrorMsg text={`Event ${args[1]} is not accepting`} />
+        ) : (
+          <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
+        );
+
       default:
         return (
-          <div className="mt-0.5 text-red-900">
-            <p>Wrong Command ask "nexus --help" for commands</p>
-          </div>
+          <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
         );
     }
   };
@@ -190,7 +180,7 @@ const Terminal = () => {
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 ">
       <h2 className="text-2xl font-semibold">$ Nexus Terminal</h2>
-      <p className="text-base text-gray-400 md:text-[1.25rem]">
+      <p className="text-gray-400 text-base md:text-[1.25rem]">
         Interact to know more about Nexus...
       </p>
       <div className="flex h-[50vh] w-[90%] flex-col overflow-y-auto rounded-2xl bg-white/95 text-black md:h-[75vh] md:w-[70vw] ">
@@ -205,10 +195,10 @@ const Terminal = () => {
           {prevCommands.map((command, index) => (
             <div
               key={index}
-              className="px-4 py-2 font-semibold text-orange-500"
+              className="text-orange-500 px-4 py-2 font-semibold"
             >
               <div className="mb-0.5">
-                <p className="text-xs text-orange-500 md:text-base">
+                <p className="text-orange-500 text-xs md:text-base">
                   SVNIT/DoCSE \& DoAI/Nexus/User:~${command.input}
                 </p>
               </div>
@@ -219,8 +209,8 @@ const Terminal = () => {
 
           {/* Form for new input */}
           <form onSubmit={handleTerminalSubmit}>
-            <div className="flex px-4 py-2 font-semibold text-orange-500 ">
-              <p className="text-xs text-orange-500 md:text-base">
+            <div className="text-orange-500 flex px-4 py-2 font-semibold ">
+              <p className="text-orange-500 text-xs md:text-base">
                 SVNIT/DoCSE \& DoAI/Nexus/User:~$
               </p>
               <input
@@ -237,5 +227,72 @@ const Terminal = () => {
     </div>
   );
 };
+
+// Components
+
+const HelpMessage = () => (
+  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
+    <p>
+      The Nexus Terminal lets you navigate the website via command-line
+      interface. Use the following commands:
+    </p>
+    {[
+      ["cd home", "Redirect to Home Page"],
+      ["cd [page]", "Redirect to a particular page"],
+      ["cd coding", ""],
+      ["", "-s: Search user"],
+      ["", "-b: Filter by branch (CS/AI)"],
+      ["", "-a: Filter by status (0=current, 1=alumni)"],
+      ["", "-p: Platform (codeforces/codechef/leetcode)"],
+      ["", "-y: Year"],
+      ["cls", "Clear terminal"],
+      ["ls", "List available pages"],
+    ].map(([cmd, desc], i) => (
+      <div key={i} className="flex gap-4">
+        <span className="text-teal-300">{cmd}</span>
+        <span>{desc}</span>
+      </div>
+    ))}
+  </div>
+);
+
+const PageList = () => (
+  // list of all pages of nexus
+  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
+    {[
+      ["cd home", "You are here"],
+      "cd team",
+      "cd achievements",
+      "cd events",
+      "cd forms",
+      "cd connect",
+      "cd projects",
+      "cd coding",
+      "cd interview-experiences",
+      "cd about",
+    ].map((item, i) =>
+      Array.isArray(item) ? (
+        <div key={i} className="flex gap-4">
+          <span className="text-teal-300">{item[0]}</span>
+          <span>{item[1]}</span>
+        </div>
+      ) : (
+        <div key={i}>{item}</div>
+      ),
+    )}
+  </div>
+);
+
+const ErrorMsg = ({ text }) => (
+  <div className="mt-0.5 text-red-900">
+    <p>{text}</p>
+  </div>
+);
+
+const SimpleMsg = ({ text }) => (
+  <div className="mt-0.5">
+    <p>{text}</p>
+  </div>
+);
 
 export default Terminal;
