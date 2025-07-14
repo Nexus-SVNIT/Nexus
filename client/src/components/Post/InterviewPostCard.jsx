@@ -14,11 +14,11 @@ const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
       <div className="flex flex-col sm:flex-row justify-between items-start gap-2">
         <Link 
           to={`/interview-experiences/post/${post._id}`}
-          className="text-xl font-bold text-white hover:text-blue-400 transition-colors max-w-[500px]"
+          className="text-xl font-bold text-white hover:text-blue-400 transition-colors w-full truncate md:pr-5"
           title={post.title}
         >
           <div className="truncate">
-            {truncateText(post.title, 40)}
+            {post.title}
           </div>
         </Link>
         <span className="text-sm text-gray-400 whitespace-nowrap">
