@@ -47,11 +47,12 @@ const Terminal = () => {
 
   const codingValidate = (args) => {
     const platforms = ["codeforces", "codechef", "leetcode"];
-    const branches = ["CS", "AI"];
+    const branches = ["CS", "AI", "DS", "IS"];
     const codingProfile = {
       search: undefined,
       year: undefined,
       branch: undefined,
+      grad: undefined,
       platform: undefined,
       status: undefined,
     };
@@ -79,8 +80,29 @@ const Terminal = () => {
           codingProfile.branch = value.toUpperCase();
           break;
         case "-a":
-          codingProfile.status =
-            value === "0" ? "current" : value === "1" ? "alumni" : undefined;
+          switch (value) {
+            case "0":
+              codingProfile.status = "current";
+              break;
+            case "1":
+              codingProfile.status = "alumni";
+              break;
+          }
+          break;
+        case "-g":
+          switch (value.toLowerCase()) {
+            case "ug":
+              codingProfile.grad = "U";
+              break;
+            case "pg":
+              codingProfile.grad = "P";
+              break;
+            case "phd":
+              codingProfile.grad = "D";
+              break;
+            default:
+              return "gradUndefined";
+          }
           break;
         default:
           return "filterUndefined";
@@ -117,7 +139,13 @@ const Terminal = () => {
                 <ErrorMsg text="Platform does not exist. Use codeforces, leetcode or codechef." />
               );
             case "branchUndefined": //when -b tag is used incorrectly
-              return <ErrorMsg text="Branch does not exist. Use CS or AI." />;
+              return (
+                <ErrorMsg text="Branch does not exist. Use CS/AI (for UG), CS/DS/IS (for PG)." />
+              );
+            case "gradUndefined": //when -g tag is used incorrectly
+              return (
+                <ErrorMsg text="Graduation Level does not exist. Use ug, pg or phd." />
+              );
             case "filterUndefined": //if an invalid tag is used
               return (
                 <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
@@ -142,7 +170,7 @@ const Terminal = () => {
           case "--help":
             return <HelpMessage />;
           case "about":
-            return <SimpleMsg text="Nexus About" />;
+            return <AboutMessage />;
           default:
             return (
               <ErrorMsg text='Wrong Command. Ask "nexus --help" for commands.' />
@@ -236,20 +264,26 @@ const HelpMessage = () => (
       The Nexus Terminal lets you navigate the website via command-line
       interface. Use the following commands:
     </p>
+    <div className="flex gap-4">
+      <span className="text-teal-300">cd home</span>
+      <span>Redirect to Home Page</span>
+    </div>
     {[
-      ["cd home", "Redirect to Home Page"],
       ["cd [page]", "Redirect to a particular page"],
       ["cd coding", ""],
       ["", "-s: Search user"],
-      ["", "-b: Filter by branch (CS/AI)"],
+      ["", "-b: Filter by branch (CS/AI/DS/IS)"],
       ["", "-a: Filter by status (0=current, 1=alumni)"],
       ["", "-p: Platform (codeforces/codechef/leetcode)"],
       ["", "-y: Year"],
+      ["", "-g: Graduation Level (ug/pg/phd)"],
       ["cls", "Clear terminal"],
       ["ls", "List available pages"],
+      ["nexus --help", "Show this help message"],
+      ["nexus about", "About Nexus"],
     ].map(([cmd, desc], i) => (
       <div key={i} className="flex gap-4">
-        <span className="text-teal-300">{cmd}</span>
+        <span>{cmd}</span>
         <span>{desc}</span>
       </div>
     ))}
@@ -280,6 +314,26 @@ const PageList = () => (
         <div key={i}>{item}</div>
       ),
     )}
+  </div>
+);
+
+const AboutMessage = () => (
+  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
+    <p>
+      Nexus is the buzzing hub for computer science minds at SVNIT Surat. We
+      bring together CSE and AI students who are passionate about tech,
+      learning, and growth.{" "}
+    </p>
+    <p>
+      At Nexus, it's not just about academics — it's about building skills,
+      exploring interests, and growing together. We aim to spark innovation,
+      encourage curiosity, and shape a community ready to take on the digital
+      world.{" "}
+    </p>
+    <p>
+      Whether it's coding, collaboration, or creativity — Nexus is where it all
+      connects.
+    </p>
   </div>
 );
 

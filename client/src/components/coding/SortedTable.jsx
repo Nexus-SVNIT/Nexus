@@ -117,10 +117,11 @@ const SortableTable = ({ columns, data }) => {
 
     // For Codeforces
     if (row.original.rating !== undefined) {
-      if (row.original.rating >= 2400) color = "bg-rose-400";
-      else if (row.original.rating >= 2100) color = "bg-amber-400";
-      else if (row.original.rating >= 1900) color = "bg-yellow-400";
-      else if (row.original.rating >= 1600) color = "bg-violet-400";
+      // if (row.original.rating >= 2400) color = "bg-rose-400";
+      // else if (row.original.rating >= 2100) color = "bg-amber-400";
+      if (row.original.rating >= 2100) color = "bg-yellow-400";
+      else if (row.original.rating >= 1900) color = "bg-violet-400";
+      else if (row.original.rating >= 1600) color = "bg-blue-400";
       else if (row.original.rating >= 1400) color = "bg-cyan-400";
       else if (row.original.rating >= 1200) color = "bg-emerald-400";
       else if (row.original.rating > 0) color = "bg-zinc-400";
@@ -128,11 +129,12 @@ const SortableTable = ({ columns, data }) => {
 
     // For LeetCode
     if (row.original.globalRanking !== undefined) {
-      if (row.original.rating >= 2800) color = "bg-rose-400";
-      else if (row.original.rating >= 2400) color = "bg-amber-400";
-      else if (row.original.rating >= 2000) color = "bg-yellow-400";
-      else if (row.original.rating >= 1600) color = "bg-violet-400";
+      if (row.original.rating >= 2100) color = "bg-rose-400";
+      else if (row.original.rating >= 1900) color = "bg-amber-400";
+      else if (row.original.rating >= 1700) color = "bg-yellow-400";
+      else if (row.original.rating >= 1500) color = "bg-violet-400";
       else if (row.original.rating > 0) color = "bg-emerald-400";
+      else color = "bg-zinc-400";
     }
 
     // For CodeChef
@@ -142,7 +144,8 @@ const SortableTable = ({ columns, data }) => {
       else if (row.original.rating_number >= 2000) color = "bg-yellow-400";
       else if (row.original.rating_number >= 1800) color = "bg-violet-400";
       else if (row.original.rating_number >= 1600) color = "bg-cyan-400";
-      else if (row.original.rating_number > 0) color = "bg-emerald-400";
+      else if (row.original.rating_number >= 1400) color = "bg-emerald-400";
+      else color = "bg-zinc-400";
     }
 
     return color ? (
