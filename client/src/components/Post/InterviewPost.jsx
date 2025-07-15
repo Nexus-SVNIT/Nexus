@@ -346,7 +346,7 @@ const InterviewPost = () => {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-5">
           {/* Left Column - Main Content */}
           <div className="order-2 space-y-8 lg:order-1 lg:col-span-3 ">
-            <div className="prose prose-invert max-w-none">
+            <div className="prose prose-invert max-w-none break-words">
               {parse(post.content)}
             </div>
 
