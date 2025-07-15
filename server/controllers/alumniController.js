@@ -71,35 +71,80 @@ const uploadImageToDrive = async (imagePath, imageName) => {
 };
 */
 
-// Alumni data retrieval functions
-const allAlumniDetails = async (req, res) => {
+// Alumni data retrieval functions with pagination and the specific filters
+//(for users)
+const getAllAlumniDetails = async (req, res) => {
     try {
-        const alumniDetails = await User.find({ isAlumni: true })
-            .sort({ createdAt: 1 });
-        return res.status(200).json(alumniDetails);
+        // Pagination
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
+        const skip = (page - 1) * limit;
+
+        // Filters
+        const { batchFrom, batchTo, company,expertise, q } = req.query;
+        const query = { isAlumni: true , isVerified: true };
+
+        // Batch (passingYear) range filter
+        if (batchFrom || batchTo) {
+            query.passingYear = {};
+            if (batchFrom) query.passingYear.$gte = Number(batchFrom);
+            if (batchTo) query.passingYear.$lte = Number(batchTo);
+        }
+
+        
+        if (company) {
+            query.currentCompany = { $regex: company, $options: 'i' };
+        }
+
+        if(expertise) {
+            query.expertise = { $regex: expertise, $options: 'i' };
+        }
+
+        // Common search query (name, admission no, company, expertise)
+        if (q) {
+            query.$or = [
+                { fullName: { $regex: q, $options: 'i' } },
+                { admissionNumber: { $regex: q, $options: 'i' } },
+                { currentCompany: { $regex: q, $options: 'i' } },
+                { expertise: { $regex: q, $options: 'i' } }
+            ];
+        }
+
+        const total = await User.countDocuments(query);
+        const alumniDetails = await User.find(query)
+            .sort({ createdAt: 1 })
+            .skip(skip)
+            .limit(limit);
+
+        return res.status(200).json({
+            data: alumniDetails,
+            pagination: {
+                total,
+                page,
+                limit,
+                totalPages: Math.ceil(total / limit)
+            }
+        });
     } catch (error) {
         console.error("Error fetching all alumni:", error);
         return res.status(500).json({ message: "Server error" });
     }
 };
 
-const allVerifiedAlumniDetails = async (req, res) => {
-    try {
-        const alumniDetails = await User.find({ isAlumni:true ,  isVerified: true })
-            .sort({ createdAt: 1 })
-            .select('-isVerified');
-        return res.status(200).json(alumniDetails);
-    } catch (error) {
-        console.error("Error fetching verified alumni:", error);
-        return res.status(500).json({ message: "Server error" });
-    }
-};
 
-const allPendingAlumniDetails = async (req, res) => {
+//retrieving all un verified alumni details (for core team)
+const getPendingAlumniDetails = async (req, res) => {
     try {
+          const page = parseInt(req.query.page, 10) || 1;
+          const limit = parseInt(req.query.limit, 10) || 10;
+          const skip = (page - 1) * limit;
+
         const alumniDetails = await User.find({isAlumni:true , isVerified: false })
             .sort({ createdAt: 1 })
-            .select('-isVerified');
+            .select('-isVerified')
+            .skip(skip)
+            .limit(limit);
+
         return res.status(200).json(alumniDetails);
     } catch (error) {
         console.error("Error fetching pending alumni:", error);
@@ -109,7 +154,7 @@ const allPendingAlumniDetails = async (req, res) => {
 
 
 
-const addAlumniDetails = async (req, res) => {
+const signUpAlumni = async (req, res) => {
     let tempFilePath = req.file?.path;
 
     try {
@@ -268,7 +313,7 @@ function generateVerificationEmailTemplate(userData) {
 }
 
 
-// Verification functions
+// Verification functions(for core team)
 const toggleVerification = async (req, res) => {
     try {
         const { id } = req.params;
@@ -303,6 +348,7 @@ const toggleVerification = async (req, res) => {
     }
 };
 
+// email verification function for alumni called when alumni clicks on verification lnk sent to his mail
 const verifyAlumniEmail = async (req, res) => {
     const { token } = req.params;
 
@@ -342,50 +388,14 @@ const verifyAlumniEmail = async (req, res) => {
     }
 };
  
-//search alumni with fullName, admissionNumber, or currentCompany
- const searchAlumni = async (req, res) => {
-    const { fullName, admissionNumber, currentCompany } = req.query;
 
-    if (!fullName && !admissionNumber && !currentCompany) {
-        return res.status(400).json({ message: 'At least one search parameter is required' });
-    }
-
-    const query = {
-        isVerified: true,
-        isAlumni: true,
-        $or: []
-    };
-
-    if (fullName) {
-        query.$or.push({ fullName: { $regex: fullName, $options: 'i' } });
-    }
-    if (admissionNumber) {
-        query.$or.push({ admissionNumber: { $regex: admissionNumber, $options: 'i' } });
-    }
-    if (currentCompany) {
-        query.$or.push({ currentCompany: { $regex: currentCompany, $options: 'i' } });
-    }
-
-    try {
-        const alumniDetails = await User.find(query);
-        if (alumniDetails.length === 0) {
-            return res.status(404).json({ message: 'No alumni found' });
-        }
-        return res.status(200).json(alumniDetails);
-    } catch (error) {
-        console.error("Error searching alumni:", error);
-        return res.status(500).json({ message: "Server error" });
-    }
-};
 
 
 
 module.exports = {
-    allAlumniDetails,
-    addAlumniDetails,
-    allVerifiedAlumniDetails,
-    allPendingAlumniDetails,
+    signUpAlumni,
+    getAllAlumniDetails,
+    getPendingAlumniDetails,
     toggleVerification,
     verifyAlumniEmail,
-    searchAlumni
 };
