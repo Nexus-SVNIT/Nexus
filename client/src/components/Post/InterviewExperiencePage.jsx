@@ -16,7 +16,7 @@ const InterviewExperiencePage = () => {
   const [locations, setLocations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [isError, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -409,7 +409,7 @@ const InterviewExperiencePage = () => {
       )}
 
       {/* Posts Grid */}
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
         {posts.length === 0 ? (
           <p className="text-gray-400">
             No posts available. Be the first to share your experience!

@@ -60,6 +60,19 @@ const Forms = () => {
     form.status = form.publish ? "Active" : "Inactive";
   });
 
+  // Filter out forms that are not active or inactive
+  const { activeForms, inactiveForms } = forms.reduce(
+    (acc, form) => {
+      if (form.status === "Active") {
+        acc.activeForms.push(form);
+      } else {
+        acc.inactiveForms.push(form);
+      }
+      return acc;
+    },
+    { activeForms: [], inactiveForms: [] }
+  );
+
   return (
     <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
       <HeadTags
@@ -75,23 +88,33 @@ const Forms = () => {
 
       {/* Display active forms */}
       <h2 className="text-center text-2xl font-semibold">Active Forms</h2>
-      <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
-        {forms
-          .filter((form) => form.status === "Active")
-          .map((form) => (
-            <FormCard key={form._id} form={form} />
-          ))}
-      </div>
+      {
+          activeForms.length === 0 ? (
+            <div className="text-center text-gray-500 text-lg">
+              No active forms available at the moment
+            </div>
+          ) : (
+            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
+              {activeForms.map((form) => (
+                <FormCard key={form._id} form={form} />
+              ))}
+            </div>
+          )
+      }
 
       {/* Display inactive forms */}
       <h2 className="text-center text-2xl font-semibold">Inactive Forms</h2>
-      <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
-        {forms
-          .filter((form) => form.status === "Inactive")
-          .map((form) => (
+      {inactiveForms.length === 0 ? (
+        <div className="text-center text-gray-500 text-lg">
+          No inactive forms available at the moment
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
+          {inactiveForms.map((form) => (
             <FormCard key={form._id} form={form} />
           ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 };
