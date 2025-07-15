@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const { loginUser, signupUser } = require('../controllers/userController.js')
-const { addAlumniDetails, verifyAlumniEmail } = require('../controllers/alumniController.js')
+const { signUpAlumni, verifyAlumniEmail } = require('../controllers/alumniController.js')
 
 router.post('/login', (req, res) => {
     loginUser(req, res)
