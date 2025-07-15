@@ -23,7 +23,7 @@ const userSchema = new mongoose.Schema({
     shareCodingProfile: { type: Boolean, default: true }, // New field for subscription status
     isAlumni: { type: Boolean, default: false }, // Add this field
     isVerified: { type: Boolean, default: false }, // Add this field
-    program: { type: String, default: '' }, // btech/mtech/phd
+   // program: { type: String, default: '' }, // btech/mtech/phd
     currentCompany:{type: String, default: ''}, 
     currentDesignation: {type: String, default: ''}, 
     pastCompanies: { type: [String], default: [] }, // New field for past companies
