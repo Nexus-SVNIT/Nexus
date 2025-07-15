@@ -10,7 +10,7 @@ router.post('/signup', (req, res) => {
     signupUser(req, res)
 })
 router.post('/alumni/signup', (req, res) => {
-    addAlumniDetails(req, res)
+    signUpAlumni
 })
 
 router.get('/alumni/verify/:token', (req, res) => {
