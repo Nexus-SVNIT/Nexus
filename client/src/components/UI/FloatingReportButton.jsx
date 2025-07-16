@@ -2,7 +2,15 @@
 
 import { useState } from "react"
 
-const categories = ["Bug", "Feedback", "Feature Request", "Other"]
+const categories = [
+  "Website or Tech issue/bug",
+  "Nexus's operation related issue",
+  "Event related issue",
+  "Finance related issue",
+  "Nexus's Social Media related issue",
+  "Other",
+  "Feedback"
+]
 
 export default function FloatingReportButton() {
   const [open, setOpen] = useState(false)
@@ -36,15 +44,27 @@ export default function FloatingReportButton() {
     setError("")
     setSuccess(false)
     try {
-      // Placeholder: Replace with actual API call
-      await new Promise((res) => setTimeout(res, 1000))
+      const formData = new FormData();
+      formData.append('category', category);
+      formData.append('description', description);
+      if (image) {
+        formData.append('image', image);
+      }
+      const response = await fetch('/api/report', {
+        method: 'POST',
+        body: formData
+      });
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || 'Failed to submit report.');
+      }
       setSuccess(true)
       setDescription("")
       setCategory(categories[0])
-      setImage(null) // Clear image after successful submission
-      setImagePreview(null) // Clear image preview
+      setImage(null)
+      setImagePreview(null)
     } catch (err) {
-      setError("Failed to submit report.")
+      setError(err.message || "Failed to submit report.")
     } finally {
       setSubmitting(false)
     }
