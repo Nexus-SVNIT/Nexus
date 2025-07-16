@@ -1,4 +1,5 @@
 "use client"
+
 import { useState } from "react"
 
 const categories = ["Bug", "Feedback", "Feature Request", "Other"]
@@ -14,7 +15,7 @@ export default function FloatingReportButton() {
   const [imagePreview, setImagePreview] = useState(null)
 
   const handleImageChange = (e) => {
-    const file = e.target.files[0]
+    const file = e.target.files?.[0]
     if (file) {
       setImage(file)
       setImagePreview(URL.createObjectURL(file))
@@ -40,6 +41,8 @@ export default function FloatingReportButton() {
       setSuccess(true)
       setDescription("")
       setCategory(categories[0])
+      setImage(null) // Clear image after successful submission
+      setImagePreview(null) // Clear image preview
     } catch (err) {
       setError("Failed to submit report.")
     } finally {
@@ -53,7 +56,7 @@ export default function FloatingReportButton() {
       <button
         onClick={() => setOpen(true)}
         className="fixed bottom-8 z-[10000] bg-blue-600 text-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg text-2xl border-none cursor-pointer hover:bg-blue-700 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-        style={{ right: '2rem', left: 'auto' }}
+        style={{ right: "2rem", left: "auto" }}
         aria-label="Report Issue"
       >
         {/* Inline SVG for Flag icon */}
@@ -81,7 +84,7 @@ export default function FloatingReportButton() {
           onClick={() => setOpen(false)}
         >
           <div
-            className="bg-white rounded-xl p-8 min-w-[320px] max-w-md w-full shadow-2xl relative"
+            className="relative bg-white rounded-xl min-w-[320px] max-w-md w-full shadow-2xl"
             onClick={(e) => e.stopPropagation()}
             role="dialog"
             aria-modal="true"
@@ -89,7 +92,8 @@ export default function FloatingReportButton() {
           >
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-3 right-3 bg-transparent border-none text-gray-500 hover:text-gray-700 text-2xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1"
+              className="absolute bg-transparent border-none text-gray-500 hover:text-gray-700 text-2xl cursor-pointer focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-full p-1"
+              style={{ top: 0, right: 0, left: 'auto', margin: '1rem' }}
               aria-label="Close"
             >
               {/* Inline SVG for X icon */}
@@ -109,92 +113,94 @@ export default function FloatingReportButton() {
                 <path d="m6 6 12 12" />
               </svg>
             </button>
-            <h2 id="report-issue-title" className="mb-6 text-2xl font-semibold text-gray-800">
-              Report an Issue
-            </h2>
-            <form onSubmit={handleSubmit}>
-              <div className="mb-4">
-                <label htmlFor="category" className="block mb-1 text-sm font-medium text-gray-700">
-                  Category
-                </label>
-                <select
-                  id="category"
-                  name="category"
-                  value={category}
-                  onChange={(e) => setCategory(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                  required
+            <div className="p-8">
+              <h2 id="report-issue-title" className="mb-6 text-2xl font-semibold text-gray-800">
+                Report an Issue
+              </h2>
+              <form onSubmit={handleSubmit}>
+                <div className="mb-4">
+                  <label htmlFor="category" className="block mb-1 text-sm font-medium text-gray-700">
+                    Category
+                  </label>
+                  <select
+                    id="category"
+                    name="category"
+                    value={category}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    required
+                  >
+                    {categories.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mb-6">
+                  <label htmlFor="description" className="block mb-1 text-sm font-medium text-gray-700">
+                    Description
+                  </label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full min-h-[120px] p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none resize-y"
+                    required
+                    maxLength={500}
+                    placeholder="Describe the issue or feedback..."
+                    aria-describedby="description-help"
+                  />
+                  <p id="description-help" className="text-xs text-gray-500 mt-1">
+                    Max 500 characters.
+                  </p>
+                </div>
+                {/* Image Upload Field */}
+                <div className="mb-6">
+                  <label htmlFor="image" className="block mb-1 text-sm font-medium text-gray-700">
+                    Upload Image (optional)
+                  </label>
+                  <input
+                    id="image"
+                    name="image"
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageChange}
+                    className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                  />
+                  {imagePreview && (
+                    <div className="mt-2 flex flex-col items-start gap-2">
+                      <img src={imagePreview || "/placeholder.svg"} alt="Preview" className="max-h-32 rounded border" />
+                      <button
+                        type="button"
+                        onClick={handleRemoveImage}
+                        className="text-xs text-red-600 hover:underline focus:outline-none"
+                      >
+                        Remove Image
+                      </button>
+                    </div>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-blue-600 text-white py-2 px-6 border-none rounded-md cursor-pointer font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
                 >
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div className="mb-6">
-                <label htmlFor="description" className="block mb-1 text-sm font-medium text-gray-700">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  className="w-full min-h-[120px] p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none resize-y"
-                  required
-                  maxLength={500}
-                  placeholder="Describe the issue or feedback..."
-                  aria-describedby="description-help"
-                />
-                <p id="description-help" className="text-xs text-gray-500 mt-1">
-                  Max 500 characters.
-                </p>
-              </div>
-              {/* Image Upload Field */}
-              <div className="mb-6">
-                <label htmlFor="image" className="block mb-1 text-sm font-medium text-gray-700">
-                  Upload Image (optional)
-                </label>
-                <input
-                  id="image"
-                  name="image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="block w-full text-sm text-gray-700 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
-                />
-                {imagePreview && (
-                  <div className="mt-2 flex flex-col items-start gap-2">
-                    <img src={imagePreview} alt="Preview" className="max-h-32 rounded border" />
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="text-xs text-red-600 hover:underline focus:outline-none"
-                    >
-                      Remove Image
-                    </button>
+                  {submitting ? "Submitting..." : "Submit Report"}
+                </button>
+                {success && (
+                  <div className="mt-4 text-center text-green-600 text-sm" role="status">
+                    Report submitted. Thank you!
                   </div>
                 )}
-              </div>
-              <button
-                type="submit"
-                disabled={submitting}
-                className="w-full bg-blue-600 text-white py-2 px-6 border-none rounded-md cursor-pointer font-semibold hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-              >
-                {submitting ? "Submitting..." : "Submit Report"}
-              </button>
-              {success && (
-                <div className="mt-4 text-center text-green-600 text-sm" role="status">
-                  Report submitted. Thank you!
-                </div>
-              )}
-              {error && (
-                <div className="mt-4 text-center text-red-600 text-sm" role="alert">
-                  {error}
-                </div>
-              )}
-            </form>
+                {error && (
+                  <div className="mt-4 text-center text-red-600 text-sm" role="alert">
+                    {error}
+                  </div>
+                )}
+              </form>
+            </div>
           </div>
         </div>
       )}
