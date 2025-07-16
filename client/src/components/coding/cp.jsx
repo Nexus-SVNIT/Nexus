@@ -16,16 +16,40 @@ import RatingLegend from "./RatingLegend";
 const Cp = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   // Add new state for rank display preference
-  const [showGlobalRank, setShowGlobalRank] = useState(searchParams.get("globalRank") === "true");
+  const [showGlobalRank, setShowGlobalRank] = useState(
+    searchParams.get("globalRank") === "true",
+  );
   // Replace useState initializations with URL params
-  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
-  const [activePlatform, setActivePlatform] = useState(searchParams.get("platform") || "codeforces");
-  const [branchFilter, setBranchFilter] = useState(searchParams.get("branch") || "all");
-  const [yearFilter, setYearFilter] = useState(searchParams.get("year") || "all");
-  const [activeStatusFilter, setActiveStatusFilter] = useState(searchParams.get("status") || "all");
-  const [tempBranchFilter, setTempBranchFilter] = useState(searchParams.get("branch") || "all");
-  const [tempYearFilter, setTempYearFilter] = useState(searchParams.get("year") || "all");
-  const [studentStatusFilter, setTempStudentStatusFilter] = useState(searchParams.get("status") || "all");
+  const [searchTerm, setSearchTerm] = useState(
+    searchParams.get("search") || "",
+  );
+  const [activePlatform, setActivePlatform] = useState(
+    searchParams.get("platform") || "codeforces",
+  );
+  const [gradFilter, setGradFilter] = useState(
+    searchParams.get("grad") || "all",
+  );
+  const [branchFilter, setBranchFilter] = useState(
+    searchParams.get("branch") || "all",
+  );
+  const [yearFilter, setYearFilter] = useState(
+    searchParams.get("year") || "all",
+  );
+  const [activeStatusFilter, setActiveStatusFilter] = useState(
+    searchParams.get("status") || "all",
+  );
+  const [tempGradFilter, setTempGradFilter] = useState(
+    searchParams.get("grad") || "all",
+  );
+  const [tempBranchFilter, setTempBranchFilter] = useState(
+    searchParams.get("branch") || "all",
+  );
+  const [tempYearFilter, setTempYearFilter] = useState(
+    searchParams.get("year") || "all",
+  );
+  const [studentStatusFilter, setTempStudentStatusFilter] = useState(
+    searchParams.get("status") || "all",
+  );
   const [userData, setUserData] = useState([]);
   const [batchData, setBatchData] = useState({});
   const [codeforcesLeaderboard, setCodeforcesLeaderboard] = useState([]);
@@ -50,7 +74,6 @@ const Cp = () => {
         if (
           localData &&
           Date.now() - localData.lastUpdate < 1000 * 60 * 60 * 8
-
         ) {
           setBatchData(localData.batchData);
           setCodeforcesLeaderboard(localData.codeforcesLeaderboard);
@@ -64,13 +87,19 @@ const Cp = () => {
         const [cfProfiles, lcProfiles, ccProfiles] = await Promise.all([
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/codeforces`,
-          ).then((res) => res.json()).then((data => data.data)),
+          )
+            .then((res) => res.json())
+            .then((data) => data.data),
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/leetcode`,
-          ).then((res) => res.json()).then((data => data.data)),
+          )
+            .then((res) => res.json())
+            .then((data) => data.data),
           fetch(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/users/codechef`,
-          ).then((res) => res.json()).then((data => data.data)),
+          )
+            .then((res) => res.json())
+            .then((data) => data.data),
         ]);
 
         // Process Codeforces data
@@ -219,16 +248,25 @@ const Cp = () => {
   // Add effect to sync URL with state changes
   useEffect(() => {
     const params = new URLSearchParams();
-    
+
     if (searchTerm) params.set("search", searchTerm);
     if (activePlatform !== "codeforces") params.set("platform", activePlatform);
     if (branchFilter !== "all") params.set("branch", branchFilter);
+    if (gradFilter !== "all") params.set("grad", gradFilter);
     if (yearFilter !== "all") params.set("year", yearFilter);
     if (activeStatusFilter !== "all") params.set("status", activeStatusFilter);
     if (showGlobalRank) params.set("globalRank", "true");
-    
+
     setSearchParams(params, { replace: true });
-  }, [searchTerm, activePlatform, branchFilter, yearFilter, activeStatusFilter, showGlobalRank]);
+  }, [
+    searchTerm,
+    activePlatform,
+    branchFilter,
+    gradFilter,
+    yearFilter,
+    activeStatusFilter,
+    showGlobalRank,
+  ]);
 
   if (isError) {
     return <MaintenancePage />;
@@ -248,10 +286,10 @@ const Cp = () => {
 
     // Calculate academic year
     const academicYear = currentMonth >= 7 ? currentYear : currentYear - 1;
-    
+
     // Calculate years since admission
     const yearsSinceAdmission = academicYear - (2000 + parseInt(admissionYear));
-    
+
     // Student is current if they've been in college for less than 4 years
     return yearsSinceAdmission < 4;
   };
@@ -259,23 +297,34 @@ const Cp = () => {
   const filterData = (data) => {
     return data.filter((user) => {
       // Branch and Year filtering
-      const userBranch = user.admissionNumber?.substring(3, 5) || "";
+      const uBranch = user.admissionNumber?.substring(3, 5) || "";
+      const userBranch = uBranch === "CO" ? "CS" : uBranch; // Treat CO as CS
+      const uGrad = user.admissionNumber?.substring(0, 1) || "";
+      const userGrad = uGrad === "I" ? "U" : uGrad; // Treat IPG as UG
       const userYear = user.admissionNumber?.substring(1, 3) || "";
       const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
 
       const matchesBranch =
         branchFilter === "all" || userBranch === branchFilter;
+      const matchesGrad = gradFilter === "all" || userGrad === gradFilter;
       const matchesYear = yearFilter === "all" || userYear === yearFilter;
-      const matchesStatus = activeStatusFilter === "all" || 
-                           (activeStatusFilter === "current" && studentStatus === "current") ||
-                           (activeStatusFilter === "alumni" && studentStatus === "alumni");
+      const matchesStatus =
+        activeStatusFilter === "all" ||
+        (activeStatusFilter === "current" && studentStatus === "current") ||
+        (activeStatusFilter === "alumni" && studentStatus === "alumni");
       const matchesSearch =
         !searchTerm ||
         Object.values(user).some((val) =>
           String(val).toLowerCase().includes(searchTerm.toLowerCase()),
         );
 
-      return matchesBranch && matchesYear && matchesStatus && matchesSearch;
+      return (
+        matchesBranch &&
+        matchesYear &&
+        matchesStatus &&
+        matchesSearch &&
+        matchesGrad
+      );
     });
   };
 
@@ -289,17 +338,23 @@ const Cp = () => {
     } else {
       // First apply filters without search
       const filteredData = data.filter((user) => {
-        const userBranch = user.admissionNumber?.substring(3, 5) || "";
+        const uBranch = user.admissionNumber?.substring(3, 5) || "";
+        const userBranch = uBranch === "CO" ? "CS" : uBranch; // Treat CO as CS
+        const uGrad = user.admissionNumber?.substring(0, 1) || "";
+        const userGrad = uGrad === "I" ? "U" : uGrad; // Treat IPG as UG
         const userYear = user.admissionNumber?.substring(1, 3) || "";
         const studentStatus = isCurrentStudent(userYear) ? "current" : "alumni";
 
-        const matchesBranch = branchFilter === "all" || userBranch === branchFilter;
+        const matchesBranch =
+          branchFilter === "all" || userBranch === branchFilter;
         const matchesYear = yearFilter === "all" || userYear === yearFilter;
-        const matchesStatus = activeStatusFilter === "all" || 
-                           (activeStatusFilter === "current" && studentStatus === "current") ||
-                           (activeStatusFilter === "alumni" && studentStatus === "alumni");
+        const matchesStatus =
+          activeStatusFilter === "all" ||
+          (activeStatusFilter === "current" && studentStatus === "current") ||
+          (activeStatusFilter === "alumni" && studentStatus === "alumni");
+        const matchesGrad = gradFilter === "all" || userGrad === gradFilter;
 
-        return matchesBranch && matchesYear && matchesStatus;
+        return matchesBranch && matchesYear && matchesStatus && matchesGrad;
       });
 
       // Assign ranks based on filtered data (without search)
@@ -310,10 +365,10 @@ const Cp = () => {
 
       // If there's a search term, filter the ranked data but preserve the ranks
       if (searchTerm) {
-        return rankedData.filter(user => 
-          Object.values(user).some(val => 
-            String(val).toLowerCase().includes(searchTerm.toLowerCase())
-          )
+        return rankedData.filter((user) =>
+          Object.values(user).some((val) =>
+            String(val).toLowerCase().includes(searchTerm.toLowerCase()),
+          ),
         );
       }
 
@@ -394,7 +449,9 @@ const Cp = () => {
   };
 
   const getPlatformColor = (platform) => {
-    return activePlatform === platform ? "bg-blue-600 hover:bg-blue-500" : "bg-white/10 hover:bg-white/20";
+    return activePlatform === platform
+      ? "bg-blue-600 hover:bg-blue-500"
+      : "bg-white/10 hover:bg-white/20";
   };
 
   const processCodeforcesData = (profile) => {
@@ -430,15 +487,18 @@ const Cp = () => {
   const handleApplyFilters = () => {
     setBranchFilter(tempBranchFilter);
     setYearFilter(tempYearFilter);
+    setGradFilter(tempGradFilter);
     setActiveStatusFilter(studentStatusFilter);
   };
 
   const handleClearFilters = () => {
     setTempBranchFilter("all");
     setTempYearFilter("all");
+    setTempGradFilter("all");
     setTempStudentStatusFilter("all");
     setBranchFilter("all");
     setYearFilter("all");
+    setGradFilter("all");
     setActiveStatusFilter("all");
     setSearchTerm("");
     // Clear URL params
@@ -449,8 +509,12 @@ const Cp = () => {
     <div className="App text-gray-200 min-h-screen py-8 md:mx-24">
       <HeadTags
         title={"Coding Profile LeaderBoard | Nexus - NIT Surat"}
-        description={"Check out the LeaderBoard of Coding Profiles of different plateforms of students of CSE and AI at NIT Surat."}
-        keywords={"Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"}
+        description={
+          "Check out the LeaderBoard of Coding Profiles of different plateforms of students of CSE and AI at NIT Surat."
+        }
+        keywords={
+          "Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"
+        }
       />
       {loading ? (
         <div className="flex h-screen w-full items-center justify-center">
@@ -469,8 +533,11 @@ const Cp = () => {
               >
                 Profile Page
               </Link>
-              and turn on "Share Your Coding Profile" feature.<br/>
-              It may take upto <span className="font-bold italic">24 hours</span> to reflect your data here.
+              and turn on "Share Your Coding Profile" feature.
+              <br />
+              It may take upto{" "}
+              <span className="font-bold italic">24 hours</span> to reflect your
+              data here.
             </p>
           </div>
           <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">
@@ -502,68 +569,133 @@ const Cp = () => {
             {/* Search and Filter Controls */}
             <div className="relative mb-6 mt-10">
               <div className="flex flex-col gap-4">
-                <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-                  <div className="flex-1 w-full md:max-w-fit">
-                    <SearchBar 
-                      placeholder="Search..." 
+                <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
+                  <div className="w-full flex-1 md:max-w-fit">
+                    <SearchBar
+                      placeholder="Search..."
                       onChange={handleSearchChange}
                       initialValue={searchTerm}
-                      />
+                    />
                   </div>
                   <button
                     onClick={() => setShowFilters(!showFilters)}
                     className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
-                      showFilters ? 'bg-blue-600 hover:bg-blue-500' : 'bg-white/10 hover:bg-white/20'
+                      showFilters
+                        ? "bg-blue-600 hover:bg-blue-500"
+                        : "bg-white/10 hover:bg-white/20"
                     }`}
                   >
-                    <FaFilter className={showFilters ? 'text-white' : 'text-gray-300'} />
+                    <FaFilter
+                      className={showFilters ? "text-white" : "text-gray-300"}
+                    />
                     <span>Filters</span>
                   </button>
                 </div>
 
                 {/* Filters Section */}
-                <div className={`transition-all duration-300 ${showFilters ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 overflow-hidden'}`}>
+                <div
+                  className={`transition-all duration-300 ${
+                    showFilters
+                      ? "max-h-96 opacity-100"
+                      : "max-h-0 overflow-hidden opacity-0"
+                  }`}
+                >
                   <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
                     <div className="flex flex-wrap gap-4">
                       <select
                         value={showGlobalRank ? "global" : "filtered"}
-                        onChange={(e) => setShowGlobalRank(e.target.value === "global")}
-                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                        onChange={(e) =>
+                          setShowGlobalRank(e.target.value === "global")
+                        }
+                        className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
                       >
-                        <option value="global" className="bg-slate-900">Nexus Ranking</option>
-                        <option value="filtered" className="bg-slate-900">Filtered Ranking</option>
+                        <option value="global" className="bg-slate-900">
+                          Nexus Ranking
+                        </option>
+                        <option value="filtered" className="bg-slate-900">
+                          Filtered Ranking
+                        </option>
                       </select>
                       {/* ... existing filter selects ... */}
                       <select
                         value={tempBranchFilter}
                         onChange={(e) => setTempBranchFilter(e.target.value)}
-                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                        className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
                       >
-                        <option value="all" className="bg-slate-900">All Branches</option>
-                        <option value="CS" className="bg-slate-900">CS</option>
-                        <option value="AI" className="bg-slate-900">AI</option>
+                        <option value="all" className="bg-slate-900">
+                          All Branches
+                        </option>
+                        <option value="CS" className="bg-slate-900">
+                          CS/CO
+                        </option>
+                        <option value="AI" className="bg-slate-900">
+                          AI
+                        </option>
+                        <option value="DS" className="bg-slate-900">
+                          DS
+                        </option>
+                        <option value="IS" className="bg-slate-900">
+                          IS
+                        </option>
+                      </select>
+
+                      <select
+                        value={tempGradFilter}
+                        onChange={(e) => setTempGradFilter(e.target.value)}
+                        className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
+                      >
+                        <option value="all" className="bg-slate-900">
+                          All Graduation Levels
+                        </option>
+                        <option value="U" className="bg-slate-900">
+                          UG
+                        </option>
+                        <option value="P" className="bg-slate-900">
+                          PG
+                        </option>
+                        <option value="D" className="bg-slate-900">
+                          PhD
+                        </option>
                       </select>
 
                       <select
                         value={tempYearFilter}
                         onChange={(e) => setTempYearFilter(e.target.value)}
-                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                        className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
                       >
-                        <option value="all" className="bg-slate-900">All Years</option>
-                        <option value="21" className="bg-slate-900">2021</option>
-                        <option value="22" className="bg-slate-900">2022</option>
-                        <option value="23" className="bg-slate-900">2023</option>
-                        <option value="24" className="bg-slate-900">2024</option>
+                        <option value="all" className="bg-slate-900">
+                          All Years
+                        </option>
+                        <option value="21" className="bg-slate-900">
+                          2021
+                        </option>
+                        <option value="22" className="bg-slate-900">
+                          2022
+                        </option>
+                        <option value="23" className="bg-slate-900">
+                          2023
+                        </option>
+                        <option value="24" className="bg-slate-900">
+                          2024
+                        </option>
                       </select>
 
                       <select
                         value={studentStatusFilter}
-                        onChange={(e) => setTempStudentStatusFilter(e.target.value)}
-                        className="rounded-lg border border-white/20 bg-white/5 backdrop-blur-sm px-4 py-2 text-white focus:border-blue-500 focus:outline-none"
+                        onChange={(e) =>
+                          setTempStudentStatusFilter(e.target.value)
+                        }
+                        className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
                       >
-                        <option value="all" className="bg-slate-900">All Students</option>
-                        <option value="current" className="bg-slate-900">Current Students</option>
-                        <option value="alumni" className="bg-slate-900">Alumni</option>
+                        <option value="all" className="bg-slate-900">
+                          All Students
+                        </option>
+                        <option value="current" className="bg-slate-900">
+                          Current Students
+                        </option>
+                        <option value="alumni" className="bg-slate-900">
+                          Alumni
+                        </option>
                       </select>
                     </div>
 
@@ -576,7 +708,7 @@ const Cp = () => {
                       </button>
                       <button
                         onClick={handleClearFilters}
-                        className="bg-white/10 hover:bg-white/20 rounded-lg px-4 py-2 transition-colors"
+                        className="rounded-lg bg-white/10 px-4 py-2 transition-colors hover:bg-white/20"
                       >
                         Clear Filters
                       </button>
@@ -590,7 +722,7 @@ const Cp = () => {
             <div className="mb-8 flex flex-wrap justify-center gap-4">
               <button
                 onClick={() => handlePlatformChange("codeforces")}
-                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 font-semibold transition-colors md:px-4 md:py-2 ${getPlatformColor(
                   "codeforces",
                 )} hover:bg-blue-500`}
               >
@@ -598,7 +730,7 @@ const Cp = () => {
               </button>
               <button
                 onClick={() => handlePlatformChange("leetcode")}
-                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 font-semibold transition-colors md:px-4 md:py-2 ${getPlatformColor(
                   "leetcode",
                 )} hover:bg-blue-500`}
               >
@@ -606,7 +738,7 @@ const Cp = () => {
               </button>
               <button
                 onClick={() => handlePlatformChange("codechef")}
-                className={`rounded-lg px-3 py-2 md:px-4 md:py-2 font-semibold transition-colors ${getPlatformColor(
+                className={`rounded-lg px-3 py-2 font-semibold transition-colors md:px-4 md:py-2 ${getPlatformColor(
                   "codechef",
                 )} hover:bg-blue-500`}
               >
@@ -620,9 +752,7 @@ const Cp = () => {
                 <RatingLegend platform="codeforces" />
                 <SortableTable
                   columns={columns.codeforces}
-                  data={filterData(
-                    getRankData(codeforcesLeaderboard)
-                  )}
+                  data={filterData(getRankData(codeforcesLeaderboard))}
                 />
               </>
             )}
