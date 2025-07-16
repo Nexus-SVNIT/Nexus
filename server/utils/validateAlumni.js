@@ -1,4 +1,4 @@
-function isAlumni(admissionNumber) {
+function validateAlumni(admissionNumber) {
    
     admissionNumber = admissionNumber.trim().toUpperCase()
     const currentDate = new Date();
@@ -20,4 +20,4 @@ function isAlumni(admissionNumber) {
            (programType === 'I' && yearsSinceAdmission >= 5);
 }
 
-module.exports = { isAlumni };
+module.exports = { validateAlumni };

@@ -4,7 +4,7 @@ const authMiddleware = require('../middlewares/authMiddleware'); // Assuming you
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js'); // Assuming you have an auth middleware
 const { loginUser, signupUser, verifyEmail, updateUserProfile, getUsers, getUserProfile, getAllUsers, forgotPassword, resetPassword, verifyPasswordResetEmail, generalNotification, getUserStats, getPendingAlumni, verifyAlumni, rejectAlumni } = require('../controllers/userController.js')
 const Post = require('../models/postModel'); // Add at the top with other imports
-
+const {getPendingAlumniDetails}=require('../controllers/alumniController.js')
 router.post('/login', (req, res) => {
     loginUser(req, res);
 })

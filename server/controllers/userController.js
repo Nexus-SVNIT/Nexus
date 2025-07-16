@@ -16,6 +16,8 @@ const transporter = nodemailer.createTransport({
     }
 });
 
+
+
 const loginUser = async (req, res) => {
     const { admissionNumber, password } = req.body;
 
@@ -25,34 +27,52 @@ const loginUser = async (req, res) => {
             return res.status(400).json({ message: 'User not found' });
         }
 
-        // Check if the user is verified
+        // Check if email is verified
         if (!foundUser.emailVerified) {
             return res.status(400).json({ message: 'Please verify your email before logging in.' });
         }
 
-        // Check if alumni is verified by admin
-        if (foundUser.isAlumni && !foundUser.isVerifiedAlumni) {
+        // Check admin verification for alumni
+        if (foundUser.isAlumni && !foundUser.isVerified) {
             return res.status(400).json({ 
                 message: 'Your alumni account is pending verification. Please wait for admin approval.' 
             });
         }
 
+        // Password check
         const isMatch = await foundUser.comparePassword(password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
 
-        const token = jwt.sign(
-            { id: foundUser._id, admissionNumber: foundUser.admissionNumber },
-            process.env.SECRET,
-        );
+        // Final payload
+        const payload = {
+            id: foundUser._id,
+            admissionNumber: foundUser.admissionNumber,
+            isAlumni: foundUser.isAlumni || false,
+        };
 
-        res.status(200).json({ message: 'Login successful', token });
+        const token = jwt.sign(payload, process.env.SECRET, {
+            expiresIn: '7d'
+        });
+
+        res.status(200).json({
+            message: 'Login successful',
+            token,
+            user: {
+                id: foundUser._id,
+                fullName: foundUser.fullName,
+                isAlumni: foundUser.isAlumni,
+                admissionNumber: foundUser.admissionNumber
+            }
+        });
+
     } catch (error) {
-        console.error(error);
+        console.error("Login error:", error);
         res.status(500).json({ message: 'Server error', error });
     }
 };
+    
 
 
 const signupUser = async (req, res) => {
