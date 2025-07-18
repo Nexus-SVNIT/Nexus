@@ -224,7 +224,8 @@ module.exports = {
         5: '0px 1px 1px rgba(0, 0, 0, 0.15)',
         6: '0px 3px 15px rgba(0, 0, 0, 0.1)',
         7: '-5px 0 0 #313D4A, 5px 0 0 #313D4A',
-        8: '1px 0 0 #313D4A, -1px 0 0 #313D4A, 0 1px 0 #313D4A, 0 -1px 0 #313D4A, 0 3px 13px rgb(0 0 0 / 8%)'
+        8: '1px 0 0 #313D4A, -1px 0 0 #313D4A, 0 1px 0 #313D4A, 0 -1px 0 #313D4A, 0 3px 13px rgb(0 0 0 / 8%)',
+        elegant: '0 10px 30px -10px hsl(142 76% 36% / 0.3)',
       },
       dropShadow: {
         1: '0px 1px 0px #E2E8F0',
@@ -233,7 +234,17 @@ module.exports = {
       keyframes: {
         rotating: {
           '0%, 100%': { transform: 'rotate(360deg)' },
-          '50%': { transform: 'rotate(0deg)' }
+          '50%': { transform: 'rotate(0deg)' },
+          'fade-in': {
+            '0%': {
+              opacity: '0',
+              transform: 'translateY(10px)'
+            },
+            '100%': {
+              opacity: '1',
+              transform: 'translateY(0)'
+            }
+				  }
         }
       },
       animation: {
@@ -241,7 +252,8 @@ module.exports = {
         rotating: 'rotating 30s linear infinite',
         'spin-1.5': 'spin 1.5s linear infinite',
         'spin-2': 'spin 2s linear infinite',
-        'spin-3': 'spin 3s linear infinite'
+        'spin-3': 'spin 3s linear infinite',
+        'fade-in': 'fade-in 0.3s ease-out',
       }
     }
   },

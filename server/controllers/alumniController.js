@@ -113,6 +113,7 @@ const getAllAlumniDetails = async (req, res) => {
         const total = await User.countDocuments(query);
         const alumniDetails = await User.find(query)
             .sort({ createdAt: 1 })
+            .select('fullName passingYear currentDesignation currentCompany expertise linkedInProfile location admissionNumber imageLink')
             .skip(skip)
             .limit(limit);
 
@@ -127,6 +128,22 @@ const getAllAlumniDetails = async (req, res) => {
         });
     } catch (error) {
         console.error("Error fetching all alumni:", error);
+        return res.status(500).json({ message: "Server error" });
+    }
+};
+
+
+const getAllCompanies = async (req, res) => {
+    try {
+        const companies = await User.distinct('currentCompany', { 
+            isAlumni: true, 
+            isVerified: true,
+            currentCompany: { $nin: [null, ''] }
+        });
+
+        return res.status(200).json({ companies });
+    } catch (error) {
+        console.error("Error fetching companies:", error);
         return res.status(500).json({ message: "Server error" });
     }
 };
@@ -398,4 +415,5 @@ module.exports = {
     getPendingAlumniDetails,
     toggleVerification,
     verifyAlumniEmail,
+    getAllCompanies
 };

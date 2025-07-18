@@ -16,7 +16,7 @@ const InterviewExperiencePage = () => {
   const [locations, setLocations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageLimit, setPageLimit] = useState(10);
+  const [pageLimit, setPageLimit] = useState(5);
   const [isError, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 
@@ -311,7 +311,7 @@ const InterviewExperiencePage = () => {
               className="border-gray-700 rounded-lg border bg-zinc-800 px-4 py-2 text-white"
             >
               <option value="">All Campus Types</option>
-              <option value="In Campus">In Campus</option>
+              <option value="On Campus">On Campus</option>
               <option value="Off Campus">Off Campus</option>
               <option value="Pool Campus">Pool Campus</option>
             </select>

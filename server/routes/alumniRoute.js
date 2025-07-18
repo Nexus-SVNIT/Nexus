@@ -1,6 +1,6 @@
 const express = require('express');
 const requireAuth = require('../middlewares/requireAuth.js');
-const { signUpAlumni, getPendingAlumniDetails, toggleVerification, getAllAlumniDetails ,verifyAlumniEmail} = require('../controllers/alumniController.js');
+const { signUpAlumni, getPendingAlumniDetails, toggleVerification, getAllAlumniDetails ,verifyAlumniEmail, getAllCompanies} = require('../controllers/alumniController.js');
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js');
 const authMiddleware = require('../middlewares/authMiddleware.js');
 const router = express.Router();
@@ -14,7 +14,8 @@ const path = require('path');
 // Define routes
 
 router.get('/pending',coreAuthMiddleware, getPendingAlumniDetails);
-router.get('/',authMiddleware, getAllAlumniDetails);
+router.get('/', getAllAlumniDetails);
 router.patch('/:id',coreAuthMiddleware, toggleVerification);
+router.get('/get-companies', getAllCompanies);
 
 module.exports = router;
