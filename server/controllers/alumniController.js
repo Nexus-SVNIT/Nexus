@@ -133,15 +133,35 @@ const getAllAlumniDetails = async (req, res) => {
 };
 
 
-const getAllCompanies = async (req, res) => {
+const getAllCompaniesAndExpertise = async (req, res) => {
     try {
-        const companies = await User.distinct('currentCompany', { 
-            isAlumni: true, 
-            isVerified: true,
-            currentCompany: { $nin: [null, ''] }
-        });
+        // const companies = await User.distinct('currentCompany', { 
+        //     isAlumni: true, 
+        //     isVerified: true,
+        //     currentCompany: { $nin: [null, ''] }
+        // });
 
-        return res.status(200).json({ companies });
+        // const expertise = await User.distinct('expertise', {
+        //     isAlumni: true, 
+        //     isVerified: true,
+        //     expertise: { $nin: [null, ''] }
+        // });
+
+        // run both parallel
+        const [companies, expertise] = await Promise.all([
+            User.distinct('currentCompany', {
+                isAlumni: true, 
+                isVerified: true,
+                currentCompany: { $nin: [null, ''] }
+            }),
+            User.distinct('expertise', {
+                isAlumni: true, 
+                isVerified: true,
+                expertise: { $nin: [null, ''] }
+            })
+        ]);
+
+        return res.status(200).json({ companies, expertise });
     } catch (error) {
         console.error("Error fetching companies:", error);
         return res.status(500).json({ message: "Server error" });
@@ -415,5 +435,5 @@ module.exports = {
     getPendingAlumniDetails,
     toggleVerification,
     verifyAlumniEmail,
-    getAllCompanies
+    getAllCompaniesAndExpertise
 };
