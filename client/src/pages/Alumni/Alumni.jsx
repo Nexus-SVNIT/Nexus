@@ -28,6 +28,8 @@ const Alumni = () => {
     const [expertise, setExpertise] = useState('');
     const [expertises, setExpertises] = useState([]);
 
+    const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('');
+
     const clearFilters = () => {
     setBatchFrom('');
     setBatchTo('');
@@ -53,7 +55,7 @@ const Alumni = () => {
         isError,
         data: data,
     } = useQuery({
-        queryKey: ["alumniDetails", currentPage, pageLimit, searchTerm, batchFrom, batchTo, expertise, company],
+        queryKey: ["alumniDetails", currentPage, pageLimit, debouncedSearchTerm, batchFrom, batchTo, expertise, company],
         queryFn: async () => {
             try {
                 const response = await axios.get(
@@ -62,7 +64,7 @@ const Alumni = () => {
                         params: {
                             page: currentPage,
                             limit: pageLimit,
-                            q: searchTerm,
+                            q: debouncedSearchTerm,
                             batchFrom: batchFrom || undefined,
                             batchTo: batchTo || undefined,
                             expertise: expertise || undefined,
@@ -113,6 +115,17 @@ const Alumni = () => {
 
         fetchCompanies();
     }, []);
+
+    // Debounce logic
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchTerm(searchTerm);
+        }, 500); // 500ms debounce
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchTerm]);
 
     function handlePageChange(newPage) {
         if (newPage < 1 || newPage > totalPages) return;
