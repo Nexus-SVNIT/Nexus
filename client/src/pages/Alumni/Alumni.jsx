@@ -35,6 +35,15 @@ const Alumni = () => {
     setBatchTo('');
     setExpertise('');
     setSearchTerm('');
+    setCompany('');
+    setSearchParams({
+        batchFrom: '',
+        batchTo: '',
+        expertise: '',
+        company: '',
+        page: '1',
+        limit: pageLimit.toString(),
+    });
     };
 
     // Initialize currentPage and pageLimit from URL params if available
@@ -149,6 +158,7 @@ const Alumni = () => {
         setBatchFrom(newFilters.batchFrom);
         setBatchTo(newFilters.batchTo);
         setExpertise(newFilters.expertise);
+        setCompany(newFilters.company);
 
         // Update URL with new filters
         const newSearchParams = new URLSearchParams(searchParams);

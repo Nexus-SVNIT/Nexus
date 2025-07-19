@@ -34,7 +34,7 @@ const Filters = ({
             batchFrom: localBatchFrom,
             batchTo: localBatchTo,
             company: localCompany,
-            expertise: localExpertise
+            expertise: localExpertise,
         });
     };
 
@@ -50,15 +50,8 @@ const Filters = ({
 
     return (
         <div className="mb-6 rounded-lg bg-white/5 p-6 backdrop-blur-sm border border-white/10">
-            <div className="mb-4 flex items-center justify-between">
+            <div className="mb-4">
                 <h3 className="text-lg font-semibold text-white">Filter Alumni</h3>
-                <button
-                    onClick={handleClearFilters}
-                    className="flex items-center gap-2 text-sm text-gray-300 hover:text-white transition-colors"
-                >
-                    <FaTimes className="text-xs" />
-                    Clear All
-                </button>
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -134,12 +127,19 @@ const Filters = ({
             </div>
 
             {/* Apply Filters Button */}
-            <div className="mt-6 flex justify-end">
+            <div className="mt-6 flex gap-4 justify-end">
                 <button
                     onClick={handleApplyFilters}
-                    className="rounded-lg bg-blue-600 px-6 py-2 text-white hover:bg-blue-500 transition-colors font-medium"
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-white hover:bg-blue-500 transition-colors font-medium"
                 >
                     Apply Filters
+                </button>
+
+                <button
+                    onClick={handleClearFilters}
+                    className="rounded-lg bg-white/10 px-4 py-2 text-white transition-colors hover:bg-white/20 font-medium"
+                >
+                    Clear All
                 </button>
             </div>
         </div>
