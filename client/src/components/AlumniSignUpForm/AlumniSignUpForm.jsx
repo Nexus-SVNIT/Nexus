@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
 import { FaInfoCircle } from "react-icons/fa";
@@ -13,6 +14,10 @@ function AlumniSignUpForm() {
     personalEmail: "",
     branch: "",
     linkedInProfile: "",
+    companyName: "",
+    designation: "",
+    expertise: "",
+    // Optional fields
     githubProfile: "",
     leetcodeProfile: "",
     codeforcesProfile: "",
@@ -33,6 +38,28 @@ function AlumniSignUpForm() {
     localStorage.setItem("alumniSignupFormData", JSON.stringify(formData));
   }, [formData]);
 
+  const [companies, setCompanies] = useState([]);
+
+  useEffect(() => {
+    const fetchCompanies = async () => {
+      try {
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/companies`,
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        setCompanies(data.map((company) => company.name));
+      } catch (error) {
+        console.error("Error fetching companies:", error);
+      }
+    };
+
+    fetchCompanies();
+  }, []);
+
   const handleChange = (e) => {
     if (e.target.name === "admissionNumber") {
       e.target.value = e.target.value.toUpperCase();
@@ -52,13 +79,17 @@ function AlumniSignUpForm() {
       mobileNumber,
       personalEmail,
       branch,
+      passingYear,
+      companyName,
+      designation,
+      expertise,
       linkedInProfile,
       password,
     } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
-    if (!admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
+    if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }
@@ -91,10 +122,13 @@ function AlumniSignUpForm() {
       2000 + parseInt(formData.admissionNumber.substring(1, 3));
     const programType = formData.admissionNumber.charAt(0);
     const yearsSinceAdmission = academicYear - admissionYear;
+    const passingYearInt = parseInt(formData.passingYear);
 
     if (
-      (programType === "U" && yearsSinceAdmission < 4) ||
-      (programType === "I" && yearsSinceAdmission < 5)
+      ((programType === "U" && yearsSinceAdmission < 4) ||
+        (programType === "I" && yearsSinceAdmission < 5) ||
+        (programType === "P" && yearsSinceAdmission < 2)) &&
+      passingYearInt <= academicYear
     ) {
       toast.error("You are not eligible for alumni registration yet");
       return false;
@@ -116,7 +150,7 @@ function AlumniSignUpForm() {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
           body: JSON.stringify(formData),
         },
@@ -163,9 +197,18 @@ function AlumniSignUpForm() {
       <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
         <FaInfoCircle size={42} className="h-auto text-yellow-500" />
         <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
-          Welcome to the Alumni Sign Up Page! Shine a Spotlight on Your Success !!
-          <br/>Please provide all profile links/usernames to help us in building a
-          better <Link to="/coding" target="_blank" className="text-blue-400 hover:underline">coding profile leaderboard.</Link>{" "}
+          Welcome to the Alumni Sign Up Page! Shine a Spotlight on Your Success
+          !!
+          <br />
+          Please provide all profile links/usernames to help us in building a
+          better{" "}
+          <Link
+            to="/coding"
+            target="_blank"
+            className="text-blue-400 hover:underline"
+          >
+            coding profile leaderboard.
+          </Link>{" "}
         </p>
       </div>
       <div className="flex min-h-screen items-center justify-center bg-black-2">
@@ -205,7 +248,7 @@ function AlumniSignUpForm() {
               type="text"
               id="admissionNumber"
               name="admissionNumber"
-              // pattern="[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}"
+              pattern="[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}"
               value={formData.admissionNumber}
               onChange={handleChange}
               placeholder="[UYYCSXXX, UYYAIXXX, UYYCOXXX, IYYAIXXX,  PYYCSXXX, PYYDSXXX, PYYISXXX]"
@@ -266,9 +309,29 @@ function AlumniSignUpForm() {
               required
             >
               <option value="">Select Branch</option>
-              <option value="CSE">CSE</option>
+              <option value="CSE">CSE/COE</option>
               <option value="AI">AI</option>
             </select>
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="mb-2 block text-sm text-white"
+              htmlFor="passingYear"
+            >
+              Passing Year <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="bg-gray-200 w-full rounded p-2 text-black"
+              type="text"
+              id="passingYear"
+              name="passingYear"
+              // pattern="^(19|20)[0-9]{2}$"
+              value={formData.passingYear}
+              onChange={handleChange}
+              placeholder="YYYY"
+              required
+            />
           </div>
 
           {/* Profile input fields */}
@@ -288,6 +351,69 @@ function AlumniSignUpForm() {
               value={formData.linkedInProfile}
               onChange={handleChange}
               placeholder="LinkedIn Profile URL"
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              className="mb-2 block text-sm text-white"
+              htmlFor="companyName"
+            >
+              Company Name <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="bg-gray-200 w-full rounded p-2 text-black"
+              type="text"
+              list="companies"
+              id="companyName"
+              name="companyName"
+              value={formData.companyName}
+              onChange={handleChange}
+              placeholder="Your Company Name"
+              required
+            />
+            <datalist id="companies">
+              {companies.map((company) => (
+                <option key={company} value={company}>
+                  {company}
+                </option>
+              ))}
+            </datalist>
+          </div>
+          <div className="mb-4">
+            <label
+              className="mb-2 block text-sm text-white"
+              htmlFor="designation"
+            >
+              Designation <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="bg-gray-200 w-full rounded p-2 text-black"
+              type="text"
+              id="designation"
+              name="designation"
+              value={formData.designation}
+              onChange={handleChange}
+              placeholder="Your Designation"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label
+              className="mb-2 block text-sm text-white"
+              htmlFor="expertise"
+            >
+              Expertise <span className="text-red-500">*</span>
+            </label>
+            <input
+              className="bg-gray-200 w-full rounded p-2 text-black"
+              type="text"
+              id="expertise"
+              name="expertise"
+              value={formData.expertise}
+              onChange={handleChange}
+              placeholder="Your Expertise"
               required
             />
           </div>

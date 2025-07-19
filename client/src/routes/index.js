@@ -32,6 +32,7 @@ import AdminLeaderBoard from '../components/Form/AdminLeaderBoard.jsx'
 import EditPost from '../components/Post/EditPost.jsx'
 import AlumniSignUpForm from '../components/AlumniSignUpForm/AlumniSignUpForm.jsx'
 import AlumniUserVerification from '../components/Admin/AlumniVerification';
+import Alumni from '../pages/Alumni/Alumni.jsx'
 
 export const DefaultRoutes = [
   {
@@ -85,7 +86,7 @@ export const DefaultRoutes = [
   {
     path: 'connect',
     title: 'Connect',
-    component: Connect
+    component: Alumni
   },
 
   {
