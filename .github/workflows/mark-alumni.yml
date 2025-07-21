@@ -30,7 +30,7 @@ jobs:
           EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
         run: node scripts/sendAlumniReport.js
           to: ${{ secrets.NEXUS_EMAIL }}
-          from: "noreply@nexus.com"
+          from: "nexus@coed.svnit.ac.in"
           subject: "Alumni Marking Automation Report"
           body: |
             The alumni marking automation has run on June 1st.
