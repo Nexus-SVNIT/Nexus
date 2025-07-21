@@ -20,13 +20,14 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run alumni marking script
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-        run: node scripts/markAlumni.js
+      - name: Install server dependencies
+        run: npm install --prefix server
 
-      - name: Send alumni marking report
+      - name: Run alumni marking API
         env:
-          EMAIL_ID: nexus@coed.svnit.ac.in
-          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
-        run: node scripts/sendAlumniReport.js
+          API_SECRET: ${{ secrets.API_SECRET }}
+          AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
+        run: |
+          curl -X POST "$AUTOMATION_BASE_URL/mark-alumni" \
+            -H "Authorization: Bearer $API_SECRET" \
+            -H "Content-Type: application/json"
