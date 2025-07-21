@@ -1,0 +1,37 @@
+name: Mark Alumni Users
+
+on:
+  schedule:
+    - cron: '0 0 1 6 *' # Runs at midnight UTC on June 1st every year
+
+jobs:
+  mark-alumni:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run alumni marking script
+        env:
+          MONGO_URI: ${{ secrets.MONGO_URI }}
+        run: node scripts/markAlumni.js
+
+      - name: Send alumni marking report
+        env:
+          EMAIL_ID: nexus@coed.svnit.ac.in
+          EMAIL_PASSWORD: ${{ secrets.GMAIL_APP_PASSWORD }}
+        run: node scripts/sendAlumniReport.js
+          to: ${{ secrets.NEXUS_EMAIL }}
+          from: "noreply@nexus.com"
+          subject: "Alumni Marking Automation Report"
+          body: |
+            The alumni marking automation has run on June 1st.
+            Please check the logs in GitHub Actions for details.
