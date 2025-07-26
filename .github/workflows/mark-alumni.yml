@@ -29,6 +29,9 @@ jobs:
           cd server
           npm ci
 
+      - name: Install root dependencies
+        run: npm install
+
       - name: Mark users as alumni
         run: |
           node scripts/markAlumniGithubAction.js "${{ github.event.inputs.year }}"
