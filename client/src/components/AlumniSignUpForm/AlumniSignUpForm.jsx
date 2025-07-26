@@ -14,9 +14,9 @@ function AlumniSignUpForm() {
     personalEmail: "",
     branch: "",
     linkedInProfile: "",
-    companyName: "",
-    designation: "",
-    expertise: "",
+    currentCompany: "",
+    currentDesignation: "",
+    expertise: [],
     // Optional fields
     githubProfile: "",
     leetcodeProfile: "",
@@ -61,14 +61,24 @@ function AlumniSignUpForm() {
   }, []);
 
   const handleChange = (e) => {
-    if (e.target.name === "admissionNumber") {
-      e.target.value = e.target.value.toUpperCase();
+    let value;
+
+    switch (e.target.name) {
+      case "expertise":
+        value = e.target.value;
+        break;
+      case "admissionNumber":
+        value = e.target.value.toUpperCase();
+        break;
+      default:
+        value =
+          e.target.type === "checkbox" ? e.target.checked : e.target.value;
+        break;
     }
 
     setFormData({
       ...formData,
-      [e.target.name]:
-        e.target.type === "checkbox" ? e.target.checked : e.target.value,
+      [e.target.name]: value,
     });
   };
 
@@ -80,8 +90,8 @@ function AlumniSignUpForm() {
       personalEmail,
       branch,
       passingYear,
-      companyName,
-      designation,
+      currentCompany,
+      currentDesignation,
       expertise,
       linkedInProfile,
       password,
@@ -140,6 +150,11 @@ function AlumniSignUpForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    const dataTosend = {
+      ...formData,
+      expertise: formData.expertise.split(",").map((exp) => exp.trim()),
+    }
+
     if (!validateForm()) return;
 
     try {
@@ -152,9 +167,11 @@ function AlumniSignUpForm() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(dataTosend),
         },
       );
+
+      console.log("Response:", res);
 
       const result = await res.json();
       if (res.ok) {
@@ -358,7 +375,7 @@ function AlumniSignUpForm() {
           <div className="mb-4">
             <label
               className="mb-2 block text-sm text-white"
-              htmlFor="companyName"
+              htmlFor="currentCompany"
             >
               Company Name <span className="text-red-500">*</span>
             </label>
@@ -366,9 +383,9 @@ function AlumniSignUpForm() {
               className="bg-gray-200 w-full rounded p-2 text-black"
               type="text"
               list="companies"
-              id="companyName"
-              name="companyName"
-              value={formData.companyName}
+              id="currentCompany"
+              name="currentCompany"
+              value={formData.currentCompany}
               onChange={handleChange}
               placeholder="Your Company Name"
               required
@@ -384,16 +401,16 @@ function AlumniSignUpForm() {
           <div className="mb-4">
             <label
               className="mb-2 block text-sm text-white"
-              htmlFor="designation"
+              htmlFor="currentDesignation"
             >
               Designation <span className="text-red-500">*</span>
             </label>
             <input
               className="bg-gray-200 w-full rounded p-2 text-black"
               type="text"
-              id="designation"
-              name="designation"
-              value={formData.designation}
+              id="currentDesignation"
+              name="currentDesignation"
+              value={formData.currentDesignation}
               onChange={handleChange}
               placeholder="Your Designation"
               required
