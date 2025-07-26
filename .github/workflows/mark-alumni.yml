@@ -1,33 +1,36 @@
 name: Mark Alumni Users
 
 on:
-  schedule:
-    - cron: '0 0 1 6 *' # Runs at midnight UTC on June 1st every year
   workflow_dispatch:
+    inputs:
+      year:
+        description: 'Year to mark as alumni (optional, defaults to current year)'
+        required: false
+        type: string
+  schedule:
+    - cron: '0 0 1 6 *' # 1st June every year at 00:00 UTC
 
 jobs:
   mark-alumni:
     runs-on: ubuntu-latest
+    env:
+      MONGO_URL: ${{ secrets.MONGO_URL }}
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: 20
 
       - name: Install dependencies
-        run: npm install
-
-      - name: Install server dependencies
-        run: npm install --prefix server
-
-      - name: Run alumni marking API
-        env:
-          API_SECRET: ${{ secrets.API_SECRET }}
-          AUTOMATION_BASE_URL: ${{ secrets.AUTOMATION_BASE_URL }}
         run: |
-          curl -X POST "$AUTOMATION_BASE_URL/mark-alumni" \
-            -H "Authorization: Bearer $API_SECRET" \
-            -H "Content-Type: application/json"
+          cd server
+          npm ci
+
+      - name: Mark users as alumni
+        run: |
+          node scripts/markAlumniGithubAction.js "${{ github.event.inputs.year }}"
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
