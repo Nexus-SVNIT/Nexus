@@ -262,7 +262,7 @@ const signUpAlumni = async (req, res) => {
         const newAlumni = await User.create(alumniData);
 
         //  Create verification link
-        const verificationUrl = `${req.headers.origin || req.headers.referer}alumni/verify/${verificationToken}`;
+        const verificationUrl = `${req.headers.origin || req.headers.referer}/auth/alumni/verify/${verificationToken}`;
 
         // 
         const mailOptions = {

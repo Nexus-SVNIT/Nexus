@@ -605,7 +605,7 @@ const getPendingAlumni = async (req, res) => {
         const pendingAlumni = await user.find({ 
             isAlumni: true, 
             emailVerified: true,
-            isVerifiedAlumni: false 
+            isVerified: false 
         });
         res.status(200).json(pendingAlumni);
     } catch (error) {
@@ -622,7 +622,7 @@ const verifyAlumni = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        alumniUser.isVerifiedAlumni = true;
+        alumniUser.isVerified = true;
         await alumniUser.save();
 
         // Send verification email
