@@ -26,8 +26,8 @@ const questionRoutes=require("./routes/questionRoutes.js");
 const commentRoutes=require("./routes/commentRoutes.js");
 const answerRoutes=require("./routes/answerRoutes.js");
 const contributorsRoute=require("./routes/contributorsRoute.js");
-const automationRoutes = require('./routes/automationRoutes.js')
 const rateLimit = require('express-rate-limit');
+const reportRoutes = require('./routes/reportRoutes.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -76,7 +76,7 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/questions', answerRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/contributors', contributorsRoute);
-app.use('/api/automation', automationRoutes);
+app.use('/api/report', reportRoutes)
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
