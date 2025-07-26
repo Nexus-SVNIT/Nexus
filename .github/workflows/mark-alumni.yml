@@ -24,13 +24,13 @@ jobs:
         with:
           node-version: 20
 
+      - name: Install root dependencies
+        run: npm install
+
       - name: Install dependencies
         run: |
           cd server
           npm ci
-
-      - name: Install root dependencies
-        run: npm install
 
       - name: Mark users as alumni
         run: |
