@@ -27,13 +27,11 @@ jobs:
       - name: Install root dependencies
         run: npm install
 
-      - name: Install dependencies
-        run: |
-          cd server
-          npm ci
+      - name: Install server dependencies
+        run: npm install --prefix server
 
       - name: Mark users as alumni
-        run: |
-          node scripts/markAlumniGithubAction.js "${{ github.event.inputs.year }}"
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
+        run: |
+          node scripts/markAlumniGithubAction.js "${{ github.event.inputs.year }}"
