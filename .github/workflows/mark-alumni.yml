@@ -33,6 +33,11 @@ jobs:
       - name: Install mongoose at root
         run: npm install mongoose
 
+      - name: Debug MONGO_URL
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+        run: echo "${MONGO_URL:0:30}... (masked)"
+
       - name: Mark users as alumni
         env:
           MONGO_URL: ${{ secrets.MONGO_URL }}
