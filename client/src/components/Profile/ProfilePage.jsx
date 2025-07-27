@@ -7,8 +7,11 @@ import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 import PostProfile from "./PostProfile"; // Assuming you have a PostProfile component
+import { Navigate } from "react-router-dom"; // Importing for routing, if needed
 
 const ProfilePage = () => {
+  const token = localStorage.getItem("token");
+  
   const [profile, setProfile] = useState({
     fullName: "",
     admissionNumber: "",
@@ -31,6 +34,10 @@ const ProfilePage = () => {
 
   if (err) {
     return <MaintenancePage />;
+  }
+
+  if(!token) {
+    return <Navigate to="/login" replace />;
   }
 
   return (
