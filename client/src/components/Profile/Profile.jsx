@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Toaster, toast } from "react-hot-toast"; // Import react-hot-toast
+import AlumnusBadge from "./AlumniBadge";
 
 const ProfilePage = ({ profile, setProfile, setErr }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -170,7 +171,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     <div className="space-y-8">
       {/* Profile Form Box */}
       <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-6 backdrop-blur-sm">
-        <h3 className="text-xl font-semibold text-gray-200 mb-6">Personal Information</h3>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="text-xl font-semibold text-gray-200">Personal Information</h3>
+          {profile['isAlumni'] && <AlumnusBadge/>}
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Toaster />{" "}
           {/* Toast notification container */}
@@ -232,7 +236,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
           </div>
           <div>
             <label className="text-gray-700 block">Branch</label>
-            <input
+            {/* <input
               type="text"
               name="branch"
               value={profile.branch}
@@ -240,7 +244,16 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               disabled={!isEditing}
               required
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-            />
+            /> */}
+            <select name="branch"
+              value={profile.branch}
+              onChange={handleChange}
+              disabled={!isEditing}
+              required
+              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white">
+                <option value="CSE">CSE/COE</option>
+                <option value="AI">AI</option>
+              </select>
           </div>
           <div>
             <label className="text-gray-700 block">LinkedIn Profile (Link)</label>
