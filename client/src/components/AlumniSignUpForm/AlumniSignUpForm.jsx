@@ -94,11 +94,16 @@ function AlumniSignUpForm() {
       currentDesignation,
       expertise,
       linkedInProfile,
+      githubProfile,
       password,
     } = formData;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
+    if (!fullName) {
+      toast.error("Full Name is required");
+      return false;
+    }
     if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
@@ -111,11 +116,34 @@ function AlumniSignUpForm() {
       toast.error("Invalid Personal Email");
       return false;
     }
+    if (!branch) {
+      toast.error("Branch is required");
+      return false;
+    }
+    if (!passingYear.match(/^(19|20)\d{2}$/)) {
+      toast.error("Invalid Passing Year");
+      return false;
+    }
     if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
       toast.error("LinkedIn Profile URL is required");
       return false;
     }
-
+    if (!currentCompany) {
+      toast.error("Current Company is required");
+      return false;
+    }
+    if (!currentDesignation) {
+      toast.error("Current Designation is required");
+      return false;
+    }
+    if (expertise.length === 0){
+      toast.error("Enter your expertise");
+      return false;
+    }
+    if (githubProfile && !githubProfile.match(/^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/)) {
+      toast.error("Invalid GitHub Profile URL");
+      return false;
+    }
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters");
       return false;
@@ -447,7 +475,7 @@ function AlumniSignUpForm() {
               type="url"
               id="githubProfile"
               name="githubProfile"
-              pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-z0-9_-]+\/?$"
+              pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$"
               value={formData.githubProfile}
               onChange={handleChange}
               placeholder="GitHub Profile URL"
