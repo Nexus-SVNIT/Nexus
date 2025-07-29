@@ -13,6 +13,7 @@ const issueTypeRoleMapping = {
 };
 
 exports.createIssue = async (req, res) => {
+  console.log(req.body)
   const { issueType, description } = req.body;
 
   try {

@@ -58,6 +58,15 @@ async function main() {
             admissionNumber: { $regex: `^(${admissionNumbers.join('|')})`, $options: 'i' }
         });
         let batch = [];
+        const nodemailer = require('nodemailer');
+        // Setup mail transporter (use your SMTP credentials)
+        const transporter = nodemailer.createTransport({
+            service: 'gmail', // or your email provider
+            auth: {
+                user: process.env.EMAIL_ID, // set in .env
+                pass: process.env.EMAIL_PASSWORD  // set in .env
+            }
+        });
         while (await cursor.hasNext()) {
             batch = await cursor.next();
             if (!batch) break;
@@ -69,6 +78,60 @@ async function main() {
                 );
                 updated++;
                 console.log(`Marked ${batch.fullName || batch._id} as alumni for year ${year}`);
+                // Send beautiful HTML email
+                if (batch.personalEmail) {
+                    try {
+                        await transporter.sendMail({
+                            from: process.env.EMAIL_ID,
+                            to: batch.personalEmail,
+                            subject: 'Welcome to the Alumni Network!',
+                            html: `
+                            <html>
+                            <head>
+                                <style>
+                                    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
+                                    .header { text-align: center; padding: 20px 0; }
+                                    .logo { max-height: 80px; }
+                                    .content { background-color: #f8f9fa; padding: 25px; border-radius: 8px; }
+                                    .footer { text-align: center; font-size: 12px; color: #777; margin-top: 20px; }
+                                    .info-item { margin-bottom: 10px; }
+                                    .info-label { font-weight: bold; }
+                                    .button-link { display:inline-block; padding:10px 20px; background-color:skyblue; color:black; border-radius:5px; text-decoration:none; font-weight:bold; }
+                                </style>
+                            </head>
+                            <body>
+                                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+                                    <div style="margin-bottom: 25px; display: flex; justify-content: center;">
+                                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
+                                    </div>
+                                    <div>Dear ${batch.fullName || 'Alumnus'},</div>
+                                    <p>Congratulations, now you've become the part of our alumni network!</p>
+                                    <p>You're now listed on our <b>Alumni Connect</b> page, where you can connect and inspire others in the Nexus community.</p>
+                                    <div style="margin: 20px 0; text-align: center;">
+                                        <a href="https://nexus-svnit.in/connect" class="button-link">View Alumni Connect Page</a>
+                                    </div>
+                                    <p>To help us keep your profile up to date, please provide the following details:</p>
+                                    <ul>
+                                        <li>Company</li>
+                                        <li>Designation</li>
+                                        <li>Location</li>
+                                        <li>Expertises</li>
+                                    </ul>
+                                    <p>You can reply to this email with your details, or update your profile directly on the alumni portal:</p>
+                                    <div style="margin: 20px 0; text-align: center;">
+                                        <a href="https://nexus-svnit.in/profile" class="button-link">Go to Profile Page</a>
+                                    </div>
+                                    <p>Thanks,<br>Team NEXUS</p>
+                                </div>
+                            </body>
+                            </html>
+                            `
+                        });
+                        console.log(`Email sent to ${batch.personalEmail}`);
+                    } catch (mailErr) {
+                        console.error(`Failed to send email to ${batch.personalEmail}:`, mailErr);
+                    }
+                }
             }
         }
         console.log(`Done. Marked ${updated} users as alumni for year ${year}.`);
