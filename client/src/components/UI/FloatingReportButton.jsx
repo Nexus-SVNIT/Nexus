@@ -45,7 +45,7 @@ export default function FloatingReportButton() {
     setSuccess(false)
     try {
       const formData = new FormData();
-      formData.append('category', category);
+      formData.append('issueType', category);
       formData.append('description', description);
       if (image) {
         formData.append('image', image);
