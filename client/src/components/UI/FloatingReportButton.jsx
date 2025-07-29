@@ -50,7 +50,7 @@ export default function FloatingReportButton() {
       if (image) {
         formData.append('image', image);
       }
-      const response = await fetch('/api/report', {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`, {
         method: 'POST',
         body: formData
       });
