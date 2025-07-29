@@ -55,10 +55,10 @@ function App() {
               <>
                 <Route path="/login" element={<LoginForm />} />
                 
-                <Route
+                {/*<Route
                   path="/profile"
                   element={<Navigate to={"/login"}></Navigate>}
-                />
+                />*/}
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/alumni/signup" element={<AlumniSignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />
