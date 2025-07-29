@@ -14,10 +14,15 @@ const issueTypeRoleMapping = {
 
 exports.createIssue = async (req, res) => {
   const { issueType, description } = req.body;
+  const image = req.file; // Multer will populate this if an image is uploaded
 
   try {
     // Save the issue to the database
-    const newIssue = new Issue({ issueType, description });
+    const newIssue = new Issue({ 
+      issueType, // Use issueType directly
+      description,
+      image: image ? image.buffer : null // Store image buffer if uploaded
+    });
     await newIssue.save();
 
     // Get roles based on the issue type
@@ -33,7 +38,7 @@ exports.createIssue = async (req, res) => {
       // Collect email addresses of relevant team members
       const emailRecipients = teamMembers.map(member => member.email);
 
-      // Send notification emails to each relevant team member
+      // Send notification emails to each relevant team members
       await Promise.all(
         emailRecipients.map((to) =>
           sendEmail({
