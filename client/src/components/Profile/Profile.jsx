@@ -10,6 +10,14 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   const [buttonLoading, setButtonLoading] = useState(false); // New state for button loading
   const navigate = useNavigate();
 
+  const [expertiseInput, setExpertiseInput] = useState("");
+
+  useEffect(() => {
+    if (profile.expertise && Array.isArray(profile.expertise)) {
+      setExpertiseInput(profile.expertise.join(", "));
+    }
+  }, [profile.isAlumni, profile.expertise]);
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -39,6 +47,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+    if (name === "expertise"){
+      setExpertiseInput(value);
+      return;
+    }
     setProfile({ ...profile, [name]: type === "checkbox" ? checked : value });
   };
 
@@ -49,18 +61,25 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       mobileNumber,
       personalEmail,
       instituteEmail,
-      branch,
-      password,
+      currentCompany,
+      currentDesignation,
+      githubProfile,
+      linkedInProfile,
       leetcodeProfile,
       codeforcesProfile,
       codechefProfile,
+      isAlumni,
     } = profile;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const instituteEmailPattern =
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
-    if (!admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
+    if (!fullName) {
+      toast.error("Full Name is required");
+      return false;
+    }
+    if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
     }
@@ -72,42 +91,77 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Invalid Personal Email");
       return false;
     }
-    if (!instituteEmail.match(instituteEmailPattern)) {
+    if (!isAlumni && !instituteEmail.match(instituteEmailPattern)) {
       toast.error("Invalid Institute Email");
       return false;
     }
-    if (leetcodeProfile.includes("leetcode.com/")) {
+    if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
+      toast.error("LinkedIn Profile URL is required");
+      return false;
+    }
+    if (isAlumni && !currentCompany) {
+      toast.error("Current Company is required");
+      return false;
+    }
+    if (isAlumni && !currentDesignation) {
+      toast.error("Current Designation is required");
+      return false;
+    }
+    if (isAlumni && expertiseInput.length === 0){
+      toast.error("Enter your expertise");
+      return false;
+    }
+    if (githubProfile && !githubProfile.match(/^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/)) {
+      toast.error("Invalid GitHub Profile URL");
+      return false;
+    }
+    if (!isAlumni && !githubProfile){
+      toast.error("Github profile is compulsory");
+    }
+    if (leetcodeProfile && leetcodeProfile.includes("leetcode.com/")) {
       toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codeforcesProfile.includes("codeforces.com/")) {
+    if(!isAlumni && !leetcodeProfile){
+      toast.error("Leetcode profile is compulsory");
+      return false;
+    }
+    if (codeforcesProfile && codeforcesProfile.includes("codeforces.com/")) {
       toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
-    if (codechefProfile.includes("codechef.com/")) {
+    if (!isAlumni && !codeforcesProfile){
+      toast.error("Codeforces profile is compulsory");
+      return false;
+    }
+    if (codechefProfile && codechefProfile.includes("codechef.com/")) {
       toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
-
-    if(instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
+    if(!isAlumni && instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
       return false;
     }
 
     // Add URL validation for coding profiles
     const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
     
-    if (urlPattern.test(leetcodeProfile)) {
+    if (leetcodeProfile && urlPattern.test(leetcodeProfile)) {
       toast.error("Please enter only your LeetCode username, not the full URL");
       return false;
     }
-    if (urlPattern.test(codeforcesProfile)) {
+    if (codeforcesProfile && urlPattern.test(codeforcesProfile)) {
       toast.error("Please enter only your Codeforces username, not the full URL");
       return false;
     }
-    if (urlPattern.test(codechefProfile)) {
+    if (codechefProfile && urlPattern.test(codechefProfile)) {
       toast.error("Please enter only your CodeChef username, not the full URL");
       return false;
     }
+
+    // if (password.length < 8) {
+    //   toast.error("Password must be at least 8 characters");
+    //   return false;
+    // }
 
     return true;
   };
@@ -117,6 +171,16 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     setButtonLoading(true); // Show loading state in the button
     try {
       if (validateForm()) {
+        if (profile.isAlumni){
+          const expertiseArray = expertiseInput
+              .split(',')
+              .map((exp) => exp.trim())
+              .filter((exp) => exp);
+          setProfile({
+            ...profile, 
+            expertise: expertiseArray
+          });
+        }
         const response = await axios.put(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
           profile,
@@ -186,7 +250,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               value={profile.fullName}
               onChange={handleChange}
               disabled={!isEditing}
-              required
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
@@ -208,7 +271,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               value={profile.mobileNumber}
               onChange={handleChange}
               disabled={!isEditing}
-              required
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
@@ -219,8 +281,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               name="personalEmail"
               value={profile.personalEmail}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
+              disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
@@ -242,15 +303,14 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               value={profile.branch}
               onChange={handleChange}
               disabled={!isEditing}
-              required
+              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             /> */}
             <select name="branch"
               value={profile.branch}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white">
+              disabled            
+              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white">
                 <option value="CSE">CSE/COE</option>
                 <option value="AI">AI</option>
               </select>
@@ -262,11 +322,47 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               name="linkedInProfile"
               value={profile.linkedInProfile}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
+              disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
+          {profile['isAlumni'] && (
+            <>
+              <div>
+                <label className="text-gray-700 block">Current Company</label>
+                <input
+                  type="text"
+                  name="currentCompany"
+                  value={profile.currentCompany}
+                  onChange={handleChange}
+                  disabled={!isEditing}                
+                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                />
+              </div>
+              <div>
+                <label className="text-gray-700 block">Designation</label>
+                <input
+                  type="text"
+                  name="currentDesignation"
+                  value={profile.currentDesignation}
+                  onChange={handleChange}
+                  disabled={!isEditing}                
+                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                />
+              </div>
+              <div>
+                <label className="text-gray-700 block">Expertise</label>
+                <input
+                  type="text"
+                  name="expertise"
+                  value={expertiseInput}
+                  onChange={handleChange}
+                  disabled={!isEditing}                
+                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                />
+              </div>
+            </>
+          )}
           <div>
             <label className="text-gray-700 block">GitHub Profile (Link)</label>
             <input
@@ -274,8 +370,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               name="githubProfile"
               value={profile.githubProfile}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
+              disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
@@ -285,8 +380,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               name="leetcodeProfile"
               value={profile.leetcodeProfile}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
+              disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
@@ -296,8 +390,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               name="codeforcesProfile"
               value={profile.codeforcesProfile}
               onChange={handleChange}
-              disabled={!isEditing}
-              required
+              disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
