@@ -44,6 +44,8 @@ export default function FloatingReportButton() {
     setError("")
     setSuccess(false)
     try {
+      const token = localStorage.getItem("token");
+      
       const formData = new FormData();
       formData.append('issueType', category);
       formData.append('description', description);
@@ -57,8 +59,14 @@ export default function FloatingReportButton() {
         console.log(key, value);
       }
       
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`, {
         method: 'POST',
+        headers,
         body: formData
       });
       
