@@ -28,6 +28,7 @@ const auth = new google.auth.GoogleAuth({
 
 const drive = google.drive({ version: 'v3', auth });
 
+
 const allAchievements = async (req, res) => {
     try {
       // Fetch all verified achievements
@@ -72,7 +73,6 @@ const pendingAchievements = async (req, res) => {
 };
 
 // Function to upload image to Google Drive
-
 const uploadImageToDrive = async (req) => {
     try {
         if (!req.file) {
