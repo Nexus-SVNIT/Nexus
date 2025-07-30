@@ -1,5 +1,6 @@
 const Issue = require("../models/issueModel.js");
 const { sendEmail } = require('../utils/emailUtils.js');
+const User = require("../models/userModel.js");
 
 exports.createIssue = async (req, res) => {
   const issueType = req.body.issueType;
@@ -19,25 +20,50 @@ exports.createIssue = async (req, res) => {
       });
     }
 
-    // Save the issue to the database
+    // Get user details if available
+    let userDetails = null;
+    if (req.user && req.user.admissionNumber) {
+      try {
+        userDetails = await User.findOne({ admissionNumber: req.user.admissionNumber });
+        console.log('User details found:', userDetails ? 'Yes' : 'No');
+      } catch (userError) {
+        console.error('Error fetching user details:', userError);
+      }
+    }
+
+    // Save the issue to the database with user details
     console.log('Creating new issue...');
-    const newIssue = new Issue({ issueType, description });
+    const issueData = { 
+      issueType, 
+      description,
+      author: userDetails ? userDetails._id : null
+    };
+    
+    const newIssue = new Issue(issueData);
     console.log('Issue object created:', newIssue);
     
     await newIssue.save();
     console.log('Issue saved to database');
 
-    // Send email notification to nexus@coed.svnit.ac.in
+    // Send email notification to nexus@coed.svnit.ac.in with user details
     try {
+      const userInfo = userDetails ? `
+        <li><strong>Reported by:</strong> ${userDetails.fullName || 'Unknown'}</li>
+        <li><strong>Admission Number:</strong> ${userDetails.admissionNumber || 'Not provided'}</li>
+        <li><strong>Email:</strong> ${userDetails.instituteEmail || userDetails.personalEmail || 'Not provided'}</li>
+        <li><strong>Branch:</strong> ${userDetails.branch || 'Not provided'}</li>
+      ` : '<li><strong>Reported by:</strong> Anonymous user</li>';
+
       await sendEmail({
         to: 'nexus@coed.svnit.ac.in',
         subject: `New Issue Reported: ${issueType}`,
-        text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}`,
+        text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}${userDetails ? `\n\nReported by: ${userDetails.fullName} (${userDetails.admissionNumber})` : '\n\nReported by: Anonymous user'}`,
         html: `
           <p>A new issue has been reported in the system:</p>
           <ul>
             <li><strong>Issue Type:</strong> ${issueType}</li>
             <li><strong>Description:</strong> ${description}</li>
+            ${userInfo}
           </ul>
           <p>Please review and address the issue as soon as possible.</p>
         `,

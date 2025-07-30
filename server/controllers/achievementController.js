@@ -7,31 +7,26 @@ const nodemailer = require('nodemailer');
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 
-// Google Cloud configuration - only if credentials are available
-let auth, drive;
+const credentials = {
+    type: process.env.GOOGLE_CLOUD_TYPE,
+    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
+    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
+    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
+    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
+    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
+    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
+    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
+    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
+    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
+};
 
-if (process.env.GOOGLE_CLOUD_PRIVATE_KEY) {
-    const credentials = {
-        type: process.env.GOOGLE_CLOUD_TYPE,
-        project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-        private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-        private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-        client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-        auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
-        token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
-        auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
-        client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
-        universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
-    };
+const auth = new google.auth.GoogleAuth({
+    credentials,
+    scopes: SCOPES,
+});
 
-    auth = new google.auth.GoogleAuth({
-        credentials,
-        scopes: SCOPES,
-    });
-
-    drive = google.drive({ version: 'v3', auth });
-}
+const drive = google.drive({ version: 'v3', auth });
 
 
 const allAchievements = async (req, res) => {
@@ -82,11 +77,6 @@ const uploadImageToDrive = async (req) => {
     try {
         if (!req.file) {
             return { success: false, error: 'No file uploaded.' };
-        }
-
-        // Check if Google Drive is configured
-        if (!drive) {
-            return { success: false, error: 'Google Drive not configured. Please set up Google Cloud credentials.' };
         }
 
         const fileMetadata = {

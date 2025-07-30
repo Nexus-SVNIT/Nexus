@@ -4,10 +4,7 @@ const path = require("path");
 const teamMembersModel = require("../models/teamMembersModel");
 const User = require("../models/userModel");
 
-// Google Drive setup with credentials - only if available
-let auth, drive;
-
-if (process.env.GOOGLE_CLOUD_PRIVATE_KEY) {
+// Google Drive setup with credentials
 const credentials = {
     type: process.env.GOOGLE_CLOUD_TYPE,
     project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
@@ -23,23 +20,17 @@ const credentials = {
 };
 
 // Initialize Google Drive client
-    auth = new google.auth.GoogleAuth({
+const auth = new google.auth.GoogleAuth({
     credentials,
     scopes: ['https://www.googleapis.com/auth/drive']
 });
-    drive = google.drive({ version: 'v3', auth });
-}
+const drive = google.drive({ version: 'v3', auth });
 
 // Helper function to upload image to Google Drive
 const uploadImageToDrive = async (file, admissionNumber) => {
     try {
         if (!file) {
             return { success: false, error: 'No file uploaded.' };
-        }
-
-        // Check if Google Drive is configured
-        if (!drive) {
-            return { success: false, error: 'Google Drive not configured. Please set up Google Cloud credentials.' };
         }
 
         const fileMetadata = {
