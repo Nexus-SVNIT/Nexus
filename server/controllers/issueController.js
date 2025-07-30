@@ -7,6 +7,30 @@ exports.createIssue = async (req, res) => {
   const description = req.body.description;
   
   console.log('Extracted values:', { issueType, description });
+  console.log('Request file:', req.file);
+  console.log('Request body:', req.body);
+  
+  // Check for authentication token
+  let userDetails = null;
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.split(' ')[1];
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.SECRET || 'fallback_secret_key');
+      console.log('User from JWT:', decoded);
+      
+      if (decoded && decoded.admissionNumber) {
+        userDetails = await User.findOne({ admissionNumber: decoded.admissionNumber });
+        console.log('User details found:', userDetails ? 'Yes' : 'No');
+      }
+    } catch (error) {
+      console.log('JWT verification failed, proceeding as anonymous user:', error.message);
+    }
+  } else {
+    console.log('No authentication token provided, proceeding as anonymous user');
+  }
 
   try {
     // Validate required fields
@@ -20,15 +44,17 @@ exports.createIssue = async (req, res) => {
       });
     }
 
-    // Get user details if available
-    let userDetails = null;
-    if (req.user && req.user.admissionNumber) {
-      try {
-        userDetails = await User.findOne({ admissionNumber: req.user.admissionNumber });
-        console.log('User details found:', userDetails ? 'Yes' : 'No');
-      } catch (userError) {
-        console.error('Error fetching user details:', userError);
-      }
+
+
+    // Handle image if provided
+    let imageAttachment = null;
+    if (req.file) {
+      console.log('Image received:', req.file.originalname, req.file.size, 'bytes');
+      imageAttachment = {
+        filename: req.file.originalname,
+        content: req.file.buffer,
+        contentType: req.file.mimetype
+      };
     }
 
     // Save the issue to the database with user details
@@ -54,9 +80,9 @@ exports.createIssue = async (req, res) => {
         <li><strong>Branch:</strong> ${userDetails.branch || 'Not provided'}</li>
       ` : '<li><strong>Reported by:</strong> Anonymous user</li>';
 
-      await sendEmail({
-        to: 'nexus@coed.svnit.ac.in',
-        subject: `New Issue Reported: ${issueType}`,
+             const emailData = {
+         to: 'nexus@coed.svnit.ac.in',
+         subject: `New Issue Reported: ${issueType}`,
         text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}${userDetails ? `\n\nReported by: ${userDetails.fullName} (${userDetails.admissionNumber})` : '\n\nReported by: Anonymous user'}`,
         html: `
           <p>A new issue has been reported in the system:</p>
@@ -67,8 +93,15 @@ exports.createIssue = async (req, res) => {
           </ul>
           <p>Please review and address the issue as soon as possible.</p>
         `,
-      });
-      console.log('Email sent successfully to nexus@coed.svnit.ac.in');
+      };
+
+      // Add image attachment if provided
+      if (imageAttachment) {
+        emailData.attachments = [imageAttachment];
+      }
+
+             await sendEmail(emailData);
+       console.log('Email sent successfully to nexus@coed.svnit.ac.in');
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
       // Continue with the response even if email fails
