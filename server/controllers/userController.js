@@ -34,8 +34,8 @@ const loginUser = async (req, res) => {
 
         // Check admin verification for alumni
         if (foundUser.isAlumni && !foundUser.isVerified) {
-            return res.status(400).json({ 
-                message: 'Your alumni account is pending verification. Please wait for admin approval.' 
+            return res.status(400).json({
+                message: 'Your alumni account is pending verification. Please wait for admin approval.'
             });
         }
 
@@ -72,7 +72,7 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-    
+
 
 
 const signupUser = async (req, res) => {
@@ -203,6 +203,9 @@ const updateUserProfile = async (req, res) => {
             personalEmail,
             branch,
             linkedInProfile,
+            currentCompany,
+            currentDesignation,
+            expertise,
             githubProfile,
             leetcodeProfile,
             codeforcesProfile,
@@ -237,6 +240,9 @@ const updateUserProfile = async (req, res) => {
         foundUser.codechefProfile = codechefProfile || foundUser.codechefProfile;  // Update codechefProfile
         foundUser.subscribed = subscribed;
         foundUser.shareCodingProfile = shareCodingProfile;
+        foundUser.currentCompany = currentCompany || foundUser.currentCompany;
+        foundUser.currentDesignation = currentDesignation || foundUser.currentDesignation;
+        foundUser.expertise = expertise || foundUser.expertise;
 
 
         // Step 3: Save the updated user profile
@@ -285,9 +291,9 @@ const getAllUsers = async (req, res) => {
         // Add year filter
         if (yearFilter !== 'all') {
             const yearPattern = yearFilter.slice(2); // Get last two digits of year
-            searchConditions.admissionNumber = { 
-                $regex: `^[UI]${yearPattern}`, 
-                $options: 'i' 
+            searchConditions.admissionNumber = {
+                $regex: `^[UI]${yearPattern}`,
+                $options: 'i'
             };
         }
 
@@ -521,7 +527,7 @@ const generalNotification = async (subject, message) => {
 const getUserStats = async (req, res) => {
     try {
         const totalUsers = await user.countDocuments({ emailVerified: true });
-        
+
         // Get branch-wise stats
         const branchStats = await user.aggregate([
             { $match: { emailVerified: true } },
@@ -546,7 +552,7 @@ const getUserStats = async (req, res) => {
         // Calculate month-over-month growth
         const today = new Date();
         const lastMonth = new Date(today.getFullYear(), today.getMonth() - 1);
-        
+
         const currentMonthUsers = await user.countDocuments({
             emailVerified: true,
             createdAt: { $gte: lastMonth }
@@ -602,10 +608,10 @@ const getUserStats = async (req, res) => {
 
 const getPendingAlumni = async (req, res) => {
     try {
-        const pendingAlumni = await user.find({ 
-            isAlumni: true, 
+        const pendingAlumni = await user.find({
+            isAlumni: true,
             emailVerified: true,
-            isVerified: false 
+            isVerified: false
         });
         res.status(200).json(pendingAlumni);
     } catch (error) {

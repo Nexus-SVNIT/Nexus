@@ -90,16 +90,16 @@ const CodingProfile = ({
   const codeforcesRatings = codeforcesData ? codeforcesData?.data[1]?.ratings?.map((rating) => ({
     date: new Date(rating.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
     contestName: rating.contestName,
-    oldRating: rating.oldRating,
+    oldRating: rating.oldRating, // Comment to hide old rating
     newRating: rating.newRating,
   })) : [];
 
-  const codechefUser = codechefData;
+  const codechefUser = codechefData?.[0];
 
   return (
     <div className="rounded-lg p-6 text-white">
       {/* LeetCode Profile */}
-      {leetcodeData && (
+      {leetcodeUser && (
         <div className="mb-6">
           <h3 className="mb-2 text-xl">LeetCode</h3>
           <img
@@ -184,7 +184,7 @@ const CodingProfile = ({
         </div>
       )}
       {/* Codeforces Profile */}
-      {codeforcesData && (
+      {codeforcesProfileData && (
         <div>
           <h3 className="mb-2 text-xl">Codeforces</h3>
           <img
@@ -234,7 +234,7 @@ const CodingProfile = ({
                         <p>{`Date: ${label}`}</p>
                         <p>{`Contest: ${payload[0].payload.contestName}`}</p>
                         <p>{`New Rating: ${payload[0].payload.newRating}`}</p>
-                        <p>{`Old Rating: ${payload[0].payload.oldRating}`}</p>
+                        <p>{`Old Rating: ${payload[0].payload.oldRating}`}</p> {/* comment to hide old rating */}
                       </div>
                     );
                   }
@@ -261,13 +261,13 @@ const CodingProfile = ({
                 dataKey="oldRating"
                 stroke="#82ca9d"
                 name="Old Rating"
-              />
+              /> {/* Comment to hide old rating */}
             </LineChart>
           </ResponsiveContainer>
         </div>
       )}
       {/* CodeChef Profile */}
-      {codechefData && (
+      {codechefUser && (
         <div>
           <h3 className="mb-2 text-xl">CodeChef</h3>
           <p>Username: {codechefUser?.username}</p>
