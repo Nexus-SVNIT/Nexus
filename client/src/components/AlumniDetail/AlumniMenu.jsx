@@ -143,7 +143,7 @@ const AlumniMenu = () => {
               <p className="w-3/4 text-center text-sm text-white">
                 Your Details are under Review.
               </p>
-              <Link to="/connect" className="rounded-sm bg-blue-600/50 px-4 py-2">
+              <Link to="/alumni-network" className="rounded-sm bg-blue-600/50 px-4 py-2">
                 OK
               </Link>
             </div>

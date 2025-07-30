@@ -57,7 +57,7 @@ const Footer = () => {
                 <Link to={"/forms"}>Forms</Link>
               </ul>
               <ul className="flex flex-col gap-2 text-left text-blue-400">
-                <Link to={"/connect"}>Connect</Link>
+                <Link to={"/alumni-network"}>Alumni Network</Link>
                 <Link to={"/projects"}>Projects</Link>
                 <Link to={"/coding"}>Coding Profile LeaderBoard</Link>
                 <Link to={"/interview-experiences"}>Interview Experience Posts</Link>
