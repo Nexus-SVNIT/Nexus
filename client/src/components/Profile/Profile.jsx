@@ -167,44 +167,51 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    setButtonLoading(true); // Show loading state in the button
-    try {
-      if (validateForm()) {
-        if (profile.isAlumni){
-          const expertiseArray = expertiseInput
-              .split(',')
-              .map((exp) => exp.trim())
-              .filter((exp) => exp);
-          setProfile({
-            ...profile, 
-            expertise: expertiseArray
-          });
-        }
-        const response = await axios.put(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
-          profile,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              "Content-Type": "application/json",
-            },
-          },
-        );
-        setIsEditing(false);
-        toast.success("Profile updated successfully!");
+  e.preventDefault();
+  setButtonLoading(true); // Show loading state in the button
+
+  try {
+    if (validateForm()) {
+      // 👇️ Prepare the updated profile locally
+      let updatedProfile = { ...profile };
+
+      if (profile.isAlumni) {
+        const expertiseArray = expertiseInput
+          .split(',')
+          .map((exp) => exp.trim())
+          .filter((exp) => exp);
+        updatedProfile.expertise = expertiseArray;
       }
-    } catch (error) {
-      console.log(error)
-      console.error(
-        "Error updating profile:",
-        error.response?.data?.message || error.message,
+
+      // 👇️ Send updatedProfile to the backend
+      const response = await axios.put(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
+        updatedProfile,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
-      toast.error("Failed to update profile. Please try again.");
-    } finally {
-      setButtonLoading(false); // Hide loading state in the button
+
+      // 👇️ Update profile in state only after a successful update
+      setProfile(updatedProfile);
+      setIsEditing(false);
+      toast.success("Profile updated successfully!");
     }
-  };
+  } catch (error) {
+    console.log(error);
+    console.error(
+      "Error updating profile:",
+      error.response?.data?.message || error.message
+    );
+    toast.error("Failed to update profile. Please try again.");
+  } finally {
+    setButtonLoading(false); // Hide loading state in the button
+  }
+};
+
 
   const handleForgotPassword = () => {
     navigate("/forgot-password"); // Redirect to Forgot Password page
