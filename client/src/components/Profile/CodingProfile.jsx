@@ -99,7 +99,7 @@ const CodingProfile = ({
   return (
     <div className="rounded-lg p-6 text-white">
       {/* LeetCode Profile */}
-      {leetcodeData && (
+      {leetcodeUser && (
         <div className="mb-6">
           <h3 className="mb-2 text-xl">LeetCode</h3>
           <img
@@ -184,7 +184,7 @@ const CodingProfile = ({
         </div>
       )}
       {/* Codeforces Profile */}
-      {codeforcesData && (
+      {codeforcesProfileData && (
         <div>
           <h3 className="mb-2 text-xl">Codeforces</h3>
           <img
