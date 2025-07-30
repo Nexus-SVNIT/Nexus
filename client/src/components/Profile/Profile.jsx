@@ -57,10 +57,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   const validateForm = () => {
     const {
       fullName,
-      admissionNumber,
+      // admissionNumber,
       mobileNumber,
       personalEmail,
-      instituteEmail,
+      // instituteEmail,
       currentCompany,
       currentDesignation,
       githubProfile,
@@ -79,10 +79,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Full Name is required");
       return false;
     }
-    if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
-      toast.error("Invalid Admission Number");
-      return false;
-    }
+    // if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
+    //   toast.error("Invalid Admission Number");
+    //   return false;
+    // } // validation not needed
     if (!mobileNumber.match(/^[0-9]{10}$/)) {
       toast.error("Invalid Mobile Number");
       return false;
@@ -91,10 +91,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Invalid Personal Email");
       return false;
     }
-    if (!isAlumni && !instituteEmail.match(instituteEmailPattern)) {
-      toast.error("Invalid Institute Email");
-      return false;
-    }
+    // if (!isAlumni && !instituteEmail.match(instituteEmailPattern)) {
+    //   toast.error("Invalid Institute Email");
+    //   return false;
+    // }
     if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
       toast.error("LinkedIn Profile URL is required");
       return false;
@@ -138,9 +138,9 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
-    if(!isAlumni && instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
-      return false;
-    }
+    // if(!isAlumni && instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
+    //   return false;
+    // } // validation not needed
 
     // Add URL validation for coding profiles
     const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
@@ -285,16 +285,18 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
-          <div>
-            <label className="text-gray-700 block">Institute Email</label>
-            <input
-              type="email"
-              name="instituteEmail"
-              value={profile.instituteEmail}
-              disabled
-              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
-            />
-          </div>
+          {!profile['isAlumni'] && (
+            <div>
+              <label className="text-gray-700 block">Institute Email</label>
+              <input
+                type="email"
+                name="instituteEmail"
+                value={profile.instituteEmail}
+                disabled
+                className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
+              />
+            </div>
+          )}
           <div>
             <label className="text-gray-700 block">Branch</label>
             {/* <input
