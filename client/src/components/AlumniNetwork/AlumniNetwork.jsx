@@ -10,7 +10,7 @@ import { useQuery } from "@tanstack/react-query";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 
-const Connect = () => {
+const AlumniNetwork = () => {
   const {
     isLoading,
     isError,
@@ -64,7 +64,7 @@ const Connect = () => {
         <p className="w-fit text-xs text-white/80 md:w-full md:text-base">
           Enhance your CSE & AI alumni journey! Join our vibrant community.
           <Link
-            to="/connect/alumni"
+            to="/alumni-network/alumni"
             className="mx-1 font-bold text-blue-500  underline underline-offset-4"
           >
             {" "}
@@ -89,4 +89,4 @@ const Connect = () => {
   );
 };
 
-export default Connect;
+export default AlumniNetwork;

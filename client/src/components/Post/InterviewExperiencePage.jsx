@@ -16,7 +16,7 @@ const InterviewExperiencePage = () => {
   const [locations, setLocations] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [isError, setError] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
 

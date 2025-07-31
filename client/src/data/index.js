@@ -4,11 +4,11 @@ export const NavList = [
   { label: 'Achievements', path: '/achievements' },
   { label: 'Events', path: '/events' },
   { label: 'Forms', path: '/forms' },
-  { label: 'Connect', path: '/connect' },
-  { label: 'Projects',path: '/projects'},
-  { label: 'Coding',path: '/coding'},
-  { label:'Interview Experience',path:'/interview-experiences'},
-  { label: 'Merch Reference LeaderBoard',path: '/merch/reference-leaderboard'},
+  { label: 'Alumni Network', path: '/alumni-network' },
+  { label: 'Projects', path: '/projects' },
+  { label: 'Coding', path: '/coding' },
+  { label: 'Interview Experience', path: '/interview-experiences' },
+  // { label: 'Merch Reference LeaderBoard',path: '/merch/reference-leaderboard'},
   { label: 'About', path: '/about' },
 ]
 export const FAQsList = [
@@ -61,7 +61,7 @@ export const faculty_advisors = [
       googleSite: 'https://sites.google.com/coed.svnit.ac.in/bhavesh-gohil'
 
     },
-    email:'bng@coed.svnit.ac.in'
+    email: 'bng@coed.svnit.ac.in'
   },
   {
     name: 'Dr. Sankita J. Patel',
@@ -70,12 +70,12 @@ export const faculty_advisors = [
     socialLinks: {
       googleScholar: 'https://scholar.google.com/citations?hl=en&user=uhsQTk0AAAAJ&view_op=list_works&authuser=1&sortby=pubdate',
       googleSite: 'https://www.svnit.ac.in/sjp/'
-      
+
     },
-    email:'sjp@coed.svnit.ac.in'
+    email: 'sjp@coed.svnit.ac.in'
   },
   // {
-    //   name: 'Dr. Dipti P. Rana',
+  //   name: 'Dr. Dipti P. Rana',
   //   role: 'Associate Professor',
   //   image: 'https://www.svnit.ac.in/web/department/computer/images/dpr.jpg',
   //   socialLinks: {
@@ -90,10 +90,10 @@ export const faculty_advisors = [
     image: 'https://www.svnit.ac.in/web/department/ai/images/TanmoyHazra.jpg',
     socialLinks: {
       googleScholar: 'https://scholar.google.com/citations?user=86mYpqgAAAAJ&hl=en',
-      
+
       googleSite: 'https://svnit.ac.in/facup/tanmoyhazracv_latestest.pdf'
-      
+
     },
-    email:'tanmoyhazra@aid.svnit.ac.in'
+    email: 'tanmoyhazra@aid.svnit.ac.in'
   }
 ]
