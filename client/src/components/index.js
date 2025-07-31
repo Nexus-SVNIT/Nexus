@@ -15,10 +15,10 @@ export { default as WhatPeopleThinkAboutUS } from './WhatPeopleThinkAboutUs/What
 export { default as NotFound } from './NotFound/NotFound.jsx'
 export { default as CreateForm } from './Form/CreateForm.jsx'
 export { default as RegisterForm } from './Form/RegisterForm.jsx'
-export { default as Connect } from './Connect/Connect.jsx'
+export { default as AlumniNetwork } from './AlumniNetwork/AlumniNetwork.jsx'
 export { default as Three } from './ThreeJS/Three.jsx'
 export { default as AlumniMenu } from './AlumniDetail/AlumniMenu.jsx'
 export { default as AchievementsForm } from './AchievementsForm/AchievementsForm.jsx'
 
 export { default as Achievements } from './Achievements/Achievements.jsx'
-export {default as SideBar} from './SideNavigationBar/SideBar.jsx'
+export { default as SideBar } from './SideNavigationBar/SideBar.jsx'

@@ -2,10 +2,10 @@ import Profile from '../pages/Profile/Profile'
 import Settings from '../pages/Settings/Settings'
 import Tables from '../pages/Tables/Tables'
 import AdminPanel from '../pages/Dashboard/AdminPanel.jsx'
-import { About, Achievements, AchievementsForm, AlumniMenu, Connect, CreateForm, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
+import { About, Achievements, AchievementsForm, AlumniMenu, AlumniNetwork, CreateForm, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
 import SignUpForm from '../components/SignUpForm/SignUpForm.jsx'
 import LogInForm from '../components/LogInForm/LogInForm.jsx'
-import UserProfile from '../components/Profile/ProfilePage.jsx' 
+import UserProfile from '../components/Profile/ProfilePage.jsx'
 import AllForms from '../pages/Forms/AllForms'
 import CreatePanelForm from '../components/Form/CreatePanelForm.jsx'
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
@@ -40,7 +40,7 @@ export const DefaultRoutes = [
     title: 'Home',
     component: Home
   },
-  
+
   {
     path: 'team',
     title: 'Teams',
@@ -84,13 +84,13 @@ export const DefaultRoutes = [
   },
 
   {
-    path: 'connect',
-    title: 'Connect',
+    path: 'alumni-network',
+    title: 'Alumni Network',
     component: Alumni
   },
 
   {
-    path: 'connect/alumni',
+    path: 'alumni-network/alumni',
     title: 'Alumni Menu',
     component: AlumniMenu
   },
@@ -135,38 +135,38 @@ export const DefaultRoutes = [
   },
 
   {
-    path:'interview-experiences/create',
-    title:'Create Interview Experience post',
-    component:CreatePost
+    path: 'interview-experiences/create',
+    title: 'Create Interview Experience post',
+    component: CreatePost
   },
 
   {
-    path:'interview-experiences',
-    title:'Interview Experience',
-    component:InterviewExperiencePage
+    path: 'interview-experiences',
+    title: 'Interview Experience',
+    component: InterviewExperiencePage
   },
 
   {
-    path:'interview-experiences/post/:id',
-    title:'Interview Experience',
+    path: 'interview-experiences/post/:id',
+    title: 'Interview Experience',
     component: InterviewPost
   },
-  
-  {
-    path:'post/edit/:id',
-    title:'edit your post',
-    component:EditPost
-  },
 
   {
-    path:'/merch/reference-leaderboard/',
-    title:'Merch Reference LeaderBoard',
-    component: LeaderBoardPage
+    path: 'post/edit/:id',
+    title: 'edit your post',
+    component: EditPost
   },
 
+  // {
+  //   path:'/merch/reference-leaderboard/',
+  //   title:'Merch Reference LeaderBoard',
+  //   component: LeaderBoardPage
+  // },
+
   {
-    path:'/alumni/signup',
-    title:'Alumni SignUp',
+    path: '/alumni/signup',
+    title: 'Alumni SignUp',
     component: AlumniSignUpForm
   },
 
@@ -175,7 +175,7 @@ export const DefaultRoutes = [
     title: 'Not Found',
     component: NotFound
   },
-  
+
 ]
 
 export const AdminRoutes = [
@@ -221,17 +221,17 @@ export const AdminRoutes = [
     component: CreatePanelForm
   },
   {
-    path:'create-event',
+    path: 'create-event',
     title: 'Create Event',
     component: createEvent
   },
   {
-    path:'general-notification',
-    title:'Notify',
+    path: 'general-notification',
+    title: 'Notify',
     component: MessageForm
   },
   {
-    path:'add-team-member',
+    path: 'add-team-member',
     title: 'Add Team Member',
     component: AddTeamMember
   },
@@ -250,11 +250,11 @@ export const AdminRoutes = [
     title: 'Edit Form',
     component: EditForm
   },
-  {
-    path: 'merch/reference-leaderboard',
-    title: 'Merch Reference LeaderBoard',
-    component: AdminLeaderBoard
-  },
+  // {
+  //   path: 'merch/reference-leaderboard',
+  //   title: 'Merch Reference LeaderBoard',
+  //   component: AdminLeaderBoard
+  // },
   {
     title: 'Alumni Verification',
     path: '/core/admin/alumni-verification',
