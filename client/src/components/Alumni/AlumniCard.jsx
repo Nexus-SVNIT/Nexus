@@ -2,7 +2,7 @@ import { LuBuilding, LuMapPin, LuExternalLink } from "react-icons/lu";
 import { Badge } from "./Badge";
 import { FaLinkedin, FaLinkedinIn } from "react-icons/fa6";
 
-export function AlumniCard({ alumni }) {
+export function AlumniCard({ alumni, setFilters }) {
   const getInitials = (name) =>
     name
       .split(" ")
@@ -13,6 +13,12 @@ export function AlumniCard({ alumni }) {
 
   const handleLinkedInClick = () => {
     window.open(alumni.linkedInProfile, "_blank");
+  };
+
+  const handleExpertiseClick = (skill) => {
+    setFilters({
+      expertise: skill,
+    })
   };
 
   return (
@@ -79,7 +85,8 @@ export function AlumniCard({ alumni }) {
               {alumni.expertise.map((skill, index) => (
                 <Badge
                   key={index}
-                  className="border-blue-400/20 bg-blue-400/10 text-blue-400 hover:bg-blue-400/20"
+                  className="border-blue-400/20 bg-blue-400/10 text-blue-400 hover:bg-blue-400/20 hover:cursor-pointer"
+                  onClick={() => handleExpertiseClick(skill)}
                 >
                   {skill}
                 </Badge>

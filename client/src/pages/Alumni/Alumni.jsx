@@ -169,17 +169,20 @@ const Alumni = () => {
   }
 
   function setFilters(newFilters) {
-    setBatchFrom(newFilters.batchFrom);
-    setBatchTo(newFilters.batchTo);
-    setExpertise(newFilters.expertise);
-    setCompany(newFilters.company);
+    if(newFilters.batchForm) setBatchFrom(newFilters.batchFrom);
+    if(newFilters.batchTo) setBatchTo(newFilters.batchTo);
+    if(newFilters.expertise) setExpertise(newFilters.expertise);
+    if(newFilters.company) setCompany(newFilters.company);
 
     // Update URL with new filters
     const newSearchParams = new URLSearchParams(searchParams);
-    newSearchParams.set("batchFrom", newFilters.batchFrom || "");
-    newSearchParams.set("batchTo", newFilters.batchTo || "");
-    newSearchParams.set("company", newFilters.company || "");
-    newSearchParams.set("expertise", newFilters.expertise || "");
+    // newSearchParams.set("batchFrom", newFilters.batchFrom || "");
+    // newSearchParams.set("batchTo", newFilters.batchTo || "");
+    // newSearchParams.set("company", newFilters.company || "");
+    // newSearchParams.set("expertise", newFilters.expertise || "");
+    Object.entries(newFilters).forEach(([key, value]) => {
+      newSearchParams.set(key, value);
+    });
     newSearchParams.set("page", "1");
     setSearchParams(newSearchParams);
 
@@ -278,7 +281,7 @@ const Alumni = () => {
                       className="animate-fade-in"
                       style={{ animationDelay: `${index * 0.1}s` }}
                     >
-                      <AlumniCard alumni={alumni} />
+                      <AlumniCard alumni={alumni} setFilters={setFilters} />
                     </div>
                   ))}
                 </div>
