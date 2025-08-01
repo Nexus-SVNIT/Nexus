@@ -44,26 +44,51 @@ export default function FloatingReportButton() {
     setError("")
     setSuccess(false)
     try {
+      const token = localStorage.getItem("token");
+      
       const formData = new FormData();
-      formData.append('category', category);
+      formData.append('issueType', category);
       formData.append('description', description);
       if (image) {
         formData.append('image', image);
       }
-      const response = await fetch('/api/report', {
+      
+      console.log('Sending request to:', `${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`);
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        console.log(key, value);
+      }
+      
+      const headers = {};
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`, {
         method: 'POST',
+        headers,
         body: formData
       });
+      
+      console.log('Response status:', response.status);
+      console.log('Response ok:', response.ok);
+      
       if (!response.ok) {
         const data = await response.json();
-        throw new Error(data.error || 'Failed to submit report.');
+        console.log('Error response data:', data);
+        throw new Error(data.error || data.message || 'Failed to submit report.');
       }
+      
+      const data = await response.json();
+      console.log('Success response data:', data);
+      
       setSuccess(true)
       setDescription("")
       setCategory(categories[0])
       setImage(null)
       setImagePreview(null)
     } catch (err) {
+      console.error('Frontend error:', err);
       setError(err.message || "Failed to submit report.")
     } finally {
       setSubmitting(false)

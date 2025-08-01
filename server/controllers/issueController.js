@@ -1,63 +1,118 @@
 const Issue = require("../models/issueModel.js");
-const teamMembersModel = require("../models/teamMembersModel");
 const { sendEmail } = require('../utils/emailUtils.js');
-
-// Map issue types to roles that should handle them
-const issueTypeRoleMapping = {
-  "Website Issue": ["Developer"],
-  "AI/ML Issue": ["AI/ML Head"],
-  "Finance Issue": ["Treasurer"],
-  "Design Issue": ["Design Head"],
-  "Media Issue": ["Media Head"],
-  "Alumni Issue": ["Alma Relation Head"],
-};
+const User = require("../models/userModel.js");
 
 exports.createIssue = async (req, res) => {
-  console.log(req.body)
-  const { issueType, description } = req.body;
+  const issueType = req.body.issueType;
+  const description = req.body.description;
+  
+  console.log('Extracted values:', { issueType, description });
+  console.log('Request file:', req.file);
+  console.log('Request body:', req.body);
+  
+  // Check for authentication token
+  let userDetails = null;
+  const authHeader = req.headers.authorization;
+  
+  if (authHeader && authHeader.startsWith('Bearer ')) {
+    try {
+      const token = authHeader.split(' ')[1];
+      const jwt = require('jsonwebtoken');
+      const decoded = jwt.verify(token, process.env.SECRET || 'fallback_secret_key');
+      console.log('User from JWT:', decoded);
+      
+      if (decoded && decoded.admissionNumber) {
+        userDetails = await User.findOne({ admissionNumber: decoded.admissionNumber });
+        console.log('User details found:', userDetails ? 'Yes' : 'No');
+      }
+    } catch (error) {
+      console.log('JWT verification failed, proceeding as anonymous user:', error.message);
+    }
+  } else {
+    console.log('No authentication token provided, proceeding as anonymous user');
+  }
 
   try {
-    // Save the issue to the database
-    const newIssue = new Issue({ issueType, description });
+    // Validate required fields
+    if (!issueType || !description) {
+      console.log('Validation failed - missing fields');
+      return res.status(400).json({ 
+        message: "Missing required fields", 
+        received: { issueType, description },
+        bodyKeys: Object.keys(req.body),
+        bodyValues: req.body
+      });
+    }
+
+
+
+    // Handle image if provided
+    let imageAttachment = null;
+    if (req.file) {
+      console.log('Image received:', req.file.originalname, req.file.size, 'bytes');
+      imageAttachment = {
+        filename: req.file.originalname,
+        content: req.file.buffer,
+        contentType: req.file.mimetype
+      };
+    }
+
+    // Save the issue to the database with user details
+    console.log('Creating new issue...');
+    const issueData = { 
+      issueType, 
+      description,
+      author: userDetails ? userDetails._id : null
+    };
+    
+    const newIssue = new Issue(issueData);
+    console.log('Issue object created:', newIssue);
+    
     await newIssue.save();
+    console.log('Issue saved to database');
 
-    // Get roles based on the issue type
-    const roles = issueTypeRoleMapping[issueType];
-    if (!roles) {
-      return res.status(400).json({ message: "Invalid issue type." });
+    // Send email notification to nexus@coed.svnit.ac.in with user details
+    try {
+      const userInfo = userDetails ? `
+        <li><strong>Reported by:</strong> ${userDetails.fullName || 'Unknown'}</li>
+        <li><strong>Admission Number:</strong> ${userDetails.admissionNumber || 'Not provided'}</li>
+        <li><strong>Email:</strong> ${userDetails.instituteEmail || userDetails.personalEmail || 'Not provided'}</li>
+        <li><strong>Branch:</strong> ${userDetails.branch || 'Not provided'}</li>
+      ` : '<li><strong>Reported by:</strong> Anonymous user</li>';
+
+             const emailData = {
+         to: 'nexus@coed.svnit.ac.in',
+         subject: `New Issue Reported: ${issueType}`,
+        text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}${userDetails ? `\n\nReported by: ${userDetails.fullName} (${userDetails.admissionNumber})` : '\n\nReported by: Anonymous user'}`,
+        html: `
+          <p>A new issue has been reported in the system:</p>
+          <ul>
+            <li><strong>Issue Type:</strong> ${issueType}</li>
+            <li><strong>Description:</strong> ${description}</li>
+            ${userInfo}
+          </ul>
+          <p>Please review and address the issue as soon as possible.</p>
+        `,
+      };
+
+      // Add image attachment if provided
+      if (imageAttachment) {
+        emailData.attachments = [imageAttachment];
+      }
+
+             await sendEmail(emailData);
+       console.log('Email sent successfully to nexus@coed.svnit.ac.in');
+    } catch (emailError) {
+      console.error('Email sending failed:', emailError);
+      // Continue with the response even if email fails
     }
 
-    // Find team members with the required roles
-    const teamMembers = await teamMembersModel.find({ role: { $in: roles } });
-
-    if (teamMembers.length > 0) {
-      // Collect email addresses of relevant team members
-      const emailRecipients = teamMembers.map(member => member.email);
-
-      // Send notification emails to each relevant team member
-      await Promise.all(
-        emailRecipients.map((to) =>
-          sendEmail({
-            to,
-            subject: `New Issue Reported: ${issueType}`,
-            text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}`,
-            html: `
-              <p>A new issue has been reported in the system:</p>
-              <ul>
-                <li><strong>Issue Type:</strong> ${issueType}</li>
-                <li><strong>Description:</strong> ${description}</li>
-              </ul>
-              <p>Please review and address the issue as soon as possible.</p>
-            `,
-          })
-        )
-      );
-    }
-
-    res.status(201).json({ message: "Issue created and team notified." });
+    console.log('Sending success response with status 201');
+    res.status(201).json({ message: "Issue created successfully." });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to create issue." });
+    console.error('Detailed error:', error);
+    console.error('Error stack:', error.stack);
+    res.status(500).json({ message: "Failed to create issue.", error: error.message });
   }
 };
 

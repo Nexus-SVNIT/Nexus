@@ -33,6 +33,8 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
+
+
 app.use(cors());
 
 app.use(bodyParser.json({ limit: '10mb' }));
@@ -67,7 +69,7 @@ app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
 app.use('/Panel', panelRoutes);
 app.use('/projects', projectRoutes);
-app.use("/issue",issueRoutes);
+app.use("/api/issue",issueRoutes);
 app.use('/coding-profiles', codingProfileRoutes);
 app.use('/api/counter', counterRoutes)
 app.use('/api/posts', postRoutes);

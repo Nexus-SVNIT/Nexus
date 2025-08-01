@@ -54,9 +54,9 @@ const CustomSidebar = () => {
       link: "/forms",
     },
     {
-      title: "Connect",
+      title: "Alumni Network",
       icon: <FaUserGraduate className="text-2xl" />,
-      link: "/connect",
+      link: "/alumni-network",
     },
     {
       title: "Projects",
