@@ -252,6 +252,33 @@ const alumniEmailVerifiedTemplate = ({fullName}) => ({
   `,
 });
 
+const formEmailTemplate=({name,desc,deadline})=>({
+    subject: `New Form Released: ${form.name}`,
+        text: `New Form Released: ${form.name}. Apply before deadline.`,
+        html: `
+            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
+                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+                </div>
+                <div>Dear Devesh,</div>
+                <p>A new form has been released:</p>
+                <div style="margin-bottom: 20px;">
+                    <strong>Name:</strong> ${form.name}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Description:</strong> ${form.desc}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Deadline:</strong> ${form.deadline}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
+                </div>
+                <p>Thanks,<br>Team NEXUS</p>
+            </div>
+        `,
+    });
+
 
 
 module.exports = { 
@@ -266,4 +293,5 @@ module.exports = {
     alumniRejectionTemplate,
     alumniEmailVerificationTemplate,
     alumniEmailVerifiedTemplate,
+    formEmailTemplate
 };

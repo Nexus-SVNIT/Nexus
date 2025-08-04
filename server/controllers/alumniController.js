@@ -211,7 +211,7 @@ const signUpAlumni = async (req, res) => {
         const { subject, html } = alumniEmailVerificationTemplate({
             fullName: req.body['fullName'],
             verificationUrl,
-    });
+        });
 
         const mailOptions = {
             from: process.env.EMAIL_ID,
