@@ -46,14 +46,7 @@
   "author": "Bharat0509",
   "license": "ISC",
   "devDependencies": {
-    "@eslint/js": "^9.32.0",
-    "depcheck": "^1.4.7",
-    "eslint": "^9.32.0",
-    "eslint-plugin-unused-imports": "^4.1.4",
     "gh-pages": "^6.1.1",
-    "globals": "^16.3.0",
-    "kni": "^3.0.3",
-    "knip": "^5.62.0",
     "nodemon": "^3.0.2"
   }
 }
