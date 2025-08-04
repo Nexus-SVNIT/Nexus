@@ -4,7 +4,7 @@ const fs = require('fs');
 const User = require('../models/userModel');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-const sendEmail=require('../utils/emailService');
+const { sendEmail }=require('../utils/emailUtils');
 const {
   alumniEmailVerificationTemplate,
   alumniEmailVerifiedTemplate,
