@@ -8,7 +8,8 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "predeploy": "cd client && npm run predeploy",
-    "deploy": "cd client && npm run deploy"
+    "deploy": "cd client && npm run deploy", 
+    "lint": "eslint ."
   },
   "dependencies": {
     "axios": "^1.7.7",
@@ -46,7 +47,14 @@
   "author": "Bharat0509",
   "license": "ISC",
   "devDependencies": {
+    "@eslint/js": "^9.32.0",
+    "depcheck": "^1.4.7",
+    "eslint": "^9.32.0",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "gh-pages": "^6.1.1",
+    "globals": "^16.3.0",
+    "kni": "^3.0.3",
+    "knip": "^5.62.0",
     "nodemon": "^3.0.2"
   }
 }

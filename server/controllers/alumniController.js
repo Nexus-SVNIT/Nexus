@@ -1,14 +1,19 @@
 const { google } = require('googleapis');
 const fs = require('fs');
-const AlumniDetails = require('../models/alumniDetailModel');
+
 const User = require('../models/userModel');
 const nodemailer = require('nodemailer');
 const crypto = require('crypto');
-
+const sendEmail=require('../utils/emailService');
+const {
+  alumniEmailVerificationTemplate,
+  alumniEmailVerifiedTemplate,
+} = require('../utils/emailTemplates');
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles');
 const { validateAlumni } = require('../utils/validateAlumni');
 
 // Email transporter configuration
+/*
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -17,58 +22,6 @@ const transporter = nodemailer.createTransport({
     }
 });
 
-/*
-// Google Drive configuration
-const auth = new google.auth.GoogleAuth({
-    credentials: {
-        type: process.env.GOOGLE_CLOUD_TYPE,
-        project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-        private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-        private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-        client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-        auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
-        token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
-        auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
-        client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
-        universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
-    },
-    scopes: ['https://www.googleapis.com/auth/drive.file']
-});
-
-const drive = google.drive({ version: 'v3', auth });
-const folderId = process.env.GOOGLE_DRIVE_ALUMNI_FOLDER_ID;
-
-// Improved file upload function with better error handling
-const uploadImageToDrive = async (imagePath, imageName) => {
-    try {
-        const fileMetadata = {
-            name: imageName,
-            parents: [folderId]
-        };
-
-        const media = {
-            mimeType: 'image/jpeg',
-            body: fs.createReadStream(imagePath)
-        };
-
-        const response = await drive.files.create({
-            resource: fileMetadata,
-            media: media,
-            fields: 'id'
-        });
-
-        // Fix: Use response.data.id instead of fileData.id
-        const fileId = response.data.id;
-
-       
-
-        return fileId; // Return the file ID
-    } catch (error) {
-        console.error("Google Drive upload error:", error);
-        throw error; // Re-throw to handle in calling function
-    }
-};
 */
 
 // Alumni data retrieval functions with pagination and the specific filters
@@ -135,17 +88,7 @@ const getAllAlumniDetails = async (req, res) => {
 
 const getAllCompaniesAndExpertise = async (req, res) => {
     try {
-        // const companies = await User.distinct('currentCompany', { 
-        //     isAlumni: true, 
-        //     isVerified: true,
-        //     currentCompany: { $nin: [null, ''] }
-        // });
-
-        // const expertise = await User.distinct('expertise', {
-        //     isAlumni: true, 
-        //     isVerified: true,
-        //     expertise: { $nin: [null, ''] }
-        // });
+        
 
         // run both parallel
         const [companies, expertise] = await Promise.all([
@@ -265,26 +208,19 @@ const signUpAlumni = async (req, res) => {
         const verificationUrl = `${req.headers.origin || req.headers.referer}/auth/alumni/verify/${verificationToken}`;
 
         // 
+        const { subject, html } = alumniEmailVerificationTemplate({
+            fullName: req.body['fullName'],
+            verificationUrl,
+    });
+
         const mailOptions = {
             from: process.env.EMAIL_ID,
             to: req.body['personalEmail'],
-            subject: 'Verify Your Alumni Email - NEXUS',
-            html: `
-                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
-                    <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-                    </div>
-                    <p>Dear ${req.body.fullName},</p>
-                    <p>Thank you for registering on the NEXUS alumni portal.</p>
-                    <p>Please verify your email address by clicking the button below:</p>
-                    <a href="${verificationUrl}" style="display:inline-block; padding:10px 20px; background-color:skyblue; color:black; border-radius:5px; text-decoration:none;">Verify Email</a>
-                    <p>This verification is required to review and approve your alumni profile.</p>
-                    <p>Thanks,<br/>Team NEXUS</p>
-                </div>
-            `
+            subject,
+            html
         };
 
-        await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
         console.log("✅ Email verification sent");
 
         return res.status(201).json({
@@ -317,37 +253,6 @@ const signUpAlumni = async (req, res) => {
 };
 
 
-// Email template generator function
-function generateVerificationEmailTemplate(userData) {
-    return `
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; }
-            .header { text-align: center; padding: 20px 0; }
-            .logo { max-height: 80px; }
-            .content { background-color: #f8f9fa; padding: 25px; border-radius: 8px; }
-            .footer { text-align: center; font-size: 12px; color: #777; margin-top: 20px; }
-            .info-item { margin-bottom: 10px; }
-            .info-label { font-weight: bold; }
-        </style>
-    </head>
-    <body>
-         <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
-                    <div style="margin-bottom: 25px; display: flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
-                    </div>
-                    <div>Dear ${userData['fullName']},</div>
-                    <p>Thank you for taking the time to connect with us on the NEXUS Alumni portal.</p>
-                    <p>Your details are currently under review, and once verified, they will be displayed on our Alumni Connect page.</p>
-                    <p>We appreciate your support and look forward to showcasing your achievements to inspire our community.</p>
-                    <p>Thanks,<br>Team NEXUS</p>
-                </div>
-    </body>
-    </html>
-    `;
-}
 
 
 // Verification functions(for core team)
@@ -399,25 +304,19 @@ const verifyAlumniEmail = async (req, res) => {
         userData.verificationToken = undefined; // Remove the token after verification
         await userData.save();
 
+        const {html,subject}=alumniEmailVerifiedTemplate({
+
+            fullName: userData.fullName
+        } 
+        );
         const mailOptions = {
             from: process.env.EMAIL_ID,
             to: userData.personalEmail,
-            subject: 'Email Verified - Alumni Account Under Review',
-            html: `
-                <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-                    <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-                    </div>
-                    <div>Dear ${userData.fullName},</div>
-                    <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
-                    <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
-                    <p>We will notify you via email once the verification is complete.</p>
-                    <p>Thanks,<br>Team NEXUS</p>
-                </div>
-            `
+            subject,
+            html
         };
 
-        await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
