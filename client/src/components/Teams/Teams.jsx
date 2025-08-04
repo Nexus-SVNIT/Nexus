@@ -84,31 +84,18 @@ const Teams = () => {
       </div>
     );
 
-  const certainRolesList = [
-    "Chair Person",
-    "Vice Chair Person",
-    "Event Manager",
-  ];
-  const team_core = data.filter((member) =>
-    certainRolesList.includes(member.role),
-  );
-  const team_devs = data.filter((member) => member.role === "Developer");
-  const team_treasurer = data.filter((member) => member.role === "Treasurer");
-  const team_social_med = data.filter((member) => member.role === "Media Head");
-  const team_designer = data.filter((member) => member.role === "Design Head");
-  const team_AI = data.filter((member) => member.role === "AI/ML Head");
-  const team_Alma = data.filter(
-    (member) => member.role === "Alma Relation Head",
-  );
-  const team_Think_Tank = data.filter(
-    (member) => member.role === "Think Tank Head",
-  );
-  const team_Documentation = data.filter(
-    (member) => member.role === "Documentation Head",
-  );
-  const team_Coordinator = data.filter(
-    (member) => member.role === "Coordinator",
-  );
+  // Sort team members by priority (ascending: 0, 1, 2, ...)
+  // Group team members by priority level
+  const priorityGroups = {};
+  data.forEach(member => {
+    const p = typeof member.priority === 'number' ? member.priority : Infinity;
+    if (!priorityGroups[p]) priorityGroups[p] = [];
+    priorityGroups[p].push(member);
+  });
+  // Get sorted priority levels (0, 1, 2, ...)
+  const sortedPriorities = Object.keys(priorityGroups)
+    .map(Number)
+    .sort((a, b) => a - b);
 
   return (
     <div className="mx-auto mb-20 flex h-full max-w-7xl flex-col items-center justify-center md:my-10">
@@ -133,17 +120,9 @@ const Teams = () => {
           ))}
         </select>
       </Title>
-      <TeamCard data={team_core} />
-      <TeamCard data={team_devs} />
-      <TeamCard data={team_treasurer} />
-      <TeamCard data={team_social_med} />
-      <TeamCard data={team_designer} />
-
-      <TeamCard data={team_AI} />
-      <TeamCard data={team_Alma} />
-      <TeamCard data={team_Think_Tank} />
-      <TeamCard data={team_Documentation} />
-      <TeamCard data={team_Coordinator} />
+      {sortedPriorities.map(priority => (
+        <TeamCard key={priority} data={priorityGroups[priority]} />
+      ))}
     </div>
   );
 };
