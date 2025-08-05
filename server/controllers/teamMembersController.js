@@ -121,6 +121,7 @@ const getTeamMembersByYear = async (req, res) => {
                     role: member.role,
                     image: member.image,
                     year: member.year,
+                    priority: member.priority,
                     fullName: userDetails?.fullName || null,
                     linkedInProfile: userDetails?.linkedInProfile || null,
                     githubProfile: userDetails?.githubProfile || null,
