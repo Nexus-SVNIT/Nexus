@@ -16,6 +16,8 @@ export default function FloatingReportButton() {
   const [open, setOpen] = useState(false)
   const [category, setCategory] = useState(categories[0])
   const [description, setDescription] = useState("")
+  const [contactEmail, setContactEmail] = useState("")
+  const [contactName, setContactName] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
@@ -49,6 +51,12 @@ export default function FloatingReportButton() {
       const formData = new FormData();
       formData.append('issueType', category);
       formData.append('description', description);
+      if (contactEmail) {
+        formData.append('contactEmail', contactEmail);
+      }
+      if (contactName) {
+        formData.append('contactName', contactName);
+      }
       if (image) {
         formData.append('image', image);
       }
@@ -200,6 +208,34 @@ export default function FloatingReportButton() {
                   <p id="description-help" className="text-xs text-gray-500 mt-1">
                     Max 500 characters.
                   </p>
+                </div>
+                {/* Contact Information for Anonymous Users */}
+                <div className="mb-4">
+                  <label className="block mb-1 text-sm font-medium text-gray-700">
+                    Contact Information (optional)
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">
+                    Provide your contact details if you'd like us to follow up on your report.
+                  </p>
+                  <p className="text-xs text-blue-600 mb-2 font-medium">
+                    💡 Note: Please provide a correct email address so we can reach out to you to solve your issues.
+                  </p>
+                  <div className="grid grid-cols-1 gap-3">
+                    <input
+                      type="text"
+                      placeholder="Your Name (optional)"
+                      value={contactName}
+                      onChange={(e) => setContactName(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    />
+                    <input
+                      type="email"
+                      placeholder="Your Email (optional)"
+                      value={contactEmail}
+                      onChange={(e) => setContactEmail(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                    />
+                  </div>
                 </div>
                 {/* Image Upload Field */}
                 <div className="mb-6">
