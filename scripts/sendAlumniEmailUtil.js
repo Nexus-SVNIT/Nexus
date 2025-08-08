@@ -44,8 +44,8 @@ function emailWrapper(contentHtml) {
                 .title { font-size: 26px; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px; }
                 .subtitle { font-size: 16px; color: #bbb; }
                 .content { padding: 38px 30px 30px 30px; color: #fff; }
-                .button-link { display:inline-block; padding:10px 15px; background-color:#0078d4; color:#fff; border-radius:8px; text-decoration:none; font-weight:600; margin: 12px 8px; font-size: 14px; transition: background 0.2s; border:none; }
-                .button-link:hover { background-color:#005fa3; }
+                .button-link { display:inline-block; padding:10px 15px; background-color:#0089e5; color:#000; border-radius:8px; text-decoration:underline; font-weight:600; margin: 12px 8px; font-size: 14px; transition: background 0.2s; border:none; }
+                .button-link:hover { background-color:#0078f4; color: white; }
                 .footer { background: #181818; color: #aaa; text-align: center; font-size: 14px; padding: 22px 12px; border-top: 1px solid #222; }
                 ul { margin: 18px 0 26px 0; padding-left: 22px; }
                 .mandatory { color: #ff5252; font-weight: bold; }
