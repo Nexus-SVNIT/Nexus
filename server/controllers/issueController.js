@@ -5,8 +5,10 @@ const User = require("../models/userModel.js");
 exports.createIssue = async (req, res) => {
   const issueType = req.body.issueType;
   const description = req.body.description;
+  const contactEmail = req.body.contactEmail;
+  const contactName = req.body.contactName;
   
-  console.log('Extracted values:', { issueType, description });
+  console.log('Extracted values:', { issueType, description, contactEmail, contactName });
   console.log('Request file:', req.file);
   console.log('Request body:', req.body);
   
@@ -73,17 +75,28 @@ exports.createIssue = async (req, res) => {
 
     // Send email notification to nexus@coed.svnit.ac.in with user details
     try {
-      const userInfo = userDetails ? `
-        <li><strong>Reported by:</strong> ${userDetails.fullName || 'Unknown'}</li>
-        <li><strong>Admission Number:</strong> ${userDetails.admissionNumber || 'Not provided'}</li>
-        <li><strong>Email:</strong> ${userDetails.instituteEmail || userDetails.personalEmail || 'Not provided'}</li>
-        <li><strong>Branch:</strong> ${userDetails.branch || 'Not provided'}</li>
-      ` : '<li><strong>Reported by:</strong> Anonymous user</li>';
+      let userInfo;
+      if (userDetails) {
+        userInfo = `
+          <li><strong>Reported by:</strong> ${userDetails.fullName || 'Unknown'}</li>
+          <li><strong>Admission Number:</strong> ${userDetails.admissionNumber || 'Not provided'}</li>
+          <li><strong>Email:</strong> ${userDetails.instituteEmail || userDetails.personalEmail || 'Not provided'}</li>
+          <li><strong>Branch:</strong> ${userDetails.branch || 'Not provided'}</li>
+        `;
+      } else {
+        userInfo = '<li><strong>Reported by:</strong> Anonymous user</li>';
+        if (contactName || contactEmail) {
+          userInfo += `
+            <li><strong>Contact Name:</strong> ${contactName || 'Not provided'}</li>
+            <li><strong>Contact Email:</strong> ${contactEmail || 'Not provided'}</li>
+          `;
+        }
+      }
 
              const emailData = {
          to: 'nexus@coed.svnit.ac.in',
          subject: `New Issue Reported: ${issueType}`,
-        text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}${userDetails ? `\n\nReported by: ${userDetails.fullName} (${userDetails.admissionNumber})` : '\n\nReported by: Anonymous user'}`,
+        text: `A new issue has been reported.\n\nIssue Type: ${issueType}\nDescription: ${description}${userDetails ? `\n\nReported by: ${userDetails.fullName} (${userDetails.admissionNumber})` : `\n\nReported by: Anonymous user${contactName || contactEmail ? `\nContact Name: ${contactName || 'Not provided'}\nContact Email: ${contactEmail || 'Not provided'}` : ''}`}`,
         html: `
           <p>A new issue has been reported in the system:</p>
           <ul>
