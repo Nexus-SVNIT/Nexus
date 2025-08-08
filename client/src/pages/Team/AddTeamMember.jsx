@@ -15,6 +15,7 @@ const AddTeamMember = () => {
     admissionNumber: "",
     role: "",
     year: getCurrentFinancialYear(),
+    priority: 10,
   });
   const [image, setImage] = useState(null);
 
@@ -43,6 +44,7 @@ const AddTeamMember = () => {
       data.append("admissionNumber", formData.admissionNumber);
       data.append("role", formData.role);
       data.append("year", formData.year);
+      data.append("priority", formData.priority);
       data.append("image", image);
 
       const response = await axios.post(
@@ -51,7 +53,7 @@ const AddTeamMember = () => {
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${localStorage.getItem("core-token")}`,
           },
         },
       );
@@ -100,32 +102,31 @@ const AddTeamMember = () => {
           </div>
           <div>
             <label htmlFor="role" className="mb-2 block text-sm font-medium">
-              Role
+              Position/Role
             </label>
-            <select
+            <input
+              type="text"
               id="role"
               name="role"
               value={formData.role}
               onChange={handleChange}
               className="bg-gray-700 border-gray-600 w-full rounded border px-4 py-2 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
               required
-            >
-              <option value="" disabled>
-                Select role
-              </option>
-              <option value="Chair Person">Chair Person</option>
-              <option value="Vice Chair Person">Vice Chair Person</option>
-              <option value="Event Manager">Event Manager</option>
-              <option value="Developer">Developer</option>
-              <option value="Treasurer">Treasurer</option>
-              <option value="Media Head">Media Head</option>
-              <option value="Design Head">Design Head</option>
-              <option value="Alma Relation Head">Alma Relation Head</option>
-              <option value="AI/ML Head">AI/ML Head</option>
-              <option value="Think Tank Head">Think Tank Head</option>
-              <option value="Documentation Head">Documentation Head</option>
-              <option value="Coordinator">Coordinator</option>
-            </select>
+            />
+          </div>
+          <div>
+            <label htmlFor="priority" className="mb-2 block text-sm font-medium">
+              Priority (0 for highest, 1 for next, ...)
+            </label>
+            <input
+              type="number"
+              id="priority"
+              name="priority"
+              value={formData.priority}
+              onChange={handleChange}
+              className="bg-gray-700 border-gray-600 w-full rounded border px-4 py-2 text-black focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              required
+            />
           </div>
           <div>
             <label htmlFor="year" className="mb-2 block text-sm font-medium">
