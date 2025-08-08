@@ -20,6 +20,14 @@ const teamMembersSchema = new mongoose.Schema({
     priority: {
         type: Number,
         required: true,
+    },
+    password: {
+        type: String,
+        required: false,
+    },
+    personalEmail: {
+        type: String,
+        required: false,
     }
 });
 
