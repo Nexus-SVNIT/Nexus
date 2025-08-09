@@ -15,15 +15,14 @@ const QuestionBox = ({ ques, inputValue, onInputChange, isUser }) => {
       <div>
         {/* Render different input types based on questionType */}
         {questionType === "text" && (
-          <input
+          <textarea
             id={fieldName}
             value={inputValue}
             name={fieldName}
             onChange={onInputChange}
-            className={`h-6 w-full resize-none border-b-2 outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
+            className={`h-12 py-5 w-full resize-none border-b-2 outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
             required={required}
-            placeholder={`Enter your ${fieldName.toLowerCase()}`}
-            type="text"
+            placeholder={`Enter your response to ${fieldName.toLowerCase()}`}
             pattern={isUser ? "(I|U)\\d{2}(CS|AI)\\d{3}" : undefined}
           />
         )}
