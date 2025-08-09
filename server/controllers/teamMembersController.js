@@ -89,7 +89,7 @@ const addTeamMember = async (req, res) => {
             year,
             priority: Number(priority),
             password: userExists.password, // Copy hashed password
-            personalEmail: userExists.personalEmail // Copy personal email
+            email: userExists.personalEmail // Copy personal email
         });
         await newTeamMember.save();
 
