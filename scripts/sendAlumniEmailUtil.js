@@ -1,4 +1,5 @@
 const nodemailer = require('nodemailer');
+const path = require('path');
 
 const EMAIL_ID = process.env.EMAIL_ID;
 const EMAIL_PASSWORD = process.env.EMAIL_PASSWORD;
@@ -25,7 +26,7 @@ function emailFooter() {
     <div class='footer'>
         <div><b>Team Nexus</b> &bull; CSE & AI Departments, SVNIT Surat</div>
         <div>Contact: <a href='mailto:nexus@coed.svnit.ac.in' style='color:#00c6fb;text-decoration:none;'>nexus@coed.svnit.ac.in</a> | <a href='https://www.nexus-svnit.in' style='color:#00c6fb;text-decoration:none;'>nexus-svnit.in</a></div>
-        <div>Follow us: <a href='https://www.linkedin.com/company/nexus-svnit' style='color:#00c6fb;text-decoration:none;'>LinkedIn</a> | <a href='https://www.instagram.com/nexus.svnit/' style='color:#00c6fb;text-decoration:none;'>Instagram</a></div>
+        <div>Follow us: <a href='https://www.linkedin.com/company/nexus-svnit' style='color:#00c6fb;text-decoration:none;'>LinkedIn</a> | <a href='https://www.instagram.com/nexus_svnit/' style='color:#00c6fb;text-decoration:none;'>Instagram</a></div>
     </div>
     `;
 }
@@ -63,12 +64,13 @@ function emailWrapper(contentHtml) {
     `;
 }
 
+{/* <p>Congratulations on achieving this important milestone. As you step into the next chapter of your journey, we are pleased to welcome you to the <b><span style='color: #00c6fb;'>Nexus Alumni Network</span></b> – the official alumni community for the <i>CSE & AI Departments of SVNIT</i>.</p>
+<p>Your time at SVNIT has contributed to the legacy of our department, and now, as an alumnus, you become an integral part of the Nexus community that connects students, faculty, and alumni. Through this network, we aim to create opportunities for mentorship, collaboration, and sharing expertise with the batches to come.</p> */}
 async function sendAlumniWelcomeEmail(user) {
     const contentHtml = `
         <div class='content'>
             <p>Dear ${user.fullName || 'Alumnus'},</p>
-            <p>Congratulations on achieving this important milestone. As you step into the next chapter of your journey, we are pleased to welcome you to the <b><span style='color: #00c6fb;'>Nexus Alumni Network</span></b> – the official alumni community for the <i>CSE & AI Departments of SVNIT</i>.</p>
-            <p>Your time at SVNIT has contributed to the legacy of our department, and now, as an alumnus, you become an integral part of the Nexus community that connects students, faculty, and alumni. Through this network, we aim to create opportunities for mentorship, collaboration, and sharing expertise with the batches to come.</p>
+            <img src="cid:nexusposter" alt="Nexus Poster" style="width:100%; border-radius:10px; margin-top:20px;" />
             <div>To include you in our alumni directory and ensure smooth communication, we request you to share the following details:</div>
             <ul>
                 <li><span class='mandatory'>Branch*</span></li>
@@ -97,7 +99,14 @@ async function sendAlumniWelcomeEmail(user) {
         from: EMAIL_ID,
         to: user.personalEmail,
         subject: "Congratulations – You’re Now Part of the Nexus Alumni Network",
-        html
+        html,
+        attachments: [
+            {
+                filename: 'NEXUS.png',
+                path: path.join(__dirname, 'static', 'img', 'NEXUS.png'),
+                cid: 'nexusposter'
+            }
+        ]
     });
 }
 
