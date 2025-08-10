@@ -1,0 +1,32 @@
+name: Fetch Coding Profiles
+
+on:
+  workflow_dispatch:
+  schedule:
+  # cron to run every day at 2 AM IST
+    - cron: '0 20 * * *' # 2 AM IST is 20:00 UTC
+
+jobs:
+  fetch-coding-profiles:
+    runs-on: ubuntu-latest
+    env:
+      MONGO_URL: ${{ secrets.MONGO_URL }}
+      CODING_PROFILE_BASE_URL: ${{ secrets.CODING_PROFILE_BASE_URL }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install axios mongoose dotenv 
+
+      - name: Fetch all coding profiles
+        env:
+          MONGO_URL: ${{ secrets.MONGO_URL }}
+          CODING_PROFILE_BASE_URL: ${{ secrets.CODING_PROFILE_BASE_URL }}
+        run: |
+          node scripts/fetchCodingProfileAutomation.js
