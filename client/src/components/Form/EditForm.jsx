@@ -285,6 +285,7 @@ const EditForm = () => {
               className="rounded-lg border px-4 py-2"
             >
               <option value="text">Text</option>
+              <option value="longtext">Long Text</option>
               <option value="checkbox">Checkbox</option>
               <option value="dropdown">Dropdown</option>
             </select>
