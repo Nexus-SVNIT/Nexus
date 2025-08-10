@@ -232,6 +232,24 @@ const getCodingProfiles = async (req, res) => {
     }
 };
 
+const getCodingProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        if (!userId) {
+            return res.status(400).json({ success: false, error: "User ID is required" });
+        }
+        const codingProfile = await codingProfileModel.find({ userId });
+        if (!codingProfile) {
+            return res.status(400).json({ success: false, error: "Coding profile not found" });
+        }
+        res.json({ success: true, data: codingProfile });
+    }
+    catch (error) {
+        console.error("Error fetching coding profile:", error.message);
+        res.status(500).json({ success: false, error: "Failed to fetch coding profile" });
+    }
+}
+
 // sample request data for getCodingProfiles api:
 // GET /api/coding-profiles?platform=codeforces&branch=CSE&year=2023&program=B.Tech&status=active&query=John&page=1&limit=10
 
@@ -242,5 +260,6 @@ module.exports = {
     getContest,
     getCodingProfiles,
     fetchCodingProfiles,
-    fetchAllCodingProfiles
+    fetchAllCodingProfiles,
+    getCodingProfile
 };
