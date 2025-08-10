@@ -219,6 +219,69 @@ const alumniRejectionTemplate = (name) => ({
     `
 });
 
+
+const alumniEmailVerificationTemplate = ({fullName, verificationUrl}) => ({
+  subject: 'Verify Your Alumni Email - NEXUS',
+  html: `
+    <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+      <div style="margin-bottom: 25px; display:flex; justify-content: center;">
+        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
+      </div>
+      <p>Dear ${fullName},</p>
+      <p>Thank you for registering on the NEXUS alumni portal.</p>
+      <p>Please verify your email address by clicking the button below:</p>
+      <a href="${verificationUrl}" style="display:inline-block; padding:10px 20px; background-color:skyblue; color:black; border-radius:5px; text-decoration:none;">Verify Email</a>
+      <p>This verification is required to review and approve your alumni profile.</p>
+      <p>Thanks,<br/>Team NEXUS</p>
+    </div>
+  `,
+});
+
+const alumniEmailVerifiedTemplate = ({fullName}) => ({
+  subject: 'Email Verified - Alumni Account Under Review',
+  html: `
+    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+      <div style="margin-bottom: 25px; display:flex; justify-content: center;">
+        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
+      </div>
+      <div>Dear ${fullName},</div>
+      <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
+      <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
+      <p>We will notify you via email once the verification is complete.</p>
+      <p>Thanks,<br>Team NEXUS</p>
+    </div>
+  `,
+});
+
+const formEmailTemplate=({name,desc,deadline})=>({
+    subject: `New Form Released: ${form.name}`,
+        text: `New Form Released: ${form.name}. Apply before deadline.`,
+        html: `
+            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
+                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
+                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+                </div>
+                <div>Dear Devesh,</div>
+                <p>A new form has been released:</p>
+                <div style="margin-bottom: 20px;">
+                    <strong>Name:</strong> ${form.name}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Description:</strong> ${form.desc}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Deadline:</strong> ${form.deadline}
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
+                </div>
+                <p>Thanks,<br>Team NEXUS</p>
+            </div>
+        `,
+    });
+
+
+
 const personalizedBatchTemplate = (name, content) => (`
   <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
     <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
@@ -235,6 +298,7 @@ const personalizedBatchTemplate = (name, content) => (`
   </div>
 `);
 
+
 module.exports = { 
     newPostTemplate, 
     newQuestionTemplate, 
@@ -245,5 +309,10 @@ module.exports = {
     postEditTemplate,
     alumniVerificationTemplate,
     alumniRejectionTemplate,
+
+    alumniEmailVerificationTemplate,
+    alumniEmailVerifiedTemplate,
+    formEmailTemplate,
     personalizedBatchTemplate 
+
 };
