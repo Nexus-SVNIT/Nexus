@@ -13,7 +13,6 @@ const {
   forgotPassword,
   resetPassword,
   verifyPasswordResetEmail,
-  generalNotification,
   getUserStats,
   getPendingAlumni,
   verifyAlumni,
@@ -65,3 +64,4 @@ router.post('/alumni/verify/:id', coreAuthMiddleware, verifyAlumni);
 router.post('/alumni/reject/:id', coreAuthMiddleware, rejectAlumni);
 
 module.exports = router;
+

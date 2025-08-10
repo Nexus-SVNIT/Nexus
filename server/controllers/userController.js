@@ -1,20 +1,12 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+
 const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
 const bcrypt = require('bcrypt')
-const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
-const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js'); // Adjust the path to your validation utility
-const { alumniVerificationTemplate, alumniRejectionTemplate } = require('../utils/emailTemplates.js');
-
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORD
-    }
-});
+const { sendEmail } = require('../utils/emailUtils.js'); 
+const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
+const { alumniVerificationTemplate, alumniRejectionTemplate, personalizedBatchTemplate } = require('../utils/emailTemplates.js');
 
 
 
@@ -142,7 +134,8 @@ const signupUser = async (req, res) => {
 
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(201).json({ message: 'User registered. Verification email sent!' });
 
@@ -375,7 +368,8 @@ const forgotPassword = async (req, res) => {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Password reset email sent' });
 
@@ -468,7 +462,8 @@ const resetPassword = async (req, res) => {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Password reset successfully. Verification email sent.' });
 
@@ -478,22 +473,23 @@ const resetPassword = async (req, res) => {
     }
 };
 
+// REMOVE buildEmailTemplate from controller (moved to utils as personalizedBatchTemplate)
 // Personalised email template in backend
-const buildEmailTemplate = (name, content) => `
-  <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-    <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-      <p><h3 style="color: white;">Dear ${name || 'User'},</h3></p>
-      <p style="color: #ccc;">${content}</p>
-      <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
-      <p>Thanks,<br>Team NEXUS</p>
-    </div>
-    <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-      <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-      <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-    </div>
-  </div>
-`;
+// const buildEmailTemplate = (name, content) => `
+//   <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+//     <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+//       <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+//       <p><h3 style="color: white;">Dear ${name || 'User'},</h3></p>
+//       <p style="color: #ccc;">${content}</p>
+//       <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
+//       <p>Thanks,<br>Team NEXUS</p>
+//     </div>
+//     <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+//       <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+//       <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+//     </div>
+//   </div>
+// `;
 
 const notifyBatch = async (req, res) => {
   try {
@@ -540,10 +536,11 @@ const notifyBatch = async (req, res) => {
 
     let sentCount = 0;
     for (const [email, name] of uniqueMap.entries()) {
-      const html = buildEmailTemplate(name, message);
-      await transporter.sendMail({
-        from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
-        to: email, // send individually to personalize salutation
+      const html = personalizedBatchTemplate(name, message);
+      // CHANGE: await transporter.sendMail({ ... })
+      await sendEmail({
+        from: `"Team Nexus" <${process.env.Email_ID || process.env.EMAIL_ID}>`,
+        to: email,
         subject,
         html
       });
@@ -672,10 +669,8 @@ const verifyAlumni = async (req, res) => {
 
         // Send verification email
         const emailContent = alumniVerificationTemplate(alumniUser.fullName);
-        await transporter.sendMail({
-            ...emailContent,
-            to: alumniUser.personalEmail
-        });
+        // CHANGE: await transporter.sendMail({ ...emailContent, to: alumniUser.personalEmail })
+        await sendEmail({ ...emailContent, to: alumniUser.personalEmail });
 
         res.status(200).json({ message: 'Alumni verified successfully' });
     } catch (error) {
@@ -694,10 +689,8 @@ const rejectAlumni = async (req, res) => {
 
         // Send rejection email
         const emailContent = alumniRejectionTemplate(alumniUser.fullName);
-        await transporter.sendMail({
-            ...emailContent,
-            to: alumniUser.personalEmail
-        });
+        // CHANGE: await transporter.sendMail({ ...emailContent, to: alumniUser.personalEmail })
+        await sendEmail({ ...emailContent, to: alumniUser.personalEmail });
 
         await user.findByIdAndDelete(id);
         res.status(200).json({ message: 'Alumni rejected successfully' });
