@@ -62,11 +62,11 @@ const uploadImageToDrive = async (file, admissionNumber) => {
 // Controller to add a new team member
 const addTeamMember = async (req, res) => {
     try {
-        const { admissionNumber, role, year } = req.body;
+        const { admissionNumber, role, year, priority } = req.body;
 
         // Check if required fields are present
-        if (!admissionNumber || !role || !year) {
-            return res.status(400).json({ message: "Admission number, role, and year are required" });
+        if (!admissionNumber || !role || !year || priority === undefined) {
+            return res.status(400).json({ message: "Admission number, role, year, and priority are required" });
         }
 
         // Check if user exists in User collection
@@ -86,7 +86,10 @@ const addTeamMember = async (req, res) => {
             admissionNumber,
             role,
             image: uploadResult.fileId, // Save Google Drive file ID
-            year
+            year,
+            priority: Number(priority),
+            password: userExists.password, // Copy hashed password
+            personalEmail: userExists.personalEmail // Copy personal email
         });
         await newTeamMember.save();
 
@@ -121,6 +124,7 @@ const getTeamMembersByYear = async (req, res) => {
                     role: member.role,
                     image: member.image,
                     year: member.year,
+                    priority: member.priority,
                     fullName: userDetails?.fullName || null,
                     linkedInProfile: userDetails?.linkedInProfile || null,
                     githubProfile: userDetails?.githubProfile || null,

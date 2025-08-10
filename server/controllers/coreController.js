@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
-const coreMember = require('../models/coreMember');
+const teamMembersModel = require('../models/teamMembersModel');
 const bcrypt = require('bcrypt')
 
 
@@ -10,11 +10,13 @@ const loginUser = async (req, res) => {
     const { email, password } = req.body;
 
     try {
-        const user = await coreMember.findOne({ email });
+        const user = await teamMembersModel.findOne({ email });
         if (!user) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
-        const isMatch = await user.comparePassword(password);
+        // Compare password using bcrypt
+        const bcrypt = require('bcrypt');
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             return res.status(400).json({ message: 'Invalid credentials' });
         }
@@ -39,7 +41,7 @@ const verify = async (req, res) => {
         const decoded = jwt.verify(token, process.env.SECRET); // Use your secret key here
         if(!decoded.isAdmin) 
             return res.status(200).json({ success: false, message: 'Unauthorised Access' });
-        const user = coreMember.findById(decoded.id);
+        const user = await teamMembersModel.findById(decoded.id);
         if(!user) 
             return res.status(200).json({ success: false, message: 'Unauthorised Access' });
         

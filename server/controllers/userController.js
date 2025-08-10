@@ -1,20 +1,12 @@
 const mongoose = require('mongoose');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+
 const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
 const bcrypt = require('bcrypt')
-const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
-const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js'); // Adjust the path to your validation utility
-const { alumniVerificationTemplate, alumniRejectionTemplate } = require('../utils/emailTemplates.js');
-
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORD
-    }
-});
+const { sendEmail } = require('../utils/emailUtils.js'); 
+const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
+const { alumniVerificationTemplate, alumniRejectionTemplate, personalizedBatchTemplate } = require('../utils/emailTemplates.js');
 
 
 
@@ -142,7 +134,8 @@ const signupUser = async (req, res) => {
 
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(201).json({ message: 'User registered. Verification email sent!' });
 
@@ -375,7 +368,8 @@ const forgotPassword = async (req, res) => {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Password reset email sent' });
 
@@ -468,7 +462,8 @@ const resetPassword = async (req, res) => {
             `
         };
 
-        await transporter.sendMail(mailOptions);
+        // CHANGE: await transporter.sendMail(mailOptions);
+        await sendEmail(mailOptions);
 
         res.status(200).json({ message: 'Password reset successfully. Verification email sent.' });
 
@@ -478,51 +473,92 @@ const resetPassword = async (req, res) => {
     }
 };
 
-const generalNotification = async (subject, message) => {
-    try {
-        const subscribers = await user.find({ subscribed: true });
+// REMOVE buildEmailTemplate from controller (moved to utils as personalizedBatchTemplate)
+// Personalised email template in backend
+// const buildEmailTemplate = (name, content) => `
+//   <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+//     <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+//       <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+//       <p><h3 style="color: white;">Dear ${name || 'User'},</h3></p>
+//       <p style="color: #ccc;">${content}</p>
+//       <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
+//       <p>Thanks,<br>Team NEXUS</p>
+//     </div>
+//     <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+//       <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+//       <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+//     </div>
+//   </div>
+// `;
 
-        if (!subscribers.length) return;
+const notifyBatch = async (req, res) => {
+  try {
+    const { subject, message, batches } = req.body;
 
-        const recipientEmails = subscribers.map(subscriber => subscriber.personalEmail);
-        const linkToApply = 'https://www.nexus-svnit.in';
-        const batchSize = 100; // Adjust based on email provider limits
-
-        for (let i = 0; i < recipientEmails.length; i += batchSize) {
-            const batchRecipients = recipientEmails.slice(i, i + batchSize);
-
-            const emailContent = {
-                from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
-                to: process.env.EMAIL_ID, // Send to yourself (avoid exposing all emails in 'To')
-                bcc: batchRecipients.join(','), // Recipients in BCC to protect privacy
-                subject: subject,
-                html: `
-                    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-                        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                            <p><h3 style="color: white;">Dear Subscriber,</h3></p>
-                            <p style="color: #ccc;">${message}</p>
-                            <p style="color: #ccc;">Visit <a href="${linkToApply}" style="color: #1a73e8;">this link</a> for more details.</p>
-                            <p>Thanks,<br>Team NEXUS</p>
-                        </div>
-                        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-                            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-                            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-                        </div>
-                    </div>
-                `,
-            };
-
-            await sendEmail(emailContent); // Send in batches
-        }
-
-    } catch (err) {
-        console.error('Error notifying subscribers:', err);
-        throw err;
+    if (!subject || !message) {
+      return res.status(400).json({ message: 'subject and message are required' });
     }
+
+    // Parse prefixes like "u22,i25"
+    const rawBatches = Array.isArray(batches) ? batches : String(batches || '').split(',');
+    const prefixes = [...new Set(
+      rawBatches
+        .map(b => String(b).trim().toLowerCase())
+        .filter(b => /^[ui][0-9]{2}$/.test(b))
+    )];
+
+    if (!prefixes.length) {
+      return res.status(400).json({ message: 'Invalid batch values. Use prefixes like "u22" or "i25".' });
+    }
+
+    const regex = new RegExp(`^(${prefixes.join('|')})`, 'i');
+
+    // Fetch recipients with name + email, only verified users with a personal email
+    const recipients = await user.find(
+      {
+        emailVerified: true,
+        admissionNumber: { $regex: regex },
+        personalEmail: { $exists: true, $ne: '' }
+      },
+      { personalEmail: 1, fullName: 1, _id: 0 }
+    ).lean();
+
+    if (!recipients.length) {
+      return res.status(404).json({ message: 'No users found for selected batches' });
+    }
+
+    // De-duplicate by email (keep first name seen)
+    const uniqueMap = new Map();
+    for (const r of recipients) {
+      const email = r.personalEmail?.trim();
+      if (email && !uniqueMap.has(email)) uniqueMap.set(email, r.fullName || 'User');
+    }
+
+    let sentCount = 0;
+    for (const [email, name] of uniqueMap.entries()) {
+      const html = personalizedBatchTemplate(name, message);
+      // CHANGE: await transporter.sendMail({ ... })
+      await sendEmail({
+        from: `"Team Nexus" <${process.env.Email_ID || process.env.EMAIL_ID}>`,
+        to: email,
+        subject,
+        html
+      });
+      sentCount++;
+    }
+
+    console.log(`Sent ${sentCount} emails to ${uniqueMap.size} unique recipients`);
+
+    return res.status(200).json({
+      message: 'Batch notification sent',
+      totalRecipients: sentCount,
+      batches: prefixes
+    });
+  } catch (error) {
+    console.error('notify-batch error:', error);
+    return res.status(500).json({ message: 'Error notifying batch users' });
+  }
 };
-
-
 
 const getUserStats = async (req, res) => {
     try {
@@ -633,10 +669,8 @@ const verifyAlumni = async (req, res) => {
 
         // Send verification email
         const emailContent = alumniVerificationTemplate(alumniUser.fullName);
-        await transporter.sendMail({
-            ...emailContent,
-            to: alumniUser.personalEmail
-        });
+        // CHANGE: await transporter.sendMail({ ...emailContent, to: alumniUser.personalEmail })
+        await sendEmail({ ...emailContent, to: alumniUser.personalEmail });
 
         res.status(200).json({ message: 'Alumni verified successfully' });
     } catch (error) {
@@ -655,10 +689,8 @@ const rejectAlumni = async (req, res) => {
 
         // Send rejection email
         const emailContent = alumniRejectionTemplate(alumniUser.fullName);
-        await transporter.sendMail({
-            ...emailContent,
-            to: alumniUser.personalEmail
-        });
+        // CHANGE: await transporter.sendMail({ ...emailContent, to: alumniUser.personalEmail })
+        await sendEmail({ ...emailContent, to: alumniUser.personalEmail });
 
         await user.findByIdAndDelete(id);
         res.status(200).json({ message: 'Alumni rejected successfully' });
@@ -673,10 +705,11 @@ module.exports = {
     loginUser, signupUser, verifyEmail,
     forgotPassword, verifyPasswordResetEmail,
     resetPassword,
-    generalNotification,
+    // generalNotification,
     getUsers,
     getUserStats,
     getPendingAlumni,
     verifyAlumni,
-    rejectAlumni
+    rejectAlumni,
+    notifyBatch // new export
 };

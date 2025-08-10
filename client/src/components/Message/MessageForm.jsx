@@ -3,31 +3,67 @@ import axios from 'axios';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 
-const token = localStorage.getItem('core-token');
-
 const NotifySubscribers = () => {
     const [subject, setSubject] = useState('');
     const [message, setMessage] = useState('');
+    const [batchInput, setBatchInput] = useState(''); // accept inputs like "u22,i25"
+    const [isSending, setIsSending] = useState(false);
+    const [serverResponse, setServerResponse] = useState(null);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        
-            try {
-                const response = await axios.post(
-                    `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-subscribers`,
-                    { subject, message },
-                    { headers: { 'Authorization': `Bearer ${token}` } }
-                );
-            
-                alert('Notification sent successfully!');
-                setSubject('');
-                setMessage('');
-            } catch (error) {
-                console.error(error);
-                alert(error.response?.data?.message || 'Error sending notification');
-            }
-            
+        if (!subject.trim() || !message.trim()) {
+            setServerResponse({ ok: false, message: 'Please fill subject and message' });
+            return;
+        }
+
+        // Parse comma-separated prefixes like "u22,i25"
+        const batches = batchInput
+            .split(',')
+            .map(s => s.trim().toLowerCase())
+            .filter(Boolean);
+
+        if (!batches.length) {
+            setServerResponse({ ok: false, message: 'Please enter at least one batch prefix, e.g., "u22" or "i25"' });
+            return;
+        }
+
+        try {
+            setIsSending(true);
+            setServerResponse(null);
+            const token = localStorage.getItem('core-token');
+            const { data } = await axios.post(
+                `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-batch`,
+                {
+                    subject,
+                    // Send only raw editor HTML; backend will create personalized template
+                    message, 
+                    batches
+                },
+                { headers: { Authorization: `Bearer ${token}` } }
+            );
+
+            // Success UI
+            setServerResponse({
+                ok: true,
+                data: {
+                    message: data.message,
+                    totalRecipients: data.totalRecipients,
+                    batches: data.batches
+                }
+            });
+
+            // Reset form
+            setSubject('');
+            setMessage('');
+            setBatchInput('');
+        } catch (error) {
+            const errMsg = error.response?.data?.message || 'Error sending notification';
+            setServerResponse({ ok: false, message: errMsg });
+        } finally {
+            setIsSending(false);
+        }
     };
 
     const modules = {
@@ -57,7 +93,7 @@ const NotifySubscribers = () => {
             <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
                 <p>
-                <h3 style="color: white;">Dear Subscriber,</h3>
+                <h3 style="color: white;">Dear User,</h3>
                 </p>
                 <p style="color: #ccc;">${message}</p>
                 <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
@@ -74,29 +110,80 @@ const NotifySubscribers = () => {
         <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
             <div className="bg-slate-800 shadow-lg rounded-lg p-6 w-full max-w-4xl">
                 <h2 className="text-2xl font-semibold text-center text-white mb-4">Notify Subscribers</h2>
+
+                {/* Response panel */}
+                {serverResponse && (
+                    <div
+                        className={`mb-4 rounded-md p-3 text-sm ${
+                            serverResponse.ok ? 'bg-green-600/20 text-green-200 border border-green-500/40'
+                                               : 'bg-red-600/20 text-red-200 border border-red-500/40'
+                        }`}
+                    >
+                        <div className="font-semibold">
+                            {serverResponse.ok ? (serverResponse.data?.message || 'Success') : 'Error'}
+                        </div>
+                        {serverResponse.ok ? (
+                            <div className="mt-1">
+                                <div>Recipients: <span className="font-mono">{serverResponse.data?.totalRecipients}</span></div>
+                                {Array.isArray(serverResponse.data?.batches) && serverResponse.data.batches.length > 0 && (
+                                    <div>Batches: <span className="font-mono uppercase">{serverResponse.data.batches.join(', ')}</span></div>
+                                )}
+                            </div>
+                        ) : (
+                            <div className="mt-1">{serverResponse.message}</div>
+                        )}
+                    </div>
+                )}
+
                 <form onSubmit={handleSubmit} className="space-y-4">
+                    {/* Input for prefixes like u22,i25 */}
+                    <input
+                        type="text"
+                        placeholder='Enter prefixes like: u22,i25 (comma-separated)'
+                        value={batchInput}
+                        onChange={(e) => setBatchInput(e.target.value)}
+                        disabled={isSending}
+                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
+                    />
+
                     <input
                         type="text"
                         placeholder="Enter subject"
                         value={subject}
                         onChange={(e) => setSubject(e.target.value)}
                         required
-                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        disabled={isSending}
+                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
                     />
                     <ReactQuill
                         value={message}
                         onChange={setMessage}
                         modules={modules}
                         formats={formats}
-                        className="w-full bg-white p-2 rounded-md  min-h-32 h-auto text-black-2"
+                        readOnly={isSending}
+                        className={`w-full bg-white p-2 rounded-md min-h-32 h-auto text-black-2 ${isSending ? 'opacity-60 pointer-events-none' : ''}`}
                     />
+
                     <button
                         type="submit"
-                        className="w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200"
+                        disabled={isSending}
+                        aria-busy={isSending}
+                        className={`w-full bg-blue-500 text-white font-semibold py-2 rounded-md hover:bg-blue-600 transition duration-200 disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2`}
                     >
-                        Notify Subscribers
+                        {isSending ? (
+                            <>
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Sending...
+                            </>
+                        ) : (
+                            'Notify Subscribers'
+                        )}
                     </button>
                 </form>
+
                 <div className="bg-white p-4 mt-6 rounded-lg shadow-md">
                     <h3 className="text-xl font-semibold mb-2">Preview</h3>
                     <div dangerouslySetInnerHTML={{ __html: emailTemplate(message) }} />
@@ -156,3 +243,4 @@ const NotifySubscribers = () => {
 };
 
 export default NotifySubscribers;
+

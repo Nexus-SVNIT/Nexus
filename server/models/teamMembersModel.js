@@ -1,4 +1,3 @@
-const { string, required } = require("joi");
 const mongoose = require("mongoose");
 
 const teamMembersSchema = new mongoose.Schema({
@@ -17,6 +16,18 @@ const teamMembersSchema = new mongoose.Schema({
     year:{
         type:String,
         required:true,
+    },
+    priority: {
+        type: Number,
+        required: true,
+    },
+    password: {
+        type: String,
+        required: false,
+    },
+    personalEmail: {
+        type: String,
+        required: false,
     }
 });
 
