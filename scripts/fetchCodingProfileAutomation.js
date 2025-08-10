@@ -49,7 +49,7 @@ const fetchAllCodingProfiles = async (platform) => {
                     admissionNumber: userDoc.admissionNumber
                 });
             } catch (e) {
-                console.log(e);
+                console.log(`Error ${userDoc.admissionNo} ${platform} profile: ${e.message}`);
             }
         }));
         if (profiles.length === 0) {
