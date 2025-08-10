@@ -58,7 +58,7 @@ const fetchAllCodingProfiles = async (platform) => {
         }
 
         await Promise.all(profiles.map(profile => 
-            mongoose.connection.db.collection('codingProfiles').findOneAndUpdate(
+            mongoose.connection.db.collection('codingprofiles').findOneAndUpdate(
                 { platform, profileId: profile.profileId },
                 {
                     $set: {
