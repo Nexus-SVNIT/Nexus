@@ -20,7 +20,7 @@ const QuestionBox = ({ ques, inputValue, onInputChange, isUser }) => {
             value={inputValue}
             name={fieldName}
             onChange={onInputChange}
-            className={`h-6 w-full resize-none border-b-2 outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
+            className={`h-6 pl-1 w-full resize-none border-b-2 outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
             required={required}
             placeholder={`Enter your response to ${fieldName.toLowerCase()}`}
             type='text'
@@ -33,11 +33,16 @@ const QuestionBox = ({ ques, inputValue, onInputChange, isUser }) => {
             id={fieldName}
             value={inputValue}
             name={fieldName}
-            onChange={onInputChange}
-            className={`h-12 py-5 w-full resize-none border-b-2 outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
+            onChange={(e) => {
+              e.target.style.height = "auto"; // Reset height
+              e.target.style.height = `${e.target.scrollHeight}px`; // Set height to scrollHeight
+              onInputChange(e);
+            }}
+            className={`pl-1 w-full resize-none border-2 rounded-lg overflow-hidden outline-none md:w-2/3 ${isUser ? "uppercase" : ""}`}
             required={required}
             placeholder={`Enter your response to ${fieldName.toLowerCase()}`}
-            pattern={isUser ? "(I|U)\\d{2}(CS|AI)\\d{3}" : undefined}
+            // pattern={isUser ? "(I|U)\\d{2}(CS|AI)\\d{3}" : undefined} // Not applicable for long text
+            rows={3}
           />
         )}
 
