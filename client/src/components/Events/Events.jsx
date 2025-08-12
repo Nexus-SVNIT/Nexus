@@ -215,7 +215,7 @@ const Events = () => {
 
             {/* Current Image */}
             <img
-              src={imageSlider.images[imageSlider.currentIndex]}
+              src={`https://lh3.googleusercontent.com/d/${imageSlider.images[imageSlider.currentIndex]}`}
               alt={`${imageSlider.eventName} - Image ${imageSlider.currentIndex + 1}`}
               className="max-w-full max-h-full object-contain rounded-lg"
               onClick={(e) => e.stopPropagation()}
