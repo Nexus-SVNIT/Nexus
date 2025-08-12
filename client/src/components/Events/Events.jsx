@@ -83,8 +83,7 @@ const Events = () => {
                         <p>{item.eventDescription}</p>
                         <img
                           src={
-                            item?.eventPoster ??
-                            item?.eventImages[0] ??
+                            `https://lh3.googleusercontent.com/d/${item?.eventPoster}` ??
                             "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
                           }
                           alt="Banner"
