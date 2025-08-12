@@ -243,7 +243,7 @@ const Events = () => {
                     }`}
                   >
                     <img
-                      src={image}
+                      src={`https://lh3.googleusercontent.com/d/${image}`}
                       alt={`Thumbnail ${index + 1}`}
                       className="w-full h-full object-cover"
                     />
