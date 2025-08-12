@@ -73,6 +73,11 @@ const Teams = () => {
       }
     };
 
+    setSearchParams((prev) => {
+      prev.set("year", selectedYear);
+      return prev;
+    });
+
     fetchData();
   }, [selectedYear]); // Refetch data when selectedYear changes
 
