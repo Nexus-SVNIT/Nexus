@@ -54,6 +54,8 @@ function SignUpForm() {
       instituteEmail,
       branch,
       password,
+      linkedInProfile,
+      githubProfile,
       leetcodeProfile,
       codeforcesProfile,
       codechefProfile,
@@ -63,6 +65,10 @@ function SignUpForm() {
     const instituteEmailPattern =
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
+    if (!fullName) {
+      toast.error("Full Name is required");
+      return false;
+    }
     if (
       !admissionNumber.match(/[UIP]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)
     ) {
@@ -79,6 +85,26 @@ function SignUpForm() {
     }
     if (!instituteEmail.match(instituteEmailPattern)) {
       toast.error("Invalid Institute Email");
+      return false;
+    }
+    if (!branch) {
+      toast.error("Branch is required");
+      return false;
+    }
+    if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
+      toast.error("LinkedIn Profile URL is required");
+      return false;
+    }
+    if (githubProfile && !githubProfile.match(/^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/)) {
+      toast.error("Invalid GitHub Profile URL");
+      return false;
+    }
+    if (!leetcodeProfile) {
+      toast.error("LeetCode Profile ID is required");
+      return false;
+    }
+    if (!codeforcesProfile) {
+      toast.error("Codeforces Profile ID is required");
       return false;
     }
     if (
@@ -105,7 +131,6 @@ function SignUpForm() {
       toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
-
     if (password.length < 8) {
       toast.error("Password must be at least 8 characters");
       return false;
@@ -122,7 +147,8 @@ function SignUpForm() {
     const yearsSinceAdmission = academicYear - admissionYear;
 
     if ((programType === 'U' && yearsSinceAdmission >= 4) || 
-        (programType === 'I' && yearsSinceAdmission >= 5)) {
+        (programType === 'I' && yearsSinceAdmission >= 5) ||
+        (programType === 'P' && yearsSinceAdmission >= 2)) {
         toast.error("Please use the alumni signup form if you have graduated");
         return false;
     }
