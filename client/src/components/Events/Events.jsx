@@ -5,17 +5,20 @@ import "./events.css";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
+import Modal from "./Modal";
 
 const Events = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
-  const [showMore, setShowMore] = useState({});
+  const [modalOpen, setModalOpen] = useState(false);
+  const [activeImages, setActiveImages] = useState([]);
+  const [initialImageIndex, setInitialImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
       const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event`;
-      console.log("Fetching data from:", url); // Debug statement
+      console.log("Fetching data from:", url);
 
       try {
         const response = await fetch(url);
@@ -27,7 +30,7 @@ const Events = () => {
         const result = await response.json();
         setData(result);
       } catch (err) {
-        console.error("Fetch error:", err); // Log the error details
+        console.error("Fetch error:", err);
         setError(err);
       } finally {
         setLoading(false);
@@ -36,10 +39,16 @@ const Events = () => {
 
     fetchData();
     increamentCounter();
-  }, []); // Empty dependency array to run once on mount
+  }, []);
 
-  const handleShowMore = (id) => {
-    setShowMore((prev) => ({ ...prev, [id]: !prev[id] }));
+  const openModal = (images) => {
+    setActiveImages(images);
+    setModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalOpen(false);
+    setActiveImages([]);
   };
 
   if (error) {
@@ -51,7 +60,7 @@ const Events = () => {
       <HeadTags
         title="Events | Nexus - NIT Surat"
         description="Nexus Events page. Stay updated with the latest events happening at Nexus, NIT Surat."
-        keywords="Nexus, NIT Surat, Events, Nexus Events, NIT Surat Events, SVNIT, CSE, AI, Web Wonder, Mentorship Program, Riddle Fuse, Sports Event, Fiesta, Teacher's Day Celebration, CodeSprint, Catpture The Flag"
+        keywords="Nexus, NIT Surat, Events, Nexus Events, NIT Surat Events, SVNIT, CSE, AI, Web Wonder, Mentorship Program, Riddle Fuse, Sports Event, Fiesta, Teacher's Day Celebration, CodeSprint, Capture The Flag"
       />
       <Title>Events</Title>
       <div className="container">
@@ -83,32 +92,20 @@ const Events = () => {
                         <p>{item.eventDescription}</p>
                         <img
                           src={
-                            item?.eventPoster ??
-                            item?.eventImages[0] ??
-                            "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
+                            item?.eventPoster
+                              ? `https://lh3.googleusercontent.com/d/${item.eventPoster}`
+                              : "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
                           }
                           alt="Banner"
                           className="mt-4 min-h-[12rem] w-full rounded-md"
                         />
-                        {item.eventImages.length > 1 && (
+                        {item.eventImages.length > 0 && (
                           <button
-                            onClick={() => handleShowMore(item._id)}
+                            onClick={() => openModal(item.eventImages, 0)}
                             className="mt-4 text-blue-500"
                           >
-                            {showMore[item._id] ? "Show Less" : "Show More"}
+                            Show More
                           </button>
-                        )}
-                        {showMore[item._id] && (
-                          <div className="slideshow mt-4">
-                            {item.eventImages.map((image, index) => (
-                              <img
-                                key={index}
-                                src={image}
-                                alt={`Slide ${index}`}
-                                className="mt-2 min-h-[12rem] w-full rounded-md"
-                              />
-                            ))}
-                          </div>
                         )}
                       </div>
                     </li>
@@ -118,6 +115,14 @@ const Events = () => {
           </ul>
         </div>
       </div>
+
+      {modalOpen && (
+        <Modal
+          images={activeImages}
+          initialIndex={initialImageIndex}
+          onClose={closeModal}
+        />
+      )}
     </div>
   );
 };
@@ -134,10 +139,7 @@ const LoadingPlaceholders = () => (
           </div>
           <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
           <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-          <div
-            alt="Banner"
-            className="mt-4 min-h-[20rem] w-full animate-pulse rounded-md bg-slate-500"
-          />
+          <div className="mt-4 min-h-[20rem] w-full animate-pulse rounded-md bg-slate-500" />
         </div>
       </li>
     ))}
