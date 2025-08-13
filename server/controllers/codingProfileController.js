@@ -242,7 +242,11 @@ const getCodingProfile = async (req, res) => {
         if (!codingProfile) {
             return res.status(400).json({ success: false, error: "Coding profile not found" });
         }
-        res.json({ success: true, data: codingProfile });
+        const resData = {};
+        codingProfile.forEach(profile => {
+            resData[profile.platform] = profile;
+        });
+        res.json({ success: true, data: resData });
     }
     catch (error) {
         console.error("Error fetching coding profile:", error.message);
