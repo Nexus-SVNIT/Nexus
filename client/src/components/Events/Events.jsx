@@ -13,6 +13,7 @@ const Events = () => {
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeImages, setActiveImages] = useState([]);
+  const [initialImageIndex, setInitialImageIndex] = useState(0);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -49,7 +50,7 @@ const Events = () => {
     setModalOpen(false);
     setActiveImages([]);
   };
-  
+
   if (error) {
     return <MaintenancePage />;
   }
@@ -100,7 +101,7 @@ const Events = () => {
                         />
                         {item.eventImages.length > 0 && (
                           <button
-                            onClick={() => openModal(item.eventImages)}
+                            onClick={() => openModal(item.eventImages, 0)}
                             className="mt-4 text-blue-500"
                           >
                             Show More
@@ -116,19 +117,12 @@ const Events = () => {
       </div>
 
       {modalOpen && (
-  <Modal onClose={closeModal}>
-    <div className="flex overflow-x-auto space-x-4 snap-x snap-mandatory pt-12">
-      {activeImages.map((imgId, index) => (
-        <img
-          key={index}
-          src={`https://lh3.googleusercontent.com/d/${imgId}`}
-          alt={`Slide ${index + 1}`}
-          className="w-full max-w-md max-h-[80vh] object-contain flex-shrink-0 snap-center rounded-md"
+        <Modal
+          images={activeImages}
+          initialIndex={initialImageIndex}
+          onClose={closeModal}
         />
-      ))}
-    </div>
-  </Modal>
-)}
+      )}
     </div>
   );
 };
