@@ -113,7 +113,7 @@ const CustomSidebar = () => {
             </button>
           ) : (
             <>
-              <div className="flex items-center">
+              <div className="flex items-center px-4 py-9 h-10">
                 <Link to={"/"}>
                   <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
                 </Link>
@@ -184,7 +184,9 @@ const CustomSidebar = () => {
                   setCollapsed(true);
                 }}
               >
-                {!collapsed && "Logout"}
+                {!collapsed && (
+                  <span className="ml-4 text-lg font-medium">Logout</span>
+                )}
               </MenuItem>
             ) : (
               <MenuItem
@@ -193,7 +195,9 @@ const CustomSidebar = () => {
                 title={"Login"}
                 onClick={() => setCollapsed(true)}
               >
-                {!collapsed && "Login"}
+                {!collapsed && (
+                  <span className="ml-4 text-lg font-medium">Login</span>
+                )}
                 <Link to={"/login"} />
               </MenuItem>
             )}
