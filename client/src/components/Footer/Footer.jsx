@@ -23,8 +23,8 @@ const Footer = () => {
           id="wave4"
         />
       </div>
-      <div className="mx-auto flex w-full  flex-col gap-4 md:flex-row md:gap-0 ">
-        <div className="w-[100%] md:w-[32rem] lg:w-[40rem]">
+      <div className="mx-auto flex w-full  flex-col gap-4 xl:flex-row xl:gap-0 ">
+        <div className="w-[100%] xl:w-[40rem]">
           <h2 className="flex items-center text-xs md:text-sm">
             <img
               src={Logo}
