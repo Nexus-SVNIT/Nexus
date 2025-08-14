@@ -1,27 +1,31 @@
 import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
+import { useSearchParams } from "react-router-dom";
 
 const SortableTable = ({ columns, data }) => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentPage = parseInt(searchParams.get('page') || '1');
+  const currentPageSize = parseInt(searchParams.get('limit') || '10');
+
   const {
     getTableProps,
     getTableBodyProps,
     headerGroups,
     page,
     prepareRow,
-    canPreviousPage,
-    canNextPage,
-    pageOptions,
-    pageCount,
     gotoPage,
-    nextPage,
-    previousPage,
     setPageSize,
     state: { pageIndex, pageSize },
   } = useTable(
     {
       columns,
       data,
-      initialState: { pageIndex: 0, pageSize: 10 },
+      initialState: { 
+        pageIndex: currentPage - 1,
+        pageSize: currentPageSize 
+      },
+      manualPagination: true,
+      pageCount: Math.ceil(data.length / currentPageSize),
     },
     useSortBy,
     usePagination,
@@ -138,9 +142,7 @@ const SortableTable = ({ columns, data }) => {
   };
 
   return (
-    <div className="mb-16 overflow-x-auto">
-      {" "}
-      {/* Added margin-bottom for table spacing */}
+    <div className="mb-16 px-10 overflow-x-auto"> 
       <table
         {...getTableProps()}
         className="bg-gray-800 mb-4 mt-4 min-w-full rounded-lg text-sm sm:text-base"
@@ -215,44 +217,53 @@ const SortableTable = ({ columns, data }) => {
       <div className="mt-6 flex flex-col items-center justify-between gap-4 px-4 sm:flex-row">
         <div className="bg-gray-800 flex items-center gap-3 rounded-lg p-3">
           <button
-            onClick={() => gotoPage(0)}
-            disabled={!canPreviousPage}
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('page', '1');
+              setSearchParams(params);
+            }}
+            disabled={currentPage === 1}
             className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
           >
             {"<<"}
           </button>
           <button
-            onClick={() => previousPage()}
-            disabled={!canPreviousPage}
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('page', (currentPage - 1).toString());
+              setSearchParams(params);
+            }}
+            disabled={currentPage === 1}
             className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
           >
             {"<"}
           </button>
           <span className="mx-2">
-            Page <strong>{pageIndex + 1}</strong> of{" "}
-            <strong>{pageOptions.length}</strong>
+            Page <strong>{currentPage}</strong>
           </span>
           <button
-            onClick={() => nextPage()}
-            disabled={!canNextPage}
+            onClick={() => {
+              const params = new URLSearchParams(searchParams);
+              params.set('page', (currentPage + 1).toString());
+              setSearchParams(params);
+            }}
+            disabled={data.length < currentPageSize}
             className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
           >
             {">"}
-          </button>
-          <button
-            onClick={() => gotoPage(pageCount - 1)}
-            disabled={!canNextPage}
-            className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
-          >
-            {">>"}
           </button>
         </div>
 
         <div className="bg-gray-800 flex items-center gap-2 rounded-lg p-3">
           <span>Show</span>
           <select
-            value={pageSize}
-            onChange={(e) => setPageSize(Number(e.target.value))}
+            value={currentPageSize}
+            onChange={(e) => {
+              const params = new URLSearchParams(searchParams);
+              params.set('limit', e.target.value);
+              params.set('page', '1'); // Reset to first page when changing page size
+              setSearchParams(params);
+            }}
             className="text-gray-200 border-gray-700 rounded border bg-slate-950 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
           >
             {[10, 20, 30, 40, 50].map((size) => (

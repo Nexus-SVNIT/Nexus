@@ -14,6 +14,23 @@ if (!MONGO_URL) {
     process.exit(1);
 }
 
+const getStatus = (admissionNumber) => {
+    const year = admissionNumber.slice(1, 3);
+    const program = admissionNumber.slice(0, 1);
+
+    switch (program) {
+        case 'U':
+            return year <= (new Date().getFullYear() - 4) % 2000 ? 'alumni' : 'current';
+        case 'P':
+            return year <= (new Date().getFullYear() - 2) % 2000 ? 'alumni' : 'current';
+        case 'D':
+        case 'I':
+            return year <= (new Date().getFullYear() - 5) % 2000 ? 'alumni' : 'current';
+        default:
+            return 'current';
+    }
+};
+
 const fetchAllCodingProfiles = async (platform) => {
     try {
         const users = await mongoose.connection.db.collection('users').find({}, { fullName: 1, admissionNumber: 1, [platform + 'Profile']: 1 }).toArray();
@@ -67,6 +84,10 @@ const fetchAllCodingProfiles = async (platform) => {
                         userId: profile.userId,
                         fullName: profile.fullName,
                         admissionNo: profile.admissionNumber,
+                        year: profile.admissionNumber.slice(1, 3),
+                        program: profile.admissionNumber.slice(0, 1),
+                        branch: profile.admissionNumber.slice(3, 5),
+                        status: getStatus(profile.admissionNumber),
                         updatedAt: new Date()
                     }
                 },

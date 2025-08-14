@@ -200,8 +200,8 @@ const fetchAllCodingProfiles = async (req, res) => {
 }
 
 const formatCodingProfileData = {
-    codeforces: (data, index) => ({
-        tableRank: index + 1,
+    codeforces: (skip, data, index) => ({
+        tableRank: skip + index + 1,
         fullName: data.fullName || "N/A",
         admissionNo: data.admissionNo || "N/A",
         maxRating: data?.data?.[0]?.maxRating || "N/A",
@@ -210,8 +210,8 @@ const formatCodingProfileData = {
         userId: data.userId,
         profileId: data.profileId,
     }),
-    leetcode: (data, index) => ({
-        tableRank: index + 1,
+    leetcode: (skip, data, index) => ({
+        tableRank: skip + index + 1,
         fullName: data.fullName || "N/A",
         admissionNo: data.admissionNo || "N/A",
         globalRanking: data?.data?.userContestRanking?.globalRanking || "N/A",
@@ -221,8 +221,8 @@ const formatCodingProfileData = {
         userId: data.userId,
         profileId: data.profileId,
     }),
-    codechef: (data, index) => ({
-        tableRank: index + 1,
+    codechef: (skip, data, index) => ({
+        tableRank: skip + index + 1,
         fullName: data.fullName || "N/A",
         admissionNo: data.admissionNo || "N/A",
         rating_number: data?.data?.rating_number || "N/A",
@@ -266,14 +266,14 @@ const getCodingProfiles = async (req, res) => {
             return res.status(400).json({ success: false, message: "No coding profiles found" });
         }
         const formattedProfiles = codingProfiles.map((profile, index) => {
-            return formatCodingProfileData[platform](profile, index);
+            return formatCodingProfileData[platform](skip, profile, index);
         });
         res.json({
             success: true,
             data: formattedProfiles,
             totalProfiles,
             totalPages: Math.ceil(totalProfiles / limit),
-            currentPage: Number(page)
+            currentPage: Number(page),
         });
     } catch (error) {
         console.error("Error fetching coding profiles:", error.message);

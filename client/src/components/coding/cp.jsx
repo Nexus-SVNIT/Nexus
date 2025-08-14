@@ -30,22 +30,62 @@ const Cp = () => {
   );
 
   const handlePlatformChange = (platform) => {
+    // Update the URL with the new platform and reset to page 1
+    const params = new URLSearchParams(searchParams);
+    params.set('platform', platform);
+    params.set('page', '1');
+    setSearchParams(params);
     setActivePlatform(platform);
   };
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
+      setIsError(false);
       try {
-        const [cfResponse, lcResponse, ccResponse] = await Promise.all([
-          axios.get(process.env.REACT_APP_BACKEND_BASE_URL+"/coding-profiles/get-profiles?platform=codeforces"),
-          axios.get(process.env.REACT_APP_BACKEND_BASE_URL+"/coding-profiles/get-profiles?platform=leetcode"),
-          axios.get(process.env.REACT_APP_BACKEND_BASE_URL+"/coding-profiles/get-profiles?platform=codechef"),
-        ]);
+        const params = new URLSearchParams(searchParams);
+        
+        // Always include platform
+        if (!params.has('platform')) {
+          params.set('platform', activePlatform);
+        }
+        
+        // Set default values for pagination if not present
+        if (!params.has('page')) params.set('page', '1');
+        if (!params.has('limit')) params.set('limit', '10');
 
-        setCodeforcesLeaderboard(cfResponse?.data?.data);
-        setLeetcodeLeaderboard(lcResponse?.data?.data);
-        setCodechefLeaderboard(ccResponse?.data?.data);
+        // Make the API call
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profiles?${params.toString()}`
+        );
+
+        if (!response.data.success) {
+          throw new Error(response.data.message || 'Failed to fetch data');
+        }
+
+        const { data } = response.data;
+
+        // Update the appropriate leaderboard based on platform
+        const currentPlatform = params.get('platform') || activePlatform;
+        switch (currentPlatform) {
+          case "codeforces":
+            setCodeforcesLeaderboard(data);
+            setLeetcodeLeaderboard([]);
+            setCodechefLeaderboard([]);
+            break;
+          case "leetcode":
+            setLeetcodeLeaderboard(data);
+            setCodeforcesLeaderboard([]);
+            setCodechefLeaderboard([]);
+            break;
+          case "codechef":
+            setCodechefLeaderboard(data);
+            setCodeforcesLeaderboard([]);
+            setLeetcodeLeaderboard([]);
+            break;
+          default:
+            break;
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         setIsError(true);
@@ -54,9 +94,9 @@ const Cp = () => {
       }
     };
 
+    // Call fetchData whenever URL parameters change
     fetchData();
-    increamentCounter();
-  }, []);
+  }, [searchParams, activePlatform]); // Add all dependencies that should trigger a refetch
 
   if (isError) {
     return <MaintenancePage />;
@@ -106,7 +146,7 @@ const Cp = () => {
       { Header: "Global Ranking", accessor: "globalRanking" },
       { Header: "Rating", accessor: "rating" },
       { Header: "Total Solved", accessor: "totalSolved" },
-      { Header: "Contest Attended", accessor: "ContestAttended" },
+      { Header: "Contest Attended", accessor: "attendedContestsCount" },
     ],
     codechef: [
       { Header: "Rank", accessor: "tableRank" }, // Change to use pre-calculated rank
@@ -182,7 +222,6 @@ const Cp = () => {
             {/* Platform Toggle Buttons */}
             <PlateformButtons handlePlatformChange={handlePlatformChange} activePlatform={activePlatform} />
 
-            Conditional Table Rendering
             {activePlatform === "codeforces" && (
               <>
                 <RatingLegend platform="codeforces" />
