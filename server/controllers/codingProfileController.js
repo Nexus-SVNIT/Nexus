@@ -199,6 +199,40 @@ const fetchAllCodingProfiles = async (req, res) => {
     }
 }
 
+const formatCodingProfileData = {
+    codeforces: (data, index) => ({
+        tableRank: index + 1,
+        fullName: data.fullName || "N/A",
+        admissionNo: data.admissionNo || "N/A",
+        maxRating: data?.data?.[0]?.maxRating || "N/A",
+        rating: data?.data?.[0]?.rating || "N/A",
+        rank: data?.data?.[0]?.rank || "N/A",
+        userId: data.userId,
+        profileId: data.profileId,
+    }),
+    leetcode: (data, index) => ({
+        tableRank: index + 1,
+        fullName: data.fullName || "N/A",
+        admissionNo: data.admissionNo || "N/A",
+        globalRanking: data?.data?.userContestRanking?.globalRanking || "N/A",
+        rating: data?.data?.userContestRanking?.rating || "N/A",
+        totalSolved: data?.data?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count || "N/A",
+        attendedContestsCount: data?.data?.userContestRanking?.attendedContestsCount || "N/A",
+        userId: data.userId,
+        profileId: data.profileId,
+    }),
+    codechef: (data, index) => ({
+        tableRank: index + 1,
+        fullName: data.fullName || "N/A",
+        admissionNo: data.admissionNo || "N/A",
+        rating_number: data?.data?.rating_number || "N/A",
+        rating: data?.data?.rating || "N/A",
+        globalRank: data?.data?.global_rank || "N/A",
+        userId: data.userId,
+        profileId: data.profileId,
+    })
+}
+
 const getCodingProfiles = async (req, res) => {
     try {
         const platform = req.query.platform || "codeforces";
@@ -228,9 +262,15 @@ const getCodingProfiles = async (req, res) => {
             .populate('userId', 'fullName admissionNo profileImage')
             .exec();
         const totalProfiles = await codingProfileModel.countDocuments(filter);
+        if (codingProfiles.length === 0) {
+            return res.status(400).json({ success: false, message: "No coding profiles found" });
+        }
+        const formattedProfiles = codingProfiles.map((profile, index) => {
+            return formatCodingProfileData[platform](profile, index);
+        });
         res.json({
             success: true,
-            data: codingProfiles,
+            data: formattedProfiles,
             totalProfiles,
             totalPages: Math.ceil(totalProfiles / limit),
             currentPage: Number(page)

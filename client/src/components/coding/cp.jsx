@@ -12,6 +12,8 @@ import NoticeBar from "./NoticeBar";
 import FilterSection from "./FilterSection";
 import PlateformButtons from "./PlateformButtons";
 import axios from "axios";
+import SortableTable from "./SortedTable";
+import RatingLegend from "./RatingLegend";
 
 const Cp = () => {
   // Add new state for rank display preference
@@ -41,9 +43,9 @@ const Cp = () => {
           axios.get(process.env.REACT_APP_BACKEND_BASE_URL+"/coding-profiles/get-profiles?platform=codechef"),
         ]);
 
-        setCodeforcesLeaderboard(cfResponse.data);
-        setLeetcodeLeaderboard(lcResponse.data);
-        setCodechefLeaderboard(ccResponse.data);
+        setCodeforcesLeaderboard(cfResponse?.data?.data);
+        setLeetcodeLeaderboard(lcResponse?.data?.data);
+        setCodechefLeaderboard(ccResponse?.data?.data);
       } catch (error) {
         console.error("Error fetching data:", error);
         setIsError(true);
@@ -53,6 +55,7 @@ const Cp = () => {
     };
 
     fetchData();
+    increamentCounter();
   }, []);
 
   if (isError) {
@@ -66,7 +69,7 @@ const Cp = () => {
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
-        accessor: "codeforcesProfile",
+        accessor: "profileId",
         Cell: ({ value }) => (
           <a
             href={`https://codeforces.com/profile/${value}`}
@@ -88,7 +91,7 @@ const Cp = () => {
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
-        accessor: "leetcodeProfile",
+        accessor: "profileId",
         Cell: ({ value }) => (
           <a
             href={`https://leetcode.com/${value}`}
@@ -111,7 +114,7 @@ const Cp = () => {
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
-        accessor: "codechefProfile",
+        accessor: "profileId",
         Cell: ({ value }) => (
           <a
             href={`https://www.codechef.com/users/${value}`}
@@ -179,13 +182,13 @@ const Cp = () => {
             {/* Platform Toggle Buttons */}
             <PlateformButtons handlePlatformChange={handlePlatformChange} activePlatform={activePlatform} />
 
-            {/* Conditional Table Rendering
+            Conditional Table Rendering
             {activePlatform === "codeforces" && (
               <>
                 <RatingLegend platform="codeforces" />
                 <SortableTable
                   columns={columns.codeforces}
-                  data={filterData(getRankData(codeforcesLeaderboard))}
+                  data={codeforcesLeaderboard}
                 />
               </>
             )}
@@ -198,7 +201,7 @@ const Cp = () => {
                 <RatingLegend platform="leetcode" />
                 <SortableTable
                   columns={columns.leetcode}
-                  data={filterData(getRankData(leetcodeLeaderboard))}
+                  data={leetcodeLeaderboard}
                 />
               </>
             )}
@@ -211,10 +214,10 @@ const Cp = () => {
                 <RatingLegend platform="codechef" />
                 <SortableTable
                   columns={columns.codechef}
-                  data={filterData(getRankData(codechefLeaderboard))}
+                  data={codechefLeaderboard}
                 />
               </>
-            )} */}
+            )}
           </div>
         </>
       )}
