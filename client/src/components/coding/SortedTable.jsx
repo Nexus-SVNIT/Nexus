@@ -27,22 +27,6 @@ const SortableTable = ({ columns, data }) => {
     usePagination,
   );
 
-  // Function to construct URLs based on the platform
-  const getPlatformUrl = (columnId, userid) => {
-    if (!userid) return null;
-
-    switch (columnId) {
-      case "leetcodeProfile":
-        return `https://leetcode.com/u/${userid}/`;
-      case "codeforcesProfile":
-        return `https://codeforces.com/profile/${userid}`;
-      case "codechefProfile":
-        return `https://www.codechef.com/users/${userid}`;
-      default:
-        return null;
-    }
-  };
-
   const getRatingButtonStyle = (row, value) => {
     let style = "";
 

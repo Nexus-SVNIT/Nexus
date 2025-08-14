@@ -201,8 +201,17 @@ const fetchAllCodingProfiles = async (req, res) => {
 
 const getCodingProfiles = async (req, res) => {
     try {
-        const { platform, branch, year, program, status, query, page, limit} = req.query;
+        const platform = req.query.platform || "codeforces";
+        const branch = req.query.branch || undefined;
+        const year = req.query.year || undefined;
+        const program = req.query.program || undefined;
+        const status = req.query.status || undefined;
+        const query = req.query.query || undefined;
+        const page = parseInt(req.query.page) || 1;
+        const limit = parseInt(req.query.limit) || 10;
+
         const filter = { platform };
+        
         if (branch) filter.branch = branch;
         if (year) filter.year = year;
         if (program) filter.program = program;
