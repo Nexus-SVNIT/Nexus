@@ -1,7 +1,7 @@
 import React from "react";
 import { FaFilter } from "react-icons/fa";
 import SearchBar from "./SearchBar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 
 function FilterSection({activePlatform, searchParams, setSearchParams}) {
   const [rankingScheme, setRankingScheme] = useState(
@@ -92,17 +92,17 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
     }
   }, [searchTerm, branchFilter, gradFilter, yearFilter, activeStatusFilter, searchParams, setSearchParams]);
 
-  const handleSearchChange = (value) => {
+  const handleSearchChange = useCallback((value) => {
     setSearchTerm(value);
     const params = new URLSearchParams(searchParams);
-    if (value) {
-      params.set('search', value);
+    if (value.trim()) {
+      params.set('search', value.trim());
       params.set('page', '1'); // Reset to first page when searching
     } else {
       params.delete('search');
     }
-    setSearchParams(params);
-  };
+    setSearchParams(params, { replace: true }); // Using replace to prevent adding to history
+  }, [searchParams, setSearchParams]);
 
   const handleApplyFilters = () => {
     const params = new URLSearchParams(searchParams);
@@ -182,7 +182,6 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <div className="flex flex-wrap gap-4">
               <label htmlFor="rankingScheme" className="text-white flex items-center gap-2">
-                <span>Ranking Type:</span>
                 <select
                   id="rankingScheme"
                   value={rankingScheme}

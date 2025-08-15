@@ -206,7 +206,7 @@ const getCodingProfiles = async (req, res) => {
         const year = req.query.year || undefined;
         const program = req.query.program || undefined;
         const status = req.query.status || undefined;
-        const query = req.query.query || undefined;
+        const query = req.query.search || undefined; // Changed from query to search to match frontend
         const page = parseInt(req.query.page) || 1;
         const limit = parseInt(req.query.limit) || 10;
         const sortBy = req.query.sortBy || "sortingKey";
@@ -218,10 +218,14 @@ const getCodingProfiles = async (req, res) => {
         if (year) filter.year = year;
         if (program) filter.program = program;
         if (status) filter.status = status;
-        if (query) filter.$or = [
-            { fullName: new RegExp(query, 'i') },
-            { admissionNo: new RegExp(query, 'i') }
-        ];
+        if (query) {
+            // Create a case-insensitive search query and escape special characters
+            const sanitizedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            filter.$or = [
+                { fullName: new RegExp(sanitizedQuery, 'i') },
+                { admissionNo: new RegExp(sanitizedQuery, 'i') },
+            ];
+        }
         const skip = (page - 1) * limit;
         // get lean doc
         const codingProfiles = await codingProfileModel.find(filter)
