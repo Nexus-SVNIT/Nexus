@@ -493,70 +493,180 @@ const resetPassword = async (req, res) => {
 
 const notifyBatch = async (req, res) => {
   try {
-    const { subject, message, batches } = req.body;
+    // Extract data with fallbacks for different possible field names
+    const subject = req.body.subject || req.body.emailSubject || '';
+    const message = req.body.message || req.body.content || req.body.emailContent || req.body.body || '';
+    const recipients = req.body.batches || req.body.recipients || req.body.to || req.body.emails || '';
+
+    // Log incoming request data for debugging
+    console.log('Notification request received:', { 
+      subject, 
+      messageLength: message?.length,
+      recipients: typeof recipients === 'string' ? recipients : 
+                  Array.isArray(recipients) ? JSON.stringify(recipients) : typeof recipients
+    });
 
     if (!subject || !message) {
-      return res.status(400).json({ message: 'subject and message are required' });
+      return res.status(400).json({ message: 'Email subject and message content are required' });
     }
 
-    // Parse prefixes like "u22,i25"
-    const rawBatches = Array.isArray(batches) ? batches : String(batches || '').split(',');
-    const prefixes = [...new Set(
-      rawBatches
-        .map(b => String(b).trim().toLowerCase())
-        .filter(b => /^[ui][0-9]{2}$/.test(b))
-    )];
-
-    if (!prefixes.length) {
-      return res.status(400).json({ message: 'Invalid batch values. Use prefixes like "u22" or "i25".' });
+    // Parse recipients (batch prefixes or emails)
+    const rawInputs = Array.isArray(recipients) ? recipients : String(recipients || '').split(',');
+    const inputs = rawInputs.map(b => String(b).trim()).filter(Boolean);
+    
+    if (!inputs.length) {
+      return res.status(400).json({ message: 'Please provide at least one batch prefix or email address' });
     }
 
-    const regex = new RegExp(`^(${prefixes.join('|')})`, 'i');
+    console.log('Parsed inputs:', inputs);
 
-    // Fetch recipients with name + email, only verified users with a personal email
-    const recipients = await user.find(
-      {
-        emailVerified: true,
-        admissionNumber: { $regex: regex },
-        personalEmail: { $exists: true, $ne: '' }
-      },
-      { personalEmail: 1, fullName: 1, _id: 0 }
-    ).lean();
+    // Separate inputs into different types: batch prefixes, specific admission numbers, and emails
+    const prefixes = [];
+    const admissionNumbers = [];
+    const directEmails = [];
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    
+    inputs.forEach(input => {
+      // If it looks like an email, add to directEmails
+      if (emailRegex.test(input)) {
+        directEmails.push(input.toLowerCase());
+        console.log(`Valid email found: ${input}`);
+      } 
+      // Check if it looks like a complete admission number (u/i followed by 6-8 characters)
+      else if (/^[ui][a-z0-9]{6,8}$/i.test(input)) {
+        admissionNumbers.push(input.toLowerCase());
+        console.log(`Specific admission number found: ${input}`);
+      }
+      // Otherwise treat it as a batch prefix (u22, i22cs, etc.)
+      else if (/^[ui][a-z0-9]+$/i.test(input)) {
+        prefixes.push(input.toLowerCase());
+        console.log(`Batch prefix found: ${input}`);
+      } else {
+        console.log(`Invalid input (neither email, admission number, nor batch prefix): ${input}`);
+      }
+    });
 
-    if (!recipients.length) {
-      return res.status(404).json({ message: 'No users found for selected batches' });
+    console.log(`Found ${prefixes.length} batch prefixes, ${admissionNumbers.length} specific admission numbers, and ${directEmails.length} direct emails`);
+
+    let recipients_list = [];
+    let batches_matched = [];
+    let matched_admissions = [];
+    
+    // If we have specific admission numbers, query those users directly with exact match
+    if (admissionNumbers.length > 0) {
+      const admissionRecipients = await user.find(
+        {
+          emailVerified: true,
+          admissionNumber: { $in: admissionNumbers }, // Exact match
+          personalEmail: { $exists: true, $ne: '' }
+        },
+        { personalEmail: 1, fullName: 1, admissionNumber: 1, _id: 0 }
+      ).lean();
+      
+      console.log(`Found ${admissionRecipients.length} users with specific admission numbers`);
+      if (admissionRecipients.length > 0) {
+        matched_admissions = admissionRecipients.map(r => r.admissionNumber);
+        console.log('Matched admission numbers:', matched_admissions);
+      }
+      recipients_list = [...recipients_list, ...admissionRecipients];
+    }
+    
+    // If we have batch prefixes, query users matching those prefixes
+    if (prefixes.length > 0) {
+      const regex = new RegExp(`^(${prefixes.join('|')})`, 'i');
+      batches_matched = prefixes;
+      
+      const batchRecipients = await user.find(
+        {
+          emailVerified: true,
+          admissionNumber: { $regex: regex },
+          personalEmail: { $exists: true, $ne: '' }
+        },
+        { personalEmail: 1, fullName: 1, _id: 0 }
+      ).lean();
+      
+      console.log(`Found ${batchRecipients.length} users matching batch prefixes`);
+      recipients_list = [...recipients_list, ...batchRecipients];
+    }
+
+    // Process direct emails - create simpler recipient objects
+    if (directEmails.length > 0) {
+      const directRecipients = directEmails.map(email => ({ 
+        personalEmail: email, 
+        fullName: email.split('@')[0] // Use part before @ as name
+      }));
+      
+      console.log(`Adding ${directRecipients.length} direct email recipients`);
+      recipients_list = [...recipients_list, ...directRecipients];
+    }
+
+    if (!recipients_list.length) {
+      return res.status(404).json({ 
+        message: 'No recipients found for the provided inputs',
+        debug: { 
+          inputs,
+          prefixes: prefixes.length ? prefixes : 'none', 
+          emails: directEmails.length ? directEmails : 'none' 
+        }
+      });
     }
 
     // De-duplicate by email (keep first name seen)
     const uniqueMap = new Map();
-    for (const r of recipients) {
+    for (const r of recipients_list) {
       const email = r.personalEmail?.trim();
       if (email && !uniqueMap.has(email)) uniqueMap.set(email, r.fullName || 'User');
     }
 
+    console.log(`Final recipient count after deduplication: ${uniqueMap.size}`);
+
+    // Send emails with better error handling
     let sentCount = 0;
+    let errorCount = 0;
+    const errors = [];
+
     for (const [email, name] of uniqueMap.entries()) {
-      const html = personalizedBatchTemplate(name, message);
-      // CHANGE: await transporter.sendMail({ ... })
-      await sendEmail({
-        from: `"Team Nexus" <${process.env.Email_ID || process.env.EMAIL_ID}>`,
-        to: email,
-        subject,
-        html
-      });
-      sentCount++;
+      try {
+        console.log(`Sending email to: ${email}`);
+        const html = personalizedBatchTemplate(name, message);
+        await sendEmail({                            
+          to: email,
+          subject,
+          html
+        });
+        sentCount++;
+      } catch (emailError) {
+        errorCount++;
+        console.error(`Error sending to ${email}:`, emailError.message);
+        errors.push({ email, error: emailError.message });
+      }
     }
 
-    console.log(`Sent ${sentCount} emails to ${uniqueMap.size} unique recipients`);
-
-    return res.status(200).json({
-      message: 'Batch notification sent',
-      totalRecipients: sentCount,
-      batches: prefixes
-    });
+    // Respond based on success/failure ratio
+    if (sentCount > 0) {
+      return res.status(200).json({
+        message: `Sent ${sentCount} emails successfully${errorCount > 0 ? ` (${errorCount} failed)` : ''}`,
+        totalRecipients: sentCount,
+        failedCount: errorCount,
+        batches: batches_matched.length > 0 ? batches_matched : undefined,
+        directEmails: directEmails.length > 0 ? directEmails : undefined,
+        specificAdmissionNumbers: matched_admissions.length > 0 ? matched_admissions : undefined
+      });
+    } else {
+      // If all emails failed, it's likely a configuration issue
+      return res.status(500).json({
+        message: 'Failed to send any emails - check email configuration',
+        error: errors[0]?.error || 'Email authentication error',
+        details: 'You may need to create an app-specific password for Gmail'
+      });
+    }
   } catch (error) {
     console.error('notify-batch error:', error);
-    return res.status(500).json({ message: 'Error notifying batch users' });
+    return res.status(500).json({
+      message: 'Email configuration error',
+      error: error.message,
+      details: 'Ensure that your email settings are correct'
+    });
   }
 };
 
