@@ -32,8 +32,8 @@ const Cp = () => {
   const handlePlatformChange = (platform) => {
     // Update the URL with the new platform and reset to page 1
     const params = new URLSearchParams(searchParams);
-    params.set('platform', platform);
-    params.set('page', '1');
+    params.set("platform", platform);
+    params.set("page", "1");
     setSearchParams(params);
     setActivePlatform(platform);
   };
@@ -44,29 +44,37 @@ const Cp = () => {
       setIsError(false);
       try {
         const params = new URLSearchParams(searchParams);
-        
+
         // Always include platform
-        if (!params.has('platform')) {
-          params.set('platform', activePlatform);
+        if (!params.has("platform")) {
+          params.set("platform", activePlatform);
         }
-        
+
         // Set default values for pagination if not present
-        if (!params.has('page')) params.set('page', '1');
-        if (!params.has('limit')) params.set('limit', '10');
+        if (!params.has("page")) params.set("page", "1");
+        if (!params.has("limit")) params.set("limit", "10");
+
+        // Set default sorting if not present
+        if (!params.has("sortBy")) {
+          params.set("sortBy", "sortingKey");
+        }
+        if (!params.has("sortOrder")) {
+          params.set("sortOrder", "desc");
+        }
 
         // Make the API call
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profiles?${params.toString()}`
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profiles?${params.toString()}`,
         );
 
         if (!response.data.success) {
-          throw new Error(response.data.message || 'Failed to fetch data');
+          throw new Error(response.data.message || "Failed to fetch data");
         }
 
-        const { data } = response.data;
+        const { data, totalProfiles } = response.data;
 
         // Update the appropriate leaderboard based on platform
-        const currentPlatform = params.get('platform') || activePlatform;
+        const currentPlatform = params.get("platform") || activePlatform;
         switch (currentPlatform) {
           case "codeforces":
             setCodeforcesLeaderboard(data);
@@ -102,14 +110,21 @@ const Cp = () => {
     return <MaintenancePage />;
   }
 
+  const rankingScheme = searchParams.get("rankingScheme") || "filtered";
+
   const columns = {
     codeforces: [
-      { Header: "Rank", accessor: "tableRank" }, // Changed to avoid confusion with CF rank
+      {
+        Header: "Rank",
+        accessor: rankingScheme === "nexus" ? "nexusRank" : "tableRank",
+        disableSortBy: rankingScheme !== "nexus",
+      },
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
         accessor: "profileId",
+        disableSortBy: true,
         Cell: ({ value }) => (
           <a
             href={`https://codeforces.com/profile/${value}`}
@@ -126,12 +141,17 @@ const Cp = () => {
       { Header: "CF Rank", accessor: "rank" },
     ],
     leetcode: [
-      { Header: "Rank", accessor: "tableRank" }, // Change to use pre-calculated rank
+      {
+        Header: "Rank",
+        accessor: rankingScheme === "nexus" ? "nexusRank" : "tableRank",
+        disableSortBy: rankingScheme !== "nexus",
+      },
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
         accessor: "profileId",
+        disableSortBy: true,
         Cell: ({ value }) => (
           <a
             href={`https://leetcode.com/${value}`}
@@ -149,12 +169,17 @@ const Cp = () => {
       { Header: "Contest Attended", accessor: "attendedContestsCount" },
     ],
     codechef: [
-      { Header: "Rank", accessor: "tableRank" }, // Change to use pre-calculated rank
+      {
+        Header: "Rank",
+        accessor: rankingScheme === "nexus" ? "nexusRank" : "tableRank",
+        disableSortBy: rankingScheme !== "nexus",
+      },
       { Header: "Name", accessor: "fullName" },
       { Header: "Admission Number", accessor: "admissionNo" },
       {
         Header: "Profile",
         accessor: "profileId",
+        disableSortBy: true,
         Cell: ({ value }) => (
           <a
             href={`https://www.codechef.com/users/${value}`}
@@ -217,10 +242,17 @@ const Cp = () => {
             </h1>
 
             {/* Search and Filter Controls */}
-            <FilterSection activePlatform={activePlatform} searchParams={searchParams} setSearchParams={setSearchParams} />
+            <FilterSection
+              activePlatform={activePlatform}
+              searchParams={searchParams}
+              setSearchParams={setSearchParams}
+            />
 
             {/* Platform Toggle Buttons */}
-            <PlateformButtons handlePlatformChange={handlePlatformChange} activePlatform={activePlatform} />
+            <PlateformButtons
+              handlePlatformChange={handlePlatformChange}
+              activePlatform={activePlatform}
+            />
 
             {activePlatform === "codeforces" && (
               <>
@@ -228,6 +260,8 @@ const Cp = () => {
                 <SortableTable
                   columns={columns.codeforces}
                   data={codeforcesLeaderboard}
+                  searchParams={searchParams}
+                  setSearchParams={setSearchParams}
                 />
               </>
             )}
@@ -241,6 +275,8 @@ const Cp = () => {
                 <SortableTable
                   columns={columns.leetcode}
                   data={leetcodeLeaderboard}
+                  searchParams={searchParams}
+                  setSearchParams={setSearchParams}
                 />
               </>
             )}
@@ -254,6 +290,8 @@ const Cp = () => {
                 <SortableTable
                   columns={columns.codechef}
                   data={codechefLeaderboard}
+                  searchParams={searchParams}
+                  setSearchParams={setSearchParams}
                 />
               </>
             )}

@@ -4,10 +4,9 @@ import SearchBar from "./SearchBar";
 import { useState, useEffect } from "react";
 
 function FilterSection({activePlatform, searchParams, setSearchParams}) {
-  const [showGlobalRank, setShowGlobalRank] = useState(
-    searchParams.get("globalRank") === "true",
+  const [rankingScheme, setRankingScheme] = useState(
+    searchParams.get("rankingScheme") || "filtered",
   );
-  // Replace useState initializations with URL params
   const [searchTerm, setSearchTerm] = useState(
     searchParams.get("search") || "",
   );
@@ -182,18 +181,28 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
         >
           <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
             <div className="flex flex-wrap gap-4">
-              <select
-                value={showGlobalRank ? "global" : "filtered"}
-                onChange={(e) => setShowGlobalRank(e.target.value === "global")}
-                className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
-              >
-                <option value="global" className="bg-slate-900">
-                  Nexus Ranking
-                </option>
-                <option value="filtered" className="bg-slate-900">
-                  Filtered Ranking
-                </option>
-              </select>
+              <label htmlFor="rankingScheme" className="text-white flex items-center gap-2">
+                <span>Ranking Type:</span>
+                <select
+                  id="rankingScheme"
+                  value={rankingScheme}
+                  onChange={(e) => {
+                    const params = new URLSearchParams(searchParams);
+                    params.set('rankingScheme', e.target.value);
+                    params.set('page', '1'); // Reset to first page when changing ranking scheme
+                    setSearchParams(params);
+                    setRankingScheme(e.target.value);
+                  }}
+                  className="rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-white backdrop-blur-sm focus:border-blue-500 focus:outline-none"
+                >
+                  <option value="filtered" className="bg-slate-900">
+                    Filtered Ranking
+                  </option>
+                  <option value="nexus" className="bg-slate-900">
+                    Nexus Ranking
+                  </option>
+                </select>
+              </label>
               {/* ... existing filter selects ... */}
               <select
                 value={tempBranchFilter}
