@@ -22,7 +22,7 @@ const IssueModal = ({ isOpen, onClose }) => {
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/issue/create`,
-        { issueType: "Website Issue", description },
+        { issueType: "Website Issue", description: description.trim() },
         {
           headers: {
             Authorization: `Bearer ${token}`, // Attach token in headers
