@@ -12,55 +12,58 @@ const NotifySubscribers = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
+        
         if (!subject.trim() || !message.trim()) {
             setServerResponse({ ok: false, message: 'Please fill subject and message' });
             return;
         }
-
-        // Parse comma-separated prefixes like "u22,i25"
-        const batches = batchInput
-            .split(',')
-            .map(s => s.trim().toLowerCase())
-            .filter(Boolean);
-
-        if (!batches.length) {
-            setServerResponse({ ok: false, message: 'Please enter at least one batch prefix, e.g., "u22" or "i25"' });
+        
+        // Make sure batch input is not empty
+        if (!batchInput.trim()) {
+            setServerResponse({ 
+                ok: false, 
+                message: 'Please enter at least one batch prefix or email address' 
+            });
             return;
         }
 
         try {
             setIsSending(true);
             setServerResponse(null);
+            
             const token = localStorage.getItem('core-token');
-            const { data } = await axios.post(
+            
+            // Use consistent field names that match what backend expects
+            const response = await axios.post(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-batch`,
                 {
                     subject,
-                    // Send only raw editor HTML; backend will create personalized template
                     message, 
-                    batches
+                    batches: batchInput.split(',').map(item => item.trim()).filter(Boolean)
                 },
-                { headers: { Authorization: `Bearer ${token}` } }
+                { 
+                    headers: { Authorization: `Bearer ${token}` }
+                }
             );
 
-            // Success UI
             setServerResponse({
                 ok: true,
                 data: {
-                    message: data.message,
-                    totalRecipients: data.totalRecipients,
-                    batches: data.batches
+                    message: response.data.message,
+                    totalRecipients: response.data.totalRecipients,
+                    batches: response.data.batches,
+                    directEmails: response.data.directEmails
                 }
             });
 
-            // Reset form
+            // Reset form on success
             setSubject('');
             setMessage('');
             setBatchInput('');
         } catch (error) {
             const errMsg = error.response?.data?.message || 'Error sending notification';
             setServerResponse({ ok: false, message: errMsg });
+            console.error('Error sending notification:', error);
         } finally {
             setIsSending(false);
         }
@@ -128,6 +131,9 @@ const NotifySubscribers = () => {
                                 {Array.isArray(serverResponse.data?.batches) && serverResponse.data.batches.length > 0 && (
                                     <div>Batches: <span className="font-mono uppercase">{serverResponse.data.batches.join(', ')}</span></div>
                                 )}
+                                {serverResponse.data?.directEmails > 0 && (
+                                    <div>Direct emails: <span className="font-mono">{serverResponse.data.directEmails}</span></div>
+                                )}
                             </div>
                         ) : (
                             <div className="mt-1">{serverResponse.message}</div>
@@ -136,15 +142,20 @@ const NotifySubscribers = () => {
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
-                    {/* Input for prefixes like u22,i25 */}
-                    <input
-                        type="text"
-                        placeholder='Enter prefixes like: u22,i25 (comma-separated)'
-                        value={batchInput}
-                        onChange={(e) => setBatchInput(e.target.value)}
-                        disabled={isSending}
-                        className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
-                    />
+                    {/* Updated input description for prefixes and direct emails */}
+                    <div>
+                        <input
+                            type="text"
+                            placeholder='Enter batches or emails (comma-separated)'
+                            value={batchInput}
+                            onChange={(e) => setBatchInput(e.target.value)}
+                            disabled={isSending}
+                            className="w-full text-black-2 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-60"
+                        />
+                        <p className="text-gray-400 text-xs mt-1">
+                            Example: "u22,i25" for batches or "user@example.com,another@mail.com" for direct emails, or direct admissionNumber
+                        </p>
+                    </div>
 
                     <input
                         type="text"
