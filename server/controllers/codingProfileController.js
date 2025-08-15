@@ -235,9 +235,7 @@ const getCodingProfiles = async (req, res) => {
             .limit(Number(limit) || 10)
             .exec();
         const totalProfiles = await codingProfileModel.countDocuments(filter);
-        if (codingProfiles.length === 0) {
-            return res.status(400).json({ success: false, message: "No coding profiles found" });
-        }
+        
         for(let i = 0; i < codingProfiles.length; i++) {
             codingProfiles[i] = codingProfiles[i].toObject();
             codingProfiles[i]['tableRank'] = skip + i + 1;
@@ -262,9 +260,7 @@ const getCodingProfile = async (req, res) => {
             return res.status(400).json({ success: false, error: "User ID is required" });
         }
         const codingProfile = await codingProfileModel.find({ userId });
-        if (!codingProfile) {
-            return res.status(400).json({ success: false, error: "Coding profile not found" });
-        }
+        
         const resData = {};
         codingProfile.forEach(profile => {
             resData[profile.platform] = profile;
