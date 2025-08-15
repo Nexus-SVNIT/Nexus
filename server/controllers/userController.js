@@ -614,8 +614,8 @@ const notifyBatch = async (req, res) => {
     for (const [email, name] of uniqueMap.entries()) {
       try {
         let htmlToSend = htmlTemplate;
-        if (!customAddressing && htmlTemplate.includes('{{name}}')) {
-          htmlToSend = htmlTemplate.replace('{{name}}', name || 'User');
+        if (!customAddressing && htmlTemplate.includes('{{FULL_NAME}}')) {
+          htmlToSend = htmlTemplate.replace('{{FULL_NAME}}', name || 'User');
         }
         await sendEmail({ to: email, subject, html: htmlToSend });
         sentCount++;

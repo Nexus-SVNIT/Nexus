@@ -91,20 +91,22 @@ const NotifySubscribers = () => {
     ];
 
     const emailTemplate = (message, customAddressing) => `
-        <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                ${!customAddressing ? '<h3 style="color: white;">Dear User,</h3>' : ''}
-                <p style="color: #ccc;">${message}</p>
-                <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
-                <p>Thanks,<br>Team NEXUS</p>
-            </div>
-            <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-                <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-                <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-            </div>
+    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" 
+                 style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+            ${!customAddressing ? '<h3 style="color: white;">Dear {{FULL_NAME}},</h3>' : ''}
+            <p style="color: #ccc;">${message}</p>
+            <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
+            <p>Thanks,<br>Team NEXUS</p>
         </div>
-    `;
+        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+        </div>
+    </div>
+`;
+
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-gray-100 p-4">
