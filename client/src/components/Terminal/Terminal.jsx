@@ -136,7 +136,7 @@ const Terminal = () => {
           switch (path) {
             case "platformUndefined": //when -p tag is used incorrectly
               return (
-                <ErrorMsg text="Platform does not exist. Use codeforces, leetcode or codechef." />
+                <ErrorMsg text="Platform does not exist or data unavailable. Use codeforces, leetcode or codechef." />
               );
             case "branchUndefined": //when -b tag is used incorrectly
               return (

@@ -28,12 +28,6 @@ const CreateForm = () => {
     qrCodeUrl: "",
   });
 
-  const handleInputChange = (index, value) => {
-    const newInputValues = [...inputValues];
-    newInputValues[index] = value;
-    setInputValues(newInputValues);
-  };
-
   const addNewQuestion = () => {
     setQuestions([
       ...questions,
@@ -97,21 +91,21 @@ const CreateForm = () => {
     }
 
     const formObject = {
-      name: formData.name,
-      desc: formData.desc,
-      deadline: formData.deadline,
-      WaLink: formData.WaLink,
+      name: formData.name.trim(),
+      desc: formData.desc.trim(),
+      deadline: formData.deadline.trim(),
+      WaLink: formData.WaLink.trim(),
       formFields: questions,
       enableTeams,
       teamSize: enableTeams ? teamSize : null,
       fileUploadEnabled: formData.fileUploadEnabled,
       receivePayment,
       amount: receivePayment ? paymentDetails.amount : 0,
-      qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl : null,
+      qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl.trim() : null,
       payments: [],
-      posterImageDriveId: formData.posterImageDriveId,
-      extraLinkName: formData.extraLinkName,
-      extraLink: formData.extraLink,
+      posterImageDriveId: formData.posterImageDriveId.trim(),
+      extraLinkName: formData.extraLinkName.trim(),
+      extraLink: formData.extraLink.trim(),
       isHidden: formData.isHidden,
       isOpenForAll: formData.isOpenForAll
     };

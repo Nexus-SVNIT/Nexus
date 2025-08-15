@@ -65,14 +65,16 @@ function AlumniSignUpForm() {
 
     switch (e.target.name) {
       case "expertise":
+      case "fullName":
+      case "password":
         value = e.target.value;
         break;
       case "admissionNumber":
-        value = e.target.value.toUpperCase();
+        value = e.target.value.toUpperCase().trim();
         break;
       default:
         value =
-          e.target.type === "checkbox" ? e.target.checked : e.target.value;
+          e.target.type === "checkbox" ? e.target.checked : e.target.value.trim();
         break;
     }
 
@@ -180,6 +182,7 @@ function AlumniSignUpForm() {
 
     const dataTosend = {
       ...formData,
+      fullName: formData.fullName.trim(),
       expertise: formData.expertise.split(",").map((exp) => exp.trim()),
     }
 

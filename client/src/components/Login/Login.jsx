@@ -43,7 +43,7 @@ const Login = () => {
     const loadingToast = toast.loading("Logging in...");
 
     try {
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/core/login`, loginInfo);
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/core/login`, {...loginInfo, email: loginInfo.email.trim()});
       
       const token = response.data.token;
       Cookies.set("token", token, { expires: 1 / 24 });
