@@ -7,6 +7,7 @@ const {
   pendingAchievements,
   verifyAchievement,
   unverifyAchievement,
+  deleteAchievement
 } = require('../controllers/achievementController.js');
 const multer = require('multer');
 const path = require('path');
@@ -29,5 +30,6 @@ router.get('/pending', pendingAchievements);
 router.post('/add', authMiddleware, upload.single('image'), addAchievement);
 router.patch('/verify/:id', coreAuthMiddleware, verifyAchievement);
 router.patch('/unverify/:id', coreAuthMiddleware, unverifyAchievement);
+router.delete('/:id', authMiddleware, deleteAchievement); // New endpoint for deletion
 
 module.exports = router;
