@@ -45,6 +45,12 @@ async function backupMongoToDrive() {
   fs.writeFileSync(filePath, JSON.stringify(backupData, null, 2));
   console.log(`💾 Backup saved locally as ${fileName}`);
 
+  // log auth_provider_x509_cert_url from service-account.json for debugging
+  if (SERVICE_ACCOUNT_PATH) {
+    const serviceAccount = JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf8'));
+    console.log("Service Account Auth Provider:", serviceAccount.auth_provider_x509_cert_url);
+  }
+
   console.log("☁️ Uploading to Google Drive...");
     const auth = new google.auth.GoogleAuth({
     keyFile: SERVICE_ACCOUNT_PATH,
