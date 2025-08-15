@@ -21,70 +21,35 @@ const CodingProfile = ({
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeetcodeData = async () => {
+    const fetchData = async () => {
       try {
-        if (leetcodeProfile) {
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/leetcode/${leetcodeProfile}`,
-          );
-          const data = await response.json();
-          setLeetcodeData(data.data);
-        } else {
-          setLeetcodeData(null);
-        }
+        const response = await fetch(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profile`,
+          {
+            headers: {
+              "Authorization": `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        const data = await response.json();
+        setLeetcodeData(data?.data?.leetcode);
+        setCodeforcesData(data?.data?.codeforces);
+        setCodechefData(data?.data?.codechef);
       } catch (error) {
-        console.error("Error fetching LeetCode data:", error);
+        console.error("Error fetching coding profiles:", error);
       }
+      setLoading(false);
     };
-
-    const fetchCodeforcesData = async () => {
-      try {
-        if (codeforcesProfile) {
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codeforces/${codeforcesProfile}`,
-          );
-          const data = await response.json();
-          setCodeforcesData(data);
-        } else {
-          setCodeforcesData(null);
-        }
-      } catch (error) {
-        console.error("Error fetching Codeforces data:", error);
-      }
-    };
-
-    const fetchCodechefData = async () => {
-      try {
-        if (codechefProfile) {
-          const response = await fetch(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/user/codechef/${codechefProfile}`,
-          );
-          const data = await response.json();
-          
-          setCodechefData(data.data);
-        } else {
-          setCodechefData(null);
-        }
-      } catch (error) {
-        console.error("Error fetching CodeChef data:", error);
-      }
-    };
-
-    Promise.all([
-      fetchLeetcodeData(),
-      fetchCodeforcesData(),
-      fetchCodechefData(),
-    ]).then(() => setLoading(false));
+    fetchData();
   }, [leetcodeProfile, codeforcesProfile, codechefProfile]);
 
   if (loading) {
     return <div className="text-white">Loading...</div>;
   }
-
-  const leetcodeUser = leetcodeData?.[0]?.data?.matchedUser;
+  const leetcodeUser = leetcodeData?.data?.matchedUser;
   const leetcodeStats = leetcodeUser?.submitStats?.acSubmissionNum;
   const leetcodeLanguages = leetcodeUser?.languageProblemCount;
-  const leetcodeContestRanking = leetcodeData?.[0]?.data?.userContestRanking;
+  const leetcodeContestRanking = leetcodeData?.data?.userContestRanking;
 
   const codeforcesProfileData = codeforcesData ? codeforcesData?.data[0] : null;
   const codeforcesRatings = codeforcesData ? codeforcesData?.data[1]?.ratings?.map((rating) => ({
@@ -93,7 +58,7 @@ const CodingProfile = ({
     oldRating: rating.oldRating, // Comment to hide old rating
     newRating: rating.newRating,
   })) : [];
-
+  
   const codechefUser = codechefData?.[0];
 
   return (

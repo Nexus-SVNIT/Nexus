@@ -1,18 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaSearch, FaTimes } from 'react-icons/fa';
 
 const SearchBar = ({ placeholder, onChange, initialValue = "" }) => {
   const [inputValue, setInputValue] = useState(initialValue);
+  const [debouncedValue, setDebouncedValue] = useState(initialValue);
 
-  const handleClear = () => {
+  // Using useCallback to maintain function reference
+  const handleClear = useCallback(() => {
     setInputValue('');
+    setDebouncedValue('');
     onChange('');
-  };
+  }, [onChange]);
 
-  const handleChange = (value) => {
+  const handleChange = useCallback((value) => {
     setInputValue(value);
-    onChange(value);
-  };
+  }, []);
+
+  // Debounce effect
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValue(inputValue);
+    }, 500); // 500ms delay
+
+    return () => clearTimeout(timer);
+  }, [inputValue]);
+
+  // Only trigger onChange when debounced value changes
+  useEffect(() => {
+    onChange(debouncedValue);
+  }, [debouncedValue, onChange]);
 
   return (
     <div className="relative w-full max-w-md">
