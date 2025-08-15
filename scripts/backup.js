@@ -47,7 +47,6 @@ async function backupMongoToDrive() {
 
   // log auth_provider_x509_cert_url from service-account.json for debugging
   if (SERVICE_ACCOUNT_PATH) {
-      console.log("smaple:", fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf8'));
     const serviceAccount = JSON.parse(fs.readFileSync(SERVICE_ACCOUNT_PATH, 'utf8'));
     console.log("Service Account Auth Provider:", serviceAccount.auth_provider_x509_cert_url);
   }

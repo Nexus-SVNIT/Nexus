@@ -22,7 +22,8 @@ jobs:
           npm install mongoose googleapis dotenv
 
       - name: Create service account file
-        run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}" > service-account.json
+        run: |
+          printf '%s' '${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}' > service-account.json
 
       - name: Run backup script
         env:
