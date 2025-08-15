@@ -16,7 +16,6 @@ const ForgotPasswordForm = () => {
     try {
       const toastId = toast.loading('Sending reset instructions...');
       const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/forgot-password`, { admissionNumber });
-      
       toast.success('Password reset email sent!', { id: toastId });
     } catch (error) {
       toast.remove();
@@ -39,7 +38,7 @@ const ForgotPasswordForm = () => {
               className="text-black-2 mt-1 px-3 py-2 border border-gray-700 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 bg-gray-900"
               placeholder="Enter your admission number"
               value={admissionNumber}
-              onChange={(e) => setAdmissionNumber(e.target.value.toUpperCase())}
+              onChange={(e) => setAdmissionNumber(e.target.value.toUpperCase().trim())}
               required
             />
           </div>

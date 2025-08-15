@@ -84,20 +84,20 @@ const EditForm = () => {
     }
 
     const formObject = {
-      name: formData.name,
-      desc: formData.desc,
-      deadline: formData.deadline,
-      WaLink: formData.WaLink,
+      name: formData.name.trim(),
+      desc: formData.desc.trim(),
+      deadline: formData.deadline.trim(),
+      WaLink: formData.WaLink.trim(),
       formFields: questions,
       enableTeams,
       teamSize: enableTeams ? teamSize : null,
       fileUploadEnabled: formData.fileUploadEnabled,
       receivePayment,
       amount: receivePayment ? paymentDetails.amount : 0,
-      qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl : null,
-      posterImageDriveId: formData.posterImageDriveId,
-      extraLinkName: formData.extraLinkName,
-      extraLink: formData.extraLink,
+      qrCodeUrl: receivePayment ? paymentDetails.qrCodeUrl.trim() : null,
+      posterImageDriveId: formData.posterImageDriveId.trim(),
+      extraLinkName: formData.extraLinkName.trim(),
+      extraLink: formData.extraLink.trim(),
       isHidden: formData.isHidden,
       isOpenForAll: formData.isOpenForAll,
     };
@@ -126,12 +126,6 @@ const EditForm = () => {
       console.error("Error updating form:", error);
       toast.error("Error updating form", { id: toastId });
     }
-  };
-
-  const handleInputChange = (index, value) => {
-    const newQuestions = [...questions];
-    newQuestions[index].questionText = value;
-    setQuestions(newQuestions);
   };
 
   const addNewQuestion = () => {

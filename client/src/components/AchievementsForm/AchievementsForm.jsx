@@ -49,9 +49,9 @@ const AchievementsForm = () => {
     mutationFn: async (newAchievement) => {
       const token = localStorage.getItem("token");
       const formData = new FormData();
-      formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",")));
-      formData.append("desc", newAchievement.desc);
-      formData.append("proof", newAchievement.proof);
+      formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",").map(member => member.trim())));
+      formData.append("desc", newAchievement.desc.trim());
+      formData.append("proof", newAchievement.proof.trim());
       formData.append("image", newAchievement.image);
   
       const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`, {
@@ -136,9 +136,9 @@ const AchievementsForm = () => {
                 id="teamMembers"
                 value={AchievementForm.teamMembers}
                 onChange={handleInputChange}
-                placeholder="U23CS002,I24AI003(without any white space)"
+                placeholder="U23CS002, I24AI003"
                 className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none uppercase"
-              />
+              /> {/*spaces issue handled with map*/}
             </div>
             <div className="m-4 flex w-full flex-col gap-2">
               <label htmlFor="desc" className="uppercase">Description</label>

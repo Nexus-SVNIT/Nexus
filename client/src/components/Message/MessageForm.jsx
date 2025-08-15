@@ -36,9 +36,9 @@ const NotifySubscribers = () => {
             const { data } = await axios.post(
                 `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-batch`,
                 {
-                    subject,
+                    subject: subject.trim(),
                     // Send only raw editor HTML; backend will create personalized template
-                    message, 
+                    message: message.trim(),
                     batches
                 },
                 { headers: { Authorization: `Bearer ${token}` } }
