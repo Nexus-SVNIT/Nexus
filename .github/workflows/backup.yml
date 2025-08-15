@@ -19,7 +19,7 @@ jobs:
 
       - name: Install required dependencies for backup script
         run: |
-          npm install mongoose googleapis
+          npm install mongoose googleapis dotenv
 
       - name: Create service account file
         run: echo "${{ secrets.GOOGLE_SERVICE_ACCOUNT_KEY }}" > service-account.json
@@ -29,4 +29,4 @@ jobs:
           MONGO_URL: ${{ secrets.MONGO_URL }}
           DRIVE_BACKUP_FOLDER_ID: ${{ secrets.DRIVE_BACKUP_FOLDER_ID }}
           SERVICE_ACCOUNT_PATH: ./service-account.json
-        run: node backup.js
+        run: node scripts/backup.js
