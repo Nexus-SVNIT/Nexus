@@ -218,12 +218,12 @@ const Cp = () => {
           <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">
             {/* Upcoming Contests Component */}
             <UpcomingContests />
+            {/*             
             <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
               User Report by Platform and Batch
             </h2>
             <CustomBarChart batchData={batchData} />
 
-            {/* Render Batch Data */}
             <div className="mb-8 mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
               {Object.keys(batchData).map((batch) => (
                 <BatchCard
@@ -235,7 +235,8 @@ const Cp = () => {
                   avgCodechefRating={batchData[batch].CodeChef.avgRating}
                 />
               ))}
-            </div>
+            </div> 
+            */}
 
             <h1 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold  text-blue-400">
               Coding Profile Leaderboard
