@@ -14,6 +14,82 @@ if (!MONGO_URL) {
     process.exit(1);
 }
 
+const getStatus = (admissionNumber) => {
+    const year = admissionNumber.slice(1, 3);
+    const program = admissionNumber.slice(0, 1);
+
+    switch (program) {
+        case 'U':
+            return year <= (new Date().getFullYear() - 4) % 2000 ? 'alumni' : 'current';
+        case 'P':
+            return year <= (new Date().getFullYear() - 2) % 2000 ? 'alumni' : 'current';
+        case 'D':
+        case 'I':
+            return year <= (new Date().getFullYear() - 5) % 2000 ? 'alumni' : 'current';
+        default:
+            return 'current';
+    }
+};
+
+const requiredData = (profile, index, platform) => {
+    switch (platform) {
+        case 'codeforces':
+            return {
+                sortingKey: profile.sortingKey,
+                userId: profile.userId,
+                fullName: profile.fullName,
+                admissionNo: profile.admissionNumber,
+                year: profile.admissionNumber.slice(1, 3),
+                program: profile.admissionNumber.slice(0, 1),
+                branch: profile.admissionNumber.slice(3, 5),
+                status: getStatus(profile.admissionNumber),
+                updatedAt: new Date(),
+                nexusRank: index + 1,
+                maxRating: profile?.data?.[0]?.maxRating || "N/A",
+                rating: profile?.data?.[0]?.rating || "N/A",
+                rank: profile?.data?.[0]?.rank || "N/A",
+            }
+        case 'leetcode':
+            return {
+                sortingKey: profile.sortingKey,
+                userId: profile.userId,
+                fullName: profile.fullName,
+                admissionNo: profile.admissionNumber,
+                year: profile.admissionNumber.slice(1, 3),
+                program: profile.admissionNumber.slice(0, 1),
+                branch: profile.admissionNumber.slice(3, 5),
+                status: getStatus(profile.admissionNumber),
+                updatedAt: new Date(),
+                nexusRank: index + 1,
+                globalRanking: profile?.data?.userContestRanking?.globalRanking || "N/A",
+                rating: profile?.data?.userContestRanking?.rating ? Number(profile.data.userContestRanking.rating).toFixed(2) : "N/A",
+                totalSolved: profile?.data?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count || "N/A",
+                attendedContestsCount: profile?.data?.userContestRanking?.attendedContestsCount || "N/A",
+                profileId: profile.profileId,
+            };
+        case "codechef":
+            return {
+                sortingKey: profile.sortingKey,
+                userId: profile.userId,
+                fullName: profile.fullName,
+                admissionNo: profile.admissionNumber,
+                year: profile.admissionNumber.slice(1, 3),
+                program: profile.admissionNumber.slice(0, 1),
+                branch: profile.admissionNumber.slice(3, 5),
+                status: getStatus(profile.admissionNumber),
+                updatedAt: new Date(),
+                nexusRank: index + 1,
+                rating_number: profile?.data?.rating_number || "N/A",
+                rating: profile?.data?.rating || "N/A",
+                globalRank: profile?.data?.global_rank || "N/A",
+                profileId: profile.profileId,
+            };
+        default:
+            return {};
+    }
+}
+
+
 const fetchAllCodingProfiles = async (platform) => {
     try {
         const users = await mongoose.connection.db.collection('users').find({}, { fullName: 1, admissionNumber: 1, [platform + 'Profile']: 1 }).toArray();
@@ -34,7 +110,7 @@ const fetchAllCodingProfiles = async (platform) => {
                     case 'codechef':
                         sortingKey = data?.rating_number || 0;
                         break;
-                        case 'leetcode':
+                    case 'leetcode':
                         sortingKey = data?.userContestRanking?.rating || 0;
                         break;
                     default:
@@ -57,25 +133,21 @@ const fetchAllCodingProfiles = async (platform) => {
             return;
         }
 
-        await Promise.all(profiles.map(profile => 
+        // sort profiles by sortingKey in descending order
+        profiles.sort((a, b) => b.sortingKey - a.sortingKey);
+
+        await Promise.all(profiles.map((profile, index) =>
             mongoose.connection.db.collection('codingprofiles').findOneAndUpdate(
                 { platform, profileId: profile.profileId },
                 {
-                    $set: {
-                        data: profile.data,
-                        sortingKey: profile.sortingKey,
-                        userId: profile.userId,
-                        fullName: profile.fullName,
-                        admissionNo: profile.admissionNumber,
-                        updatedAt: new Date()
-                    }
+                    $set: requiredData(profile, index, platform)
                 },
                 { returnDocument: 'after', upsert: true }
             )
         ));
 
         console.log(`Successfully fetched and updated ${profiles.length} coding profiles for platform: ${platform}`);
-        return; 
+        return;
     } catch (error) {
         console.log(`Error fetching coding profiles: ${error}`);
         return;
@@ -83,7 +155,7 @@ const fetchAllCodingProfiles = async (platform) => {
 }
 
 async function main() {
-    console.log('Connecting to MongoDB with URL:', MONGO_URL);
+    console.log('Connecting to MongoDB with URL:');
     try {
         await mongoose.connect(MONGO_URL, {
             useNewUrlParser: true,
