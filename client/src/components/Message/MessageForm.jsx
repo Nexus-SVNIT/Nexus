@@ -9,65 +9,64 @@ const NotifySubscribers = () => {
     const [batchInput, setBatchInput] = useState(''); // accept inputs like "u22,i25"
     const [isSending, setIsSending] = useState(false);
     const [serverResponse, setServerResponse] = useState(null);
+    const [customAddressing, setCustomAddressing] = useState(false); // new checkbox state
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        
-        if (!subject.trim() || !message.trim()) {
-            setServerResponse({ ok: false, message: 'Please fill subject and message' });
-            return;
-        }
-        
-        // Make sure batch input is not empty
-        if (!batchInput.trim()) {
-            setServerResponse({ 
-                ok: false, 
-                message: 'Please enter at least one batch prefix or email address' 
-            });
-            return;
-        }
+    e.preventDefault();
+    
+    if (!subject.trim() || !message.trim()) {
+        setServerResponse({ ok: false, message: 'Please fill subject and message' });
+        return;
+    }
 
-        try {
-            setIsSending(true);
-            setServerResponse(null);
-            
-            const token = localStorage.getItem('core-token');
-            
-            // Use consistent field names that match what backend expects
-            const response = await axios.post(
-                `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-batch`,
-                {
-                    subject,
-                    message, 
-                    batches: batchInput.split(',').map(item => item.trim()).filter(Boolean)
-                },
-                { 
-                    headers: { Authorization: `Bearer ${token}` }
-                }
-            );
+    if (!batchInput.trim()) {
+        setServerResponse({ 
+            ok: false, 
+            message: 'Please enter at least one batch prefix or email address' 
+        });
+        return;
+    }
 
-            setServerResponse({
-                ok: true,
-                data: {
-                    message: response.data.message,
-                    totalRecipients: response.data.totalRecipients,
-                    batches: response.data.batches,
-                    directEmails: response.data.directEmails
-                }
-            });
+    try {
+        setIsSending(true);
+        setServerResponse(null);
 
-            // Reset form on success
-            setSubject('');
-            setMessage('');
-            setBatchInput('');
-        } catch (error) {
-            const errMsg = error.response?.data?.message || 'Error sending notification';
-            setServerResponse({ ok: false, message: errMsg });
-            console.error('Error sending notification:', error);
-        } finally {
-            setIsSending(false);
-        }
-    };
+        const token = localStorage.getItem('core-token');
+
+        // Generate final HTML from template here
+        const finalHtml = emailTemplate(message, customAddressing);
+
+        const response = await axios.post(
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/notify-batch`,
+            {
+                subject,
+                html: finalHtml, // send full template, not raw message
+                batches: batchInput.split(',').map(item => item.trim()).filter(Boolean),
+                customAddressing
+            },
+            { headers: { Authorization: `Bearer ${token}` } }
+        );
+
+        setServerResponse({
+            ok: true,
+            data: {
+                message: response.data.message,
+                totalRecipients: response.data.totalRecipients,
+                batches: response.data.batches,
+                directEmails: response.data.directEmails
+            }
+        });
+
+        setSubject('');
+        setMessage('');
+        setBatchInput('');
+    } catch (error) {
+        const errMsg = error.response?.data?.message || 'Error sending notification';
+        setServerResponse({ ok: false, message: errMsg });
+    } finally {
+        setIsSending(false);
+    }
+};
 
     const modules = {
         toolbar: [
@@ -91,13 +90,11 @@ const NotifySubscribers = () => {
         'color', 'background' // Add color and background formats
     ];
 
-    const emailTemplate = (message) => `
+    const emailTemplate = (message, customAddressing) => `
         <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
             <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
                 <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                <p>
-                <h3 style="color: white;">Dear User,</h3>
-                </p>
+                ${!customAddressing ? '<h3 style="color: white;">Dear User,</h3>' : ''}
                 <p style="color: #ccc;">${message}</p>
                 <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
                 <p>Thanks,<br>Team NEXUS</p>
@@ -156,7 +153,18 @@ const NotifySubscribers = () => {
                             Example: "u22,i25" for batches or "user@example.com,another@mail.com" for direct emails, or direct admissionNumber
                         </p>
                     </div>
-
+                    <div className="flex items-center gap-2">
+                        <input
+                            type="checkbox"
+                            id="customAddressing"
+                            checked={customAddressing}
+                            onChange={e => setCustomAddressing(e.target.checked)}
+                            disabled={isSending}
+                        />
+                        <label htmlFor="customAddressing" className="text-gray-200 text-sm">
+                            Custom addressing (use message as-is, no "Dear Name" prefix)
+                        </label>
+                    </div>
                     <input
                         type="text"
                         placeholder="Enter subject"
@@ -174,7 +182,6 @@ const NotifySubscribers = () => {
                         readOnly={isSending}
                         className={`w-full bg-white p-2 rounded-md min-h-32 h-auto text-black-2 ${isSending ? 'opacity-60 pointer-events-none' : ''}`}
                     />
-
                     <button
                         type="submit"
                         disabled={isSending}
@@ -197,7 +204,7 @@ const NotifySubscribers = () => {
 
                 <div className="bg-white p-4 mt-6 rounded-lg shadow-md">
                     <h3 className="text-xl font-semibold mb-2">Preview</h3>
-                    <div dangerouslySetInnerHTML={{ __html: emailTemplate(message) }} />
+                    <div dangerouslySetInnerHTML={{ __html: emailTemplate(message, customAddressing) }} />
                 </div>
             </div>
             <style jsx global>{`
