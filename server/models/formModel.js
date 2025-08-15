@@ -62,7 +62,7 @@ const formSchema = new Schema({
             return this.fileUploadEnabled;
         }
     },
-    receivePayment: {  // Field to specify if payment is required
+    receivePayment: {  
         type: Boolean,
         default: false
     },
@@ -70,7 +70,7 @@ const formSchema = new Schema({
         type:Number,
         default:0
     },
-    qrCodeUrl: {  // Field to store QR code URL for payment
+    qrCodeUrl: { 
         type: String,
         required: function() {
             return this.receivePayment;
@@ -106,6 +106,19 @@ const formSchema = new Schema({
         default: false
     },
     sheetId: {
+        type: String,
+        required: true
+    },
+    createdBy: {
+        type: String,
+        ref: 'coreMember'
+    },
+    createdByAdmissionNumber: {
+        type: String,
+        required: true
+       
+    },
+    createdByRole: {
         type: String,
         required: true
     }

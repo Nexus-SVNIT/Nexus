@@ -253,34 +253,88 @@ const alumniEmailVerifiedTemplate = ({fullName}) => ({
   `,
 });
 
-const formEmailTemplate=({name,desc,deadline})=>({
-    subject: `New Form Released: ${form.name}`,
-        text: `New Form Released: ${form.name}. Apply before deadline.`,
-        html: `
-            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
-                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
-                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
+const formEmailTemplate = ({name, desc, deadline, formId, createdBy}) => ({
+    subject: `New Form Released: ${name}`,
+    text: `New Form Released: ${name}. Apply before deadline: ${deadline}.`,
+    html: `
+        <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+            <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+                <h2 style="color: white;">New Form Released</h2>
+                <div style="color: #ccc;">Dear {{name}},</div>
+                <p style="color: #ccc;">A new form has been released on the NEXUS portal:</p>
+                
+                <div style="margin-bottom: 20px; background-color: #444; padding: 15px; border-radius: 5px;">
+                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Name:</strong> ${name}</div>
+                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Description:</strong> ${desc}</div>
+                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Deadline:</strong> ${new Date(deadline).toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    })}</div>
+                    ${createdBy ? `<div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Created By:</strong> ${createdBy}</div>` : ''}
                 </div>
-                <div>Dear Devesh,</div>
-                <p>A new form has been released:</p>
-                <div style="margin-bottom: 20px;">
-                    <strong>Name:</strong> ${form.name}
+                
+                <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
+                    <a href="https://nexus-svnit.in/forms/${formId}" style="background-color: #4cc9f0; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
+                        APPLY NOW
+                    </a>
                 </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Description:</strong> ${form.desc}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Deadline:</strong> ${form.deadline}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
-                </div>
+                
+                <p style="color: #ccc;">Please ensure you submit your response before the deadline. If you face any issues, feel free to contact us.</p>
                 <p>Thanks,<br>Team NEXUS</p>
             </div>
-        `,
-    });
+            <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
+                <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
+                <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+            </div>
+        </div>
+    `
+});
 
+// Template for notifying admins when a new form is created
+const formCreationNotificationTemplate = ({name, desc, deadline, isOpenForAll, enableTeams, teamSize, fileUploadEnabled, creatorEmail, creatorAdmissionNumber, creatorRole, sheetId, formId}) => ({
+    subject: `New Form Created: ${name}`,
+    html: `
+        <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
+            <div style="background-color: #333; padding: 20px; border-radius: 8px;">
+                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+                <h2>New Form Released</h2>
+                <p><strong>Form Name:</strong> ${name}</p>
+                <p><strong>Description:</strong> ${desc}</p>
+                <p><strong>Deadline:</strong> ${deadline}</p>
+                <p><strong>Target Audience:</strong> ${isOpenForAll ? 'Open to All' : 'SVNIT Students Only'}</p>
+                <p><strong>Team Registration:</strong> ${enableTeams ? `Yes (Team Size: ${teamSize})` : 'No'}</p>
+                <p><strong>File Upload Required:</strong> ${fileUploadEnabled ? 'Yes' : 'No'}</p>
+                <p><strong>Created By:</strong> ${creatorEmail} ${creatorAdmissionNumber ? `(${creatorAdmissionNumber})` : ''} ${creatorRole ? `- ${creatorRole}` : ''}</p>
+                <p><strong>Created On:</strong> ${new Date().toLocaleString()}</p>
+                <p><strong>Google Sheet:</strong> <a href="https://docs.google.com/spreadsheets/d/${sheetId}" style="color: #1a73e8;">View Responses</a></p>
+                <p><strong>Form Link:</strong> <a href="https://www.nexus-svnit.in/forms/${formId}" style="color: #1a73e8;">View Form</a></p>
+            </div>
+        </div>
+    `
+});
 
+// Template for summarizing form notification results to admins
+const formNotificationSummaryTemplate = ({formName, subscriberCount, formCreator, senderEmail, sheetId}) => ({
+    subject: `Form Notification Sent: ${formName}`,
+    html: `
+        <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+            <div style="background-color: #333; padding: 20px; border-radius: 8px;">
+                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
+                <h2>Form Notification Summary</h2>
+                <p>Form <strong>${formName}</strong> notification was sent to ${subscriberCount} subscribers.</p>
+                <p>Created by: ${formCreator}</p>
+                <p>Notification sent by: ${senderEmail || 'Unknown'}</p>
+                <p>Sent on: ${new Date().toLocaleString()}</p>
+                <p><a href="https://docs.google.com/spreadsheets/d/${sheetId}" style="color: #1a73e8;">View Responses</a></p>
+            </div>
+        </div>
+    `
+});
 
 const personalizedBatchTemplate = (name, content) => (`
   <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
@@ -333,5 +387,7 @@ module.exports = {
     alumniEmailVerifiedTemplate,
     formEmailTemplate,
     personalizedBatchTemplate,
-    achievementSubmissionTemplate 
+    achievementSubmissionTemplate,
+    formCreationNotificationTemplate,
+    formNotificationSummaryTemplate
 };
