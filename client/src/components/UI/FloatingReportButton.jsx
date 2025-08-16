@@ -24,6 +24,9 @@ export default function FloatingReportButton() {
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
 
+  // Check if user is authenticated
+  const isAuthenticated = !!localStorage.getItem("token")
+
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -45,18 +48,34 @@ export default function FloatingReportButton() {
     setSubmitting(true)
     setError("")
     setSuccess(false)
+    
+    // Validate contact details for anonymous users
+    if (!isAuthenticated) {
+      if (!contactEmail.trim()) {
+        setError("Email is required for anonymous users")
+        setSubmitting(false)
+        return
+      }
+      if (!contactName.trim()) {
+        setError("Name is required for anonymous users")
+        setSubmitting(false)
+        return
+      }
+    }
+    
     try {
       const token = localStorage.getItem("token");
       
       const formData = new FormData();
       formData.append('issueType', category);
       formData.append('description', description);
-      if (contactEmail) {
+      
+      // Only add contact details if user is not authenticated
+      if (!isAuthenticated) {
         formData.append('contactEmail', contactEmail);
-      }
-      if (contactName) {
         formData.append('contactName', contactName);
       }
+      
       if (image) {
         formData.append('image', image);
       }
@@ -93,6 +112,8 @@ export default function FloatingReportButton() {
       setSuccess(true)
       setDescription("")
       setCategory(categories[0])
+      setContactEmail("")
+      setContactName("")
       setImage(null)
       setImagePreview(null)
     } catch (err) {
@@ -209,34 +230,37 @@ export default function FloatingReportButton() {
                     Max 500 characters.
                   </p>
                 </div>
-                {/* Contact Information for Anonymous Users */}
-                <div className="mb-4">
-                  <label className="block mb-1 text-sm font-medium text-gray-700">
-                    Contact Information (optional)
-                  </label>
-                  <p className="text-xs text-gray-500 mb-2">
-                    Provide your contact details if you'd like us to follow up on your report.
-                  </p>
-                  <p className="text-xs text-blue-600 mb-2 font-medium">
-                    💡 Note: Please provide a correct email address so we can reach out to you to solve your issues.
-                  </p>
-                  <div className="grid grid-cols-1 gap-3">
-                    <input
-                      type="text"
-                      placeholder="Your Name (optional)"
-                      value={contactName}
-                      onChange={(e) => setContactName(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    />
-                    <input
-                      type="email"
-                      placeholder="Your Email (optional)"
-                      value={contactEmail}
-                      onChange={(e) => setContactEmail(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
-                    />
+                
+                {/* Contact Information - Only show for anonymous users */}
+                {!isAuthenticated && (
+                  <div className="mb-4">
+                    <label className="block mb-1 text-sm font-medium text-gray-700">
+                      Contact Information <span className="text-red-500">*</span>
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">
+                      Contact details are required for anonymous users so we can follow up on your report.
+                    </p>
+                    <div className="grid grid-cols-1 gap-3">
+                      <input
+                        type="text"
+                        placeholder="Your Name *"
+                        value={contactName}
+                        onChange={(e) => setContactName(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                        required
+                      />
+                      <input
+                        type="email"
+                        placeholder="Your Email *"
+                        value={contactEmail}
+                        onChange={(e) => setContactEmail(e.target.value)}
+                        className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 focus:outline-none"
+                        required
+                      />
+                    </div>
                   </div>
-                </div>
+                )}
+                
                 {/* Image Upload Field */}
                 <div className="mb-6">
                   <label htmlFor="image" className="block mb-1 text-sm font-medium text-gray-700">

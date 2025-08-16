@@ -35,7 +35,7 @@ function SignUpForm() {
 
   const handleChange = (e) => {
     if (e.target.name === "admissionNumber") {
-      e.target.value = e.target.value.toUpperCase();
+      e.target.value = e.target.value.toUpperCase().trim();
     }
 
     setFormData({
@@ -161,6 +161,14 @@ function SignUpForm() {
 
     if (!validateForm()) return;
 
+    const trimmedFormData = Object.fromEntries(
+      Object.entries(formData).map(([key, value]) => [
+        key,
+        typeof value === "string" ? value.trim() : value
+      ])
+    );
+
+
     try {
       const toastId = toast.loading("Signing up...");
       const res = await fetch(
@@ -170,7 +178,7 @@ function SignUpForm() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(trimmedFormData),
         },
       );
 
