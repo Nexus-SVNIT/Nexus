@@ -98,7 +98,7 @@ const formSchema = new Schema({
     },
     createdBy: {
         type: String,
-        ref: 'coreMember'
+        ref: 'teamMembers'
     },
     createdByAdmissionNumber: {
         type: String,
