@@ -8,15 +8,18 @@ const codingProfileSchema = new Schema({
     },
     admissionNo:{
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     fullName:{
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     platform:{
         type: String,
         required: true,
+        index: true
     },
     profileId:{
         type: String,
@@ -24,7 +27,8 @@ const codingProfileSchema = new Schema({
     },
     sortingKey:{
         type: Number,
-        required: true
+        required: true,
+        index: -1
     },
     data:{
         type:Object,
@@ -33,6 +37,8 @@ const codingProfileSchema = new Schema({
     },
 }, {
     timestamps: true
-})
+});
+
+codingProfileSchema.index({ platform: 1, sortingKey: -1 });
 
 module.exports = mongoose.model('CodingProfile', codingProfileSchema);

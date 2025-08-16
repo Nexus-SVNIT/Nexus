@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
 const PostSchema = new mongoose.Schema({
-  title: { type: String, required: true },
+  title: { type: String, required: true, index: true },
   content: { type: String, required: true },
   tags: [String],
-  company: { type: String, required: true },
+  company: { type: String, required: true, index: true },
   author: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   comments: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -18,17 +18,20 @@ const PostSchema = new mongoose.Schema({
   campusType: {
     type: String,
     enum: ['On Campus', 'Off Campus', 'Pool Campus'],
-    required: true
+    required: true,
+    index: true
   },
   jobType: {
     type: String,
     enum: ['2 Month Internship', '6 Month Internship', 'Full Time', '6 Month Internship + Full Time'],
-    required: true
+    required: true,
+    index: true
   },
   workMode: {
     type: String,
     enum: ['Remote', 'On-site', 'Hybrid'],
-    required: true
+    required: true,
+    index: true
   },
   location: [String],
   selectionProcess: {
@@ -104,6 +107,9 @@ const PostSchema = new mongoose.Schema({
 }, {
   timestamps: true,
 });
+
+// Create compound indexes for common query patterns
+PostSchema.index({ company: 1, isVerified: 1, createdAt: -1 });
 
 // Add a pre-save middleware to enforce offer logic
 PostSchema.pre('save', function(next) {
