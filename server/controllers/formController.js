@@ -1,173 +1,32 @@
 const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
-const User = require('../models/userModel.js'); // Adjust the path as necessary
-const { sendEmail } = require('../utils/emailUtils.js'); // Adjust the path to your nodemailer utility
-const fs = require('fs');
-const path = require('path');
+const User = require('../models/userModel.js');
+const CoreMember = require('../models/coreMember.js');
+const { sendEmail } = require('../utils/emailUtils.js');
+const { 
+    formEmailTemplate, 
+    personalizedBatchTemplate,
+    formCreationNotificationTemplate,
+    formNotificationSummaryTemplate
+} = require('../utils/emailTemplates.js');
 const { google } = require('googleapis');
-const { Readable } = require('stream');
-const userModel = require('../models/userModel.js');
+const { uploadImageToDrive, getDriveClient, getCredentials } = require('../utils/driveUtils.js');
 
-const SCOPES = ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/spreadsheets'];
-
-const credentials = {
-    type: process.env.GOOGLE_CLOUD_TYPE,
-    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY
-     ? process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n')
-     : '',
-    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
-    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
-    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
-    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
-    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
-};
-
+// Get authenticated Drive and Sheets clients
 const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: SCOPES,
+    credentials: getCredentials(),
+    scopes: ['https://www.googleapis.com/auth/drive.file', 'https://www.googleapis.com/auth/spreadsheets']
 });
 
-const drive = google.drive({ version: 'v3', auth });
 const sheets = google.sheets({ version: 'v4', auth });
 
+// Error handling utility
 const handleError = (res, err) => {
     console.error(err);
-    res.status(500).json(err);
+    res.status(500).json({ message: "Server error", error: err.message });
 };
 
-const temp = async (req, res) => {
-    const formId = req.params.id;
-    const form = await Forms.findById(formId);
-    if (!form) {
-        console.error(`Form with ID ${formId} not found.`);
-        return;
-    }
-
-    
-    const emailContent = {
-        to: 'devesh1217@gmail.com',
-        subject: `New Form Released: ${form.name}`,
-        text: `New Form Released: ${form.name}. Apply before deadline.`,
-        html: `
-            <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
-                <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
-                    <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
-                </div>
-                <div>Dear Devesh,</div>
-                <p>A new form has been released:</p>
-                <div style="margin-bottom: 20px;">
-                    <strong>Name:</strong> ${form.name}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Description:</strong> ${form.desc}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Deadline:</strong> ${form.deadline}
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <strong>Link to apply:</strong> <a href="https://nexus-svnit.in/forms" style="color: #1a73e8;">Apply Now</a>
-                </div>
-                <p>Thanks,<br>Team NEXUS</p>
-            </div>
-        `
-    };
-
-    try {
-        await sendEmail(emailContent);
-        res.status(200).json({ message: 'Email sent successfully.' });
-        // console.log(`Notified ${subscriber.personalEmail} about new form: ${formId}`);
-    } catch (error) {
-        console.error(`Failed to send email to ${subscriber.personalEmail}:`, error);
-        res.status(500).json({ message: 'Failed to send email.' });
-    }
-};
-
-const notifyAllSubscribers = async (req, res) => {
-    try {
-        // Fetch the form details by ID
-        const formId = req.params.formId;
-        const form = await Forms.findById(formId);
-        if (!form) {
-            console.error(`Form with ID ${formId} not found.`);
-            return res.status(404).json({ message: "Form not found" });
-        }
-
-        // Fetch users who are subscribed
-        const subscribers = await User.find({ subscribed: true });
-        if (subscribers.length === 0) {
-            console.log("No subscribers to notify.");
-            return res.status(200).json({ message: "No subscribers to notify" });
-        }
-
-        // Prepare BCC recipient list
-        const bccRecipients = subscribers.map(subscriber => subscriber.personalEmail);
-        
-        console.log(`Total subscribers to notify: ${bccRecipients.length}`);
-
-        // Notification link to apply
-        const linkToApply = 'https://www.nexus-svnit.in/forms';
-
-        // Email content template
-        const emailTemplate = {
-            to: "noreply@nexus-svnit.in",  // Sender's email (can be an official email)
-            subject: `New Form Released: ${form.name}`,
-            text: `New Form Released: ${form.name}. Apply before the deadline.`,
-            html: `
-                <div style="background-color: black; color: white; font-size: 12px; padding: 20px;">
-                    <div style="margin-bottom: 40px; margin-left:20%; margin-right:20%; width: 60%; display: flex; justify-content: center;">
-                        <img style="width:100%" src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo"/>
-                    </div>
-                    <div>Dear Subscriber,</div>
-                    <p>A new form has been released:</p>
-                    <div style="margin-bottom: 20px;">
-                        <strong>Name:</strong> ${form.name}
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <strong>Description:</strong> ${form.desc}
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <strong>Deadline:</strong> ${form.deadline}
-                    </div>
-                    <div style="margin-bottom: 20px;">
-                        <strong>Link to apply:</strong> <a href="${linkToApply}" style="color: #1a73e8;">Apply Now</a>
-                    </div>
-                    <p>Thanks,<br>Team NEXUS</p>
-                </div>
-            `
-        };
-
-        // Send emails in batches (limit to 50 recipients per batch)
-        const batchSize = 50;
-        for (let i = 0; i < bccRecipients.length; i += batchSize) {
-            const batch = bccRecipients.slice(i, i + batchSize);
-            console.log(`Sending batch ${Math.ceil(i / batchSize) + 1}: ${batch.length} recipients`);
-
-            try {
-                await sendEmail({ ...emailTemplate, bcc: batch });
-                console.log(`Batch ${Math.ceil(i / batchSize) + 1} sent successfully`);
-            } catch (error) {
-                console.error(`Error sending batch ${Math.ceil(i / batchSize) + 1}:`, error);
-            }
-        }
-
-        console.log("All email batches sent successfully.");
-        return res.status(200).json({ message: `Notification sent to ${subscribers.length} subscribers.` });
-
-    } catch (error) {
-        console.error(`Error notifying subscribers:`, error);
-        return res.status(500).json({ message: "Error sending notifications", error });
-    }
-};
-
-
-
-
-
-
+// Get public forms
 const getPublicForms = async (req, res) => {
     try {
         const allForms = await Forms.find({ isHidden: false })
@@ -186,8 +45,7 @@ const getPublicForms = async (req, res) => {
     }
 };
 
-
-
+// Get all forms (admin only)
 const getAllForms = async (req, res) => {
     try {
         const allForms = await Forms.find()
@@ -197,7 +55,7 @@ const getAllForms = async (req, res) => {
                 deadline: true,
                 publish: true,
                 isHidden: true,
-                sheetId:true
+                sheetId: true
             })
             .sort({ created_date: -1 });
         res.status(200).json(allForms);
@@ -206,17 +64,16 @@ const getAllForms = async (req, res) => {
     }
 };
 
+// Update form status
 const updateFormStatus = async (req, res) => {
     try {
         const { id } = req.params;
         const { publish, isHidden } = req.body;
 
-        // Validate input
         if (typeof publish !== 'boolean' || typeof isHidden !== 'boolean') {
             return res.status(400).json({ success: false, message: 'Invalid input' });
         }
 
-        // Find the form and update its status
         const form = await Forms.findById(id);
         if (!form) {
             return res.status(404).json({ success: false, message: 'Form not found' });
@@ -228,22 +85,23 @@ const updateFormStatus = async (req, res) => {
 
         res.json({ success: true, message: 'Form status updated successfully' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        handleError(res, error);
     }
 };
 
+// Update form deadline
 const updateFormDeadline = async (req, res) => {
     try {
         const { id } = req.params;
         const { deadline } = req.body;
 
-        // Validate input
         if (!deadline || !/^\d{4}-\d{2}-\d{2}$/.test(deadline)) {
-            return res.status(400).json({ success: false, message: 'Invalid deadline format. Expected format: YYYY-MM-DD' });
+            return res.status(400).json({ 
+                success: false, 
+                message: 'Invalid deadline format. Expected format: YYYY-MM-DD' 
+            });
         }
 
-        // Find the form and update its deadline
         const form = await Forms.findById(id);
         if (!form) {
             return res.status(404).json({ success: false, message: 'Form not found' });
@@ -254,56 +112,60 @@ const updateFormDeadline = async (req, res) => {
 
         res.json({ success: true, message: 'Form deadline updated successfully' });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: 'Server error' });
+        handleError(res, error);
     }
 };
 
+// Update form details
 const updateForm = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
+    try {
+        const { id } = req.params;
+        const updateData = req.body;
 
-    const form = await Forms.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true, runValidators: true }
-    );
+        const form = await Forms.findByIdAndUpdate(
+            id,
+            updateData,
+            { new: true, runValidators: true }
+        );
 
-    if (!form) {
-      return res.status(404).json({ message: 'Form not found' });
+        if (!form) {
+            return res.status(404).json({ message: 'Form not found' });
+        }
+
+        res.status(200).json(form);
+    } catch (error) {
+        handleError(res, error);
     }
-
-    res.status(200).json(form);
-  } catch (error) {
-    console.error('Error updating form:', error);
-    res.status(500).json({ message: 'Error updating form', error: error.message });
-  }
 };
 
+// Create Google Drive folder using driveUtils
 async function createDriveFolder(formTitle) {
+    const drive = getDriveClient();
     const folderName = `${formTitle} - ${new Date().toLocaleDateString()}`;
+    
     const fileMetadata = {
         name: folderName,
         mimeType: "application/vnd.google-apps.folder",
-        parents: [process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID], // ID of the main folder in Drive
+        parents: [process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID]
     };
 
     try {
         const response = await drive.files.create({
             resource: fileMetadata,
-            fields: "id",
+            fields: "id"
         });
-        return response.data.id; // Returns the subfolder ID
+        return response.data.id;
     } catch (error) {
         console.error("Error creating Drive folder:", error);
         throw new Error("Failed to create folder in Google Drive");
     }
 }
 
+// Create Google Sheet in Drive folder
 async function createGoogleSheet(formTitle, folderId) {
+    const drive = getDriveClient();
     const resource = {
-        name :`${formTitle} Responses`,
+        name: `${formTitle} Responses`,
         mimeType: 'application/vnd.google-apps.spreadsheet',
         parents: [folderId],
     };
@@ -313,25 +175,42 @@ async function createGoogleSheet(formTitle, folderId) {
             resource,
             fields: 'id, name',
         });
-        return response.data.id; // Returns the Google Sheet ID
+        return response.data.id;
     } catch (error) {
         console.error("Error creating Google Sheet:", error);
         throw new Error("Failed to create Google Sheet");
     }
 }
 
+// Create a new form
 const createForm = async (req, res) => {
-    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, isHidden, isOpenForAll } = req.body;
-    const _event = "none";  // Set a default value for _event if it's not provided
+    const { name, desc, deadline, formFields, WaLink, enableTeams, teamSize, 
+            fileUploadEnabled, posterImageDriveId, extraLinkName, extraLink, 
+            isHidden, isOpenForAll } = req.body;
+    const _event = "none";
 
     let driveFolderId = null;
     let sheetId = null;
 
-    // If file upload is enabled, create a subfolder on Google Drive
     try {
-        driveFolderId = await createDriveFolder(name); // Create folder and get folder ID
-        sheetId = await createGoogleSheet(name, driveFolderId); // Create Google Sheet and get sheet ID
+        // Check if user is authenticated as team member
+        if (!req.user || !req.user.admissionNumber) {
+            return res.status(401).json({ message: "Authentication required" });
+        }
+        
+        // Get user info from team member details in req.user
+        const teamMemberDetails = {
+            admissionNumber: req.user.admissionNumber,
+            
+            role: req.user.role,
+            email: req.user.email
+        };
+        
+        // Create Google Drive folder and Sheet
+        driveFolderId = await createDriveFolder(name);
+        sheetId = await createGoogleSheet(name, driveFolderId);
 
+        // Initialize Sheet headers
         if (sheetId) {
             const values = isOpenForAll ? [] : [
                 'admissionNumber',
@@ -351,7 +230,7 @@ const createForm = async (req, res) => {
                 values.push('files');
             }
             values.push('dateTime');
-            const res = await sheets.spreadsheets.values.append({
+            await sheets.spreadsheets.values.append({
                 spreadsheetId: sheetId,
                 range: 'Sheet1',
                 valueInputOption: 'RAW',
@@ -360,35 +239,18 @@ const createForm = async (req, res) => {
                 },
             });
         }
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({ message: "Failed to create folder or sheet in Google Drive" });
-    }
 
-    const created_date = new Date().toISOString();
-    const publish = true;
-
-    // Validate team size if enableTeams is true
-    let teamData = {};
-    if (enableTeams) {
-        if (teamSize && teamSize > 0) {
-            teamData = { enableTeams, teamSize };
-        } else {
-            return res.status(400).json({ error: "Invalid team size. It should be a positive integer." });
-        }
-    }
-
-    try {
+        // Create the form
         const createdForm = await Forms.create({
             name,
             desc,
             deadline,
-            created_date,
-            publish,
+            created_date: new Date().toISOString(),
+            publish: true,
             formFields,
             WaLink,
             _event,
-            ...teamData, // Spread the team data if teams are enabled
+            ...(enableTeams && teamSize > 0 ? { enableTeams, teamSize } : {}),
             fileUploadEnabled,
             driveFolderId,
             sheetId,
@@ -397,55 +259,41 @@ const createForm = async (req, res) => {
             extraLink,
             isHidden,
             isOpenForAll,
+            createdBy: teamMemberDetails.email || '',
+            createdByAdmissionNumber: teamMemberDetails.admissionNumber || '',
+            createdByRole: teamMemberDetails.role || ''
         });
-        res.status(200).json(createdForm);
+
+        // Send notification to admin team about the new form
+        await sendEmail({
+            to: process.env.EMAIL_ID,
+            ...formCreationNotificationTemplate({
+                name,
+                desc,
+                deadline,
+                isOpenForAll,
+                enableTeams,
+                teamSize,
+                fileUploadEnabled,
+                creatorEmail: teamMemberDetails.email,
+                creatorAdmissionNumber: teamMemberDetails.admissionNumber,
+                creatorRole: teamMemberDetails.role,
+                sheetId,
+                formId: createdForm._id
+            })
+        });
+
+        res.status(200).json({
+            success: true, 
+            message: 'Form created successfully',
+            form: createdForm
+        });
     } catch (err) {
         handleError(res, err);
     }
 };
 
-const uploadImageToDrive = async (req, driveFolderId, admissionNumber) => {
-    try {
-        if (!req.file && !req.files?.file) {
-            return { success: false, error: 'No file uploaded.' };
-        }
-
-        const uploadFile = req.file || req.files.file;
-
-        const fileMetadata = {
-            name: `${admissionNumber || 'unnamed'}_${Date.now()}`,
-            parents: [driveFolderId || process.env.GOOGLE_DRIVE_FORMS_FOLDER_ID]
-        };
-
-        let bufferStream;
-        if (uploadFile.buffer) {
-            bufferStream = new Readable();
-            bufferStream.push(uploadFile.buffer);
-            bufferStream.push(null);
-        } else {
-            bufferStream = new Readable();
-            bufferStream.push(uploadFile.data);
-            bufferStream.push(null);
-        }
-
-        const media = {
-            mimeType: uploadFile.mimetype,
-            body: bufferStream,
-        };
-
-        const file = await drive.files.create({
-            resource: fileMetadata,
-            media: media,
-            fields: 'id',
-        });
-
-        return { success: true, fileId: file.data.id };
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        return { success: false, error: error.message || 'Unknown error' };
-    }
-};
-
+// Submit a response to a form
 const submitResponse = async (req, res) => {
     const id = req.params.id;
     let admissionNumber = null;
@@ -456,7 +304,7 @@ const submitResponse = async (req, res) => {
         const deadlineDate = formDetails.deadline;
         const currentDate = Date.now();
 
-        // Check if the deadline has been missed
+        // Check if the deadline has been missed or form is not published
         if (deadlineDate < currentDate || !formDetails.publish) {
             return res.status(400).json({
                 success: false,
@@ -464,8 +312,8 @@ const submitResponse = async (req, res) => {
             });
         }
 
+        // For forms that aren't open to all, validate user authentication
         if (!formDetails.isOpenForAll) {
-            // If the form is not open to all, ensure the user is authenticated
             if (!req.user?.admissionNumber) {
                 return res.status(403).json({
                     success: false,
@@ -475,67 +323,71 @@ const submitResponse = async (req, res) => {
             admissionNumber = req.user.admissionNumber;
         }
 
-        // Check if the user has already submitted the form
+        // Check for duplicate submission
         const existingForm = await Forms.findOne({
             _id: id,
             "responses.admissionNumber": admissionNumber
         });
 
-        if (!existingForm && formDetails.enableTeams) {
-            const teamMembers = JSON.parse(req.body.teamMembers);
-            req.body.teamMembers = teamMembers;
-            for (const admissionNumber of teamMembers) {
-                const existingMemberForm = await Forms.findOne({
-                    _id: id,
-                    "responses.teamMembers": admissionNumber
-                });
-
-                if (existingMemberForm) {
-                    return res.status(400).json({
-                        success: false,
-                        message: `Team member with admission number ${admissionNumber} has already registered.`,
-                    });
-                }
-
-                const existingMember = await User.findOne({ admissionNumber });
-                if (!existingMember) {
-                    return res.status(400).json({
-                        success: false,
-                        message: `Team member with admission number ${admissionNumber} does not exist.`,
-                    });
-                }
-
-
-            }
-        }
-
         if (existingForm) {
             return res.status(400).json({
                 success: false,
                 message: "Already Registered.",
-            }); // User has already submitted
+            });
         }
 
+        // Validate team registration
         if (formDetails.enableTeams) {
+            // Check for team member validation
+            if (!existingForm && formDetails.enableTeams) {
+                const teamMembers = JSON.parse(req.body.teamMembers);
+                req.body.teamMembers = teamMembers;
+                
+                // Verify each team member doesn't already exist in another team
+                for (const admissionNumber of teamMembers) {
+                    const existingMemberForm = await Forms.findOne({
+                        _id: id,
+                        "responses.teamMembers": admissionNumber
+                    });
+
+                    if (existingMemberForm) {
+                        return res.status(400).json({
+                            success: false,
+                            message: `Team member with admission number ${admissionNumber} has already registered.`,
+                        });
+                    }
+
+                    // Verify team member exists
+                    const existingMember = await User.findOne({ admissionNumber });
+                    if (!existingMember) {
+                        return res.status(400).json({
+                            success: false,
+                            message: `Team member with admission number ${admissionNumber} does not exist.`,
+                        });
+                    }
+                }
+            }
+
+            // Validate team name uniqueness
             const { teamName } = req.body;
             const existingTeam = await Forms.findOne({
                 _id: id,
                 "responses.teamName": teamName
             });
+            
             if (existingTeam) {
                 return res.status(400).json({
                     success: false,
                     message: "Team Name already exists.",
-                }); // Team Name already exists
+                });
             }
         }
 
-        // Payment validation if required
+        // Handle payment validation if required
         if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments); // Parse Payments if it's a string
+            const paymentData = JSON.parse(req.body.Payments);
             const { paymentId, screenshotUrl } = paymentData;
 
-            // Check if paymentId and screenshotUrl are provided
             if (!paymentId || !screenshotUrl) {
                 return res.status(400).json({
                     success: false,
@@ -543,7 +395,6 @@ const submitResponse = async (req, res) => {
                 });
             }
 
-            // Ensure unique paymentId in payments array
             const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
             if (existingPayment) {
                 return res.status(200).json({
@@ -552,7 +403,6 @@ const submitResponse = async (req, res) => {
                 });
             }
 
-            // Add payment details to request body for tracking
             req.body.paymentDetails = {
                 paymentId,
                 screenshotUrl,
@@ -560,20 +410,22 @@ const submitResponse = async (req, res) => {
             };
         }
 
-        // Upload file to Google Drive if file upload is enabled
+        // Handle file upload if required
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
                 return res.status(400).json({ message: "File upload is required" });
             }
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
+            
+            // Use driveUtils to upload file
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }
             req.body.files = uploadResult.fileId;
         }
 
+        // Process form data
         const body = req.body;
-
         for(const key in body){
             if(body[key][0] === '"' && body[key][body[key].length-1] === '"'){
                 body[key] = body[key].slice(1, body[key].length-1);
@@ -582,13 +434,14 @@ const submitResponse = async (req, res) => {
 
         body.dateTime = new Date();
 
-        // Update the form with the new response
+        // Save response to the form
         const form = await Forms.findByIdAndUpdate(
             id,
             { $push: { responses: { ...body, admissionNumber } } },
             { new: true }
         );
 
+        // Extract fields for Google Sheet
         const resTeamName = body.teamName;
         delete body.teamName;
         
@@ -605,8 +458,9 @@ const submitResponse = async (req, res) => {
         if (form.sheetId) {
             let userData = null;
             if(admissionNumber){
-                userData = await userModel.findOne({admissionNumber});
+                userData = await User.findOne({admissionNumber});
             }
+            
             const values = Object.values({
                 admissionNumber,
                 name: userData?.fullName || 'Guest User',
@@ -615,17 +469,19 @@ const submitResponse = async (req, res) => {
                 branch: userData?.branch || 'N/A',
                 ...body,
             });
+            
             if(form.enableTeams){
                 values.push(resTeamName)
                 values.push(JSON.stringify(resTeamMembers))
             }
+            
             if(form.fileUploadEnabled){
                 values.push(`https://drive.google.com/file/d/${resFiles}/view`)
             }
             
             values.push(new Date(resDate).toLocaleString())
 
-            const res = await sheets.spreadsheets.values.append({
+            await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
                 range: 'Sheet1',
                 valueInputOption: 'RAW',
@@ -635,30 +491,28 @@ const submitResponse = async (req, res) => {
             });
         }
 
-        const responseMessage = {
+        // Return success response
+        res.status(200).json({
             success: true,
             message: "Your response has been successfully saved.",
             WaLink: form?.WaLink,
-        };
-
-        res.status(200).json(responseMessage);
+        });
     } catch (err) {
-        console.log(err)
         handleError(res, err);
     }
 };
 
+// Submit an open form response (no login required)
 const submitOpenResponse = async (req, res) => {
     const id = req.params.id;
     const admissionNumber = null; // No admission number for open forms
 
     try {
-        // Retrieve form details
         const formDetails = await Forms.findById(id).select();
         const deadlineDate = formDetails.deadline;
         const currentDate = Date.now();
 
-        // Check if the deadline has been missed
+        // Check deadline and if form is published
         if (deadlineDate < currentDate || !formDetails.publish) {
             return res.status(400).json({
                 success: false,
@@ -666,6 +520,7 @@ const submitOpenResponse = async (req, res) => {
             });
         }
 
+        // Validate form is open for all
         if (!formDetails.isOpenForAll) {
             return res.status(400).json({
                 success: false,
@@ -673,67 +528,27 @@ const submitOpenResponse = async (req, res) => {
             });
         }
 
-        // Check if the user has already submitted the form
-        // const existingForm = await Forms.findOne({
-        //     _id: id,
-        //     "responses.admissionNumber": admissionNumber
-        // });
-
-        // if (!existingForm && formDetails.enableTeams) {
-        //     const teamMembers = JSON.parse(req.body.teamMembers);
-        //     req.body.teamMembers = teamMembers;
-        //     for (const admissionNumber of teamMembers) {
-        //         const existingMemberForm = await Forms.findOne({
-        //             _id: id,
-        //             "responses.teamMembers": admissionNumber
-        //         });
-
-        //         if (existingMemberForm) {
-        //             return res.status(400).json({
-        //                 success: false,
-        //                 message: `Team member with admission number ${admissionNumber} has already registered.`,
-        //             });
-        //         }
-
-        //         const existingMember = await User.findOne({ admissionNumber });
-        //         if (!existingMember) {
-        //             return res.status(400).json({
-        //                 success: false,
-        //                 message: `Team member with admission number ${admissionNumber} does not exist.`,
-        //             });
-        //         }
-
-
-        //     }
-        // }
-
-        // if (existingForm) {
-        //     return res.status(400).json({
-        //         success: false,
-        //         message: "Already Registered.",
-        //     }); // User has already submitted
-        // }
-
+        // Handle team validation for open forms
         if (formDetails.enableTeams) {
             const { teamName } = req.body;
             const existingTeam = await Forms.findOne({
                 _id: id,
                 "responses.teamName": teamName
             });
+            
             if (existingTeam) {
                 return res.status(400).json({
                     success: false,
                     message: "Team Name already exists.",
-                }); // Team Name already exists
+                });
             }
         }
 
-        // Payment validation if required
+        // Handle payment validation
         if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments); // Parse Payments if it's a string
+            const paymentData = JSON.parse(req.body.Payments);
             const { paymentId, screenshotUrl } = paymentData;
 
-            // Check if paymentId and screenshotUrl are provided
             if (!paymentId || !screenshotUrl) {
                 return res.status(400).json({
                     success: false,
@@ -741,7 +556,6 @@ const submitOpenResponse = async (req, res) => {
                 });
             }
 
-            // Ensure unique paymentId in payments array
             const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
             if (existingPayment) {
                 return res.status(200).json({
@@ -750,7 +564,6 @@ const submitOpenResponse = async (req, res) => {
                 });
             }
 
-            // Add payment details to request body for tracking
             req.body.paymentDetails = {
                 paymentId,
                 screenshotUrl,
@@ -758,20 +571,22 @@ const submitOpenResponse = async (req, res) => {
             };
         }
 
-        // Upload file to Google Drive if file upload is enabled
+        // Handle file upload
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
                 return res.status(400).json({ message: "File upload is required" });
             }
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
+            
+            // Use driveUtils to upload file
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }
             req.body.files = uploadResult.fileId;
         }
 
+        // Process form data
         const body = req.body;
-
         for(const key in body){
             if(body[key][0] === '"' && body[key][body[key].length-1] === '"'){
                 body[key] = body[key].slice(1, body[key].length-1);
@@ -780,13 +595,14 @@ const submitOpenResponse = async (req, res) => {
 
         body.dateTime = new Date();
 
-        // Update the form with the new response
+        // Save response to the form
         const form = await Forms.findByIdAndUpdate(
             id,
             { $push: { responses: { ...body, admissionNumber } } },
             { new: true }
         );
 
+        // Extract fields for Google Sheet
         const resTeamName = body.teamName;
         delete body.teamName;
         
@@ -810,7 +626,8 @@ const submitOpenResponse = async (req, res) => {
                 values.push(`https://drive.google.com/file/d/${resFiles}/view`)
             }
             values.push(new Date(resDate).toLocaleString())
-            const res = await sheets.spreadsheets.values.append({
+            
+            await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
                 range: 'Sheet1',
                 valueInputOption: 'RAW',
@@ -820,23 +637,22 @@ const submitOpenResponse = async (req, res) => {
             });
         }
 
-        const responseMessage = {
+        // Return success response
+        res.status(200).json({
             success: true,
             message: "Your response has been successfully saved.",
             WaLink: form?.WaLink,
-        };
-
-        res.status(200).json(responseMessage);
+        });
     } catch (err) {
-        console.log(err)
         handleError(res, err);
     }
 };
 
+// Get responses for a form (admin only)
 const getResponses = async (req, res) => {
     const id = req.params.id;
     try {
-        // Fetch responses along with user details by admissionNumber
+        // Fetch responses with user details
         const form = await Forms.findById(id).select({ responses: true, enableTeams: true, _id: false });
 
         if (!form) throw new Error("Form not found");
@@ -866,235 +682,112 @@ const getResponses = async (req, res) => {
                 })
         );
 
-
         res.status(200).json({ responses: responseWithUserDetails, enableTeams: form.enableTeams });
     } catch (err) {
         handleError(res, err);
     }
 };
 
+// Get form fields (for display)
 const getFormFields = async (req, res) => {
     const id = req.params.id;
     try {
         const formFields = await Forms.findById(id).select({ _id: false, responses: false, __v: false, responseCount: false, _event: false });
-        if (!formFields) throw new Error("Event not found");
+        if (!formFields) throw new Error("Form not found");
         res.status(200).json(formFields);
     } catch (err) {
         handleError(res, err);
     }
 };
 
-const getLeaderboard = async (req, res) => {
-    const formId = '67b856257a31d0ef7e5465a4';
+// Notify all subscribers about a form        
+const notifyAllSubscribers = async (req, res) => {
     try {
+        const formId = req.params.formId;
         const form = await Forms.findById(formId);
+
         if (!form) {
-            return res.status(404).json({ message: 'Form not found' });
+            return res.status(404).json({ message: "Form not found" });
         }
 
-        const referenceData = {};
-        // First pass: collect references and track latest referral time
-        form.responses.forEach(response => {
-            const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
-            if (reference) {
-                if (!referenceData[reference]) {
-                    referenceData[reference] = {
-                        count: 0,
-                        lastReferralTime: null
-                    };
-                }
-                referenceData[reference].count += 1;
-                const currentTime = new Date(response.dateTime);
-                if (!referenceData[reference].lastReferralTime || 
-                    currentTime > referenceData[reference].lastReferralTime) {
-                    referenceData[reference].lastReferralTime = currentTime;
-                }
-            }
-        });
-
-        // Convert to array and add user details
-        const leaderboard = await Promise.all(
-            Object.entries(referenceData)
-                .map(async ([reference, data]) => {
-                    const user = await User.findOne(
-                        { admissionNumber: reference },
-                        { fullName: 1, admissionNumber: 1 }
-                    );
-                    return {
-                        reference,
-                        count: data.count,
-                        name: user ? user.fullName : 'Unknown User',
-                        lastReferralTime: data.lastReferralTime
-                    };
-                })
-        );
-
-        // Modified sorting logic
-        leaderboard.sort((a, b) => {
-            // First sort by count in descending order
-            if (b.count !== a.count) {
-                return b.count - a.count;
-            }
-            // If counts are equal, sort by last referral time in descending order
-            return a.lastReferralTime - b.lastReferralTime;
-        });
-
-        res.json(leaderboard);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
-};
-
-const getAdminLeaderboard = async (req, res) => {
-    const formId = '67b856257a31d0ef7e5465a4';
-    try {
-        const form = await Forms.findById(formId);
-        if (!form) {
-            return res.status(404).json({ message: 'Form not found' });
+        // Fetch core member who created the notification
+        const coreMember = await CoreMember.findById(req.user.id).select('email admissionNumber');
+        const formCreator = form.createdByAdmissionNumber || (coreMember ? coreMember.admissionNumber : 'NEXUS Core Team');
+        
+        // Find all subscribed users
+        const subscribers = await User.find({ subscribed: true });
+        if (subscribers.length === 0) {
+            return res.status(200).json({ message: "No subscribers to notify" });
         }
 
-        const referenceData = {};
-
-        // First pass: collect references and referrals with timestamps
-        form.responses.forEach(response => {
-            const reference = response['Your Favorite Nexus Member - Reference (Admission No only)'];
-            const referredBy = response.admissionNumber;
-            const submittedAt = response.dateTime;
+        // Get all recipient emails
+        const bccRecipients = subscribers.map(subscriber => subscriber.personalEmail);
+        const batchSize = 50;
+        
+        // Send emails in batches
+        for (let i = 0; i < bccRecipients.length; i += batchSize) {
+            const batch = bccRecipients.slice(i, i + batchSize);
             
-            if (reference) {
-                if (!referenceData[reference]) {
-                    referenceData[reference] = {
-                        count: 0,
-                        referrals: [],
-                        referredBy: [],
-                        firstReferralTime: null,
-                        lastReferralTime: null
-                    };
-                }
-
-                // Update count and add referral
-                referenceData[reference].count += 1;
-                referenceData[reference].referrals.push({
-                    admissionNumber: referredBy,
-                    submittedAt: new Date(submittedAt)
+            try {
+                const emailContent = formEmailTemplate({
+                    name: form.name,
+                    desc: form.desc,
+                    deadline: form.deadline,
+                    formId: form._id,
+                    createdBy: formCreator
                 });
-
-                // Update first and last referral times
-                const currentTime = new Date(submittedAt);
-                if (!referenceData[reference].firstReferralTime || 
-                    currentTime < referenceData[reference].firstReferralTime) {
-                    referenceData[reference].firstReferralTime = currentTime;
-                }
-                if (!referenceData[reference].lastReferralTime || 
-                    currentTime > referenceData[reference].lastReferralTime) {
-                    referenceData[reference].lastReferralTime = currentTime;
-                }
+                 // Replace template placeholder with actual recipient name
+                await sendEmail({
+                    to: "noreply@nexus-svnit.in",
+                    bcc: batch,
+                    ...emailContent,
+                    html: emailContent.html.replace('{{name}}', 'NEXUS Member')
+                });
+                
+                console.log(`Sent batch ${Math.ceil(i/batchSize) + 1} with ${batch.length} recipients`);
+            } catch (error) {
+                console.error(`Error sending batch ${Math.ceil(i/batchSize) + 1}:`, error);
             }
+        }
 
-            // Track who used this person as reference
-            if (referredBy && reference) {
-                if (!referenceData[referredBy]) {
-                    referenceData[referredBy] = {
-                        count: 0,
-                        referrals: [],
-                        referredBy: [],
-                        firstReferralTime: null,
-                        lastReferralTime: null
-                    };
-                }
-                if (!referenceData[referredBy].referredBy.includes(reference)) {
-                    referenceData[referredBy].referredBy.push(reference);
-                }
-            }
+        // Send confirmation to admin with details
+        await sendEmail({
+            to: process.env.EMAIL_ID,
+            cc: coreMember ? coreMember.email : undefined,
+            subject: `Form Notification Sent: ${form.name}`,
+            html: `
+                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+                    <div style="background-color: #333; padding: 20px; border-radius: 8px;">
+                        <h2>Form Notification Summary</h2>
+                        <p>Form <strong>${form.name}</strong> notification was sent to ${subscribers.length} subscribers.</p>
+                        <p>Created by: ${formCreator}</p>
+                        <p>Notification sent by: ${coreMember ? coreMember.email : 'Unknown'}</p>
+                        <p>Sent on: ${new Date().toLocaleString()}</p>
+                        <p><a href="https://docs.google.com/spreadsheets/d/${form.sheetId}" style="color: #1a73e8;">View Responses</a></p>
+                    </div>
+                </div>
+            `
         });
 
-        // Convert to array and add user details
-        const leaderboard = await Promise.all(
-            Object.entries(referenceData)
-                .map(async ([reference, data]) => {
-                    // Get user details
-                    const user = await User.findOne(
-                        { admissionNumber: reference },
-                        { fullName: 1, admissionNumber: 1 }
-                    );
-
-                    // Sort referrals by submission time
-                    const sortedReferrals = data.referrals.sort((a, b) => 
-                        new Date(b.submittedAt) - new Date(a.submittedAt)
-                    );
-
-                    // Fetch details for each referral
-                    const referralDetails = await Promise.all(
-                        sortedReferrals.map(async (referral) => {
-                            const referralUser = await User.findOne(
-                                { admissionNumber: referral.admissionNumber },
-                                { fullName: 1, admissionNumber: 1 }
-                            );
-                            return {
-                                admissionNumber: referral.admissionNumber,
-                                name: referralUser ? referralUser.fullName : 'Unknown User',
-                                submittedAt: referral.submittedAt
-                            };
-                        })
-                    );
-
-                    // Fetch details for each referrer
-                    const referrerDetails = await Promise.all(
-                        data.referredBy.map(async (referrerAdmissionNo) => {
-                            const referrerUser = await User.findOne(
-                                { admissionNumber: referrerAdmissionNo },
-                                { fullName: 1, admissionNumber: 1 }
-                            );
-                            return {
-                                admissionNumber: referrerAdmissionNo,
-                                name: referrerUser ? referrerUser.fullName : 'Unknown User'
-                            };
-                        })
-                    );
-
-                    return {
-                        reference,
-                        name: user ? user.fullName : 'Unknown User',
-                        count: data.count,
-                        referrals: referralDetails,
-                        referredBy: referrerDetails,
-                        firstReferralTime: data.firstReferralTime,
-                        lastReferralTime: data.lastReferralTime
-                    };
-                })
-        );
-
-        // Modified sorting logic for admin leaderboard
-        leaderboard.sort((a, b) => {
-            // Primary sort by count in descending order
-            if (b.count !== a.count) {
-                return b.count - a.count;
-            }
-            // Secondary sort by last referral time in descending order
-            return a.lastReferralTime - b.lastReferralTime;
-        });
-
-        res.json(leaderboard);
+        return res.status(200).json({ message: `Notification sent to ${subscribers.length} subscribers.` });
     } catch (error) {
-        console.error('Error in getAdminLeaderboard:', error);
-        res.status(500).json({ message: 'Server error', error: error.message });
+        handleError(res, error);  
     }
 };
 
+// Export all controller functions
 module.exports = {
     getAllForms,
     getPublicForms,
     createForm,
     submitResponse,
-    getResponses,
-    getFormFields,
-    updateFormStatus,
+    getResponses, 
+    getFormFields,     
+    updateFormStatus,    
     updateFormDeadline,
     notifyAllSubscribers,
-    temp,
-    getLeaderboard,
     updateForm,
-    getAdminLeaderboard,
-    submitOpenResponse
+    submitOpenResponse,
+    
+  
 };

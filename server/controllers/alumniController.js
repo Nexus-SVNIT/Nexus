@@ -12,17 +12,7 @@ const {
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles');
 const { validateAlumni } = require('../utils/validateAlumni');
 
-// Email transporter configuration
-/*
-const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORD
-    }
-});
 
-*/
 
 // Alumni data retrieval functions with pagination and the specific filters
 //(for users)

@@ -2,31 +2,10 @@ const fs = require('fs');
 const { google } = require('googleapis');
 const Achievement = require('../models/achievementModel');
 const userSchema = require('../models/userModel');
-const nodemailer = require('nodemailer');
+const { sendEmail } = require('../utils/emailUtils');
+const { achievementSubmissionTemplate } = require('../utils/emailTemplates');
+const { uploadImageToDrive, deleteFileFromDrive } = require('../utils/driveUtils');
 
-// Initialize Google Drive API
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
-
-const credentials = {
-    type: process.env.GOOGLE_CLOUD_TYPE,
-    project_id: process.env.GOOGLE_CLOUD_PROJECT_ID,
-    private_key_id: process.env.GOOGLE_CLOUD_PRIVATE_KEY_ID,
-    private_key: process.env.GOOGLE_CLOUD_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    client_email: process.env.GOOGLE_CLOUD_CLIENT_EMAIL,
-    client_id: process.env.GOOGLE_CLOUD_CLIENT_ID,
-    auth_uri: process.env.GOOGLE_CLOUD_AUTH_URI,
-    token_uri: process.env.GOOGLE_CLOUD_TOKEN_URI,
-    auth_provider_x509_cert_url: process.env.GOOGLE_CLOUD_AUTH_PROVIDER_X509_CERT_URL,
-    client_x509_cert_url: process.env.GOOGLE_CLOUD_CLIENT_X509_CERT_URL,
-    universe_domain: process.env.GOOGLE_CLOUD_UNIVERSE_DOMAIN
-};
-
-const auth = new google.auth.GoogleAuth({
-    credentials,
-    scopes: SCOPES,
-});
-
-const drive = google.drive({ version: 'v3', auth });
 
 
 const allAchievements = async (req, res) => {
@@ -72,38 +51,6 @@ const pendingAchievements = async (req, res) => {
     return res.status(200).json(achievements);
 };
 
-// Function to upload image to Google Drive
-const uploadImageToDrive = async (req) => {
-    try {
-        if (!req.file) {
-            return { success: false, error: 'No file uploaded.' };
-        }
-
-        const fileMetadata = {
-            name: req.file.originalname,
-            parents: [process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER_ID]
-        };
-
-        const media = {
-            mimeType: req.file.mimetype,
-            body: fs.createReadStream(req.file.path),
-        };
-
-        const file = await drive.files.create({
-            resource: fileMetadata,
-            media: media,
-            fields: 'id',
-        });
-
-        fs.unlinkSync(req.file.path);
-
-        return { success: true, fileId: file.data.id };
-    } catch (error) {
-        console.error('Error uploading file:', error.message || error);
-        return { success: false, error: error.message || 'Unknown error' };
-    }
-};
-
 const addAchievement = async (req, res) => {
     try {
         const uploadResult = await uploadImageToDrive(req);
@@ -113,7 +60,6 @@ const addAchievement = async (req, res) => {
 
         // Parse teamMembers and ensure it's an array of strings (admission numbers)
         const teamMembersArray = JSON.parse(req.body.teamMembers);
-        const teamMembers = teamMembersArray.map(member => member.admissionNumber);
 
         const achievement = {
             admissionNumber: req.user.admissionNumber,
@@ -125,42 +71,16 @@ const addAchievement = async (req, res) => {
 
         await Achievement.create(achievement);
 
-        // Fetch user details from the database
         const user = await userSchema.findOne({ admissionNumber: req.user.admissionNumber });
         if (!user || !user.instituteEmail) {
             return res.status(400).json({ message: "User email not found" });
         }
 
-        // Set up nodemailer transporter
-        const transporter = nodemailer.createTransport({
-            service: 'Gmail',
-            auth: {
-                user: process.env.EMAIL_ID,
-                pass: process.env.EMAIL_PASSWORD
-            }
-        });
-
-        // Set up mail options
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
+        const emailContent = achievementSubmissionTemplate(user.fullName);
+        await sendEmail({
             to: user.instituteEmail,
-            subject: 'Achievement Submission Under Review',
-            html: `
-                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
-                    <div style="margin-bottom: 25px; display: flex; justify-content: center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width: 350px;" />
-                    </div>
-                    <div>Dear ${user.fullName},</div>
-                    <p>Thank you for submitting your achievement on the NEXUS portal. Your achievement is currently under review.</p>
-                    <p>Once verified, it will be displayed on the website's achievement bulletin section.</p>
-                    <p>We appreciate your hard work and look forward to sharing your success story with our community.</p>
-                    <p>Thanks,<br>Team NEXUS</p>
-                </div>
-            `
-        };
-
-        // Send mail
-        await transporter.sendMail(mailOptions);
+            ...emailContent
+        });
 
         return res.status(200).json({ message: "Waiting for Review" });
     } catch (err) {
@@ -169,6 +89,37 @@ const addAchievement = async (req, res) => {
     }
 };
 
+// Add this new function to delete achievements with Drive cleanup
+const deleteAchievement = async (req, res) => {
+    try {
+        const achievementId = req.params.id;
+        
+        // Find the achievement to get the image ID
+        const achievement = await Achievement.findById(achievementId);
+        
+        if (!achievement) {
+            return res.status(404).json({ message: "Achievement not found" });
+        }
+        
+        // Check if user has permission to delete
+        if (req.user.admissionNumber !== achievement.admissionNumber && !req.user.isAdmin) {
+            return res.status(403).json({ message: "Not authorized to delete this achievement" });
+        }
+        
+        // Delete the image from Google Drive if it exists
+        if (achievement.image) {
+            await deleteFileFromDrive(achievement.image);
+        }
+        
+        // Delete the achievement from the database
+        await Achievement.findByIdAndDelete(achievementId);
+        
+        return res.status(200).json({ message: "Achievement deleted successfully" });
+    } catch (err) {
+        console.error('Error deleting achievement:', err.message);
+        return res.status(500).json({ message: "Error deleting achievement", error: err.message });
+    }
+};
 
 const verifyAchievement = async (req, res) => {
     const achievementId = req.params.id;
@@ -210,4 +161,5 @@ const unverifyAchievement = async (req, res) => {
     }
 };
 
-module.exports = { allAchievements, addAchievement, pendingAchievements, verifyAchievement, unverifyAchievement };
+module.exports = { allAchievements, addAchievement, pendingAchievements, verifyAchievement, unverifyAchievement, deleteAchievement };
+
