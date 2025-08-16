@@ -1,7 +1,7 @@
 const express = require('express');
 const { getAllCompanies, getCompanyByName, createCompany } = require('../controllers/companyController');
 const router = express.Router();
-const { authMiddleware } = require('../middlewares/authMiddleware');
+const authMiddleware = require('../middlewares/authMiddleware');
 
 router.get('/', getAllCompanies);
 router.get('/:name', getCompanyByName);

@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt')
 const { sendEmail } = require('../utils/emailUtils.js');
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
 const { alumniEmailVerificationTemplate, alumniEmailVerifiedTemplate } = require('../utils/emailTemplates.js');
-const { validateCodingProfiles } = require('../utils/validateCodingProfiles');
 const { validateAlumni } = require('../utils/validateAlumni');
 
 const loginUser = async (req, res) => {

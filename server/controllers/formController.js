@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Forms = mongoose.model('form');
+const Forms = require('../models/formModel.js');
 const User = require('../models/userModel.js');
 const { google } = require('googleapis');
 const { uploadImageToDrive, getCredentials } = require('../utils/driveUtils.js');
