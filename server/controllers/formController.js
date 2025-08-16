@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const User = require('../models/userModel.js');
 const CoreMember = require('../models/coreMember.js');
+const TeamMember = require('../models/teamMembersModel');
 const { sendEmail } = require('../utils/emailUtils.js');
 const { 
     formEmailTemplate, 
@@ -649,7 +650,9 @@ const getFormFields = async (req, res) => {
     }
 };
 
-// Notify all subscribers about a form        
+// Notify all subscribers about a form 
+
+// hold for while need to implement batch wise form notification
 const notifyAllSubscribers = async (req, res) => {
     try {
         const formId = req.params.formId;
@@ -660,7 +663,7 @@ const notifyAllSubscribers = async (req, res) => {
         }
 
         // Fetch core member who created the notification
-        const coreMember = await CoreMember.findById(req.user.id).select('email admissionNumber');
+        const coreMember = await TeamMember.findById(req.user.id).select('email admissionNumber');
         const formCreator = form.createdByAdmissionNumber || (coreMember ? coreMember.admissionNumber : 'NEXUS Core Team');
         
         // Find all subscribed users
