@@ -383,32 +383,7 @@ const submitResponse = async (req, res) => {
             }
         }
 
-        // Handle payment validation if required
-        if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments);
-            const { paymentId, screenshotUrl } = paymentData;
-
-            if (!paymentId || !screenshotUrl) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Payment ID and screenshot URL are required for this form."
-                });
-            }
-
-            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
-            if (existingPayment) {
-                return res.status(200).json({
-                    success: false,
-                    message: "This payment ID has already been used.",
-                });
-            }
-
-            req.body.paymentDetails = {
-                paymentId,
-                screenshotUrl,
-                paymentStatus: "Pending"
-            };
-        }
+        
 
         // Handle file upload if required
         if (formDetails.fileUploadEnabled) {
@@ -544,33 +519,7 @@ const submitOpenResponse = async (req, res) => {
             }
         }
 
-        // Handle payment validation
-        if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments);
-            const { paymentId, screenshotUrl } = paymentData;
-
-            if (!paymentId || !screenshotUrl) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Payment ID and screenshot URL are required for this form."
-                });
-            }
-
-            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
-            if (existingPayment) {
-                return res.status(200).json({
-                    success: false,
-                    message: "This payment ID has already been used.",
-                });
-            }
-
-            req.body.paymentDetails = {
-                paymentId,
-                screenshotUrl,
-                paymentStatus: "Pending"
-            };
-        }
-
+       
         // Handle file upload
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
