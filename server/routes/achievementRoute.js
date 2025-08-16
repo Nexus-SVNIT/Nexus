@@ -3,11 +3,7 @@ const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js');
 const authMiddleware = require('../middlewares/authMiddleware.js');
 const {
   addAchievement,
-  allAchievements,
-  pendingAchievements,
-  verifyAchievement,
-  unverifyAchievement,
-  deleteAchievement
+  allAchievements
 } = require('../controllers/achievementController.js');
 const multer = require('multer');
 const path = require('path');
