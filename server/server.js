@@ -31,13 +31,6 @@ const MONGO_URL = process.env.MONGO_URL
 
 app.use(cors());
 
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ extended: true }));
-
-app.get('/health-check', (req, res) => {
-    return res.send('EveryThing is Fine.')
-})
-
 // Rate limiter middleware
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
@@ -47,6 +40,13 @@ const limiter = rateLimit({
 
 // Apply the rate limiter to all requests
 app.use(limiter);
+
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true }));
+
+app.get('/health-check', (req, res) => {
+    return res.send('EveryThing is Fine.')
+})
 
 app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
