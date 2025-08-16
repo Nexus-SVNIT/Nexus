@@ -70,21 +70,8 @@ const formSchema = new Schema({
         type:Number,
         default:0
     },
-    qrCodeUrl: { 
-        type: String,
-        required: function() {
-            return this.receivePayment;
-        }
-    },
-    payments: {  // New field to track payment details per response
-        type: [{
-            responseId: { type: mongoose.Schema.Types.ObjectId, ref: 'Response' },
-            paymentId: { type: String, required: true },
-            screenshotUrl: { type: String, required: true }, // URL to screenshot of payment
-            paymentStatus: { type: String, enum: ['Pending', 'Verified', 'Rejected'], default: 'Pending' }
-        }],
-        default: []
-    },
+   
+   
     posterImageDriveId:{
         type: String,
         default: ''
@@ -111,7 +98,7 @@ const formSchema = new Schema({
     },
     createdBy: {
         type: String,
-        ref: 'coreMember'
+        ref: 'teamMembers'
     },
     createdByAdmissionNumber: {
         type: String,

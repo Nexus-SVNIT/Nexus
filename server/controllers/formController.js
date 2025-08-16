@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Forms = mongoose.model('form');
 const User = require('../models/userModel.js');
 const CoreMember = require('../models/coreMember.js');
+const TeamMember = require('../models/teamMembersModel');
 const { sendEmail } = require('../utils/emailUtils.js');
 const { 
     formEmailTemplate, 
@@ -301,7 +302,7 @@ const submitResponse = async (req, res) => {
     try {
         // Retrieve form details
         const formDetails = await Forms.findById(id).select();
-        const deadlineDate = formDetails.deadline;
+        const deadlineDate = new Date(formDetails.deadline).getTime();
         const currentDate = Date.now();
 
         // Check if the deadline has been missed or form is not published
@@ -383,32 +384,7 @@ const submitResponse = async (req, res) => {
             }
         }
 
-        // Handle payment validation if required
-        if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments);
-            const { paymentId, screenshotUrl } = paymentData;
-
-            if (!paymentId || !screenshotUrl) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Payment ID and screenshot URL are required for this form."
-                });
-            }
-
-            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
-            if (existingPayment) {
-                return res.status(200).json({
-                    success: false,
-                    message: "This payment ID has already been used.",
-                });
-            }
-
-            req.body.paymentDetails = {
-                paymentId,
-                screenshotUrl,
-                paymentStatus: "Pending"
-            };
-        }
+        
 
         // Handle file upload if required
         if (formDetails.fileUploadEnabled) {
@@ -544,33 +520,7 @@ const submitOpenResponse = async (req, res) => {
             }
         }
 
-        // Handle payment validation
-        if (formDetails.receivePayment) {
-            const paymentData = JSON.parse(req.body.Payments);
-            const { paymentId, screenshotUrl } = paymentData;
-
-            if (!paymentId || !screenshotUrl) {
-                return res.status(400).json({
-                    success: false,
-                    message: "Payment ID and screenshot URL are required for this form."
-                });
-            }
-
-            const existingPayment = formDetails.payments.find(payment => payment.paymentId === paymentId);
-            if (existingPayment) {
-                return res.status(200).json({
-                    success: false,
-                    message: "This payment ID has already been used.",
-                });
-            }
-
-            req.body.paymentDetails = {
-                paymentId,
-                screenshotUrl,
-                paymentStatus: "Pending"
-            };
-        }
-
+       
         // Handle file upload
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
@@ -700,7 +650,9 @@ const getFormFields = async (req, res) => {
     }
 };
 
-// Notify all subscribers about a form        
+// Notify all subscribers about a form 
+
+// hold for while need to implement batch wise form notification
 const notifyAllSubscribers = async (req, res) => {
     try {
         const formId = req.params.formId;
@@ -711,7 +663,7 @@ const notifyAllSubscribers = async (req, res) => {
         }
 
         // Fetch core member who created the notification
-        const coreMember = await CoreMember.findById(req.user.id).select('email admissionNumber');
+        const coreMember = await TeamMember.findById(req.user.id).select('email admissionNumber');
         const formCreator = form.createdByAdmissionNumber || (coreMember ? coreMember.admissionNumber : 'NEXUS Core Team');
         
         // Find all subscribed users
