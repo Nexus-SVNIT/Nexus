@@ -7,8 +7,6 @@ const mongoose = require('mongoose')
 const ExpressError = require('./utils/ExpressError.js')
 const eventRoutes = require('./routes/eventRoutes.js')
 const formRoutes = require('./routes/formRoutes.js')
-const memberRoutes = require('./routes/memberRoutes.js')
-const messageRoutes = require('./routes/messageRoutes.js')
 const userRoutes = require('./routes/userRoutes.js')
 const achievementRoute = require('./routes/achievementRoute.js')
 const alumniRoute = require('./routes/alumniRoute.js')
@@ -27,7 +25,6 @@ const commentRoutes=require("./routes/commentRoutes.js");
 const answerRoutes=require("./routes/answerRoutes.js");
 const contributorsRoute=require("./routes/contributorsRoute.js");
 const rateLimit = require('express-rate-limit');
-const reportRoutes = require('./routes/reportRoutes.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -60,9 +57,7 @@ cloudinary.config({
 app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
 app.use('/forms', formRoutes)
-app.use('/member', memberRoutes)
 app.use('/team', teamMembersRoutes)
-app.use('/messages', messageRoutes)
 app.use('/api/user', userRoutes)
 app.use('/api/core', coreRoutes)
 app.use('/achievements', achievementRoute)
@@ -78,7 +73,6 @@ app.use('/api/questions', questionRoutes);
 app.use('/api/questions', answerRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/contributors', contributorsRoute);
-app.use('/api/report', reportRoutes)
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

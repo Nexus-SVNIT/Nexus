@@ -1,7 +1,6 @@
 const express = require('express');
 const requireAuth = require('../middlewares/requireAuth.js');
 const coreAuthMiddleware = require('../middlewares/coreAuthMiddleware.js');
-const { logRequest, validateEventData } = require("../middleware.js");
 const { getAllEvents, getSingleEvent, addEvent, updateEvent, deleteEvent, } = require('../controllers/eventController.js');
 
 const router = express.Router();
