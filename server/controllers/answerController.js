@@ -1,6 +1,5 @@
 const Question = require('../models/QuestionModel');
 const User = require('../models/userModel');
-const Post = require('../models/postModel');
 const { sendEmail } = require('../utils/emailUtils');
 const { newAnswerTemplate } = require('../utils/emailTemplates');
 
