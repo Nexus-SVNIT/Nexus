@@ -301,7 +301,7 @@ const submitResponse = async (req, res) => {
     try {
         // Retrieve form details
         const formDetails = await Forms.findById(id).select();
-        const deadlineDate = formDetails.deadline;
+        const deadlineDate = new Date(formDetails.deadline).getTime();
         const currentDate = Date.now();
 
         // Check if the deadline has been missed or form is not published
