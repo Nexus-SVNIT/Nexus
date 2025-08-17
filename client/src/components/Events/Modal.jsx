@@ -34,7 +34,7 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
         </button>
 
         {/* Prev button */}
-        {images.length > 1 && (
+        {images.length > 1 && currentIndex > 0 && (
           <button
             onClick={prevImage}
             className="z-10  text-4xl font-bold text-black"
@@ -51,7 +51,7 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
         />
 
         {/* Next button */}
-        {images.length > 1 && (
+        {images.length > 1 && currentIndex < images.length - 1 && (
           <button
             onClick={nextImage}
             className="text-4xl font-bold text-black"
