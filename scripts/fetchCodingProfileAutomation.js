@@ -48,6 +48,7 @@ const requiredData = (profile, index, platform) => {
                 maxRating: profile?.data?.[0]?.maxRating || "N/A",
                 rating: profile?.data?.[0]?.rating || "N/A",
                 rank: profile?.data?.[0]?.rank || "N/A",
+                data: profile?.data
             }
         case 'leetcode':
             return {
@@ -66,6 +67,7 @@ const requiredData = (profile, index, platform) => {
                 totalSolved: profile?.data?.matchedUser?.submitStats?.acSubmissionNum?.[0]?.count || "N/A",
                 attendedContestsCount: profile?.data?.userContestRanking?.attendedContestsCount || "N/A",
                 profileId: profile.profileId,
+                data: profile?.data
             };
         case "codechef":
             return {
@@ -83,12 +85,12 @@ const requiredData = (profile, index, platform) => {
                 rating: profile?.data?.rating || "N/A",
                 globalRank: profile?.data?.global_rank || "N/A",
                 profileId: profile.profileId,
+                data: profile?.data
             };
         default:
             return {};
     }
 }
-
 
 const fetchAllCodingProfiles = async (platform) => {
     try {
