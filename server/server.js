@@ -35,7 +35,13 @@ const MONGO_URL = process.env.MONGO_URL
 
 
 
-app.use(cors());
+app.use(cors(
+    {
+        origin: process.env.CORS_ORIGIN || '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
+    }
+));
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
