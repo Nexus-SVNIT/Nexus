@@ -2,14 +2,14 @@ const Post = require('../models/postModel');
 const Company = require('../models/CompanyModel');
 const User = require('../models/userModel');
 const { sendEmail } = require('../utils/emailUtils');
-const { postVerificationTemplate, postCreationTemplate, postEditTemplate } = require('../utils/emailTemplates');
+const { postCreationTemplate, postEditTemplate } = require('../utils/emailTemplates');
 
 const createPost = async (req, res) => {
   try {
     // Log incoming data
 
-    const { 
-      title, content, company, tags, 
+    const {
+      title, content, company, tags,
       campusType, jobType, selectionProcess,
       rounds, compensation, difficultyLevel,
       hiringPeriod, cgpaCriteria, shortlistCriteria,
@@ -20,7 +20,7 @@ const createPost = async (req, res) => {
 
     // Basic validation
     if (!title || !content || !company || !campusType || !jobType || !workMode || !location || !role) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         error: "Missing required fields",
         required: ["title", "content", "company", "campusType", "jobType", "workMode", "location", "role"]
       });
@@ -86,10 +86,9 @@ const createPost = async (req, res) => {
   }
 };
 
-// Fetch all posts
 const getAllPosts = async (req, res) => {
   try {
-    const { 
+    const {
       companyName, tag, admissionNumber, startDate, endDate,
       campusType, jobType, hasAptitude, hasCoding,
       minStipend, maxStipend, minCTC, maxCTC,
@@ -99,9 +98,9 @@ const getAllPosts = async (req, res) => {
       workMode, location,
       page = 1, limit = 5
     } = req.query;
-    
+
     const filter = {};
-    
+
     if (companyName) {
       filter.company = new RegExp(companyName, 'i');
     }
@@ -110,8 +109,8 @@ const getAllPosts = async (req, res) => {
     }
     if (admissionNumber) {
       // First find users with matching admission numbers
-      const users = await User.find({ 
-        admissionNumber: new RegExp(admissionNumber, 'i') 
+      const users = await User.find({
+        admissionNumber: new RegExp(admissionNumber, 'i')
       });
       const userIds = users.map(user => user._id);
       filter.author = { $in: userIds };
@@ -127,7 +126,7 @@ const getAllPosts = async (req, res) => {
     if (jobType) filter.jobType = jobType;
     if (hasAptitude) filter['selectionProcess.onlineAssessment.aptitude'] = true;
     if (hasCoding) filter['selectionProcess.onlineAssessment.codingRound'] = true;
-    
+
     if (minStipend || maxStipend) {
       filter['compensation.stipend'] = {};
       if (minStipend) filter['compensation.stipend'].$gte = Number(minStipend);
@@ -146,10 +145,10 @@ const getAllPosts = async (req, res) => {
 
     if (minCgpaBoys) filter['cgpaCriteria.boys'] = { $gte: Number(minCgpaBoys) };
     if (maxCgpaBoys) filter['cgpaCriteria.boys'] = { ...filter['cgpaCriteria.boys'], $lte: Number(maxCgpaBoys) };
-    
+
     if (minCgpaGirls) filter['cgpaCriteria.girls'] = { $gte: Number(minCgpaGirls) };
     if (maxCgpaGirls) filter['cgpaCriteria.girls'] = { ...filter['cgpaCriteria.girls'], $lte: Number(maxCgpaGirls) };
-    
+
     if (workMode) filter.workMode = workMode;
     if (location) {
       // Update to search in array of locations
@@ -166,11 +165,11 @@ const getAllPosts = async (req, res) => {
     const pageSize = parseInt(limit);
 
     const skipCount = (pageNumber - 1) * pageSize;
-    const totalCount = await Post.countDocuments(filter); 
+    const totalCount = await Post.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / pageSize);
-    
+
     const currentUser = req.user;
-   
+
 
     const posts = await Post.find(filter)
       .populate('author', 'fullName linkedInProfile admissionNumber')
@@ -180,7 +179,7 @@ const getAllPosts = async (req, res) => {
       .sort({ createdAt: -1 })
       .skip(skipCount)
       .limit(pageSize);
-    
+
     res.status(200).json({
       posts,
       totalPages,
@@ -199,53 +198,9 @@ const getPostById = async (req, res) => {
       .populate('questions.askedBy')
       .populate('questions')
       .select('+views'); // Ensure views are included
-    
+
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
-    }
-
-    res.status(200).json(post);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const getPendingPosts = async (req, res) => {
-  try {
-    const posts = await Post.find({ isVerified: false })
-      .populate('author', 'fullName linkedInProfile admissionNumber')
-      .sort({ createdAt: -1 });
-    res.status(200).json(posts);
-  } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: error.message });
-  }
-};
-
-const verifyPost = async (req, res) => {
-  try {
-    const { postId } = req.params;
-
-    const post = await Post.findById(postId).populate('author');
-    if (!post) {
-      return res.status(404).json({ error: 'Post not found' });
-    }
-
-    post.isVerified = true;
-    post.verifiedAt = new Date();
-    await post.save();
-
-    // Send verification email to the author
-    if (post.author.personalEmail) {
-      const emailContent = postVerificationTemplate(
-        post.author,
-        post.title,
-        post._id
-      );
-      await sendEmail({
-        to: post.author.personalEmail,
-        ...emailContent
-      });
     }
 
     res.status(200).json(post);
@@ -258,11 +213,11 @@ const updatePost = async (req, res) => {
   try {
     const postId = req.body._id;
     const post = await Post.findById(postId);
-    
+
     if (!post) {
       return res.status(404).json({ error: 'Post not found' });
     }
-    if(post.author.toString() !== req.user.id) {
+    if (post.author.toString() !== req.user.id) {
       return res.status(403).json({ error: 'You are not authorized to update this post' });
     }
 
@@ -293,11 +248,56 @@ const updatePost = async (req, res) => {
   }
 };
 
-module.exports = { 
-  createPost, 
-  getAllPosts, 
+const incrementPostView = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(200).json({ success: false, error: 'Post not found' });
+    }
+
+    post.views += 1;
+    await post.save();
+
+    res.status(200).json({ success: true, data: { views: post.views } });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
+const deletePost = async (req, res) => {
+  try {
+    const postId = req.params.id;
+    const post = await Post.findById(postId);
+
+    if (!post) {
+      return res.status(200).json({ success: false, error: 'Post not found' });
+    }
+
+    if (post.author.toString() !== req.user.id) {
+      return res.status(200).json({ success: false, error: 'You are not authorized to delete this post' });
+    }
+
+    await Post.findByIdAndDelete(postId);
+
+    const company = await Company.findOne({ name: post.company });
+    if (company) {
+      company.posts = company.posts.filter(p => p.toString() !== postId);
+      await company.save();
+    }
+
+    res.status(200).json({ success: true, message: 'Post deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: error.message });
+  }
+}
+
+module.exports = {
+  createPost,
+  getAllPosts,
   getPostById,
-  getPendingPosts,
-  verifyPost,
-  updatePost
+  updatePost,
+  incrementPostView,
+  deletePost
 };

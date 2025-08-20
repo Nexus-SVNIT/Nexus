@@ -5,7 +5,6 @@ const authMiddleware=require('../middlewares/authMiddleware')
 
 router.post('/',authMiddleware, createQuestion);
 router.get('/:postId', getQuestionsByPost);
-// router.get('/:postId',authMiddleware, getQuestionsByPost);
 router.post('/:id/answer',authMiddleware, answerQuestion);
 
 module.exports = router;

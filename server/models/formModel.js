@@ -15,7 +15,8 @@ const formSchema = new Schema({
     },
     deadline: {
         type: String,
-        required: true
+        required: true,
+        index: true
     },
     created_date: {
         type: String,
