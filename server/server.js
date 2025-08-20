@@ -29,7 +29,15 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
-app.use(cors());
+
+
+app.use(cors(
+    {
+        origin: process.env.CORS_ORIGIN || '*',
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        credentials: true,
+    }
+));
 
 // Rate limiter middleware
 const limiter = rateLimit({

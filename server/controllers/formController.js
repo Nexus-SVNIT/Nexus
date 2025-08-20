@@ -1,6 +1,15 @@
 const mongoose = require('mongoose');
 const Forms = require('../models/formModel.js');
 const User = require('../models/userModel.js');
+const CoreMember = require('../models/coreMember.js');
+const TeamMember = require('../models/teamMembersModel');
+const { sendEmail } = require('../utils/emailUtils.js');
+const { 
+    formEmailTemplate, 
+    personalizedBatchTemplate,
+    formCreationNotificationTemplate,
+    formNotificationSummaryTemplate
+} = require('../utils/emailTemplates.js');
 const { google } = require('googleapis');
 const { uploadImageToDrive, getCredentials } = require('../utils/driveUtils.js');
 
@@ -45,7 +54,7 @@ const submitResponse = async (req, res) => {
     try {
         // Retrieve form details
         const formDetails = await Forms.findById(id).select();
-        const deadlineDate = formDetails.deadline;
+        const deadlineDate = new Date(formDetails.deadline).getTime();
         const currentDate = Date.now();
 
         // Check if the deadline has been missed or form is not published
@@ -350,6 +359,83 @@ const getFormFields = async (req, res) => {
         res.status(200).json(formFields);
     } catch (err) {
         handleError(res, err);
+    }
+};
+
+// Notify all subscribers about a form 
+
+// hold for while need to implement batch wise form notification
+const notifyAllSubscribers = async (req, res) => {
+    try {
+        const formId = req.params.formId;
+        const form = await Forms.findById(formId);
+
+        if (!form) {
+            return res.status(404).json({ message: "Form not found" });
+        }
+
+        // Fetch core member who created the notification
+        const coreMember = await TeamMember.findById(req.user.id).select('email admissionNumber');
+        const formCreator = form.createdByAdmissionNumber || (coreMember ? coreMember.admissionNumber : 'NEXUS Core Team');
+        
+        // Find all subscribed users
+        const subscribers = await User.find({ subscribed: true });
+        if (subscribers.length === 0) {
+            return res.status(200).json({ message: "No subscribers to notify" });
+        }
+
+        // Get all recipient emails
+        const bccRecipients = subscribers.map(subscriber => subscriber.personalEmail);
+        const batchSize = 50;
+        
+        // Send emails in batches
+        for (let i = 0; i < bccRecipients.length; i += batchSize) {
+            const batch = bccRecipients.slice(i, i + batchSize);
+            
+            try {
+                const emailContent = formEmailTemplate({
+                    name: form.name,
+                    desc: form.desc,
+                    deadline: form.deadline,
+                    formId: form._id,
+                    createdBy: formCreator
+                });
+                 // Replace template placeholder with actual recipient name
+                await sendEmail({
+                    to: "noreply@nexus-svnit.in",
+                    bcc: batch,
+                    ...emailContent,
+                    html: emailContent.html.replace('{{name}}', 'NEXUS Member')
+                });
+                
+                console.log(`Sent batch ${Math.ceil(i/batchSize) + 1} with ${batch.length} recipients`);
+            } catch (error) {
+                console.error(`Error sending batch ${Math.ceil(i/batchSize) + 1}:`, error);
+            }
+        }
+
+        // Send confirmation to admin with details
+        await sendEmail({
+            to: process.env.EMAIL_ID,
+            cc: coreMember ? coreMember.email : undefined,
+            subject: `Form Notification Sent: ${form.name}`,
+            html: `
+                <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
+                    <div style="background-color: #333; padding: 20px; border-radius: 8px;">
+                        <h2>Form Notification Summary</h2>
+                        <p>Form <strong>${form.name}</strong> notification was sent to ${subscribers.length} subscribers.</p>
+                        <p>Created by: ${formCreator}</p>
+                        <p>Notification sent by: ${coreMember ? coreMember.email : 'Unknown'}</p>
+                        <p>Sent on: ${new Date().toLocaleString()}</p>
+                        <p><a href="https://docs.google.com/spreadsheets/d/${form.sheetId}" style="color: #1a73e8;">View Responses</a></p>
+                    </div>
+                </div>
+            `
+        });
+
+        return res.status(200).json({ message: `Notification sent to ${subscribers.length} subscribers.` });
+    } catch (error) {
+        handleError(res, error);  
     }
 };
 
