@@ -4,9 +4,9 @@ const mongoose = require('mongoose');
 const axios = require('axios');
 
 const MONGO_URL = process.env.MONGO_URL;
-const owner = process.env.GITHUB_OWNER;
-const repo = process.env.GITHUB_REPO;
-const token = process.env.GITHUB_TOKEN;
+const owner = process.env.GIT_OWNER;
+const repo = process.env.GIT_REPO;
+const token = process.env.GIT_TOKEN;
 if (!MONGO_URL) {
     console.error('Error: MONGO_URL environment variable is not set. Please set it before running this script.');
     process.exit(1);
