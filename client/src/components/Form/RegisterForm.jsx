@@ -103,7 +103,6 @@ const RegisterForm = () => {
         key === "Your Favorite Nexus Member - Reference (Admission No only)"
       ) {
         trimmedFormResponse[key] = trimmedFormResponse[key].toUpperCase();
-        console.log(trimmedFormResponse[key]);
       }
     }
 

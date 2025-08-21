@@ -80,10 +80,8 @@ export default function FloatingReportButton() {
         formData.append('image', image);
       }
       
-      console.log('Sending request to:', `${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`);
-      console.log('FormData contents:');
+     
       for (let [key, value] of formData.entries()) {
-        console.log(key, value);
       }
       
       const headers = {};
@@ -97,17 +95,16 @@ export default function FloatingReportButton() {
         body: formData
       });
       
-      console.log('Response status:', response.status);
-      console.log('Response ok:', response.ok);
+    
       
       if (!response.ok) {
         const data = await response.json();
-        console.log('Error response data:', data);
+       
         throw new Error(data.error || data.message || 'Failed to submit report.');
       }
       
       const data = await response.json();
-      console.log('Success response data:', data);
+    
       
       setSuccess(true)
       setDescription("")

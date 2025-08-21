@@ -36,7 +36,6 @@ const Teams = () => {
           setSelectedYear(searchParams.get("year"));
         } else {
           setSelectedYear(response.data.years[0]);
-          console.log(response.data.years, response.data);
           setSearchParams((prev) => {
             prev.set("year", response.data.years[0]);
             return prev;
@@ -50,7 +49,7 @@ const Teams = () => {
     };
 
     fetchYears();
-    console.log(location.search);
+  
     increamentCounter();
   }, []);
 

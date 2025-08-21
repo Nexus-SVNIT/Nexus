@@ -408,7 +408,6 @@ const notifyAllSubscribers = async (req, res) => {
                     html: emailContent.html.replace('{{name}}', 'NEXUS Member')
                 });
                 
-                console.log(`Sent batch ${Math.ceil(i/batchSize) + 1} with ${batch.length} recipients`);
             } catch (error) {
                 console.error(`Error sending batch ${Math.ceil(i/batchSize) + 1}:`, error);
             }

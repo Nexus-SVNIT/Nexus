@@ -11,5 +11,6 @@ router.get('/profile', authMiddleware, getUserProfile);
 router.put('/profile', authMiddleware, updateUserProfile);
 router.get('/posts', authMiddleware, getUserPosts);
 
+
 module.exports = router;
 

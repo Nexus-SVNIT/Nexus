@@ -60,7 +60,6 @@ const createToast = (title, msg, type) => {
 //     return response
 //   })
 //   .then(data => {
-//     console.log(data);
 //     dataJSON=data;
 //   })
 const fireToast = () => {

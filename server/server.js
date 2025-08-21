@@ -77,12 +77,9 @@ app.use('/api/contributors', contributorsRoute);
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         app.listen(PORT, (req, res) => {
-            console.log('connected to db')
-            console.log('listening on port', PORT)
         })
     })
     .catch((err) => {
-        console.log(err)
     })
 
 app.all('*', (req, res, next) => {

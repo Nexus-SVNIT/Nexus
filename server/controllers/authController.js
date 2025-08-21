@@ -144,7 +144,6 @@ const signUpAlumni = async (req, res) => {
     let tempFilePath = req.file?.path;
 
     try {
-        console.log("🔹 Received alumni submission request");
 
         const requiredFields = [
             'fullName', 'personalEmail', 'admissionNumber',
@@ -227,7 +226,6 @@ const signUpAlumni = async (req, res) => {
         };
 
         await sendEmail(mailOptions);
-        console.log("✅ Email verification sent");
 
         return res.status(201).json({
             success: true,

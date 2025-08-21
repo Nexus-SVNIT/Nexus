@@ -47,10 +47,8 @@ const sendEmail = async ({ to, subject, text, html, attachments }) => {
       if (process.env.NODE_ENV === 'development') {
         transporter.verify(function (error, success) {
           if (error) {
-            console.log('SMTP connection error:', error);
             reject(error);
           } else {
-            console.log('SMTP server is ready to send messages');
             resolve(success);
           }
         });
@@ -61,7 +59,6 @@ const sendEmail = async ({ to, subject, text, html, attachments }) => {
 
     // Send the email
     const info = await transporter.sendMail(mailOptions);
-    console.log('Email sent:', info.messageId);
     return info;
 
   } catch (error) {

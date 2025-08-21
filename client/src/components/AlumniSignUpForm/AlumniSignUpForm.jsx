@@ -202,8 +202,7 @@ function AlumniSignUpForm() {
         },
       );
 
-      console.log("Response:", res);
-
+     
       const result = await res.json();
       if (res.ok) {
         toast.success(

@@ -18,7 +18,7 @@ const Events = () => {
   useEffect(() => {
     const fetchData = async () => {
       const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event`;
-      console.log("Fetching data from:", url);
+     
 
       try {
         const response = await fetch(url);

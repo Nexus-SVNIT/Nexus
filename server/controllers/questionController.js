@@ -35,7 +35,6 @@ const createQuestion = async (req, res) => {
 
     res.status(201).json(savedQuestion);
   } catch (error) {
-    console.log(error);
     res.status(400).json({ error: error.message });
   }
 };

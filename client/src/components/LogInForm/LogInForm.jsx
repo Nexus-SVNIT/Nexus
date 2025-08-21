@@ -19,7 +19,7 @@ const LoginForm = () => {
 
       // Send the login details to the backend for authentication
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/login`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/login`,
         { admissionNumber, password },
       );
 
