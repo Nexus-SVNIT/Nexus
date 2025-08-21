@@ -8,7 +8,7 @@ const contributorSchema = new Schema({
     html_url: String
 }, { _id: false });
 
-const contributionsSchema = new Schema({
+const contributorsSchema = new Schema({
     year: { 
         type: Number, 
         required: true, 
@@ -24,4 +24,4 @@ const contributionsSchema = new Schema({
     timestamps: true,
 })
 
-module.exports = mongoose.model('Contributions', contributionsSchema);
+module.exports = mongoose.model('Contributors', contributorsSchema);

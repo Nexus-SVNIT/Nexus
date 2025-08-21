@@ -77,11 +77,11 @@ const fetchContributors = async() => {
     try {
         const currentYear = new Date().getFullYear();
 
-        const currentYearDoc = await contributionsSchema.findOne({ year: currentYear });
+        const currentYearDoc = await contributorsSchema.findOne({ year: currentYear });
 
         const shouldUpdate = !currentYearDoc || (currentYearDoc && currentYearDoc.updatedAt < new Date(Date.now() - 24 * 60 * 60 * 1000));
 
-        const isFirstRun = (await contributionsSchema.countDocuments()) === 0;
+        const isFirstRun = (await contributorsSchema.countDocuments()) === 0;
 
         if (isFirstRun || shouldUpdate) {
             const commits = isFirstRun ? await fetchAllCommits() : await fetchCommitsForYear(currentYear);
@@ -91,7 +91,7 @@ const fetchContributors = async() => {
             if(isFirstRun) {
                 for(const year in commitsByYear) {
                     const yearData = commitsByYear[year];
-                    const newContributions = new contributionsSchema({
+                    const newContributions = new contributorsSchema({
                         year: parseInt(year),
                         total: yearData.total,
                         contributors: yearData.contributors
@@ -100,7 +100,7 @@ const fetchContributors = async() => {
                 }
             } else if(commitsByYear[currentYear]) {
                 const yearData = commitsByYear[currentYear];
-                await contributionsSchema.findOneAndUpdate(
+                await contributorsSchema.findOneAndUpdate(
                     { year: currentYear },
                     { total: yearData.total, contributors: yearData.contributors }
                 );
