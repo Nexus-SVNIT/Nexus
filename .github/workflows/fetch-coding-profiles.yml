@@ -11,7 +11,9 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGO_URL: ${{ secrets.MONGO_URL }}
-      CODING_PROFILE_BASE_URL: ${{ secrets.CODING_PROFILE_BASE_URL }}
+      GIT_TOKEN: ${{ secrets.GIT_TOKEN }}
+      GIT_OWNER: ${{ secrets.GIT_OWNER }}
+      GIT_REPO: ${{ secrets.GIT_REPO }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
