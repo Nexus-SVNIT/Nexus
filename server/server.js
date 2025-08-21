@@ -47,7 +47,7 @@ const limiter = rateLimit({
 });
 
 // Apply the rate limiter to all requests
-// app.use(limiter);
+app.use(limiter);
 
 app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true }));
