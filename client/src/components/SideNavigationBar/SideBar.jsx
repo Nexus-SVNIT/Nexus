@@ -141,6 +141,7 @@ const CustomSidebar = () => {
             {menuList.map((item, index) => {
               return (
                 <MenuItem
+                  key={item.title || item.link || index}
                   icon={React.cloneElement(item.icon, {
                     size: 16,
                     className: "hover-icon text-white",
@@ -204,7 +205,7 @@ const CustomSidebar = () => {
           </Menu>
         </div>
       </div>
-      <style jsx>{`
+      <style>{`
         .pro-sidebar > .pro-sidebar-inner {
           background-color: transparent;
         }
