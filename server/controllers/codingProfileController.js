@@ -6,11 +6,14 @@ const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 
 const getContest = async (req, res) => {
     try {
+        console.log("testing");
         const contests = await contestModel.findOne();
         if (contests && contests.updatedAt && (new Date() - contests.updatedAt) < 24 * 60 * 60 * 1000) {
-            return res.json({ success: true, data: contests });
+            return res.json({ success: true, data: contests.data });
         }
         const response = await axios.get(`${CODING_PROFILE_API}/contests/upcoming`);
+
+       
 
         await contestModel.findOneAndUpdate(
             {},

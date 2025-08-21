@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 const UpcomingContests = () => {
@@ -7,22 +8,27 @@ const UpcomingContests = () => {
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const localData = JSON.parse(localStorage.getItem('upcoming-contests'))
-        if(localData && localData.lastUpdated && (new Date() - new Date(localData.lastUpdated)) < 86400000){
+        const localData = JSON.parse(localStorage.getItem('upcoming-contests'));
+        if (
+          localData &&
+          localData.lastUpdated &&
+          (new Date() - new Date(localData.lastUpdated)) < 86400000 &&
+          Array.isArray(localData.data) &&
+          localData.data.length > 0
+        ) {
           setContests(localData.data);
+          setLoading(false);
           return;
         }
 
-        const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
-        const data = await response.json();
-        console.log(data);
-        if(!data || data.success === false){
-          setContests([]);
-        } else {
-          setContests(data.data);
-          console.log(contests);
-          localStorage.setItem('upcoming-contests', JSON.stringify({data: data.data, lastUpdated: new Date()}));
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
+        const data = response.data;
+        let contestsArray = [];
+        if (data && data.success !== false && Array.isArray(data.data)) {
+          contestsArray = data.data;
         }
+        setContests(contestsArray);
+        localStorage.setItem('upcoming-contests', JSON.stringify({ data: contestsArray, lastUpdated: new Date() }));
       } catch (error) {
         console.error("Error fetching contests:", error);
       } finally {
@@ -46,11 +52,11 @@ const UpcomingContests = () => {
       <h2 className="text-3xl font-semibold text-blue-400 border-b border-blue-600 pb-2 mb-4">
         Upcoming Contests
       </h2>
-      {contests.length === 0 ? (
+      {Array.isArray(contests) && contests.length === 0 ? (
         <p className="text-gray-300">No upcoming contests available at the moment.</p>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {contests.map((contest, index) => (
+          {Array.isArray(contests) && contests.map((contest, index) => (
             <div
               key={index}
               className="bg-gray-700 rounded-lg p-4 transition duration-200 hover:shadow-xl"
