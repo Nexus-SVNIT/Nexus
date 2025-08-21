@@ -152,8 +152,8 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
         className="bg-gray-800 mb-4 mt-4 min-w-full rounded-lg text-sm sm:text-base"
       >
         <thead className="text-xs uppercase text-blue-400 sm:text-sm">
-          {headerGroups.map((headerGroup) => (
-            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id}>
+          {headerGroups.map((headerGroup, idx) => (
+            <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id || idx}>
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps(
@@ -205,10 +205,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
         <tbody {...getTableBodyProps()}>
           {page.map((row, i) => {
             prepareRow(row);
+            // Use row.id if available, else fallback to index
+            const key = row.id || i;
             return (
               <tr
                 {...row.getRowProps()}
-                key={row.id}
+                key={key}
                 className="hover:bg-gray-700/50 text-gray-200 transition duration-200 ease-in-out"
               >
                 {row.cells.map((cell) => (
