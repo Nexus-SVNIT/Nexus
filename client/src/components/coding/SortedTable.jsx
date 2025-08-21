@@ -39,7 +39,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
 
   const getRatingButtonStyle = (row, value) => {
     let style = "";
-    console.log(row);
+   
     // For Codeforces - only maxRating
     const data = row.original.sortingKey;
 

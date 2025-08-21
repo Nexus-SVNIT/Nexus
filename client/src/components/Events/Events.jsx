@@ -28,7 +28,8 @@ const Events = () => {
         }
 
         const result = await response.json();
-        setData(result);
+        setData(result.data || []);
+        
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err);

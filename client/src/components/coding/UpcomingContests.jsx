@@ -15,10 +15,12 @@ const UpcomingContests = () => {
 
         const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
         const data = await response.json();
+        console.log(data);
         if(!data || data.success === false){
           setContests([]);
         } else {
           setContests(data.data);
+          console.log(contests);
           localStorage.setItem('upcoming-contests', JSON.stringify({data: data.data, lastUpdated: new Date()}));
         }
       } catch (error) {
