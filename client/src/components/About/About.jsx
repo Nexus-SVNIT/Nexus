@@ -114,9 +114,9 @@ const About = () => {
       </div>
       
       {/* Contributors Section */}
-      <div className="p-6">
+      {/* <div className="p-6">
         <Contributors />
-      </div>
+      </div> */}
     </div>
   );
 };
