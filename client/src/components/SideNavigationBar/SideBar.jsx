@@ -180,7 +180,7 @@ const CustomSidebar = () => {
                 title={"Logout"}
                 onClick={() => {
                   localStorage.removeItem("token"); // Remove token from storage
-                  window.location.href = "/login"; // Redirect to login page
+                  window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`; // Redirect to login page
                   setCollapsed(true);
                 }}
               >

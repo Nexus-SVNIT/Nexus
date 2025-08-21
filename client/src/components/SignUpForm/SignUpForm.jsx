@@ -190,7 +190,7 @@ function SignUpForm() {
         );
         localStorage.removeItem("signupFormData"); // Clear saved form data on successful signup
         setTimeout(() => {
-          window.location.href = "/login"; // Change this to your desired route
+          window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`; // Change this to your desired route
         }, 2000);
       } else {
         toast.error(result.message || "Sign up failed", { id: toastId });

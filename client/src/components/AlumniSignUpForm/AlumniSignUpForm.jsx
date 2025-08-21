@@ -211,7 +211,7 @@ function AlumniSignUpForm() {
         );
         localStorage.removeItem("alumniSignupFormData");
         setTimeout(() => {
-          window.location.href = "/login";
+          window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`;
         }, 2000);
       } else {
         toast.error(result.message || "Sign up failed", { id: toastId });

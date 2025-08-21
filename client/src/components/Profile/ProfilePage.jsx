@@ -37,7 +37,7 @@ const ProfilePage = () => {
   }
 
   if(!token) {
-    return <Navigate to="/login" replace />;
+    return <Navigate to={`/login?redirect_to=${encodeURIComponent(window.location.pathname)}`} replace />;
   }
 
   return (
