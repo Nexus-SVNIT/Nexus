@@ -8,6 +8,7 @@ import {
 } from "../index";
 import Counter from "../Counter/Counter";
 import HeadTags from "../HeadTags/HeadTags";
+import Contributors from "../Contributors/Contributors";
 
 const Home = () => {
 
@@ -61,6 +62,10 @@ const Home = () => {
       </div>
       <div className="relative my-48 w-full ">
         <WhatPeopleThinkAboutUS />
+      </div>
+
+      <div className="p-6">
+        <Contributors />
       </div>
       
     </div>
