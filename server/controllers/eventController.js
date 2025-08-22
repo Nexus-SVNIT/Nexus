@@ -29,7 +29,7 @@ const getEventsByYear = async (req, res) => {
 
 const getUniqueYears = async (req, res) => {
     try {
-        // Fetch unique years from the teamMembers collection
+        // Fetch unique years from the events collection
         const dates = await Event.distinct("eventDate");
         const setYears = new Set(dates.map(date => new Date(date).getFullYear()));
         const uniqueYears = [...setYears];
