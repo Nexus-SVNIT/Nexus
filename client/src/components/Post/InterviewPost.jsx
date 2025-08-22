@@ -74,7 +74,7 @@ const InterviewPost = () => {
   const incrementView = async () => {
     try {
       await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}/increment-view`
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${id}/increment-view`
       );
     } catch (error) {
       console.error('Error incrementing view:', error);
@@ -88,13 +88,13 @@ const InterviewPost = () => {
         const [postResponse, questionsResponse, commentResponse] =
           await Promise.all([
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${id}`
             ),
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${id}`
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/questions/${id}`
             ),
             axios.get(
-              `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments/${id}`
+              `${process.env.REACT_APP_BACKEND_BASE_URL}/comments/${id}`
             ),
           ]);
 
@@ -150,7 +150,7 @@ const InterviewPost = () => {
       const loadingToast = toast.loading("Submitting comment...");
       const payload = { content: comments[postId], postId };
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/comments`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/comments`,
         payload,
         {
           headers: {
@@ -200,7 +200,7 @@ const InterviewPost = () => {
       const loadingToast = toast.loading("Submitting question...");
       const payload = { question: questions[postId], postId };
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/questions/`,
         payload,
         {
           headers: {
@@ -248,7 +248,7 @@ const InterviewPost = () => {
 
       const loadingToast = toast.loading("Submitting answer...");
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/questions/${questionId}/answers`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/questions/${questionId}/answers`,
         { content: answers[questionId] },
         {
           headers: {

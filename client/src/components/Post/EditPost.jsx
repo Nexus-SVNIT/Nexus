@@ -114,7 +114,7 @@ const EditPost = () => {
     const fetchPost = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -201,7 +201,7 @@ const EditPost = () => {
     const fetchCompanies = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/companies`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/companies`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -324,7 +324,7 @@ const EditPost = () => {
       };
 
       await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${id}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${id}`,
         processedData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

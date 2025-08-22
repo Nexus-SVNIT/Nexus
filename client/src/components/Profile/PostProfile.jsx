@@ -12,7 +12,7 @@ function PostProfile() {
     const fetchUserPosts = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/posts`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/user/posts`,
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -34,7 +34,7 @@ function PostProfile() {
 
     try {
       const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts/${postId}`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${postId}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

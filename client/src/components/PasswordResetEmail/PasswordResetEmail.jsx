@@ -18,7 +18,7 @@ const ResetPasswordForm = () => {
 
     try {
       const toastId = toast.loading('Resetting password...');
-      await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/reset-password/${token}`, {
+      await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/reset-password/${token}`, {
         newPassword,
       });
       localStorage.removeItem('token'); // Remove token from local storage

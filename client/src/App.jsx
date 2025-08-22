@@ -20,6 +20,7 @@ import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEma
 
 import AlumniSignUpForm from "./components/AlumniSignUpForm/AlumniSignUpForm";
 import FloatingReportButton from './components/UI/FloatingReportButton';
+import VerifyAlumniEmail from "./components/VerifyEmail/VerifyAlumniEmail";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -59,6 +60,7 @@ function App() {
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/alumni/signup" element={<AlumniSignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />
+                <Route path="/auth/verify/alumni/:token" element={<VerifyAlumniEmail />} />
                 <Route
                   path="/auth/reset-password/:token"
                   element={<PasswordResetEmail />}

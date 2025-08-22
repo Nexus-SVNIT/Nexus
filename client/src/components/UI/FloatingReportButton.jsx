@@ -89,7 +89,7 @@ export default function FloatingReportButton() {
         headers['Authorization'] = `Bearer ${token}`;
       }
       
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/issue/create`, {
+      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/issue/create`, {
         method: 'POST',
         headers,
         body: formData

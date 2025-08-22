@@ -29,7 +29,7 @@ const UserTable = () => {
 
     const fetchUsers = async (page, sortField, sortOrder, search = searchQuery) => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/get/all`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/get/all`, {
                 params: {
                     page,
                     limit, // Add this line
@@ -106,7 +106,7 @@ const UserTable = () => {
 
     const downloadAllUsersExcel = async () => {
         try {
-            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/get/all`, {
+            const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/get/all`, {
                 params: {
                     page: 1,
                     limit: 1000000, // Large number to get all users

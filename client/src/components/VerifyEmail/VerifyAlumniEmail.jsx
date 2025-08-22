@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast, { Toaster } from 'react-hot-toast';
 
-function VerifyEmail() {
+function VerifyAlumniEmail() {
     const { token } = useParams(); // Token from URL
     const navigate = useNavigate();
     const [verificationStatus, setVerificationStatus] = useState('Verifying...');
@@ -10,7 +10,7 @@ function VerifyEmail() {
     useEffect(() => {
         const verifyEmail = async () => {
             try {
-                const res = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/verify/${token}`, {
+                const res = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/alumni/verify/${token}`, {
                     method: 'GET'
                 });
 
@@ -52,4 +52,4 @@ function VerifyEmail() {
     );
 }
 
-export default VerifyEmail;
+export default VerifyAlumniEmail;
