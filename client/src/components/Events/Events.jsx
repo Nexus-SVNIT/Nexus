@@ -48,7 +48,7 @@ const Events = () => {
 
     fetchYears();
     increamentCounter();
-  }, [])
+  }, []);
 
   useEffect(() => {
     if(!selectedYear) return;
