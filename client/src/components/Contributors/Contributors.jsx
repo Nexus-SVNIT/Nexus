@@ -10,7 +10,7 @@ const Contributors = () => {
         const fetchContributors = async () => {
             try {
                 const response = await axios.get(
-                    `${process.env.REACT_APP_BACKEND_BASE_URL}/api/contributors/get`
+                    `${process.env.REACT_APP_BACKEND_BASE_URL}/contributors/get`
                 );
                 setContributorsByYear(response.data);
                 setLoading(false);

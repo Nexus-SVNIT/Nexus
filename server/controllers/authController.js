@@ -210,7 +210,7 @@ const signUpAlumni = async (req, res) => {
         const newAlumni = await user.create(alumniData);
 
         //  Create verification link
-        const verificationUrl = `${req.headers.origin || req.headers.referer}/auth/alumni/verify/${verificationToken}`;
+        const verificationUrl = `${req.headers.origin || req.headers.referer}/auth/verify/alumni/${verificationToken}`;
 
         // 
         const { subject, html } = alumniEmailVerificationTemplate({
@@ -279,7 +279,7 @@ const verifyAlumniEmail = async (req, res) => {
     const { token } = req.params;
 
     try {
-        const userData = await User.findOne({ isAlumni: true, verificationToken: token });
+        const userData = await user.findOne({ isAlumni: true, verificationToken: token });
         if (!userData) {
             return res.status(400).json({ message: 'Invalid token' });
         }

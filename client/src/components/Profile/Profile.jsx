@@ -23,7 +23,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       try {
         const [profileResponse, postsResponse] = await Promise.all([
           axios.get(
-            `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
+            `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
             {
               headers: {
                 Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -185,7 +185,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
 
       // 👇️ Send updatedProfile to the backend
       const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/user/profile`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
         updatedProfile,
         {
           headers: {

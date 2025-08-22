@@ -44,7 +44,7 @@ function AlumniSignUpForm() {
     const fetchCompanies = async () => {
       try {
         const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/companies`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/companies`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);

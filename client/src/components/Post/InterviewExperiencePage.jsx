@@ -83,7 +83,7 @@ const InterviewExperiencePage = () => {
     try {
       toast.loading("Loading posts...");
       const response = await axios.get(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts`,
         {
           params: {
             companyName: filters.companyName || "",
