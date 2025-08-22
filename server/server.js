@@ -60,19 +60,19 @@ app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)
 app.use('/forms', formRoutes)
 app.use('/team', teamMembersRoutes)
-app.use('/api/user', userRoutes)
+app.use('/user', userRoutes)
 app.use('/achievements', achievementRoute)
 app.use('/alumni', alumniRoute)
 app.use('/projects', projectRoutes);
-app.use("/api/issue",issueRoutes);
+app.use("/issue",issueRoutes);
 app.use('/coding-profiles', codingProfileRoutes);
-app.use('/api/counter', counterRoutes)
-app.use('/api/posts', postRoutes);
-app.use('/api/companies', companyRoutes);
-app.use('/api/questions', questionRoutes);
-app.use('/api/questions', answerRoutes);
-app.use('/api/comments', commentRoutes);
-app.use('/api/contributors', contributorsRoute);
+app.use('/counter', counterRoutes)
+app.use('/posts', postRoutes);
+app.use('/companies', companyRoutes);
+app.use('/questions', questionRoutes);
+app.use('/questions', answerRoutes);
+app.use('/comments', commentRoutes);
+app.use('/contributors', contributorsRoute);
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

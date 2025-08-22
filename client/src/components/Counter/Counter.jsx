@@ -7,7 +7,7 @@ const Counter = ({ onComplete }) => {
 
   const fetchCount = async () => {
     try {
-      const response = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL+'/api/counter');
+      const response = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL+'/counter');
       setCount(response.data);
     } catch (error) {
       console.error('Error fetching count:', error);
@@ -16,7 +16,7 @@ const Counter = ({ onComplete }) => {
 
   const incrementCount = async () => {
     try {
-      const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL+'/api/counter/increment');
+      const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL+'/counter/increment');
       setCount(response.data);
     } catch (error) {
       console.error('Error incrementing count:', error);

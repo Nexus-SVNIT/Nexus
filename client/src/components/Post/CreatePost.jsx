@@ -130,7 +130,7 @@ const CreatePost = () => {
       try {
         if (!checkAuth()) return;
         const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/api/companies`,
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/companies`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -280,7 +280,7 @@ const CreatePost = () => {
       };
 
       const response = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/api/posts`,
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts`,
         processedData,
         { headers: { Authorization: `Bearer ${token}` } },
       );
