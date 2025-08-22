@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Error from "../Error/Error";
 import Title from "../Title/Title";
@@ -8,6 +9,8 @@ import MaintenancePage from "../Error/MaintenancePage";
 import Modal from "./Modal";
 
 const Events = () => {
+  const [selectedYear, setSelectedYear] = useState("");
+  const [years, setYears] = useState([]); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [data, setData] = useState([]);
@@ -15,11 +18,42 @@ const Events = () => {
   const [activeImages, setActiveImages] = useState([]);
   const [initialImageIndex, setInitialImageIndex] = useState(0);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event`;
-     
+  const handleYearChange = (event) => {
+    setSelectedYear(event.target.value);
+  };
 
+  useEffect(() => {
+    const fetchYears = async () => {
+      try {
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/event/unique-years`,
+        );
+        setYears(response.data.years); // Assuming 'years' is returned in the API response
+        setSelectedYear(response.data.years[0]); // Default to the first available year
+        // if (searchParams.has("year")) {
+        //   setSelectedYear(searchParams.get("year"));
+        // } else {
+        //   setSelectedYear(response.data.years[0]);
+        //   setSearchParams((prev) => {
+        //     prev.set("year", response.data.years[0]);
+        //     return prev;
+        //   });
+        // }
+      } catch (err) {
+        setError(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchYears();
+    increamentCounter();
+  }, [])
+
+  useEffect(() => {
+    if(!selectedYear) return;
+    const fetchData = async () => {
+      const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event/${selectedYear}`;
       try {
         const response = await fetch(url);
 
@@ -39,8 +73,7 @@ const Events = () => {
     };
 
     fetchData();
-    increamentCounter();
-  }, []);
+  }, [selectedYear]);
 
   const openModal = (images) => {
     setActiveImages(images);
@@ -63,7 +96,20 @@ const Events = () => {
         description="Nexus Events page. Stay updated with the latest events happening at Nexus, NIT Surat."
         keywords="Nexus, NIT Surat, Events, Nexus Events, NIT Surat Events, SVNIT, CSE, AI, Web Wonder, Mentorship Program, Riddle Fuse, Sports Event, Fiesta, Teacher's Day Celebration, CodeSprint, Capture The Flag"
       />
-      <Title>Events</Title>
+      <Title>
+        Events &nbsp;&nbsp;
+          <select
+          value={selectedYear}
+          onChange={handleYearChange}
+          className="border-gray-300 rounded-md border bg-transparent px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          {years.map((year) => (
+            <option key={year} value={year} className="bg-black text-white">
+              {year}
+            </option>
+          ))}
+        </select>
+      </Title>
       <div className="container">
         <div className="timeline">
           <ul className="py-10 transition-all ">
