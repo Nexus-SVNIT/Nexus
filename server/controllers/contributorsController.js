@@ -1,15 +1,15 @@
-const contributionsSchema = require('../models/contributorsModel');
+const contributorsSchema = require('../models/contributorsModel');
 const { fetchAllCommits, fetchCommitsForYear, processCommits, formatResponse } = require('../utils/contributorsUtils');
 
 const getContributors = async (req, res) => {
     try {
         const currentYear = new Date().getFullYear();
 
-        const currentYearDoc = await contributionsSchema.findOne({ year: currentYear });
+        const currentYearDoc = await contributorsSchema.findOne({ year: currentYear });
 
         const shouldUpdate = !currentYearDoc || (currentYearDoc && currentYearDoc.updatedAt < new Date(Date.now() - 24 * 60 * 60 * 1000));
 
-        const isFirstRun = (await contributionsSchema.countDocuments()) === 0;
+        const isFirstRun = (await contributorsSchema.countDocuments()) === 0;
 
         if (isFirstRun || shouldUpdate) {
             const commits = isFirstRun ? await fetchAllCommits() : await fetchCommitsForYear(currentYear);
@@ -19,7 +19,7 @@ const getContributors = async (req, res) => {
             if(isFirstRun) {
                 for(const year in commitsByYear) {
                     const yearData = commitsByYear[year];
-                    const newContributions = new contributionsSchema({
+                    const newContributions = new contributorsSchema({
                         year: parseInt(year),
                         total: yearData.total,
                         contributors: yearData.contributors
@@ -28,14 +28,14 @@ const getContributors = async (req, res) => {
                 }
             } else if(commitsByYear[currentYear]) {
                 const yearData = commitsByYear[currentYear];
-                await contributionsSchema.findOneAndUpdate(
+                await contributorsSchema.findOneAndUpdate(
                     { year: currentYear },
                     { total: yearData.total, contributors: yearData.contributors }
                 );
             }
         }
 
-        const allYearlyData = await contributionsSchema.find({}).sort({ year: -1 });
+        const allYearlyData = await contributorsSchema.find({}).sort({ year: -1 });
         const formattedResponse = formatResponse(allYearlyData);
 
         return res.status(200).json(formattedResponse);
