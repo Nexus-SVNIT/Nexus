@@ -5,7 +5,7 @@ const TeamCard = ({ data, isFaculty = false }) => {
   return (
     <div className="my-10 flex w-full flex-col items-center justify-center">
       <div className="flex w-full flex-wrap items-center justify-center gap-8 md:gap-10 lg:gap-12">
-        {data.map((member) => {
+        {data.map((member, idx) => {
           const socialLinks = {
             linkedin: member.linkedInProfile,
             github: member.githubProfile,
@@ -23,9 +23,11 @@ const TeamCard = ({ data, isFaculty = false }) => {
             role: member.role,
           };
 
+          // Use admissionNumber if available, else fallback to index
+          const key = member.admissionNumber || member.email || member.name || idx;
           return (
             <ModernProfile
-              key={member.admissionNumber}
+              key={key}
               profile={profile}
               isFaculty={isFaculty}
             />

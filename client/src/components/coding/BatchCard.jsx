@@ -28,7 +28,7 @@ function CheckIcon() {
 
 export function BatchCard({ batch, avgCodeforcesRating, avgLeetcodeRating, avgLeetcodeSolved, avgCodechefRating }) {
   const allowedBatches = ["22", "23", "24"];
-  console.log(batch);
+  
 
   // Only render if batch is in allowedBatches
   if (!allowedBatches.includes(batch)) return null;

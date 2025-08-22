@@ -201,7 +201,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.success("Profile updated successfully!");
     }
   } catch (error) {
-    console.log(error);
+   
     console.error(
       "Error updating profile:",
       error.response?.data?.message || error.message

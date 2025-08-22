@@ -18,7 +18,7 @@ const Events = () => {
   useEffect(() => {
     const fetchData = async () => {
       const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event`;
-      console.log("Fetching data from:", url);
+     
 
       try {
         const response = await fetch(url);
@@ -28,7 +28,8 @@ const Events = () => {
         }
 
         const result = await response.json();
-        setData(result);
+        setData(result.data || []);
+        
       } catch (err) {
         console.error("Fetch error:", err);
         setError(err);

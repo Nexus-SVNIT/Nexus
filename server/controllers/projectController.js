@@ -41,28 +41,6 @@ const getOngoingProjects = async (req, res) => {
     }
 };
 
-// Create a new project
-const createProject = async (req, res) => {
-    const { title, description, githubLink, teamMembers, mentors } = req.body;
-
-    const newProject = new Project({
-        title,
-        description,
-        githubLink,
-        status: 'ongoing', // Default status
-        teamMembers,
-        mentors,
-    });
-
-    try {
-        const savedProject = await newProject.save();
-        res.status(201).json(savedProject);
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
-};
-
 module.exports = {
     getOngoingProjects,
-    createProject,
 };

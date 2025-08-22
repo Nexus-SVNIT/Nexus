@@ -121,7 +121,6 @@ const EditPost = () => {
         );
         
         const postData = response.data;
-        console.log('Fetched post data:', postData); // Debug log
 
         // Directly set most of the fields
         setFormData(prev => ({

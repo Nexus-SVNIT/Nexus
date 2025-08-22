@@ -3,11 +3,11 @@ const bcrypt = require('bcrypt');
 
 const userSchema = new mongoose.Schema({
     fullName: String,
-    admissionNumber: String,
-    mobileNumber: String,
-    personalEmail: String,
-    instituteEmail: String,
-    branch: String,
+    admissionNumber: { type: String, required: true, index: true },
+    mobileNumber: { type: String, required: true, index: true },
+    personalEmail: { type: String, required: true, index: true },
+    instituteEmail: { type: String },
+    branch: { type: String, required: true, index: true },
     linkedInProfile: String,
     githubProfile: String,
     leetcodeProfile: String,
@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
     resetPasswordExpires: Date,  // Expiration date for password reset token
     subscribed: { type: Boolean, default: true }, // New field for subscription status
     shareCodingProfile: { type: Boolean, default: true }, // New field for subscription status
-    isAlumni: { type: Boolean, default: false }, // Add this field
+    isAlumni: { type: Boolean, default: false, index: true }, // Add this field
     isVerified: { type: Boolean, default: false }, // Add this field
    // program: { type: String, default: '' }, // btech/mtech/phd
     currentCompany:{type: String, default: ''}, 

@@ -5,6 +5,5 @@ const router = express.Router();
 
 router.post('/',authMiddleware, createComment);
 router.get('/:postId', getCommentsByPost);
-// router.get('/:postId',authMiddleware, getCommentsByPost);
 
 module.exports = router;

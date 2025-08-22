@@ -16,8 +16,6 @@ const createComment = async (req, res) => {
     post.comments.push(savedComment._id);
     await post.save();
 
-    // Send email notification to post author if it's not their own comment
-    // if (post.author._id.toString() !== author) {
       if (post.author.personalEmail) {
         const commentAuthor = await User.findById(author);
         const emailContent = newCommentTemplate(
@@ -32,11 +30,9 @@ const createComment = async (req, res) => {
           ...emailContent
         });
       }
-    // }
 
     res.status(201).json(savedComment);
   } catch (error) {
-    console.log(error)
     res.status(400).json({ error: error.message });
   }
 };

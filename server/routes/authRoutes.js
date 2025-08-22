@@ -1,20 +1,29 @@
 const express = require('express')
 const router = express.Router()
-const { loginUser, signupUser } = require('../controllers/userController.js')
-const { signUpAlumni, verifyAlumniEmail } = require('../controllers/alumniController.js')
+const {
+    loginUser,
+    signupUser,
+    signUpAlumni,
+    forgotPassword,
+    resetPassword,
+    verifyAlumniEmail,
+    verifyEmail,
+    verifyPasswordResetEmail
+} = require('../controllers/authController.js')
 
-router.post('/login', (req, res) => {
-    loginUser(req, res)
-})
-router.post('/signup', (req, res) => {
-    signupUser(req, res)
-})
-router.post('/alumni/signup', (req, res) => {
-    signUpAlumni(req,res)
-})
+// Auth
+router.post('/login', loginUser);
+router.post('/signup', signupUser);
+router.get('/verify/:token', verifyEmail);
 
-router.get('/alumni/verify/:token', (req, res) => {
-    verifyAlumniEmail(req, res)
-})
+// Alumni
+router.post('/alumni/signup', signUpAlumni)
+router.get('/alumni/verify/:token', verifyAlumniEmail)
+
+// Password flows
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:token', verifyPasswordResetEmail);
+router.put('/reset-password', resetPassword);
+
 
 module.exports = router

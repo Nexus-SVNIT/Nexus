@@ -4,7 +4,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const CompanySchema = new mongoose.Schema({
-    name: { type: String, unique: true, required: true },
+    name: { type: String, unique: true, required: true, index: true },
     posts: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Post' }],
   });
   

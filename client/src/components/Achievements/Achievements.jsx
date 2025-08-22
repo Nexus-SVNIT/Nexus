@@ -63,7 +63,7 @@ const Achievements = () => {
       <div className="mt-10 flex flex-wrap items-center justify-center gap-10 transition-all delay-300">
         {achievements.map((el) => (
           <AchievementCard
-            key={el.email}
+            key={el._id || el.email}
             el={el}
             open={open}
             setOpen={setOpen}

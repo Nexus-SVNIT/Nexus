@@ -9,7 +9,7 @@ const AnswerSchema = new mongoose.Schema({
 
 const QuestionSchema = new mongoose.Schema({
   question: { type: String, required: true },
-  postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true },
+  postId: { type: mongoose.Schema.Types.ObjectId, ref: 'Post', required: true, index: true },
   answers: [AnswerSchema],
   askedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
 }, {

@@ -8,17 +8,16 @@ import {
   Routes,
 } from "react-router-dom";
 import "./App.css";
-import AdminLayout from "./layout/AdminLayout";
-import { AdminRoutes, DefaultRoutes } from "./routes";
+
+import {  DefaultRoutes } from "./routes";
 import LoginForm from "./components/LogInForm/LogInForm";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
-import CoreLoginPage from "./components/Login/CoreLoginPage";
+
 import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEmail";
-import ShowProject from "./components/Project/showProject";
-import IssueModal from "./components/Issue/issue";
-import { useState } from "react";
-import VerifyAlumni from './components/VerifyAlumni/VerifyAlumni';
+
+
+
 import AlumniSignUpForm from "./components/AlumniSignUpForm/AlumniSignUpForm";
 import FloatingReportButton from './components/UI/FloatingReportButton';
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
@@ -27,9 +26,7 @@ const queryClient = new QueryClient();
 const token = localStorage.getItem("token");
 
 function App() {
-  const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
-  const openIssueModal = () => setIsIssueModalOpen(true);
-  const closeIssueModal = () => setIsIssueModalOpen(false);
+ 
   return (
     <>
       <QueryClientProvider client={queryClient}>
@@ -69,32 +66,20 @@ function App() {
               </>
             )}
 
-            <Route path="/core/admin/login" element={<CoreLoginPage />} />
-            <Route path="/core/admin" element={<AdminLayout />}>
-              {AdminRoutes.map(({ title, path, component: Component }) => (
-                <Route key={title} path={path} element={<Component />} />
-              ))}
-            </Route>
+           
 
             <Route path="/" element={<DefaultLayout />}>
               {DefaultRoutes.map(({ title, path, component: Component }) => (
                 <Route key={title} path={path} element={<Component />} />
               ))}
             </Route>
-            <Route path="/auth/alumni/verify/:token" element={<VerifyAlumni />} />
+            
           </Routes>
           <Toaster />
         </Router>
       </QueryClientProvider>
       <FloatingReportButton />
-      {/* <button
-        onClick={openIssueModal}
-        className="fixed bottom-4 left-4 z-50 w-40 rounded-lg bg-blue-600 px-4 py-2 text-white shadow-lg"
-      >
-        Report an Issue
-      </button>
-
-      <IssueModal isOpen={isIssueModalOpen} onClose={closeIssueModal} /> */}
+      
     </>
   );
 }

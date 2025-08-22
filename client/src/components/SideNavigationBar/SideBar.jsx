@@ -141,6 +141,7 @@ const CustomSidebar = () => {
             {menuList.map((item, index) => {
               return (
                 <MenuItem
+                  key={item.title || item.link || index}
                   icon={React.cloneElement(item.icon, {
                     size: 16,
                     className: "hover-icon text-white",
@@ -180,7 +181,7 @@ const CustomSidebar = () => {
                 title={"Logout"}
                 onClick={() => {
                   localStorage.removeItem("token"); // Remove token from storage
-                  window.location.href = "/login"; // Redirect to login page
+                  window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`; // Redirect to login page
                   setCollapsed(true);
                 }}
               >
@@ -204,7 +205,7 @@ const CustomSidebar = () => {
           </Menu>
         </div>
       </div>
-      <style jsx>{`
+      <style>{`
         .pro-sidebar > .pro-sidebar-inner {
           background-color: transparent;
         }

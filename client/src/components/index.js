@@ -13,7 +13,7 @@ export { default as Forms } from './Forms/Forms.jsx'
 export { default as Footer } from './Footer/Footer.jsx'
 export { default as WhatPeopleThinkAboutUS } from './WhatPeopleThinkAboutUs/WhatPeopleThinkAboutUS.jsx'
 export { default as NotFound } from './NotFound/NotFound.jsx'
-export { default as CreateForm } from './Form/CreateForm.jsx'
+
 export { default as RegisterForm } from './Form/RegisterForm.jsx'
 export { default as AlumniNetwork } from './AlumniNetwork/AlumniNetwork.jsx'
 export { default as Three } from './ThreeJS/Three.jsx'
