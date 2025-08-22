@@ -60,7 +60,7 @@ const Terminal = () => {
     if (args.length === 2) return "/coding";
 
     for (let i = 2; i < args.length; i += 2) {
-      const flag = args[i];
+      const flag = args[i].toLowerCase(); // Convert flag to lowercase for case-insensitive matching
       const value = args[i + 1];
 
       switch (flag) {
@@ -124,13 +124,16 @@ const Terminal = () => {
     const args = inputStr.trim().split(" ");
     const [command, ...rest] = args;
 
+    // Convert command to lowercase for case-insensitive matching
+    const commandLower = command.toLowerCase();
+
     // iterating through commands whether it matches any of the commands in the list
-    switch (command) {
+    switch (commandLower) {
       case "": //no input given
         return;
 
       case "cd":
-        if (args.length % 2 === 0 && args[1] === "coding") {
+        if (args.length % 2 === 0 && args[1].toLowerCase() === "coding") {
           //particularly if its coding page, using seperate flags on it
           const path = codingValidate(args);
           switch (path) {
@@ -154,8 +157,8 @@ const Terminal = () => {
               navigate(path); //redirect to the coding page with query params
               return <div className="mt-0.5" />;
           }
-        } else if (args.length === 2 && nexusPages.includes(args[1])) {
-          navigate(`/${args[1]}`); // redirect to the args[1] page
+        } else if (args.length === 2 && nexusPages.includes(args[1].toLowerCase())) {
+          navigate(`/${args[1].toLowerCase()}`); // redirect to the args[1] page
           return <div className="mt-0.5" />;
         } else if (args.length === 2) {
           return <ErrorMsg text={`Page ${args[1]} doesn't exist.`} />;
@@ -264,6 +267,9 @@ const HelpMessage = () => (
       The Nexus Terminal lets you navigate the website via command-line
       interface. Use the following commands:
     </p>
+    <p className="text-blue-300 text-xs">
+      💡 Tip: Commands are case-insensitive for mobile compatibility
+    </p>
     <div className="flex gap-4">
       <span className="text-teal-300">cd home</span>
       <span>Redirect to Home Page</span>
@@ -287,6 +293,9 @@ const HelpMessage = () => (
         <span>{desc}</span>
       </div>
     ))}
+    <p className="text-yellow-300 text-xs mt-2">
+      📱 Mobile: Commands work regardless of case (CD, cd, Cd all work)
+    </p>
   </div>
 );
 
