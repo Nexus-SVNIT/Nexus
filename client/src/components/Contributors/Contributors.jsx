@@ -67,33 +67,33 @@ const Contributors = () => {
                             
                             {/* Contributors Grid */}
                             <div className="grid gap-3 md:grid-cols-2">
-                                {Object.entries(yearData.contributors)
-                                    .sort(([,a], [,b]) => b.contributions - a.contributions)
-                                    .map(([username, data]) => (
-                                    <div key={username} 
+                                {yearData.contributors
+                                    .sort((a, b) => b.contributions - a.contributions)
+                                    .map((contributor) => (
+                                    <div key={contributor.githubId} 
                                          className="group/card flex items-center justify-between p-4 
                                                   bg-white/[0.02] backdrop-blur-sm border border-white/5 
                                                   rounded-lg hover:bg-white/[0.04] hover:border-blue-500/20 
                                                   transition-all duration-300">
                                         <div className="flex items-center gap-3 min-w-0">
-                                            {data.avatar_url && (
-                                                <img src={data.avatar_url} 
-                                                     alt={username}
+                                            {contributor.avatar_url && (
+                                                <img src={contributor.avatar_url} 
+                                                     alt={contributor.githubId}
                                                      className="w-8 h-8 rounded-full ring-2 ring-white/10" />
                                             )}
-                                            <a href={data.html_url}
+                                            <a href={contributor.html_url}
                                                target="_blank"
                                                rel="noopener noreferrer"
                                                className="flex items-center gap-2 text-white/80 
                                                         hover:text-blue-400 transition-colors truncate">
                                                 <FaGithub className="flex-shrink-0 opacity-50 
                                                                    group-hover/card:opacity-100" />
-                                                <span className="font-medium truncate">{username}</span>
+                                                <span className="font-medium truncate">{contributor.githubId}</span>
                                             </a>
                                         </div>
                                         <span className="text-sm font-medium px-2.5 py-1 rounded-full 
                                                        bg-white/5 text-white/60 border border-white/5">
-                                            {data.contributions}
+                                            {contributor.contributions}
                                         </span>
                                     </div>
                                 ))}
