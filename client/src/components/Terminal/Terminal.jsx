@@ -32,13 +32,13 @@ const Terminal = () => {
 
   const handleTerminalSubmit = (e) => {
     e.preventDefault();
-    const output = terminalFunction(input);
+    const output = terminalFunction(input.trim());
     setCount(count + 1);
 
     if (output === 0) {
       setPrevCommands([]);
     } else {
-      setPrevCommands((prev) => [...prev, { input, output }]);
+      setPrevCommands((prev) => [...prev, { input: input.trim(), output }]);
     }
 
     setInput("");
