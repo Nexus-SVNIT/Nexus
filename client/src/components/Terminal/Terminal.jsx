@@ -10,7 +10,6 @@ const Terminal = () => {
 
   // const commands = ["cd", "nexus", "ls", "cls", "exit", "register"];
   const nexusPages = [
-    "home",
     "team",
     "achievements",
     "events",
@@ -29,7 +28,7 @@ const Terminal = () => {
       scrollContainerRef.current.scrollHeight;
   }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
 
-  const handleInputChange = (e) => setInput(e.target.value);
+  const handleInputChange = (e) => setInput(e.target.value.toLowerCase());
 
   const handleTerminalSubmit = (e) => {
     e.preventDefault();
@@ -154,6 +153,9 @@ const Terminal = () => {
               navigate(path); //redirect to the coding page with query params
               return <div className="mt-0.5" />;
           }
+        } else if (args.length === 2 && args[1] === 'home') {
+          navigate(`/`); // reloads home
+          return <div className="mt-0.5" />;
         } else if (args.length === 2 && nexusPages.includes(args[1])) {
           navigate(`/${args[1]}`); // redirect to the args[1] page
           return <div className="mt-0.5" />;
@@ -264,10 +266,6 @@ const HelpMessage = () => (
       The Nexus Terminal lets you navigate the website via command-line
       interface. Use the following commands:
     </p>
-    <div className="flex gap-4">
-      <span className="text-teal-300">cd home</span>
-      <span>Redirect to Home Page</span>
-    </div>
     {[
       ["cd [page]", "Redirect to a particular page"],
       ["cd coding", ""],
