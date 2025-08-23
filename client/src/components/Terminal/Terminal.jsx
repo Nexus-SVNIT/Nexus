@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 
 const Terminal = () => {
   const [input, setInput] = useState("");
-  const [prevCommands, setPrevCommands] = useState([]);
+  const [prevCommands, setPrevCommands] = useState([]); // Displayed commands
+  const [commandHistory, setCommandHistory] = useState([]); // All entered commands
   const [count, setCount] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState(null); // For up/down navigation
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
 
@@ -29,19 +31,51 @@ const Terminal = () => {
   }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
 
   const handleInputChange = (e) => setInput(e.target.value.toLowerCase());
+  // Handle up/down arrow key navigation
+  const handleInputKeyDown = (e) => {
+    if (commandHistory.length === 0) return;
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHistoryIndex((prev) => {
+        const newIndex = prev === null ? commandHistory.length - 1 : Math.max(prev - 1, 0);
+        setInput(commandHistory[newIndex] || "");
+        return newIndex;
+      });
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHistoryIndex((prev) => {
+        if (prev === null) return null;
+        const newIndex = Math.min(prev + 1, commandHistory.length);
+        if (newIndex === commandHistory.length) {
+          setInput("");
+          return null;
+        } else {
+          setInput(commandHistory[newIndex] || "");
+          return newIndex;
+        }
+      });
+    }
+  };
 
   const handleTerminalSubmit = (e) => {
     e.preventDefault();
-    const output = terminalFunction(input.trim());
+    const trimmedInput = input.trim();
+    const output = terminalFunction(trimmedInput);
     setCount(count + 1);
 
+    // Always update commandHistory except for empty input
+    if (trimmedInput !== "") {
+      setCommandHistory((prev) => [...prev, trimmedInput]);
+    }
+
     if (output === 0) {
-      setPrevCommands([]);
+      setPrevCommands([]); // Clear display, but keep commandHistory
     } else {
-      setPrevCommands((prev) => [...prev, { input: input.trim(), output }]);
+      setPrevCommands((prev) => [...prev, { input: trimmedInput, output }]);
     }
 
     setInput("");
+    setHistoryIndex(null); // Reset history navigation after submit
   };
 
   const codingValidate = (args) => {
@@ -120,7 +154,7 @@ const Terminal = () => {
 
   const terminalFunction = (inputStr) => {
     // splitting the input with to check whether it is correct command or not
-    const args = inputStr.trim().split(" ");
+    const args = inputStr.split(" ");
     const [command, ...rest] = args;
 
     // iterating through commands whether it matches any of the commands in the list
@@ -248,6 +282,7 @@ const Terminal = () => {
                 placeholder={count === 0 ? "nexus --help " : null}
                 value={input}
                 onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
                 className="ml-1 w-full basis-1/2 border-none bg-transparent text-xs outline-none md:text-base"
               />
             </div>
