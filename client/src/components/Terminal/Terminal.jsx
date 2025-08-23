@@ -30,7 +30,7 @@ const Terminal = () => {
       scrollContainerRef.current.scrollHeight;
   }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
 
-  const handleInputChange = (e) => setInput(e.target.value.toLowerCase());
+  const handleInputChange = (e) => setInput(e.target.value.toLowerCase()); // will convert any input to lower change, so terminal is mobile friendly now
   // Handle up/down arrow key navigation
   const handleInputKeyDown = (e) => {
     if (commandHistory.length === 0) return;
@@ -104,9 +104,9 @@ const Terminal = () => {
           codingProfile.year = parseInt(value) % 2000;
           break;
         case "-p":
-          if (!platforms.includes(value.toLowerCase()))
+          if (!platforms.includes(value))
             return "platformUndefined";
-          codingProfile.platform = value.toLowerCase();
+          codingProfile.platform = value;
           break;
         case "-b":
           if (!branches.includes(value.toUpperCase())) return "branchUndefined";
@@ -123,7 +123,7 @@ const Terminal = () => {
           }
           break;
         case "-g":
-          switch (value.toLowerCase()) {
+          switch (value) {
             case "ug":
               codingProfile.grad = "U";
               break;
@@ -158,7 +158,7 @@ const Terminal = () => {
     const [command, ...rest] = args;
 
     // iterating through commands whether it matches any of the commands in the list
-    switch (command) {
+    switch (commandLower) {
       case "": //no input given
         return;
 
