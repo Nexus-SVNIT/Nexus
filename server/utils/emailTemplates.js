@@ -140,23 +140,6 @@ const newAnswerTemplate = (author, postTitle, question, answer, answeredBy, id) 
     `)
 });
 
-const postVerificationTemplate = (author, postTitle, id) => ({
-    subject: 'Your Interview Experience Post Has Been Verified',
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0;">Dear ${author.fullName},</h3>
-        <p>
-            Great news! Your interview experience post <strong>"${postTitle}"</strong> has been verified and is now live on the platform.
-        </p>
-        <p>
-            Thank you for contributing to the community and helping fellow students with your valuable insights!
-        </p>
-        <p>
-            <a class="btn" href="${link}/interview-experiences/post/${id}">View Your Post</a>
-        </p>
-        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
-    `)
-});
-
 const postEditTemplate = (user, postTitle, postId) => ({
     subject: 'Your Interview Experience Post Has Been Updated',
     html: emailWrapperTemplate(`
@@ -170,40 +153,6 @@ const postEditTemplate = (user, postTitle, postId) => ({
         </p>
         <p>
             <a class="btn" href="${link}/interview-experiences/post/${postId}">View Post</a>
-        </p>
-        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
-    `)
-});
-
-const alumniVerificationTemplate = (name) => ({
-    subject: 'Alumni Status Verified',
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0;">Dear ${name},</h3>
-        <p>
-            Congratulations! Your alumni status has been verified by the NEXUS team.
-        </p>
-        <p>
-            You now have full access to the alumni features on the platform. Welcome back to the NEXUS community!
-        </p>
-        <p>
-            <a class="btn" href="${link}">Explore Alumni Features</a>
-        </p>
-        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
-    `)
-});
-
-const alumniRejectionTemplate = (name) => ({
-    subject: 'Alumni Status Update',
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0;">Dear ${name},</h3>
-        <p>
-            Your alumni verification request has been reviewed and could not be verified at this time.
-        </p>
-        <p>
-            Please ensure you meet all eligibility criteria and try again. If you have any questions, feel free to contact us.
-        </p>
-        <p>
-            <a class="btn" href="${link}">Try Again</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
@@ -281,90 +230,6 @@ const alumniEmailVerifiedTemplate = ({fullName}) => ({
     `)
 });
 
-const formEmailTemplate = ({name, desc, deadline, formId, createdBy}) => ({
-    subject: `New Form Released: ${name}`,
-    text: `New Form Released: ${name}. Apply before deadline: ${deadline}.`,
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0; color: #4fc3f7;">New Form Released</h3>
-        <p>Dear {{name}},</p>
-        <p>A new form has been released on the NEXUS portal:</p>
-        
-        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Name:</strong> ${name}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Description:</strong> ${desc}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Deadline:</strong> ${new Date(deadline).toLocaleDateString('en-US', { 
-                weekday: 'long', 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            })}</div>
-            ${createdBy ? `<div><strong style="color: #4fc3f7;">Created By:</strong> ${createdBy}</div>` : ''}
-        </div>
-        
-        <div style="text-align: center; margin: 25px 0;">
-            <a class="btn" href="${link}/forms/${formId}" style="background-color: #4fc3f7; color: #111; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
-                APPLY NOW
-            </a>
-        </div>
-        
-        <p>Please ensure you submit your response before the deadline. If you face any issues, feel free to contact us.</p>
-        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
-    `)
-});
-
-const formCreationNotificationTemplate = ({name, desc, deadline, isOpenForAll, enableTeams, teamSize, fileUploadEnabled, creatorEmail, creatorAdmissionNumber, creatorRole, sheetId, formId}) => ({
-    subject: `New Form Created: ${name}`,
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0; color: #4fc3f7;">New Form Created</h3>
-        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Form Name:</strong> ${name}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Description:</strong> ${desc}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Deadline:</strong> ${deadline}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Target Audience:</strong> ${isOpenForAll ? 'Open to All' : 'SVNIT Students Only'}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Team Registration:</strong> ${enableTeams ? `Yes (Team Size: ${teamSize})` : 'No'}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">File Upload Required:</strong> ${fileUploadEnabled ? 'Yes' : 'No'}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Created By:</strong> ${creatorEmail} ${creatorAdmissionNumber ? `(${creatorAdmissionNumber})` : ''} ${creatorRole ? `- ${creatorRole}` : ''}</div>
-            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Created On:</strong> ${new Date().toLocaleString()}</div>
-        </div>
-        <p>
-            <a class="btn" href="https://docs.google.com/spreadsheets/d/${sheetId}" style="margin-right: 10px;">View Responses</a>
-            <a class="btn" href="${link}/forms/${formId}">View Form</a>
-        </p>
-    `)
-});
-
-const formNotificationSummaryTemplate = ({formName, subscriberCount, formCreator, senderEmail, sheetId}) => ({
-    subject: `Form Notification Sent: ${formName}`,
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0; color: #4fc3f7;">Form Notification Summary</h3>
-        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <div style="margin-bottom: 12px;">Form <strong>${formName}</strong> notification was sent to <strong style="color: #4fc3f7;">${subscriberCount}</strong> subscribers.</div>
-            <div style="margin-bottom: 12px;"><strong>Created by:</strong> ${formCreator}</div>
-            <div style="margin-bottom: 12px;"><strong>Notification sent by:</strong> ${senderEmail || 'Unknown'}</div>
-            <div><strong>Sent on:</strong> ${new Date().toLocaleString()}</div>
-        </div>
-        <p>
-            <a class="btn" href="https://docs.google.com/spreadsheets/d/${sheetId}">View Responses</a>
-        </p>
-    `)
-});
-
-const personalizedBatchTemplate = (name, content) => ({
-    subject: 'Message from NEXUS Team',
-    html: emailWrapperTemplate(`
-        <h3 style="margin-top: 0;">Dear ${name || 'User'},</h3>
-        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            ${content}
-        </div>
-        <p>
-            <a class="btn" href="${link}">Visit NEXUS Portal</a>
-        </p>
-        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
-    `)
-});
-
 const achievementSubmissionTemplate = (name) => ({
     subject: 'Achievement Submission Under Review',
     html: emailWrapperTemplate(`
@@ -389,18 +254,11 @@ module.exports = {
     newQuestionTemplate, 
     newCommentTemplate,
     newAnswerTemplate,
-    postVerificationTemplate,
     postCreationTemplate,
     postEditTemplate,
-    alumniVerificationTemplate,
-    alumniRejectionTemplate,
     alumniEmailVerificationTemplate,
     alumniEmailVerifiedTemplate,
-    formEmailTemplate,
-    personalizedBatchTemplate,
     achievementSubmissionTemplate,
-    formCreationNotificationTemplate,
-    formNotificationSummaryTemplate,
     forgotPasswordTemplate,
     signupEmailTemplate
 };
