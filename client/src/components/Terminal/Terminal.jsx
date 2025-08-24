@@ -158,7 +158,7 @@ const Terminal = () => {
     const [command, ...rest] = args;
 
     // iterating through commands whether it matches any of the commands in the list
-    switch (commandLower) {
+    switch (command) {
       case "": //no input given
         return;
 
