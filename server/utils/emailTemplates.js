@@ -1,380 +1,356 @@
-const link = 'https://nexus-svnit.in';
-const newPostTemplate = (author, postTitle, id) => ({
-    subject: 'Your Interview Experience Post Has Been Created',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Your interview experience post "${postTitle}" has been successfully created.Thank you for sharing your experience with the community!You will receive notifications when others ask questions on your post.
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> for more details.</p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
+const link = 'https://www.nexus-svnit.in';
+const LINK_COLOR = '#4fc3f7';
+
+const emailWrapperTemplate = (content) => (
     `
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .link {
+                color: #4fc3f7;
+                text-decoration: none;
+            }
+            .link:hover {
+                text-decoration: underline;
+            }
+            .btn {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #00c6fb;
+                color: #111 !important;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: 600;
+                margin-top: 12px;
+            }
+        </style>
+    </head>
+    <body style="font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0;">
+        <div style="max-width: 650px; margin: 40px auto; background: #181818; border-radius: 14px; box-shadow: 0 4px 24px rgba(0,0,0,0.25); overflow: hidden;">
+            
+            <!-- Header -->
+            <div style="background: #1e1e1e; padding: 28px 20px; text-align: center; border-bottom: 1px solid #2c2c2c;">
+                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" alt="Nexus Logo" style="max-height: 70px; margin-bottom: 12px;" />
+                <div style="font-size: 15px; color: #bbb;">Departmental Cell of DoCSE & DoAI, SVNIT Surat</div>
+            </div>
+
+            <!-- Content -->
+            <div style="padding: 30px 28px; color: #ddd; font-size: 16px; line-height: 1.6;">
+                ${content}
+            </div>
+
+            <!-- Footer -->
+            <div style="background: #1e1e1e; color: #aaa; text-align: center; font-size: 14px; padding: 20px; border-top: 1px solid #2c2c2c;">
+                <div><strong>Team Nexus</strong> • CSE & AI Departments, SVNIT Surat</div>
+                <div style="margin: 6px 0;">
+                    Contact: 
+                    <a class="link" style="color:${LINK_COLOR};" href="mailto:nexus@coed.svnit.ac.in">nexus@coed.svnit.ac.in</a> |
+                    <a class="link" style="color:${LINK_COLOR};" href="https://www.nexus-svnit.in">nexus-svnit.in</a>
+                </div>
+                <div>
+                    Follow us: 
+                    <a class="link" style="color:${LINK_COLOR};" href="https://www.linkedin.com/company/nexus-svnit">LinkedIn</a> |
+                    <a class="link" style="color:${LINK_COLOR};" href="https://www.instagram.com/nexus.svnit/">Instagram</a>
+                </div>
+            </div>
+        </div>
+    </body>
+    </html>
+    `
+);
+
+const postCreationTemplate = (author, postTitle, id) => ({
+    subject: 'Your Interview Experience Post Is Under Review',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${author.fullName || 'Nexus Member'},</h3>
+        <p>
+            Thank you for sharing your interview experience with the community! Your post titled <strong>"${postTitle}"</strong> has been successfully created and is currently under review by the NEXUS Core Team.
+        </p>
+        <p>
+            Once verified, your post will be visible to all users on the platform. You will receive a notification when your post is approved.
+        </p>
+        <p>
+            You can check your submission status using the button below:
+        </p>
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${id}">View Your Post</a>
+        </p>
+        <p style="margin-top: 28px;">Best regards,<br>Team NEXUS</p>
+    `)
 });
 
 const newQuestionTemplate = (author, postTitle, question, askedBy, id) => ({
     subject: 'New Question on Your Interview Experience Post',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                    <p>Someone has asked a question on your post "${postTitle}"</p>
-                    <p><strong>Question by ${askedBy.fullName}:</strong></p>
-                    <p style="color:black; padding: 10px; background-color: #f5f5f5; border-left: 4px solid #007bff;">
-                    ${question}
-                    </p>
-                    <p>Login to your account to answer this question.</p>
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> for more details.</p>
-            <p>Thanks,<br>Team NEXUS</p>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${author.fullName},</h3>
+        <p>
+            Someone has asked a question on your post <strong>"${postTitle}"</strong>
+        </p>
+        <p><strong>Question by ${askedBy.fullName}:</strong></p>
+        <div style="background-color: #2c2c2c; padding: 15px; border-left: 4px solid #4fc3f7; border-radius: 4px; margin: 15px 0;">
+            ${question}
         </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
-  `
+        <p>Login to your account to answer this question.</p>
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${id}">View Post & Answer</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const newCommentTemplate = (author, postTitle, comment, commentedBy, id) => ({
     subject: 'New Comment on Your Interview Experience Post',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                <p>Someone has commented on your post "${postTitle}"</p>
-                <p><strong>Comment by ${commentedBy.fullName}:</strong></p>
-                <p style="color:black; padding: 10px; background-color: #f5f5f5; border-left: 4px solid #007bff;">
-                ${comment}
-                </p>
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> for more details.</p>
-            <p>Thanks,<br>Team NEXUS</p>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${author.fullName},</h3>
+        <p>
+            Someone has commented on your post <strong>"${postTitle}"</strong>
+        </p>
+        <p><strong>Comment by ${commentedBy.fullName}:</strong></p>
+        <div style="background-color: #2c2c2c; padding: 15px; border-left: 4px solid #4fc3f7; border-radius: 4px; margin: 15px 0;">
+            ${comment}
         </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
-    `
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${id}">View Post</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const newAnswerTemplate = (author, postTitle, question, answer, answeredBy, id) => ({
     subject: 'New Answer to Your Question',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                <p>Someone has answered your question on the post "${postTitle}"</p>
-                <p><strong>Your Question:</strong></p>
-                <p style="color:black; padding: 10px; background-color: #f5f5f5; border-left: 4px solid #007bff;">
-                ${question}
-                </p>
-                <p><strong>Answer by ${answeredBy.fullName}:</strong></p>
-                <p style="color:black; padding: 10px; background-color: #f5f5f5; border-left: 4px solid #28a745;">
-                ${answer}
-                </p>
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> for more details.</p>
-            <p>Thanks,<br>Team NEXUS</p>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${author.fullName},</h3>
+        <p>
+            Someone has answered your question on the post <strong>"${postTitle}"</strong>
+        </p>
+        <p><strong>Your Question:</strong></p>
+        <div style="background-color: #2c2c2c; padding: 15px; border-left: 4px solid #4fc3f7; border-radius: 4px; margin: 15px 0;">
+            ${question}
         </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
+        <p><strong>Answer by ${answeredBy.fullName}:</strong></p>
+        <div style="background-color: #2c2c2c; padding: 15px; border-left: 4px solid #28a745; border-radius: 4px; margin: 15px 0;">
+            ${answer}
         </div>
-    </div>
-    `
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${id}">View Full Discussion</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const postVerificationTemplate = (author, postTitle, id) => ({
     subject: 'Your Interview Experience Post Has Been Verified',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Your interview experience post "${postTitle}" has been verified and is now live on the platform. Thank you for contributing to the community!
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> to view your post.</p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
-    `
-});
-
-const postCreationTemplate = (author, postTitle, id) => ({
-    subject: 'Your Interview Experience Post Is Under Review',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${author.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Thank you for sharing your interview experience with the community! Your post "${postTitle}" has been successfully created and is currently under review by the NEXUS Core Team.
-            </p>
-            <p style="color: #ccc;">
-                Once verified, your post will be visible to all users on the platform. You will receive a notification when your post is approved.
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${id}" style="color: #1a73e8;">this link</a> to view your post after verification.</p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
-    `
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${author.fullName},</h3>
+        <p>
+            🎉 Great news! Your interview experience post <strong>"${postTitle}"</strong> has been verified and is now live on the platform.
+        </p>
+        <p>
+            Thank you for contributing to the community and helping fellow students with your valuable insights!
+        </p>
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${id}">View Your Post</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const postEditTemplate = (user, postTitle, postId) => ({
-  subject: 'Your Interview Experience Post Has Been Updated',
-  html: `
-  <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h2>Post Update Under Review</h2>
-            <h3 style="color: white;">Dear ${user.fullName},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Your edited interview experience post "${postTitle}" has been submitted for review. You will be notified once it is verified.F            </p>
-            <p style="color: #ccc;">
-                Your post will be visible to others after verification by our team.
-            </p>
-            <p style="color: #ccc;">Visit <a href="${link}/interview-experiences/post/${postId}" style="color: #1a73e8;">this link</a> to view your post after verification.</p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-        <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-            <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-            <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-        </div>
-    </div>
-  `
+    subject: 'Your Interview Experience Post Has Been Updated',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Post Update Under Review</h3>
+        <h4>Dear ${user.fullName},</h4>
+        <p>
+            Your edited interview experience post <strong>"${postTitle}"</strong> has been submitted for review. You will be notified once it is verified.
+        </p>
+        <p>
+            Your post will be visible to others after verification by our team.
+        </p>
+        <p>
+            <a class="btn" href="${link}/interview-experiences/post/${postId}">View Post</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const alumniVerificationTemplate = (name) => ({
     subject: 'Alumni Status Verified',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${name},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Your alumni status has been verified by the NEXUS team. You now have full access to the alumni features on the platform.
-            </p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-    </div>
-    `
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${name},</h3>
+        <p>
+            🎉 Congratulations! Your alumni status has been verified by the NEXUS team.
+        </p>
+        <p>
+            You now have full access to the alumni features on the platform. Welcome back to the NEXUS community!
+        </p>
+        <p>
+            <a class="btn" href="${link}">Explore Alumni Features</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const alumniRejectionTemplate = (name) => ({
     subject: 'Alumni Status Update',
-    html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-        <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-            <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-            <p>
-            <h3 style="color: white;">Dear ${name},</h3>
-            </p>
-            <p style="color: #ccc;">
-                Your alumni verification request has been reviewed and could not be verified at this time. Please ensure you meet all eligibility criteria and try again.
-            </p>
-            <p>Thanks,<br>Team NEXUS</p>
-        </div>
-    </div>
-    `
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${name},</h3>
+        <p>
+            Your alumni verification request has been reviewed and could not be verified at this time.
+        </p>
+        <p>
+            Please ensure you meet all eligibility criteria and try again. If you have any questions, feel free to contact us.
+        </p>
+        <p>
+            <a class="btn" href="${link}">Try Again</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
-
 const alumniEmailVerificationTemplate = ({fullName, verificationUrl}) => ({
-  subject: 'Verify Your Alumni Email - NEXUS',
-  html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
-      <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-      </div>
-      <p>Dear ${fullName},</p>
-      <p>Thank you for registering on the NEXUS alumni portal.</p>
-      <p>Please verify your email address by clicking the button below:</p>
-      <a href="${verificationUrl}" style="display:inline-block; padding:10px 20px; background-color:skyblue; color:black; border-radius:5px; text-decoration:none;">Verify Email</a>
-      <p>This verification is required to review and approve your alumni profile.</p>
-      <p>Thanks,<br/>Team NEXUS</p>
-    </div>
-  `,
+    subject: 'Verify Your Alumni Email - NEXUS',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${fullName},</h3>
+        <p>
+            Thank you for registering on the NEXUS alumni portal.
+        </p>
+        <p>
+            Please verify your email address by clicking the button below:
+        </p>
+        <p>
+            <a class="btn" href="${verificationUrl}">Verify Email</a>
+        </p>
+        <p>
+            This verification is required to review and approve your alumni profile.
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const alumniEmailVerifiedTemplate = ({fullName}) => ({
-  subject: 'Email Verified - Alumni Account Under Review',
-  html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-      <div style="margin-bottom: 25px; display:flex; justify-content: center;">
-        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:350px"/>
-      </div>
-      <div>Dear ${fullName},</div>
-      <p>Thank you for verifying your email address. As an alumni member, your account requires additional verification from our team.</p>
-      <p>Your account is currently under review. Once approved, you will be able to log in to the NEXUS portal.</p>
-      <p>We will notify you via email once the verification is complete.</p>
-      <p>Thanks,<br>Team NEXUS</p>
-    </div>
-  `,
+    subject: 'Email Verified - Alumni Account Under Review',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${fullName},</h3>
+        <p>
+            ✅ Thank you for verifying your email address.
+        </p>
+        <p>
+            As an alumni member, your account requires additional verification from our team. Your account is currently under review.
+        </p>
+        <p>
+            Once approved, you will be able to log in to the NEXUS portal. We will notify you via email once the verification is complete.
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 const formEmailTemplate = ({name, desc, deadline, formId, createdBy}) => ({
     subject: `New Form Released: ${name}`,
     text: `New Form Released: ${name}. Apply before deadline: ${deadline}.`,
-    html: `
-        <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                <h2 style="color: white;">New Form Released</h2>
-                <div style="color: #ccc;">Dear {{name}},</div>
-                <p style="color: #ccc;">A new form has been released on the NEXUS portal:</p>
-                
-                <div style="margin-bottom: 20px; background-color: #444; padding: 15px; border-radius: 5px;">
-                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Name:</strong> ${name}</div>
-                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Description:</strong> ${desc}</div>
-                    <div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Deadline:</strong> ${new Date(deadline).toLocaleDateString('en-US', { 
-                        weekday: 'long', 
-                        year: 'numeric', 
-                        month: 'long', 
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                    })}</div>
-                    ${createdBy ? `<div style="margin-bottom: 10px;"><strong style="color: #4cc9f0;">Created By:</strong> ${createdBy}</div>` : ''}
-                </div>
-                
-                <div style="text-align: center; margin-top: 25px; margin-bottom: 25px;">
-                    <a href="https://nexus-svnit.in/forms/${formId}" style="background-color: #4cc9f0; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">
-                        APPLY NOW
-                    </a>
-                </div>
-                
-                <p style="color: #ccc;">Please ensure you submit your response before the deadline. If you face any issues, feel free to contact us.</p>
-                <p>Thanks,<br>Team NEXUS</p>
-            </div>
-            <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-                <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-                <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-            </div>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0; color: #4fc3f7;">🆕 New Form Released</h3>
+        <p>Dear {{name}},</p>
+        <p>A new form has been released on the NEXUS portal:</p>
+        
+        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Name:</strong> ${name}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Description:</strong> ${desc}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Deadline:</strong> ${new Date(deadline).toLocaleDateString('en-US', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            })}</div>
+            ${createdBy ? `<div><strong style="color: #4fc3f7;">Created By:</strong> ${createdBy}</div>` : ''}
         </div>
-    `
+        
+        <div style="text-align: center; margin: 25px 0;">
+            <a class="btn" href="${link}/forms/${formId}" style="background-color: #4fc3f7; color: #111; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; display: inline-block;">
+                APPLY NOW
+            </a>
+        </div>
+        
+        <p>Please ensure you submit your response before the deadline. If you face any issues, feel free to contact us.</p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
-// Template for notifying admins when a new form is created
 const formCreationNotificationTemplate = ({name, desc, deadline, isOpenForAll, enableTeams, teamSize, fileUploadEnabled, creatorEmail, creatorAdmissionNumber, creatorRole, sheetId, formId}) => ({
     subject: `New Form Created: ${name}`,
-    html: `
-        <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-            <div style="background-color: #333; padding: 20px; border-radius: 8px;">
-                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                <h2>New Form Released</h2>
-                <p><strong>Form Name:</strong> ${name}</p>
-                <p><strong>Description:</strong> ${desc}</p>
-                <p><strong>Deadline:</strong> ${deadline}</p>
-                <p><strong>Target Audience:</strong> ${isOpenForAll ? 'Open to All' : 'SVNIT Students Only'}</p>
-                <p><strong>Team Registration:</strong> ${enableTeams ? `Yes (Team Size: ${teamSize})` : 'No'}</p>
-                <p><strong>File Upload Required:</strong> ${fileUploadEnabled ? 'Yes' : 'No'}</p>
-                <p><strong>Created By:</strong> ${creatorEmail} ${creatorAdmissionNumber ? `(${creatorAdmissionNumber})` : ''} ${creatorRole ? `- ${creatorRole}` : ''}</p>
-                <p><strong>Created On:</strong> ${new Date().toLocaleString()}</p>
-                <p><strong>Google Sheet:</strong> <a href="https://docs.google.com/spreadsheets/d/${sheetId}" style="color: #1a73e8;">View Responses</a></p>
-                <p><strong>Form Link:</strong> <a href="https://www.nexus-svnit.in/forms/${formId}" style="color: #1a73e8;">View Form</a></p>
-            </div>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0; color: #4fc3f7;">📝 New Form Created</h3>
+        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Form Name:</strong> ${name}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Description:</strong> ${desc}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Deadline:</strong> ${deadline}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Target Audience:</strong> ${isOpenForAll ? 'Open to All' : 'SVNIT Students Only'}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Team Registration:</strong> ${enableTeams ? `Yes (Team Size: ${teamSize})` : 'No'}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">File Upload Required:</strong> ${fileUploadEnabled ? 'Yes' : 'No'}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Created By:</strong> ${creatorEmail} ${creatorAdmissionNumber ? `(${creatorAdmissionNumber})` : ''} ${creatorRole ? `- ${creatorRole}` : ''}</div>
+            <div style="margin-bottom: 12px;"><strong style="color: #4fc3f7;">Created On:</strong> ${new Date().toLocaleString()}</div>
         </div>
-    `
+        <p>
+            <a class="btn" href="https://docs.google.com/spreadsheets/d/${sheetId}" style="margin-right: 10px;">View Responses</a>
+            <a class="btn" href="${link}/forms/${formId}">View Form</a>
+        </p>
+    `)
 });
 
-// Template for summarizing form notification results to admins
 const formNotificationSummaryTemplate = ({formName, subscriberCount, formCreator, senderEmail, sheetId}) => ({
     subject: `Form Notification Sent: ${formName}`,
-    html: `
-        <div style="background-color: black; color: white; font-size: 14px; padding: 20px;">
-            <div style="background-color: #333; padding: 20px; border-radius: 8px;">
-                <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-                <h2>Form Notification Summary</h2>
-                <p>Form <strong>${formName}</strong> notification was sent to ${subscriberCount} subscribers.</p>
-                <p>Created by: ${formCreator}</p>
-                <p>Notification sent by: ${senderEmail || 'Unknown'}</p>
-                <p>Sent on: ${new Date().toLocaleString()}</p>
-                <p><a href="https://docs.google.com/spreadsheets/d/${sheetId}" style="color: #1a73e8;">View Responses</a></p>
-            </div>
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0; color: #4fc3f7;">📊 Form Notification Summary</h3>
+        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            <div style="margin-bottom: 12px;">Form <strong>${formName}</strong> notification was sent to <strong style="color: #4fc3f7;">${subscriberCount}</strong> subscribers.</div>
+            <div style="margin-bottom: 12px;"><strong>Created by:</strong> ${formCreator}</div>
+            <div style="margin-bottom: 12px;"><strong>Notification sent by:</strong> ${senderEmail || 'Unknown'}</div>
+            <div><strong>Sent on:</strong> ${new Date().toLocaleString()}</div>
         </div>
-    `
+        <p>
+            <a class="btn" href="https://docs.google.com/spreadsheets/d/${sheetId}">View Responses</a>
+        </p>
+    `)
 });
 
-const personalizedBatchTemplate = (name, content) => (`
-  <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-    <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-      <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-      <p><h3 style="color: white;">Dear ${name || 'User'},</h3></p>
-      <p style="color: #ccc;">${content}</p>
-      <p style="color: #ccc;">Visit <a href="https://www.nexus-svnit.in" style="color: #1a73e8;">this link</a> for more details.</p>
-      <p>Thanks,<br>Team NEXUS</p>
-    </div>
-    <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-      <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-      <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-    </div>
-  </div>
-`);
+const personalizedBatchTemplate = (name, content) => ({
+    subject: 'Message from NEXUS Team',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${name || 'User'},</h3>
+        <div style="background-color: #2c2c2c; padding: 20px; border-radius: 8px; margin: 20px 0;">
+            ${content}
+        </div>
+        <p>
+            <a class="btn" href="${link}">Visit NEXUS Portal</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
+});
 
 const achievementSubmissionTemplate = (name) => ({
-  subject: 'Achievement Submission Under Review',
-  html: `
-    <div style="background-color: black; color: white; font-size: 14px; padding: 20px; font-family: Arial, sans-serif;">
-      <div style="background-color: #333; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
-        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="display: block; margin: auto; max-width: 100%; height: auto;"/>
-        <p><h3 style="color: white;">Dear ${name},</h3></p>
-        <p style="color: #ccc;">Thank you for submitting your achievement on the NEXUS portal.</p>
-        <p style="color: #ccc;">Your submission is currently under review by our team.</p>
-        <p style="color: #ccc;">Once verified, your achievement will be displayed on the website's achievement bulletin section.</p>
-        <p style="color: #ccc;">We appreciate your contributions and look forward to sharing your success with the community!</p>
-        <p>Thanks,<br>Team NEXUS</p>
-      </div>
-      <div style="margin-top: 20px; text-align: center; color: #888; font-size: 12px;">
-        <p>Contact us: <a href="mailto:nexus@coed.svnit.ac.in" style="color: #1a73e8;">nexus@coed.svnit.ac.in</a></p>
-        <p>Follow us on <a href="https://www.linkedin.com/company/nexus-svnit/" style="color: #1a73e8;">LinkedIn</a> <a href="https://www.instagram.com/nexus_svnit/" style="color: #1a73e8;">Instagram</a></p>
-      </div>
-    </div>
-  `
+    subject: 'Achievement Submission Under Review',
+    html: emailWrapperTemplate(`
+        <h3 style="margin-top: 0;">Dear ${name},</h3>
+        <p>
+            🎯 Thank you for submitting your achievement on the NEXUS portal.
+        </p>
+        <p>
+            Your submission is currently under review by our team. Once verified, your achievement will be displayed on the website's achievement bulletin section.
+        </p>
+        <p>
+            We appreciate your contributions and look forward to sharing your success with the community!
+        </p>
+        <p>
+            <a class="btn" href="${link}/achievements">View Achievement Bulletin</a>
+        </p>
+        <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
+    `)
 });
 
 module.exports = { 
-    newPostTemplate, 
     newQuestionTemplate, 
     newCommentTemplate,
     newAnswerTemplate,
