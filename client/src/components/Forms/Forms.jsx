@@ -73,6 +73,9 @@ const Forms = () => {
     { activeForms: [], inactiveForms: [] }
   );
 
+  activeForms.reverse();
+  inactiveForms.reverse();
+  
   return (
     <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
       <HeadTags

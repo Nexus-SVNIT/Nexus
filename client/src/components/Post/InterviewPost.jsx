@@ -610,18 +610,6 @@ const InterviewPost = () => {
                       {post.cgpaCriteria?.girls || "N/A"}
                     </div>
 
-                    <div className="text-blue-400">Shortlisted Count:</div>
-                    <div className="text-gray-300">
-                      Boys: {post.shortlistedCount?.boys || "0"} | Girls:{" "}
-                      {post.shortlistedCount?.girls || "0"}
-                    </div>
-
-                    <div className="text-blue-400">Selected Count:</div>
-                    <div className="text-gray-300">
-                      Boys: {post.selectedCount?.boys || "0"} | Girls:{" "}
-                      {post.selectedCount?.girls || "0"}
-                    </div>
-
                     <div className="text-blue-400">Shortlist Criteria:</div>
                     <div className="text-gray-300">
                       {formatCGPA(post.shortlistCriteria)}

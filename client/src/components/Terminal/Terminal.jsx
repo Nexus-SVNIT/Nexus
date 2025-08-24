@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 
 const Terminal = () => {
   const [input, setInput] = useState("");
-  const [prevCommands, setPrevCommands] = useState([]);
+  const [prevCommands, setPrevCommands] = useState([]); // Displayed commands
+  const [commandHistory, setCommandHistory] = useState([]); // All entered commands
   const [count, setCount] = useState(0);
+  const [historyIndex, setHistoryIndex] = useState(null); // For up/down navigation
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
 
   // const commands = ["cd", "nexus", "ls", "cls", "exit", "register"];
   const nexusPages = [
-    "home",
     "team",
     "achievements",
     "events",
@@ -29,20 +30,52 @@ const Terminal = () => {
       scrollContainerRef.current.scrollHeight;
   }, [prevCommands]); // Assuming prevCommands is the array of terminal outputs
 
-  const handleInputChange = (e) => setInput(e.target.value);
+  const handleInputChange = (e) => setInput(e.target.value.toLowerCase()); // will convert any input to lower change, so terminal is mobile friendly now
+  // Handle up/down arrow key navigation
+  const handleInputKeyDown = (e) => {
+    if (commandHistory.length === 0) return;
+    if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHistoryIndex((prev) => {
+        const newIndex = prev === null ? commandHistory.length - 1 : Math.max(prev - 1, 0);
+        setInput(commandHistory[newIndex] || "");
+        return newIndex;
+      });
+    } else if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHistoryIndex((prev) => {
+        if (prev === null) return null;
+        const newIndex = Math.min(prev + 1, commandHistory.length);
+        if (newIndex === commandHistory.length) {
+          setInput("");
+          return null;
+        } else {
+          setInput(commandHistory[newIndex] || "");
+          return newIndex;
+        }
+      });
+    }
+  };
 
   const handleTerminalSubmit = (e) => {
     e.preventDefault();
-    const output = terminalFunction(input);
+    const trimmedInput = input.trim();
+    const output = terminalFunction(trimmedInput);
     setCount(count + 1);
 
+    // Always update commandHistory except for empty input
+    if (trimmedInput !== "") {
+      setCommandHistory((prev) => [...prev, trimmedInput]);
+    }
+
     if (output === 0) {
-      setPrevCommands([]);
+      setPrevCommands([]); // Clear display, but keep commandHistory
     } else {
-      setPrevCommands((prev) => [...prev, { input, output }]);
+      setPrevCommands((prev) => [...prev, { input: trimmedInput, output }]);
     }
 
     setInput("");
+    setHistoryIndex(null); // Reset history navigation after submit
   };
 
   const codingValidate = (args) => {
@@ -71,9 +104,9 @@ const Terminal = () => {
           codingProfile.year = parseInt(value) % 2000;
           break;
         case "-p":
-          if (!platforms.includes(value.toLowerCase()))
+          if (!platforms.includes(value))
             return "platformUndefined";
-          codingProfile.platform = value.toLowerCase();
+          codingProfile.platform = value;
           break;
         case "-b":
           if (!branches.includes(value.toUpperCase())) return "branchUndefined";
@@ -90,7 +123,7 @@ const Terminal = () => {
           }
           break;
         case "-g":
-          switch (value.toLowerCase()) {
+          switch (value) {
             case "ug":
               codingProfile.grad = "U";
               break;
@@ -121,7 +154,7 @@ const Terminal = () => {
 
   const terminalFunction = (inputStr) => {
     // splitting the input with to check whether it is correct command or not
-    const args = inputStr.trim().split(" ");
+    const args = inputStr.split(" ");
     const [command, ...rest] = args;
 
     // iterating through commands whether it matches any of the commands in the list
@@ -154,6 +187,9 @@ const Terminal = () => {
               navigate(path); //redirect to the coding page with query params
               return <div className="mt-0.5" />;
           }
+        } else if (args.length === 2 && args[1] === 'home') {
+          navigate(`/`); // reloads home
+          return <div className="mt-0.5" />;
         } else if (args.length === 2 && nexusPages.includes(args[1])) {
           navigate(`/${args[1]}`); // redirect to the args[1] page
           return <div className="mt-0.5" />;
@@ -246,6 +282,7 @@ const Terminal = () => {
                 placeholder={count === 0 ? "nexus --help " : null}
                 value={input}
                 onChange={handleInputChange}
+                onKeyDown={handleInputKeyDown}
                 className="ml-1 w-full basis-1/2 border-none bg-transparent text-xs outline-none md:text-base"
               />
             </div>
@@ -264,10 +301,6 @@ const HelpMessage = () => (
       The Nexus Terminal lets you navigate the website via command-line
       interface. Use the following commands:
     </p>
-    <div className="flex gap-4">
-      <span className="text-teal-300">cd home</span>
-      <span>Redirect to Home Page</span>
-    </div>
     {[
       ["cd [page]", "Redirect to a particular page"],
       ["cd coding", ""],
