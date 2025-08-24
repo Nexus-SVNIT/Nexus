@@ -15,7 +15,7 @@ const ForgotPasswordForm = () => {
 
     try {
       const toastId = toast.loading('Sending reset instructions...');
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/user/forgot-password`, { admissionNumber });
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/forgot-password`, { admissionNumber });
       toast.success('Password reset email sent!', { id: toastId });
     } catch (error) {
       toast.remove();
