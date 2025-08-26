@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 // No need to require the resource model here for the schema definition
 const Schema = mongoose.Schema;
 
-const subjectSchema = new Schema({
+const subjectModel = new Schema({
     category: {
         type: String,
         enum: ['Placements/Internships', 'Semester Exams'],
@@ -11,20 +11,17 @@ const subjectSchema = new Schema({
     subjectName: {
         type: String,
         required: true
-    },
+    },//LLD,OOP etc
     tips: {
         type: String,
         required: true 
-    },
+    },//general tips from the seniors
    
     resources: [{
         type: Schema.Types.ObjectId,
         ref: 'Resource'
-    }],
-    url: {
-        type: String,
-        required: true
-    }
+    }], // reference of the resourcees
+    
 });
 
-module.exports = mongoose.model('Subject', subjectSchema);
+module.exports = mongoose.model('Subject', subjectModel);

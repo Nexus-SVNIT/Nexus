@@ -1,5 +1,5 @@
 const mongoose=require('mongoose');
-const subject=require('./subjectSchema');
+const subject=require('./subjectModel');
 const Schema=mongoose.Schema;
 
 const ResourceSchema=new Schema({
@@ -7,13 +7,13 @@ const ResourceSchema=new Schema({
     
     title:{
         type:String,
-        required:true
-    },
+        required:true   
+    },//DAA 2024 ENDSEM PYQ
     subCategory:{
         type:String,
         required:true,
-        enum:['Books','Notes','Important topics','Youtube Resources','Other']
-    },
+        enum:['Notes','Important topics','Youtube Resources','PYQs','Other']
+    },//Notes
     resourcetype:{
         type:String,
         required:true,
@@ -22,7 +22,7 @@ const ResourceSchema=new Schema({
     Link:{
         type:String,
         required:true
-    }
+    }// drive/youtube link
     
 })
 

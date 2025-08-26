@@ -1,6 +1,6 @@
 const express=require('express');
 const ResourceSchema=require('../models/resourceModel');
-const Subject=require('../models/subjectSchema');
+const Subject=require('../models/subjectModel');
 const resourceModel = require('../models/resourceModel');
 const getSubjectsbyCategory = async (req, res) => {
     try {
