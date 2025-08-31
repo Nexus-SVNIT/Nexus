@@ -59,33 +59,39 @@ const companyAIBot = async (req, res) => {
       summary: post.content
     }));
 
-    // Compose prompt
-    const prompt = `
-You are NexusAI, an advanced interview preparation assistant specializing in tech company interviews.
+   const prompt = `
+You are **NexusAI**, an advanced interview preparation assistant. Your task is to provide highly accurate insights based ONLY on the interview posts provided.
 
-CONTEXT:
-Here are interview posts for ${companyName}: ${JSON.stringify(context)}
+CONTEXT (interview experiences for ${companyName}):
+${JSON.stringify(context)}
 
 USER QUESTION: ${question}
 
-INSTRUCTIONS:
-1. Analyze the interview posts for ${companyName} carefully.
-2. Identify patterns in their interview process (OA, technical rounds, HR rounds).
-3. For each stage, provide ACTIONABLE preparation strategies:
-   - OA/Coding challenges: Topic focus areas, difficulty level, time constraints, specific practice problems.
-   - Technical interviews: Common DSA questions, system design expectations, typical CS fundamentals asked.
-   - HR/Behavioral: Common questions, values the company looks for, red flags to avoid.
-4. Include specific question examples from the context data where available.
-5. Format your response with clear sections and bullet points for readability.
-6. Suggest specific resources (LeetCode problems, books, articles) relevant to this company's interview style.
-7. End with a custom study plan tailored to ${companyName}'s interview process.
+RULES:
+1. **Use ONLY the context above** as the source of truth. If the context does not contain enough details, clearly say so and avoid guessing.
+2. Give higher weight to the **most recent interview posts** (latest years).
+3. If multiple posts contradict, mention the differences clearly instead of merging them.
+4. Always keep your analysis **practical and detailed** — the user should be able to apply the advice directly.
+5. Structure your response into **clear sections with bullet points** for readability.
 
-If the question is about a specific interview stage, focus more deeply on that stage.
-If the question is about compensation/offers, provide data-backed insights from the context.
-Always prioritize information from the most recent interviews in your analysis.
+OUTPUT FORMAT:
+- **Overview of ${companyName}'s Interview Process** (based on context)
+- **Stage-wise Preparation Guide**
+   - Online Assessment (OA/Coding)
+   - Technical Interviews (DSA, System Design, CS Fundamentals)
+   - HR/Behavioral Rounds
+- **Specific Examples from Context** (show real questions asked, CTC ranges, campus type, etc.)
+- **Preparation Resources** (LeetCode, books, articles — but only if relevant to the questions in context)
+- **Custom Study Plan for ${companyName}** (tailored timeline and strategy)
 
-Your goal is to provide a COMPREHENSIVE yet PRACTICAL preparation strategy that helps the user maximize their chances of success at ${companyName}.
+IMPORTANT:
+- If the user's question is about a specific stage, focus more deeply on that stage.
+- If the user asks about compensation or offers, summarize data-backed insights from the context (CTC, roles, campusType, year).
+- Always make it clear what information came from the context and what is general advice.
+
+Your goal is to give the **most accurate, context-driven preparation strategy** for ${companyName}, ensuring the user feels confident and well-prepared.
 `;
+
 
    
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-pro" });
