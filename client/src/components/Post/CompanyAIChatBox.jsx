@@ -1,3 +1,4 @@
+// ...existing code...
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ReactMarkdown from "react-markdown";
@@ -7,6 +8,7 @@ const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
   const [company, setCompany] = useState(defaultCompany || "");
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
+  const [limitMsg, setLimitMsg] = useState(""); // NEW
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -17,14 +19,37 @@ const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
     if (!company || !question.trim()) return;
     setLoading(true);
     setAnswer("");
+    setLimitMsg(""); // reset
+
     try {
+      const token = localStorage.getItem("token"); // read fresh token
+      if (!token) {
+        setLimitMsg("Please log in to use the AI assistant.");
+        return;
+      }
+
       const res = await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/companies/ai-bot`,
-        { companyName: company, question: question.trim() }
+        { companyName: company, question: question.trim() },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
       );
       setAnswer(res.data?.answer || "No answer.");
-    } catch (_) {
-      setAnswer("Failed to get answer. Try again.");
+    } catch (err) {
+      if (err?.response?.status === 429) {
+        const data = err.response.data || {};
+        const resetAtIST = data.resetAtIST || err.response.headers["x-ratelimit-reset-ist"];
+        setLimitMsg(
+          data.message ||
+            `Daily AI bot limit reached (3 requests). Please try again after ${resetAtIST || "the reset time"} (IST).`
+        );
+      } else {
+        setLimitMsg("Failed to get answer. Try again.");
+      }
     } finally {
       setLoading(false);
     }
@@ -132,6 +157,13 @@ const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
         </button>
         {!company && <span className="text-sm text-red-300">Select a company to ask.</span>}
       </div>
+
+      {/* Limit/Errors */}
+      {limitMsg && (
+        <div className="mt-3 rounded-md border border-amber-600/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-300">
+          {limitMsg}
+        </div>
+      )}
 
       {/* Answer output with Markdown parsing */}
       {answer && (
