@@ -89,7 +89,7 @@ const Alumni = () => {
         },
       )
       if (!response.success) {
-        console.error("Failed to fetch Alumni Details", response.message);
+        throw new Error(`Failed to fetch Alumni Details: ${response.message}`);
       }
 
       return response.data;
