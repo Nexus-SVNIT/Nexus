@@ -10,6 +10,7 @@ import { FaFilter } from "react-icons/fa";
 import SearchBar from "../../components/Alumni/SearchBar.jsx";
 import Filters from "../../components/Alumni/AlumniFilters.jsx";
 import Loader from "../../components/Loader/Loader.jsx";
+import { getAllCompaniesAndExpertise, getAlumniDetails } from "../../services/alumniService.js";
 
 const Alumni = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -77,30 +78,21 @@ const Alumni = () => {
       company,
     ],
     queryFn: async () => {
-      try {
-        // toast.loading("Loading details...");
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/`,
-          {
-            params: {
-              page: currentPage,
-              limit: pageLimit,
-              q: debouncedSearchTerm,
-              batchFrom: batchFrom || undefined,
-              batchTo: batchTo || undefined,
-              expertise: expertise || undefined,
-              company: company || undefined,
-            },
-          },
-        );
-        if (response.status !== 200) {
-          throw new Error("Failed to fetch Alumni Details");
-        }
-
-        return response.data;
-      } catch (error) {
-        throw new Error("Failed to fetch Alumni Details");
+      const response = await getAlumniDetails({
+          page: currentPage,
+          limit: pageLimit,
+          q: debouncedSearchTerm,
+          batchFrom: batchFrom || undefined,
+          batchTo: batchTo || undefined,
+          expertise: expertise || undefined,
+          company: company || undefined,
+        },
+      )
+      if (!response.success) {
+        console.error("Failed to fetch Alumni Details", response.message);
       }
+
+      return response.data;
     },
     staleTime: 1000 * 60 * 15,
     cacheTime: 1000 * 60 * 60,
@@ -121,18 +113,12 @@ const Alumni = () => {
   useEffect(() => {
     clearFilters();
     const fetchCompanies = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/get-companies-and-expertise`,
-        );
-        if (response.status === 200) {
-          setCompanies(response.data.companies);
-          setExpertises(response.data.expertise);
-        } else {
-          console.error("Failed to fetch companies");
-        }
-      } catch (error) {
-        console.error("Error fetching companies:", error);
+      const response = await getAllCompaniesAndExpertise();
+      if (response.success) {
+        setCompanies(response.data.companies);
+        setExpertises(response.data.expertise);
+      } else {
+        console.error("Failed to fetch companies", response.message);
       }
     };
 
