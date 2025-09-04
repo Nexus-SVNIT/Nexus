@@ -1,13 +1,18 @@
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 import axios from 'axios';
+import { getCounter } from '../../services/counterService';
 
 const Counter = ({ onComplete }) => {
   const [count, setCount] = useState(0);
 
   const fetchCount = async () => {
     try {
-      const response = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL+'/counter');
+      const response = await getCounter();
+      if(!response.success) {
+        console.error('Error fetching count:', response.message);
+        return;
+      }
       setCount(response.data);
     } catch (error) {
       console.error('Error fetching count:', error);
