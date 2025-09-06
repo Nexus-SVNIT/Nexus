@@ -38,7 +38,10 @@ const getAllAlumniDetails = async (req, res) => {
 
         const total = await User.countDocuments(query);
         const alumniDetails = await User.find(query)
-            .sort({ _id: 1 })
+            .sort({ 
+                currentCompany: -1,
+                _id: 1
+             })
             .select('fullName passingYear currentDesignation currentCompany expertise linkedInProfile location')
             .skip(skip)
             .limit(limit);
