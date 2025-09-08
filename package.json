@@ -4,8 +4,10 @@
     "bcrypt": "^6.0.0",
     "dotenv": "^17.2.1",
     "googleapis": "^156.0.0",
+    "jspdf": "^3.0.2",
     "mongoose": "^8.16.5",
     "nodemailer": "^7.0.5",
-    "react-helmet-async": "^2.0.5"
+    "react-helmet-async": "^2.0.5",
+    "react-loader-spinner": "^6.1.6"
   }
 }

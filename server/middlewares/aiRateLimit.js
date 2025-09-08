@@ -5,7 +5,6 @@ const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
 function getIstDayKeyAndReset() {
   const now = Date.now();
-  // Shift to IST, then get the UTC midnight of that IST date
   const shifted = new Date(now + IST_OFFSET_MS);
   const y = shifted.getUTCFullYear();
   const m = shifted.getUTCMonth();
