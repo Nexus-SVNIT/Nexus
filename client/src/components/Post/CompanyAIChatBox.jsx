@@ -417,7 +417,7 @@ const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() =>
                       quickAsk(
-                        "What are the most frequent DSA and CS core topics in technical rounds?"
+                        "How I should prepare for technical interviews at this company?"
                       )
                     }
                     className="rounded-xl border border-purple-500/40 bg-purple-500/10 px-4 py-2 text-sm text-purple-300 hover:bg-purple-500/20 transition-all flex items-center gap-2"
