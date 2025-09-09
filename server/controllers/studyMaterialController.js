@@ -2,20 +2,26 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourceModel");
 
-
+// Get subjects list based on category (and department if Semester Exams)
 const getSubjects = async (req, res) => {
     try {
         const { category, department } = req.query;
 
         if (!category) {
-            return res.status(400).json({ message: "A category is required" });
+            return res.status(400).json({ message: "Category is required" });
         }
 
         const filter = { category };
 
-        // Only add department to filter if it's for Semester Exams
-        if (category === "Semester Exams" && department) {
+        if (category === "Semester Exams") {
+            if (!department) {
+                return res.status(400).json({ message: "Department is required for Semester Exams" });
+            }
             filter.department = department;
+        }
+
+        if (category === "Placements/Internships") {
+            filter.department = "Common"; 
         }
 
         const subjects = await Subject.find(filter).select('_id subjectName');
@@ -30,7 +36,7 @@ const getSubjects = async (req, res) => {
     }
 };
 
-
+// Get full subject details: tips + resources
 const getSubjectDetails = async (req, res) => {
     try {
         const { id } = req.params;
@@ -43,16 +49,24 @@ const getSubjectDetails = async (req, res) => {
             .select('subjectName tips resources')
             .populate({
                 path: 'resources',
-                select: 'title link subCategory resourceType' 
+                select: 'title link subCategory resourceType'
             });
 
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }
 
+        
+        const formattedSubject = {
+            _id: subject._id,
+            subjectName: subject.subjectName,
+            tips: subject.tips.map(t => t.text),
+            resources: subject.resources
+        };
+
         res.status(200).json({
             message: "Subject details fetched successfully",
-            data: subject
+            data: formattedSubject
         });
 
     } catch (error) {
@@ -65,3 +79,4 @@ module.exports = {
     getSubjects,
     getSubjectDetails
 };
+
