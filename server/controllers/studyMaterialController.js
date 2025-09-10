@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
-const Resource = require("../models/resourceModel");
+const Resource = require("../models/resourcesModel");
 
 // Get subjects list based on category (and department if Semester Exams)
 const getSubjects = async (req, res) => {
