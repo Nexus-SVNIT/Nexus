@@ -37,11 +37,26 @@ const getAllAlumniDetails = async (req, res) => {
         }
 
         const total = await User.countDocuments(query);
-        const alumniDetails = await User.find(query)
-            .sort({ _id: 1 })
-            .select('fullName passingYear currentDesignation currentCompany expertise linkedInProfile location')
-            .skip(skip)
-            .limit(limit);
+        const alumniDetails = await User.aggregate([
+            { $match: query },
+            {
+                $addFields: {
+                    hasCompany: { $cond: [{$eq: ["$currentCompany", ""]}, 0, 1] }
+                }
+            },
+            { $sort: { hasCompany: -1, currentCompany: 1, _id: 1 } },
+            { $project: { fullName: 1, passingYear: 1, currentDesignation: 1, currentCompany: 1, expertise: 1, linkedInProfile: 1 } },
+            { $skip: skip },
+            { $limit: limit },
+        ])
+        // const alumniDetails = await User.find(query)
+        //     .sort({ 
+        //         currentCompany: -1,
+        //         _id: 1
+        //      })
+        //     .select('fullName passingYear currentDesignation currentCompany expertise linkedInProfile location')
+        //     .skip(skip)
+        //     .limit(limit);
 
         return res.status(200).json({
             data: alumniDetails,
