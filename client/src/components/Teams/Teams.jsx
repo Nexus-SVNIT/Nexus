@@ -31,13 +31,14 @@ const Teams = () => {
           `${process.env.REACT_APP_BACKEND_BASE_URL}/team/unique-years`,
         );
         setYears(response.data.years); // Assuming 'years' is returned in the API response
-        setSelectedYear(response.data.years[0]); // Default to the first available year
+        // setSelectedYear(response.data.years[response.data.years.length - 1]); // Default to the first available year
         if (searchParams.has("year")) {
           setSelectedYear(searchParams.get("year"));
         } else {
-          setSelectedYear(response.data.years[0]);
+          console.log(response.data.years);
+          setSelectedYear(response.data.years[response.data.years.length - 1]);
           setSearchParams((prev) => {
-            prev.set("year", response.data.years[0]);
+            prev.set("year", response.data.years[response.data.years.length - 1]);
             return prev;
           });
         }
