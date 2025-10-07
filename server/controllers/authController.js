@@ -76,7 +76,7 @@ const verifyLogin = async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.SECRET || 'fallback_secret_key'); // Use your secret key here
-        return res.status(201).json({ message: 'Token is valid', decoded });
+        return res.status(200).json({ message: 'Token is valid', decoded });
     } catch (error) {
         res.status(401).json({ message: 'Token is not valid' });
     }
