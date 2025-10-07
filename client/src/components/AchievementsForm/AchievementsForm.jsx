@@ -6,6 +6,7 @@ import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
 import { addAchievement } from "../../services/achievementService";
+import { useUser } from "../../context/userContext";
 
 const AchievementsForm = () => {
   const [open, setOpen] = useState(false);
@@ -16,13 +17,13 @@ const AchievementsForm = () => {
     image: null,
   });
   const [image, setImage] = useState(null);
-  const token = localStorage.getItem("token");
+  const { user } = useUser();
 
   useEffect(()=>{
     increamentCounter();
   })
 
-  if(!token) {
+  if(!user) {
     toast.error("You need to login first!", { id: "loginToast" });
     toast.loading("Redirecting to login page...", { id: "a" });
     setTimeout(() => {

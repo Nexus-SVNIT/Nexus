@@ -8,9 +8,10 @@ import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 import PostProfile from "./PostProfile"; // Assuming you have a PostProfile component
 import { Navigate } from "react-router-dom"; // Importing for routing, if needed
+import { useUser } from "../../context/userContext";
 
 const ProfilePage = () => {
-  const token = localStorage.getItem("token");
+  const { user } = useUser();
   
   const [profile, setProfile] = useState({
     fullName: "",
@@ -36,7 +37,7 @@ const ProfilePage = () => {
     return <MaintenancePage />;
   }
 
-  if(!token) {
+  if(!user) {
     return <Navigate to={`/login?redirect_to=${encodeURIComponent(window.location.pathname)}`} replace />;
   }
 

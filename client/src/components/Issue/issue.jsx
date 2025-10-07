@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useUser } from "../../context/userContext";
 
 const IssueModal = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
@@ -11,9 +12,9 @@ const IssueModal = ({ isOpen, onClose }) => {
     setLoading(true);
     setError("");
 
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
+    const { user } = useUser()
 
-    if (!token) {
+    if (!user) {
       setError("You must be logged in to submit an issue.");
       setLoading(false);
       return;
