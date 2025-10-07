@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
 import axios from 'axios';
-import { getCounter } from '../../services/counterService';
+import { getCounter, incrementCounter } from '../../services/counterService';
 
 const Counter = ({ onComplete }) => {
   const [count, setCount] = useState(0);
@@ -21,7 +21,11 @@ const Counter = ({ onComplete }) => {
 
   const incrementCount = async () => {
     try {
-      const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL+'/counter/increment');
+      const response = await incrementCounter();
+      if(!response.success) {
+        console.error('Error incrementing count:', response.message);
+        return;
+      }
       setCount(response.data);
     } catch (error) {
       console.error('Error incrementing count:', error);
