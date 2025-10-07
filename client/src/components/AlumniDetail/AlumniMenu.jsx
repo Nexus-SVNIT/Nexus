@@ -4,7 +4,6 @@ import Loader from '../Loader/Loader';
 import { Link } from 'react-router-dom';
 import Modal from '@mui/joy/Modal/Modal';
 import { toast } from 'react-hot-toast'; // Import toast
-import { addAlumniDetails } from '../../services/alumniService';
 
 const AlumniMenu = () => {
   const [open, setOpen] = useState(false);
@@ -54,9 +53,27 @@ const AlumniMenu = () => {
 
   const mutation = useMutation({
     mutationFn: async (formData) => {
-      const response = await addAlumniDetails(formData);
-      if (!response.success) {
-        throw new Error(`Failed to submit alumni details: ${response.message}`);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/add`,
+        {
+          method: "POST",
+          body: formData,
+          headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+        },
+        
+
+      );
+      if (!response.ok) {
+        let errorMessage = 'Something went wrong';
+        try {
+          const errorData = await response.json();
+          errorMessage = errorData.message || errorMessage;
+        } catch (error) {
+          errorMessage = response.statusText || errorMessage;
+        }
+        throw new Error(errorMessage);
       }
       return response.json();
     },

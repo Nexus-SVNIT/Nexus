@@ -8,7 +8,6 @@ import Title from "../Title/Title";
 import AchievementCard from "./AchievementCard";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from '../Error/MaintenancePage';
-import { getAchivements } from "../../services/achievementService";
 
 const Achievements = () => {
   const [open, setOpen] = useState(false);
@@ -23,13 +22,10 @@ const Achievements = () => {
     data: achievements,
   } = useQuery({
     queryKey: ["achievementsData"],
-    queryFn: async () => {
-      const response = await getAchivements();
-      if (!response.success) {
-        throw new Error(`Failed to fetch achievements: ${response.message}`);
-      }
-      return response.data;
-    },
+    queryFn: () =>
+      fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/`).then(
+        (res) => res.json(),
+      ),
   });
   if (error) {
     return <MaintenancePage />;

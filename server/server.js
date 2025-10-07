@@ -24,8 +24,6 @@ const commentRoutes=require("./routes/commentRoutes.js");
 const answerRoutes=require("./routes/answerRoutes.js");
 const contributorsRoute=require("./routes/contributorsRoute.js");
 const rateLimit = require('express-rate-limit');
-const studyMaterialRoutes = require('./routes/studyMaterialRoutes.js')
-
 
 const app = express()
 const PORT = process.env.PORT
@@ -75,17 +73,13 @@ app.use('/questions', questionRoutes);
 app.use('/questions', answerRoutes);
 app.use('/comments', commentRoutes);
 app.use('/contributors', contributorsRoute);
-app.use('/study-material', studyMaterialRoutes);
-
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         app.listen(PORT, (req, res) => {
-            console.log(`Server is running on port ${PORT}`);
         })
     })
     .catch((err) => {
-        console.error("Database connection error:", err);
     })
 
 app.all('*', (req, res, next) => {

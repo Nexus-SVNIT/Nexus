@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { createForm } from "../../services/formService";
 
 const CreateForm = () => {
+  const token = localStorage.getItem("core-token");
   const [formData, setFormData] = useState({
     name: "",
     desc: "",
@@ -112,9 +112,19 @@ const CreateForm = () => {
 
     const toastId = toast.loading("Creating form...");
     try {
-      const response = await createForm(formObject);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/create`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formObject),
+        },
+      );
 
-      if (response.success) {
+      if (response.ok) {
         toast.success("Form created successfully", { id: toastId });
         setFormData({ name: "", desc: "", deadline: "", WaLink: "" });
         setQuestions([]);

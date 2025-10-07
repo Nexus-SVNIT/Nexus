@@ -7,7 +7,6 @@ import { FaPenToSquare } from "react-icons/fa6";
 import { FaFilter, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
-import CompanyAIChatBox from "./CompanyAIChatBox";
 import HeadTags from "../HeadTags/HeadTags";
 
 const InterviewExperiencePage = () => {
@@ -408,8 +407,6 @@ const InterviewExperiencePage = () => {
           </div>
         </div>
       )}
-     <CompanyAIChatBox companies={companies} defaultCompany={formState.companyFilter} /> 
-     <br/>
 
       {/* Posts Grid */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">

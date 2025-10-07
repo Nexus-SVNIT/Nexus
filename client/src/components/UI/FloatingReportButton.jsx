@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useUser } from "../../context/userContext"
 
 const categories = [
   "Website or Tech issue/bug",
@@ -23,9 +24,7 @@ export default function FloatingReportButton() {
   const [error, setError] = useState("")
   const [image, setImage] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
-
-  // Check if user is authenticated
-  const isAuthenticated = !!localStorage.getItem("token")
+  const { user } = useUser();
 
   const handleImageChange = (e) => {
     const file = e.target.files?.[0]
@@ -50,7 +49,7 @@ export default function FloatingReportButton() {
     setSuccess(false)
     
     // Validate contact details for anonymous users
-    if (!isAuthenticated) {
+    if (!user) {
       if (!contactEmail.trim()) {
         setError("Email is required for anonymous users")
         setSubmitting(false)
@@ -71,7 +70,7 @@ export default function FloatingReportButton() {
       formData.append('description', description);
       
       // Only add contact details if user is not authenticated
-      if (!isAuthenticated) {
+      if (!user) {
         formData.append('contactEmail', contactEmail);
         formData.append('contactName', contactName);
       }
@@ -229,7 +228,7 @@ export default function FloatingReportButton() {
                 </div>
                 
                 {/* Contact Information - Only show for anonymous users */}
-                {!isAuthenticated && (
+                {!user && (
                   <div className="mb-4">
                     <label className="block mb-1 text-sm font-medium text-gray-700">
                       Contact Information <span className="text-red-500">*</span>

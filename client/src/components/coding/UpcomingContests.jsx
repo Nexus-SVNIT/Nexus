@@ -1,6 +1,5 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { getContests } from "../../services/codingService";
 
 const UpcomingContests = () => {
   const [contests, setContests] = useState([]);
@@ -22,19 +21,14 @@ const UpcomingContests = () => {
           return;
         }
 
-        const response = await getContests();
-        if (!response.success) {
-          console.error("Failed to fetch contests:", response.message);
-        } else {
-          const data = response.data;
-          let contestsArray = [];
-          if (data && data.success !== false && Array.isArray(data.data)) {
-            contestsArray = data.data;
-          }
-          setContests(contestsArray);
-          localStorage.setItem('upcoming-contests', JSON.stringify({ data: contestsArray, lastUpdated: new Date() }));
+        const response = await axios.get(`${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/contests`);
+        const data = response.data;
+        let contestsArray = [];
+        if (data && data.success !== false && Array.isArray(data.data)) {
+          contestsArray = data.data;
         }
-        setLoading(false);
+        setContests(contestsArray);
+        localStorage.setItem('upcoming-contests', JSON.stringify({ data: contestsArray, lastUpdated: new Date() }));
       } catch (error) {
         console.error("Error fetching contests:", error);
       } finally {
