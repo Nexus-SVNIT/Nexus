@@ -7,7 +7,6 @@ import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import Modal from "./Modal";
-import { getEventsByYear, getUniqueEventYears } from "../../services/eventService";
 
 const Events = () => {
   const [selectedYear, setSelectedYear] = useState("");
@@ -26,11 +25,9 @@ const Events = () => {
   useEffect(() => {
     const fetchYears = async () => {
       try {
-        const response = await getUniqueEventYears();
-        if(!response.success) {
-          console.error('Error fetching years:', response.message);
-          return;
-        }
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/event/unique-years`,
+        );
         setYears(response.data.years); // Assuming 'years' is returned in the API response
         setSelectedYear(response.data.years[0]); // Default to the first available year
         // if (searchParams.has("year")) {
@@ -56,13 +53,12 @@ const Events = () => {
   useEffect(() => {
     if(!selectedYear) return;
     const fetchData = async () => {
+      const url = `${process.env.REACT_APP_BACKEND_BASE_URL}/event/${selectedYear}`;
       try {
-        const response = await getEventsByYear(selectedYear);
+        const response = await fetch(url);
 
-        if (!response.success) {
-          console.error("Error fetching events:", response.message);
-          setLoading(false);
-          return;
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
         }
 
         const result = await response.json();

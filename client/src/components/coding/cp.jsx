@@ -14,7 +14,6 @@ import PlateformButtons from "./PlateformButtons";
 import axios from "axios";
 import SortableTable from "./SortedTable";
 import RatingLegend from "./RatingLegend";
-import { getProfiles } from "../../services/codingService";
 
 const Cp = () => {
   // Add new state for rank display preference
@@ -64,10 +63,12 @@ const Cp = () => {
         }
 
         // Make the API call
-        const response = await getProfiles(params);
+        const response = await axios.get(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profiles?${params.toString()}`,
+        );
 
-        if (!response.success) {
-          throw new Error(response.message || "Failed to fetch data");
+        if (!response.data.success) {
+          throw new Error(response.data.message || "Failed to fetch data");
         }
 
         const { data, totalProfiles } = response.data;

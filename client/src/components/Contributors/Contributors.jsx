@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { FaGithub } from 'react-icons/fa';
-import { getContributors } from '../../services/contributorService';
 
 const Contributors = () => {
     const [contributorsByYear, setContributorsByYear] = useState({});
@@ -10,22 +9,18 @@ const Contributors = () => {
     useEffect(() => {
         const fetchContributors = async () => {
             try {
-                const response = await getContributors();
-
-                if(!response.success) {
-                    console.error('Error fetching contributors:', response.message);
-                    return;
-                }
+                const response = await axios.get(
+                    `${process.env.REACT_APP_BACKEND_BASE_URL}/contributors/get`
+                );
                 setContributorsByYear(response.data);
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching contributors:', error);
+                setLoading(false);
             }
         };
 
-        fetchContributors().catch((error) => {
-            console.error('Error fetching contributors:', error);
-        });
+        fetchContributors();
     }, []);
 
     if (loading) {
