@@ -21,7 +21,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
           className="-z-10 flex h-full w-full cursor-pointer object-cover object-top transition-all duration-300 hover:scale-110"
         />
       </figure>
-      <div className="mt-[15.5rem] px-5 py-4">
+      <div className="mt-[15.5rem] w-full px-5 py-4">
         <div className="mb-2 flex gap-2">
           {isFaculty ? (
             <>
@@ -56,7 +56,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
           )}
         </div>
         <h3 className="mb-0.5 text-xl font-bold">{profile?.name}</h3>
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between">
           <h4 className="text-red-600">{profile?.role}</h4>
           {profile?.email && (
             <a href={`mailto:${profile.email}`}>
