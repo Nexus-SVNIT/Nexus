@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast"; // Import the toast functionality
 import increamentCounter from "../../libs/increamentCounter";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
+import UserContext from "../../context/userContext";
 
 const LoginForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const {setUser} = useContext(UserContext);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ const LoginForm = () => {
 
       // Handle success (e.g., store JWT token, redirect, etc.)
       localStorage.setItem("token", response.data.token);
+      setUser({ ...response.data.user });
 
       // Redirect user after a short delay
       setTimeout(() => {

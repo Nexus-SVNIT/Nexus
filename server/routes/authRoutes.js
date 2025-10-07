@@ -8,13 +8,15 @@ const {
     resetPassword,
     verifyAlumniEmail,
     verifyEmail,
-    verifyPasswordResetEmail
+    verifyPasswordResetEmail,
+    verifyLogin
 } = require('../controllers/authController.js')
 
 // Auth
 router.post('/login', loginUser);
 router.post('/signup', signupUser);
 router.get('/verify/:token', verifyEmail);
+router.post('/verify-login', verifyLogin);
 
 // Alumni
 router.post('/alumni/signup', signUpAlumni)

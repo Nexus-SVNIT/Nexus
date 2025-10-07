@@ -21,19 +21,22 @@ import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEma
 import AlumniSignUpForm from "./components/AlumniSignUpForm/AlumniSignUpForm";
 import FloatingReportButton from './components/UI/FloatingReportButton';
 import VerifyAlumniEmail from "./components/VerifyEmail/VerifyAlumniEmail";
+import { UserContextProvider } from "./context/userContext";
+import { CounterProvider } from "./context/CounterContext";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
 const token = localStorage.getItem("token");
 
 function App() {
- 
+
   return (
-    <>
-      <QueryClientProvider client={queryClient}>
-        <Router>
-          <Routes>
-            {token ? (
+    <UserContextProvider>
+      <CounterProvider>
+        <QueryClientProvider client={queryClient}>
+          <Router>
+            <Routes>
+              {token ? (
               <>
                 <Route path="/login" element={<Navigate to={"/"}></Navigate>} />
                 <Route
@@ -79,10 +82,10 @@ function App() {
           </Routes>
           <Toaster />
         </Router>
-      </QueryClientProvider>
-      <FloatingReportButton />
-      
-    </>
+        </QueryClientProvider>
+        <FloatingReportButton />
+      </CounterProvider>
+    </UserContextProvider>
   );
 }
 
