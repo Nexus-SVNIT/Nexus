@@ -15,7 +15,7 @@ const Contributors = () => {
                 if(!response.success) {
                     console.error('Error fetching contributors:', response.message);
                 }
-                setContributorsByYear(response.data);
+                setContributorsByYear(response.data || {});
                 setLoading(false);
             } catch (error) {
                 console.error('Error fetching contributors:', error);

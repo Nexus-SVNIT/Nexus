@@ -13,7 +13,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
     : `https://lh3.googleusercontent.com/d/${profile.image}`;
 
   return (
-    <div className="relative h-[23rem] w-[18rem] flex-wrap overflow-hidden rounded-lg bg-white text-black shadow-lg transition-all hover:shadow-xl md:w-[16rem]">
+    <div className="relative inline-flex w-[18rem] flex-wrap overflow-hidden rounded-lg bg-white text-black shadow-lg transition-all hover:shadow-xl md:w-[16rem]">
       <figure className="absolute -left-[5%] top-0 h-[16rem] w-[20rem] overflow-hidden rounded-b-[50%] border-b-8 border-red-400 bg-red-500/20 md:h-[16rem] md:w-[18rem]">
         <img
           src={imageUrl}
