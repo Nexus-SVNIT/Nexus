@@ -70,8 +70,6 @@ const loginUser = async (req, res) => {
 
 const verifyLogin = async (req, res) => {
     const token = req.headers.authorization?.split(' ')[1]; // Bearer token
-    const user = null
-
     if (!token) {
         return res.status(401).json({ message: 'No token provided, authorization denied' });
     }
