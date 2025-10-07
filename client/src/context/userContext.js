@@ -6,7 +6,6 @@ const UserContext = createContext();
 export const UserContextProvider = ({ children }) => {
     const {pathname} = useLocation();
     const navigate = useNavigate();
-    const token = localStorage.getItem("token");
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -22,7 +21,6 @@ export const UserContextProvider = ({ children }) => {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ token })
                 });
                 const data = await response.json();
                 setUser(data.decoded);

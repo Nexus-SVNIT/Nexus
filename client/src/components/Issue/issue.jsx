@@ -6,13 +6,12 @@ const IssueModal = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useUser()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
-
-    const { user } = useUser()
 
     if (!user) {
       setError("You must be logged in to submit an issue.");

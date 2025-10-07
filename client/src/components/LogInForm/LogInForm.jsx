@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Toaster, toast } from "react-hot-toast"; // Import the toast functionality
 import increamentCounter from "../../libs/increamentCounter";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
-import UserContext, { useUser } from "../../context/userContext";
+import { useUser } from "../../context/userContext";
 
 const LoginForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState("");
