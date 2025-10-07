@@ -5,6 +5,8 @@ import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
 import { FaInfoCircle } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { getCompanies } from "../../services/companiesService";
+import { postAlumni } from "../../services/alumniService";
 
 function AlumniSignUpForm() {
   const [formData, setFormData] = useState({
@@ -43,15 +45,13 @@ function AlumniSignUpForm() {
   useEffect(() => {
     const fetchCompanies = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/companies`,
-        );
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
+        const response = await getCompanies();
 
-        setCompanies(data.map((company) => company.name));
+        if (response.success) {
+          setCompanies(response.data.map((company) => company.name));
+        } else {
+          console.error("Error fetching companies:", response.error);
+        } 
       } catch (error) {
         console.error("Error fetching companies:", error);
       }
@@ -188,37 +188,20 @@ function AlumniSignUpForm() {
 
     if (!validateForm()) return;
 
-    try {
-      const toastId = toast.loading("Signing up...");
-      const res = await fetch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/alumni/signup`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(dataTosend),
-        },
+    const toastId = toast.loading("Signing up...");
+    const response = await postAlumni(dataTosend);     
+    if (response.success) {
+      toast.success(
+        "Sign up successful! Please check your personal email to verify your account.",
+        { id: toastId },
       );
-
-     
-      const result = await res.json();
-      if (res.ok) {
-        toast.success(
-          "Sign up successful! Please check your personal email to verify your account.",
-          { id: toastId },
-        );
-        localStorage.removeItem("alumniSignupFormData");
-        setTimeout(() => {
-          window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`;
-        }, 2000);
-      } else {
-        toast.error(result.message || "Sign up failed", { id: toastId });
-      }
-    } catch (error) {
+      localStorage.removeItem("alumniSignupFormData");
+      setTimeout(() => {
+        window.location.href = `/login?redirect_to=${encodeURIComponent(window.location.pathname)}`;
+      }, 2000);
+    } else {
       toast.remove();
-      toast.error("Error signing up");
+      toast.error(`Error signing up ${response.message}`, { id: toastId });
     }
   };
 

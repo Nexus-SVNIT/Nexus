@@ -9,6 +9,7 @@ import Error from "../Error/Error";
 import { useQuery } from "@tanstack/react-query";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
+import { getAllAlumni } from "../../services/alumniService";
 
 const AlumniNetwork = () => {
   const {
@@ -19,13 +20,11 @@ const AlumniNetwork = () => {
     queryKey: ["alumniDetails"],
     queryFn: async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/alumni/`,
-        );
-        if (!response.ok) {
-          throw new Error("Failed to fetch Alumni Details");
+        const response = await getAllAlumni();
+        if (!response.success) {
+          throw new Error(`Failed to fetch Alumni Details ${response.message}`);
         }
-        return response.json();
+        return response.data;
       } catch (error) {
         throw new Error("Failed to fetch Alumni Details");
       }
