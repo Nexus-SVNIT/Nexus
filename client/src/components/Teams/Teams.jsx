@@ -35,7 +35,6 @@ const Teams = () => {
         if (searchParams.has("year")) {
           setSelectedYear(searchParams.get("year"));
         } else {
-          console.log(response.data.years);
           setSelectedYear(response.data.years[response.data.years.length - 1]);
           setSearchParams((prev) => {
             prev.set("year", response.data.years[response.data.years.length - 1]);
