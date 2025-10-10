@@ -1,19 +1,19 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useUser } from "../../context/userContext";
 
 const IssueModal = ({ isOpen, onClose }) => {
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useUser()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    const token = localStorage.getItem("token"); // Retrieve token from local storage
-
-    if (!token) {
+    if (!user) {
       setError("You must be logged in to submit an issue.");
       setLoading(false);
       return;

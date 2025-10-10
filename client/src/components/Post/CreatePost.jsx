@@ -7,6 +7,7 @@ import "react-quill/dist/quill.snow.css";
 import "./CreatePost.css";
 import PostDetailWrapper from "./PostDetailWrapper";
 import increamentCounter from "../../libs/increamentCounter";
+import { useUser } from "../../context/userContext";
 
 const modules = {
   toolbar: [
@@ -116,10 +117,11 @@ const CreatePost = () => {
 
   const [companies, setCompanies] = useState([]);
   const token = localStorage.getItem("token");
+  const { user } = useUser();
 
   useEffect(() => {
     const checkAuth = () => {
-      if (!token) {
+      if (!user) {
         toast.error("Please login to view this page");
         navigate("/login");
         return false;

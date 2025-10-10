@@ -1,32 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useContext, useEffect } from 'react';
 import CountUp from 'react-countup';
-import axios from 'axios';
+import { CounterContext } from '../../context/CounterContext';
 
 const Counter = ({ onComplete }) => {
-  const [count, setCount] = useState(0);
-
-  const fetchCount = async () => {
-    try {
-      const response = await axios.get(process.env.REACT_APP_BACKEND_BASE_URL+'/counter');
-      setCount(response.data);
-    } catch (error) {
-      console.error('Error fetching count:', error);
-    }
-  };
-
-  const incrementCount = async () => {
-    try {
-      const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL+'/counter/increment');
-      setCount(response.data);
-    } catch (error) {
-      console.error('Error incrementing count:', error);
-    }
-  };
-
-  useEffect(() => {
-    incrementCount();
-    fetchCount();
-  }, []);
+  const { count } = useContext(CounterContext);
 
   return (
     <div className="flex justify-center items-center min-h-[200px] p-8">
