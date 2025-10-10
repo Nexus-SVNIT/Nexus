@@ -16,15 +16,12 @@ export const CounterProvider = ({ children }) => {
     };
 
     const incrementCount = async () => {
-        if (process.env.REACT_APP_ENV !== 'prod') {
-            try {
-                const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL + '/counter/increment');
-                setCount(response.data);
-            } catch (error) {
-                console.error('Error incrementing count:', error);
-            }
-        } else {
-            fetchCount();
+        try {
+            const response = await axios.post(process.env.REACT_APP_BACKEND_BASE_URL + '/counter/increment');
+            setCount(response.data);
+        } catch (error) {
+            console.error('Error incrementing count:', error);
+            fetchCount(); // Fallback to fetch current count on error
         }
     };
 
