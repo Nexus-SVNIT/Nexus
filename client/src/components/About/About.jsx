@@ -4,9 +4,10 @@ import { GoGoal } from "react-icons/go";
 import { Link } from "react-router-dom";
 import NexusLogo from "../../data/images/nexus.png";
 import SVNITLogo from "../../data/images/svnit.svg";
+import Brochure from "../../data/gmc-sponsorship.pdf";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
-import Contributors from "../Contributors/Contributors";
+import PDFViewer from "../PDFViewer/PDFViewer";
 
 const About = () => {
   useEffect(() => {
@@ -117,6 +118,8 @@ const About = () => {
       {/* <div className="p-6">
         <Contributors />
       </div> */}
+
+      <PDFViewer pdf={Brochure}/>
     </div>
   );
 };
