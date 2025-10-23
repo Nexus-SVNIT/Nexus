@@ -67,6 +67,8 @@ function AlumniSignUpForm() {
       case "expertise":
       case "fullName":
       case "password":
+      case "currentCompany":
+      case "currentDesignation":
         value = e.target.value;
         break;
       case "admissionNumber":
@@ -104,6 +106,10 @@ function AlumniSignUpForm() {
 
     if (!fullName) {
       toast.error("Full Name is required");
+      return false;
+    }
+    if (!fullName.match(/^[a-zA-Z ]*$/)){
+      toast.error("Full Name must have letters and spaces only");
       return false;
     }
     if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
