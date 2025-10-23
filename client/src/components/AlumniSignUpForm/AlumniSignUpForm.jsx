@@ -63,11 +63,24 @@ function AlumniSignUpForm() {
   const handleChange = (e) => {
     let value;
 
+    const nameToValue = () => {
+      if(e.target.value.length === 0) return "";
+      if(e.target.value.length === 1) return e.target.value.toUpperCase().trim();
+      if(e.target.value.charAt(e.target.value.length - 1) === ' ') return e.target.value.trim() + ' ';
+      if(e.target.value.charAt(e.target.value.length - 2) === ' ') return e.target.value.slice(0,e.target.value.length - 2).trim() + ' ' + e.target.value.charAt(e.target.value.length - 1).toUpperCase();
+      return e.target.value.trim();
+    };
+
     switch (e.target.name) {
       case "expertise":
-      case "fullName":
+      // case "fullName":
+      case "currentCompany":
+      case "currentDesignation":
       case "password":
         value = e.target.value;
+        break;
+      case "fullName":
+        value = nameToValue(e);
         break;
       case "admissionNumber":
         value = e.target.value.toUpperCase().trim();
