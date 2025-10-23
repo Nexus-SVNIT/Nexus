@@ -43,9 +43,9 @@ const getTeamMembersByYear = async (req, res) => {
 const getUniqueYears = async (req, res) => {
     try {
         // Fetch unique years from the teamMembers collection
-        const uniqueYears = await teamMembersModel.distinct("year");
+        const uniqueYears = (await teamMembersModel.distinct("year")).toSorted();
         if (!uniqueYears || uniqueYears.length === 0) {
-            return res.status(200).json({ years: ['2024-2025'], message: "No years found" });
+            return res.status(200).json({ years: ['2025-2026'], message: "No years found" });
         }
 
         res.status(200).json({ years: uniqueYears });
