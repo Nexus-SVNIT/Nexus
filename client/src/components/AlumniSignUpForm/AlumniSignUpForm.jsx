@@ -206,7 +206,7 @@ function AlumniSignUpForm() {
       ...formData,
       fullName: formData.fullName.trim(),
       expertise: formData.expertise.split(",").map((exp) => exp.trim()),
-      branch: formData.admissionNumber.slice(1,3) === "AI" ? "AI" : "CSE"
+      branch: formData.admissionNumber.slice(3,5) === "AI" ? "AI" : "CSE"
     }
 
     if (!validateForm()) return;
