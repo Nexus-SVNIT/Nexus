@@ -12,7 +12,7 @@ import EditPost from '../components/Post/EditPost.jsx'
 import AlumniSignUpForm from '../components/AlumniSignUpForm/AlumniSignUpForm.jsx'
 import Alumni from '../pages/Alumni/Alumni.jsx'
 
-// Import new pages
+
 import StudyMaterialPage from '../pages/StudyMaterial/SubjectMaterialPage.jsx'
 import SubjectDetailPage from '../pages/StudyMaterial/SubjectDetailPage.jsx'
 
