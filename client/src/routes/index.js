@@ -19,6 +19,8 @@ import EditPost from '../components/Post/EditPost.jsx'
 import AlumniSignUpForm from '../components/AlumniSignUpForm/AlumniSignUpForm.jsx'
 
 import Alumni from '../pages/Alumni/Alumni.jsx'
+import StudyMaterialPage from '../pages/StudyMaterial/studyMaterialPage.jsx'
+import SubjectDetailPage from '../pages/StudyMaterial/SubjectDetailPage.jsx'
 
 export const DefaultRoutes = [
   {
@@ -61,6 +63,18 @@ export const DefaultRoutes = [
     path: 'about',
     title: 'About',
     component: About
+  },
+
+  {
+    path: 'study-material',
+    title: 'Study Material',
+    component: StudyMaterialPage
+  },
+
+  {
+    path: 'study-material/:id',
+    title: 'Study Material Detail',
+    component: SubjectDetailPage
   },
 
   {
