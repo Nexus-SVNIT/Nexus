@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { apiFetch } from '../../utils/api'
 
 const categories = ['Semester Exams', 'Placements/Internships']
 const departments = ['CSE', 'AI', 'ECE', 'ME']
@@ -24,7 +25,7 @@ export default function StudyMaterialPage() {
       params.append('category', category)
       if (category === 'Semester Exams') params.append('department', department)
 
-      const res = await fetch(`/study-material/subjects?${params.toString()}`)
+      const res = await apiFetch(`/study-material/subjects?${params.toString()}`)
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err.message || 'Failed to fetch subjects')
@@ -40,13 +41,17 @@ export default function StudyMaterialPage() {
   }
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Study Material</h2>
+    <div className="p-6">
+      <h2 className="text-2xl font-semibold">Study Material</h2>
 
-      <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginTop: 12 }}>
-        <div>
-          <label style={{ display: 'block', fontSize: 12 }}>Category</label>
-          <select value={category} onChange={e => setCategory(e.target.value)}>
+      <div className="flex flex-wrap gap-4 items-center mt-4">
+        <div className="flex flex-col">
+          <label className="text-sm mb-1">Category</label>
+          <select
+            value={category}
+            onChange={e => setCategory(e.target.value)}
+            className="px-3 py-2 rounded border"
+          >
             {categories.map(c => (
               <option key={c} value={c}>
                 {c}
@@ -55,12 +60,13 @@ export default function StudyMaterialPage() {
           </select>
         </div>
 
-        <div>
-          <label style={{ display: 'block', fontSize: 12 }}>Department</label>
+        <div className="flex flex-col">
+          <label className="text-sm mb-1">Department</label>
           <select
             value={department}
             onChange={e => setDepartment(e.target.value)}
             disabled={category === 'Placements/Internships'}
+            className="px-3 py-2 rounded border disabled:opacity-50"
           >
             {departments.map(d => (
               <option key={d} value={d}>
@@ -71,23 +77,23 @@ export default function StudyMaterialPage() {
         </div>
       </div>
 
-      <div style={{ marginTop: 20 }}>
-        {loading && <div>Loading subjects…</div>}
-        {error && <div style={{ color: 'red' }}>{error}</div>}
+      <div className="mt-6">
+        {loading && <div className="text-sm text-gray-600">Loading subjects…</div>}
+        {error && <div className="text-sm text-red-600">{error}</div>}
 
         {!loading && !error && (
           <div>
             {subjects.length === 0 ? (
-              <div>No subjects found.</div>
+              <div className="text-sm text-gray-600">No subjects found.</div>
             ) : (
-              <ul style={{ listStyle: 'none', padding: 0 }}>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 list-none p-0">
                 {subjects.map(s => (
                   <li
                     key={s._id}
-                    style={{ padding: 12, border: '1px solid #eee', marginBottom: 8, borderRadius: 6 }}
+                    className="p-4 border rounded-lg shadow-sm hover:shadow-md transition-shadow bg-white"
                   >
-                    <Link to={`/study-material/${s._id}`} style={{ textDecoration: 'none' }}>
-                      <strong>{s.subjectName}</strong>
+                    <Link to={`/study-material/${s._id}`} className="no-underline text-gray-900">
+                      <strong className="text-lg">{s.subjectName}</strong>
                     </Link>
                   </li>
                 ))}
