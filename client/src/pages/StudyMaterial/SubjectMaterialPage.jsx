@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link } from 'react-router-dom';
-import { apiService } from '../services/apiService';
-import Loader from '../components/Loader/Loader';
-import { Title } from '../components';
+import { apiService } from '../../services/apiService';
+import Loader from '../../components/Loader/Loader';
+import { Title } from '../../components';
 
 // API function to fetch subjects
 const fetchSubjects = async (category, department) => {
@@ -13,7 +13,7 @@ const fetchSubjects = async (category, department) => {
   return data.data; 
 };
 
-const StudyMaterialPage = () => {
+const SubjectMaterialPage = () => {
   const [category, setCategory] = useState('Semester Exams');
   const [department, setDepartment] = useState('CSE');
 
