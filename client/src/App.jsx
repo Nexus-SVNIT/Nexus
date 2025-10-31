@@ -13,8 +13,8 @@ import {  DefaultRoutes } from "./routes";
 import LoginForm from "./components/LogInForm/LogInForm";
 import SignUpForm from "./components/SignUpForm/SignUpForm";
 import VerifyEmail from "./components/VerifyEmail/VerifyEmail";
-import StudyMaterialPage from '../pages/StudyMaterial/StudyMaterialPage.jsx'
-import SubjectDetailPage from '../pages/StudyMaterial/SubjectDetailPage.jsx'
+
+
 import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEmail";
 
 
