@@ -36,7 +36,7 @@ const getSubjects = async (req, res) => {
     }
 };
 
-// Get full subject details: tips + resources
+// Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
         const { id } = req.params;
@@ -56,12 +56,32 @@ const getSubjectDetails = async (req, res) => {
             return res.status(404).json({ message: "Subject not found" });
         }
 
+        // Get all possible subCategories from your schema
+        const allSubCategories = Resource.schema.path('subCategory').enumValues;
+
+        // Create a base object with all categories as empty arrays
+        const baseGroups = allSubCategories.reduce((acc, category) => {
+            acc[category] = [];
+            return acc;
+        }, {});
+
+        // Group the populated resources into the base object
+        const groupedResources = subject.resources.reduce((acc, resource) => {
+            // Check if subCategory exists in baseGroups to avoid errors
+            if (acc[resource.subCategory]) {
+                acc[resource.subCategory].push(resource);
+            }
+            return acc;
+        }, baseGroups);
         
         const formattedSubject = {
             _id: subject._id,
             subjectName: subject.subjectName,
-            tips: subject.tips.map(t => t.text),
-            resources: subject.resources
+            // Sort tips by creation date and map to text
+            tips: subject.tips
+                      .sort((a, b) => a.createdAt - b.createdAt)
+                      .map(t => t.text),
+            resources: groupedResources 
         };
 
         res.status(200).json({
@@ -75,8 +95,8 @@ const getSubjectDetails = async (req, res) => {
     }
 };
 
+
 module.exports = {
     getSubjects,
     getSubjectDetails
 };
-
