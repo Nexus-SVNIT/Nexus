@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useParams, Link } from 'react-router-dom';
-import { apiService } from '../services/apiService';
-import Loader from '../components/Loader/Loader';
-import { Title } from '../components';
+import { apiService } from '../../services/apiService';
+import Loader from '../../components/Loader/Loader';
+import { Title } from '../../components';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faExternalLinkAlt } from '@fortawesome/free-solid-svg-icons';
 
