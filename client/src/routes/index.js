@@ -65,12 +65,7 @@ export const DefaultRoutes = [
   },
 
  
-  {
-    path: 'study-material/:id',
-    title: 'Study Material Detail',
-    component: SubjectDetailPage
-  },
-
+  
   {
     path: 'register/:formId',
     title: 'Register Form',
