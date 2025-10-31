@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import { apiFetch } from '../../utils/api'
 
 export default function SubjectDetailPage() {
   const { id } = useParams()
@@ -18,7 +19,7 @@ export default function SubjectDetailPage() {
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch(`/study-material/subjects/${id}`)
+      const res = await apiFetch(`/study-material/subjects/${id}`)
       if (!res.ok) {
         const err = await res.json().catch(() => ({}))
         throw new Error(err.message || 'Failed to fetch subject details')
@@ -34,47 +35,41 @@ export default function SubjectDetailPage() {
     }
   }
 
-  if (loading) return <div style={{ padding: 20 }}>Loading subject…</div>
-  if (error) return <div style={{ padding: 20, color: 'red' }}>{error}</div>
-  if (!subject) return <div style={{ padding: 20 }}>No subject found.</div>
+  if (loading) return <div className="p-6">Loading subject…</div>
+  if (error) return <div className="p-6 text-red-600">{error}</div>
+  if (!subject) return <div className="p-6">No subject found.</div>
 
   const tabs = Object.keys(subject.resources || {})
 
   return (
-    <div style={{ padding: 20 }}>
-      <div style={{ marginBottom: 12 }}>
-        <Link to="/study-material">← Back to browse</Link>
+    <div className="p-6">
+      <div className="mb-3">
+        <Link to="/study-material" className="text-blue-600">← Back to browse</Link>
       </div>
 
-      <h2>{subject.subjectName}</h2>
+      <h2 className="text-2xl font-semibold">{subject.subjectName}</h2>
 
-      <section style={{ marginTop: 12 }}>
-        <h3>Tips</h3>
+      <section className="mt-4">
+        <h3 className="font-medium">Tips</h3>
         {subject.tips && subject.tips.length ? (
-          <ul>
+          <ul className="list-disc ml-6 mt-2">
             {subject.tips.map((t, i) => (
-              <li key={i}>{t}</li>
+              <li key={i} className="text-sm text-gray-800">{t}</li>
             ))}
           </ul>
         ) : (
-          <div>No tips available.</div>
+          <div className="text-sm text-gray-600">No tips available.</div>
         )}
       </section>
 
-      <section style={{ marginTop: 18 }}>
-        <h3>Resources</h3>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+      <section className="mt-6">
+        <h3 className="font-medium">Resources</h3>
+        <div className="flex flex-wrap gap-3 mt-3 mb-4">
           {tabs.map(tab => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              style={{
-                padding: '6px 10px',
-                borderRadius: 6,
-                border: activeTab === tab ? '2px solid #2b6cb0' : '1px solid #ddd',
-                background: activeTab === tab ? '#e6f2ff' : '#fff',
-                cursor: 'pointer'
-              }}
+              className={`px-3 py-1 rounded ${activeTab === tab ? 'border-2 border-blue-600 bg-blue-50' : 'border'} text-sm`}
             >
               {tab}
             </button>
@@ -84,21 +79,21 @@ export default function SubjectDetailPage() {
         <div>
           {activeTab ? (
             (subject.resources[activeTab] && subject.resources[activeTab].length) ? (
-              <ul>
+              <ul className="list-disc ml-6">
                 {subject.resources[activeTab].map(r => (
-                  <li key={r._id || r.link} style={{ marginBottom: 8 }}>
-                    <a href={r.link} target="_blank" rel="noreferrer">
+                  <li key={r._id || r.link} className="mb-2">
+                    <a href={r.link} target="_blank" rel="noreferrer" className="text-blue-600 hover:underline">
                       {r.title}
                     </a>
-                    {r.resourceType ? <span style={{ marginLeft: 8, color: '#555' }}>({r.resourceType})</span> : null}
+                    {r.resourceType ? <span className="ml-2 text-sm text-gray-600">({r.resourceType})</span> : null}
                   </li>
                 ))}
               </ul>
             ) : (
-              <div>No resources under “{activeTab}”.</div>
+              <div className="text-sm text-gray-600">No resources under “{activeTab}”.</div>
             )
           ) : (
-            <div>No resource categories available.</div>
+            <div className="text-sm text-gray-600">No resource categories available.</div>
           )}
         </div>
       </section>
