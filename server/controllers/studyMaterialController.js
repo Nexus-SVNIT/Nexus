@@ -37,6 +37,11 @@ const getSubjects = async (req, res) => {
 };
 
 // Get full subject details: tips + resources
+const mongoose = require('mongoose');
+const Subject = require("../models/subjectModel");
+const Resource = require("../models/resourcesModel");
+
+// Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
         const { id } = req.params;
@@ -56,12 +61,33 @@ const getSubjectDetails = async (req, res) => {
             return res.status(404).json({ message: "Subject not found" });
         }
 
+        const allSubCategories = Resource.schema.path('subCategory').enumValues;
+
+        //create a base object with all categories as empty arrays
+        const baseGroups = allSubCategories.reduce((acc, category) => {
+            acc[category] = [];
+            return acc;
+        }, {});
+
+        //  group the populated resources into the base object
+        const groupedResources = subject.resources.reduce((acc, resource) => {
+            // check if subCategory exists in baseGroups to avoid errors
+            if (acc[resource.subCategory]) {
+                acc[resource.subCategory].push(resource);
+            }
+            return acc;
+        }, baseGroups);
         
+     
+
         const formattedSubject = {
             _id: subject._id,
             subjectName: subject.subjectName,
-            tips: subject.tips.map(t => t.text),
-            resources: subject.resources
+            
+            tips: subject.tips
+                      .sort((a, b) => a.createdAt - b.createdAt)
+                      .map(t => t.text),
+            resources: groupedResources 
         };
 
         res.status(200).json({
@@ -75,6 +101,11 @@ const getSubjectDetails = async (req, res) => {
     }
 };
 
+module.exports = {
+    
+    getSubjects,
+    getSubjectDetails
+};
 module.exports = {
     getSubjects,
     getSubjectDetails
