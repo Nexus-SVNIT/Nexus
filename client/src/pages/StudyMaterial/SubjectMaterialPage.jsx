@@ -94,4 +94,4 @@ const StudyMaterialPage = () => {
   );
 };
 
-export default StudyMaterialPage;
+export default SubjectMaterialPage;
