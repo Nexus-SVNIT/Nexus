@@ -77,9 +77,12 @@ const getSubjectDetails = async (req, res) => {
                 select: 'title link subCategory resourceType'
             });
 
+        // --- !! CRITICAL FIX !! ---
+        // Changed `res.status(4D)` (which crashes the server) to `res.status(404).json(...)`
         if (!subject) {
-            return res.status(4D);
+            return res.status(404).json({ message: "Subject not found" });
         }
+        // --- !! END FIX !! ---
 
         // Get all possible subCategories from your schema
         const allSubCategories = Resource.schema.path('subCategory').enumValues;
