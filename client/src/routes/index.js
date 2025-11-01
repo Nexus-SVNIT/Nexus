@@ -1,4 +1,10 @@
-
+import { About, Achievements, AchievementsForm, AlumniMenu, Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
+import SignUpForm from '../components/SignUpForm/SignUpForm.jsx' import UserProfile from '../components/Profile/ProfilePage.jsx'
+import LoginForm from '../components/LogInForm/LogInForm.jsx' import ShowProject from '../components/Project/showProject.jsx'
+import { Routes, Route } from "react-router-dom"; 
+import Home from "../components/Home/Home"; 
+import Events from "../components/Events/Events"; 
+import Layout from "../components/Layout/Layout";
 import SignUpForm from '../components/SignUpForm/SignUpForm.jsx'
 
 import UserProfile from '../components/Profile/ProfilePage.jsx'
