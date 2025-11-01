@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// Get subjects based on category and department
 const getSubjects = async (req, res) => {
     try {
         const { category: rawCategory, department } = req.query;
@@ -12,8 +11,6 @@ const getSubjects = async (req, res) => {
         }
 
         const category = rawCategory.trim();
-
-        // --- ESCAPE REGEX SPECIAL CHARACTERS ---
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
         const filter = { 
@@ -48,17 +45,11 @@ const getSubjects = async (req, res) => {
     }
 };
 
-// Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
-        // --- FIX: Added trim() to the id parameter ---
         const { id: rawId } = req.params;
-        
-        if (!rawId) {
-             return res.status(400).json({ message: "Invalid subject ID format" });
-        }
-        const id = rawId.trim(); 
-        // --- End Fix ---
+        if (!rawId) return res.status(400).json({ message: "Invalid subject ID format" });
+        const id = rawId.trim();
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid subject ID format" });
@@ -71,38 +62,36 @@ const getSubjectDetails = async (req, res) => {
                 select: 'title link subCategory resourceType'
             });
 
-        // --- !! CRITICAL FIX !! ---
-        // Changed `res.status(4D)` (which crashes the server) to `res.status(404).json(...)`
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }
-        // --- !! END FIX !! ---
 
-        // Get all possible subCategories from your schema
-        const allSubCategories = Resource.schema.path('subCategory').enumValues;
+        // SAFE: enumValues
+        const subCategoryPath = Resource.schema.path('subCategory');
+        const allSubCategories = subCategoryPath?.enumValues || [];
 
-        // Create a base object with all categories as empty arrays
-        const baseGroups = allSubCategories.reduce((acc, category) => {
-            acc[category] = [];
+        const baseGroups = allSubCategories.reduce((acc, cat) => {
+            acc[cat] = [];
             return acc;
         }, {});
 
-        // Group the populated resources into the base object
-        const groupedResources = subject.resources.reduce((acc, resource) => {
-            // Check if subCategory exists in baseGroups to avoid errors
-            if (acc[resource.subCategory]) {
-                acc[resource.subCategory].push(resource);
+        // SAFE: resources reduce
+        const resources = Array.isArray(subject.resources) ? subject.resources : [];
+        const groupedResources = resources.reduce((acc, resource) => {
+            const subCat = resource?.subCategory;
+            if (subCat && acc.hasOwnProperty(subCat)) {
+                acc[subCat].push(resource);
             }
             return acc;
-        }, baseGroups);
-        
+        }, { ...baseGroups });
+
         const formattedSubject = {
             _id: subject._id,
             subjectName: subject.subjectName,
-            // Sort tips by creation date and map to text
-            tips: subject.tips
-                      .sort((a, b) => a.createdAt - b.createdAt)
-                      .map(t => t.text),
+            tips: (subject.tips || [])
+                .filter(tip => tip?.createdAt)
+                .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime())
+                .map(t => t.text),
             resources: groupedResources 
         };
 
@@ -117,9 +106,4 @@ const getSubjectDetails = async (req, res) => {
     }
 };
 
-
-module.exports = {
-    getSubjects,
-    getSubjectDetails
-};
-
+module.exports = { getSubjects, getSubjectDetails };
