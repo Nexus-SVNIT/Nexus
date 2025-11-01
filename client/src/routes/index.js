@@ -1,10 +1,16 @@
-import { About, Achievements, AchievementsForm, AlumniMenu,  Events, Forms, Home, NotFound, RegisterForm, Teams } from '../components'
+
 import SignUpForm from '../components/SignUpForm/SignUpForm.jsx'
 
 import UserProfile from '../components/Profile/ProfilePage.jsx'
 
 import LoginForm from '../components/LogInForm/LogInForm.jsx'
 import ShowProject from '../components/Project/showProject.jsx'
+import { Routes, Route } from "react-router-dom";
+import Home from "../components/Home/Home";
+import Events from "../components/Events/Events";
+import Layout from "../components/Layout/Layout";
+import SubjectMaterial from "../pages/Study Material/SubjectMaterial";
+import SubjectDetail from "../pages/Study Material/SubjectDetail";
 
 
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
@@ -28,11 +34,13 @@ export const DefaultRoutes = [
     component: Home
   },
 
+
   {
     path: 'team',
     title: 'Teams',
     component: Teams
   },
+
 
   {
     path: 'achievements',
@@ -159,10 +167,24 @@ export const DefaultRoutes = [
     component: AlumniSignUpForm
   },
 
+
+
   {
-    path: '*',
-    title: 'Not Found',
-    component: NotFound
+    path: 'study-material',
+    title: 'Study Material',
+    component: SubjectMaterial
   },
+  {
+    path: 'study-material/:id',
+    title: 'Subject Details',
+    component: SubjectDetail
+  },
+
+  {
+  path: '*',
+  title: 'Not Found',
+  component: NotFound
+}
+
 
 ]
