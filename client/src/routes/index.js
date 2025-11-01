@@ -9,7 +9,7 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../components/Home/Home";
 import Events from "../components/Events/Events";
 import Layout from "../components/Layout/Layout";
-import SubjectMaterialPage from "../pages/SubjectMaterialPage.jsx";
+import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
 import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
 
 
