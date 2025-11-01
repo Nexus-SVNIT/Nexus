@@ -18,7 +18,8 @@ const getSubjects = async (req, res) => {
 
         
         const filter = { 
-            category: { $regex: new RegExp(`^${category}$`, 'i') } 
+            // --- FIX: Removed ^ and $ from RegExp to allow for dirty data in the DB ---
+            category: { $regex: new RegExp(category, 'i') } 
         };
         
         const lowerCaseCategory = category.toLowerCase();
@@ -35,6 +36,11 @@ const getSubjects = async (req, res) => {
         if (lowerCaseCategory === "placements/internships") {
             filter.department = "Common"; 
         }
+
+        // --- !! ULTIMATE DEBUG STEP !! ---
+        // Re-deploy with this log and check your server logs.
+        console.log("FINAL QUERY FILTER:", JSON.stringify(filter));
+        // --- !! END DEBUG STEP !! ---
         
         const subjects = await Subject.find(filter).select('_id subjectName');
         res.status(200).json({
@@ -72,7 +78,7 @@ const getSubjectDetails = async (req, res) => {
             });
 
         if (!subject) {
-            return res.status(404).json({ message: "Subject not found" });
+            return res.status(4D);
         }
 
         // Get all possible subCategories from your schema
