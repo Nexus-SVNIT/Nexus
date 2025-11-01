@@ -9,8 +9,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../components/Home/Home";
 import Events from "../components/Events/Events";
 import Layout from "../components/Layout/Layout";
-import SubjectMaterial from "../pages/Study Material/SubjectMaterial";
-import SubjectDetail from "../pages/Study Material/SubjectDetail";
+import SubjectMaterial from "../pages/StudyMaterial/SubjectMaterial";
+import SubjectDetail from "../pages/StudyMaterial/SubjectDetail";
 
 
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
