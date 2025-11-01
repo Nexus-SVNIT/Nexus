@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { fetchSubjectDetails } from "../services/studyMaterialService";
 import Tabs from "../components/StudyMaterial/Tabs";
-import Loader from "../components/Loader";
+import Loader from "../components/StudyMaterial/Loader";
 
 const SubjectDetailPage = () => {
   const { id } = useParams();

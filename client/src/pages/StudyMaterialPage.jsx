@@ -5,6 +5,7 @@ import Dropdown from "../components/StudyMaterial/Dropdown";
 import SubjectCard from "../components/StudyMaterial/SubjectCard";
 import Loader from "../components/Loader";
 
+
 const StudyMaterialPage = () => {
   const [category, setCategory] = useState("Semester Exams");
   const [department, setDepartment] = useState("CSE");
