@@ -1,4 +1,5 @@
-import { useParams, Link } from 'react-router-dom';
+import { useEffect } from 'react'; // <-- 1. Import useEffect
+import { useParams, Link, useNavigate } from 'react-router-dom'; // <-- 2. Import useNavigate
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
@@ -34,9 +35,21 @@ const ResourceLink = ({ resource }) => {
 
 const SubjectDetailPage = () => {
     const { id } = useParams();
+    const navigate = useNavigate(); // <-- 3. Get the navigate function
+
+    // --- Authentication Check ---
+    // (Matches the logic in StudyMaterialPage.jsx)
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            // 4. If no token, redirect to the login page
+            navigate('/login');
+        }
+    }, [navigate]); // Run once on component mount
+    // ----------------------------
 
     const {
-        data: subject,
+        data: subject, // 'subject' will now be the correct object
         isLoading,
         isError,
         error,
@@ -47,11 +60,14 @@ const SubjectDetailPage = () => {
             if (!response.success) {
                 throw new Error(response.message || "Failed to fetch subject details");
             }
-            return response.data; // The formatted subject object
+            // --- 5. FIX for "white screen" bug ---
+            // Return the 'data' object *inside* the response
+            return response.data.data; 
         },
         staleTime: 1000 * 60 * 15,
     });
 
+    // Handle loading state
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -60,9 +76,21 @@ const SubjectDetailPage = () => {
         );
     }
 
+    // Handle error state
     if (isError) {
         console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
+    }
+
+    // --- This check is important ---
+    // If the query succeeds but 'subject' is still null/undefined,
+    // (e.g., auth check is running), wait for it.
+    if (!subject) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+                <Loader />
+            </div>
+        );
     }
 
     // Your backend already groups resources, so we just get the keys
@@ -132,3 +160,4 @@ const SubjectDetailPage = () => {
 };
 
 export default SubjectDetailPage;
+
