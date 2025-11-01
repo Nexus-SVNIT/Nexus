@@ -10,8 +10,10 @@ import {
   RegisterForm,
   Teams,
 } from "../components";
-  Teams,
-} from "../components";
+// --- CONFLICT REMOVED ---
+// The duplicate lines and conflict markers (<<<, ===, >>>) were here.
+// I have removed them, leaving just the single correct import block.
+// -------------------------
 
 import SignUpForm from "../components/SignUpForm/SignUpForm.jsx";
 import UserProfile from "../components/Profile/ProfilePage.jsx";
@@ -30,7 +32,6 @@ import Alumni from "../pages/Alumni/Alumni.jsx";
 
 import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
 import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
-
 
 
 export const DefaultRoutes = [
@@ -56,6 +57,12 @@ export const DefaultRoutes = [
   { path: "post/edit/:id", title: "Edit Post", component: EditPost },
   { path: "alumni/signup", title: "Alumni SignUp", component: AlumniSignUpForm },
   { path: "study-material", title: "Study Material", component: StudyMaterialPage },
-  { path: "study-material/:id", title: "Subject Details", component: SubjectDetailPage },
+  {
+    
+    path: "study-material/subject/:id",
+    title: "Subject Details",
+    component: SubjectDetailPage
+  },
   { path: "*", title: "Not Found", component: NotFound },
 ];
+

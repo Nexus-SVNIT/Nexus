@@ -1,6 +1,7 @@
+// src/pages/SubjectDetailPage.jsx
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { fetchSubjects } from "../services/studyMaterialService";
+import { fetchSubjectDetails } from "../services/studyMaterialService";
 import Tabs from "../components/StudyMaterial/Tabs";
 import Loader from "../components/StudyMaterial/Loader";
 
@@ -26,7 +27,8 @@ const SubjectDetailPage = () => {
   }, [id]);
 
   if (loading) return <Loader />;
-  if (!subject) return <p className="text-center mt-12 text-gray-500">Subject not found.</p>;
+  if (!subject)
+    return <p className="text-center mt-12 text-gray-500">Subject not found.</p>;
 
   const resourceTabs = Object.keys(subject.resources);
 
@@ -40,7 +42,7 @@ const SubjectDetailPage = () => {
       {/* Tips Section */}
       {subject.tips && subject.tips.length > 0 && (
         <div className="mb-8">
-          <h2 className="text-xl font-semibold mb-3 text-gray-700">💡 Tips</h2>
+          <h2 className="text-xl font-semibold mb-3 text-gray-700">Tips</h2>
           <ul className="list-disc ml-6 text-gray-700 space-y-1">
             {subject.tips.map((tip, i) => (
               <li key={i}>{tip}</li>
@@ -50,7 +52,11 @@ const SubjectDetailPage = () => {
       )}
 
       {/* Tabs */}
-      <Tabs tabs={resourceTabs} activeTab={activeTab} onTabChange={setActiveTab} />
+      <Tabs
+        tabs={resourceTabs}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+      />
 
       {/* Resource List */}
       <div className="mt-6 space-y-3">
