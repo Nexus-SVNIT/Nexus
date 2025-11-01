@@ -9,8 +9,8 @@ import { Routes, Route } from "react-router-dom";
 import Home from "../components/Home/Home";
 import Events from "../components/Events/Events";
 import Layout from "../components/Layout/Layout";
-import SubjectMaterial from "../pages/StudyMaterial/SubjectMaterial";
-import SubjectDetail from "../pages/StudyMaterial/SubjectDetail";
+import SubjectMaterialPage from "../pages/SubjectMaterialPage.jsx";
+import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
 
 
 import ForgotPasswordForm from '../components/ForgotPasswordForm/ForgotPasswordForm.jsx'
@@ -172,13 +172,14 @@ export const DefaultRoutes = [
   {
     path: 'study-material',
     title: 'Study Material',
-    component: SubjectMaterial
+    component: SubjectMaterialPage
   },
   {
     path: 'study-material/:id',
     title: 'Subject Details',
-    component: SubjectDetail
+    component: SubjectDetailPage
   },
+
 
   {
   path: '*',
