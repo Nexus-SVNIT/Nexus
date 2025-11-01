@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// Get subjects based on category and department
+//get subjects based on category and department
 const getSubjects = async (req, res) => {
     try {
     
-        // Get category/dept from query params
+        // get category/dept from query params
         const { category: rawCategory, department: rawDepartment } = req.query; // <-- Aliased department
 
        
@@ -14,30 +14,30 @@ const getSubjects = async (req, res) => {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        // Always trim whitespace from client input
+        // always trim whitespace from client input
         const category = rawCategory.trim();
 
         
         const filter = { 
-            // Case-insensitive search, and loose regex to handle any whitespace in the DB
+            // case-insensitive search, and loose regex to handle any whitespace in the DB
             category: { $regex: new RegExp(category, 'i') } 
         };
         
-        // Standardize for logic checks
+        // standardize for logic checks
         const lowerCaseCategory = category.toLowerCase();
 
 
-        // Semester exams require a specific department
+        // semester exams require a specific department
         if (lowerCaseCategory === "semester exams") {
-            if (!rawDepartment) { // <-- Check rawDepartment
+            if (!rawDepartment) { 
                 return res.status(400).json({ message: "Department is required for Semester Exams" });
             }
             
-            // Trim dept input just in case
+         
             filter.department = rawDepartment.trim();
         }
 
-        // Placements all share the "Common" department
+        // placements all share the Common department
         if (lowerCaseCategory === "placements/internships") {
             filter.department = "Common"; 
         }
@@ -56,20 +56,18 @@ const getSubjects = async (req, res) => {
     }
 };
 
-// Get full subject details: tips + grouped resources
+// Get full subject details
 const getSubjectDetails = async (req, res) => {
     try {
-        // Get id from URL params
+        // Get id from url params
         const { id: rawId } = req.params;
         
         if (!rawId) {
              return res.status(400).json({ message: "Invalid subject ID format" });
         }
-        // Trim whitespace from URL param
+        
         const id = rawId.trim(); 
-        // --- End Fix ---
-
-        // Check if it's a valid ObjectId *before* hitting the DB
+        
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid subject ID format" });
         }
