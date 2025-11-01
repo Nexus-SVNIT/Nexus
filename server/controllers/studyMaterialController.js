@@ -51,7 +51,14 @@ const getSubjects = async (req, res) => {
 // Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
-        const { id } = req.params;
+        // --- FIX: Added trim() to the id parameter ---
+        const { id: rawId } = req.params;
+        
+        if (!rawId) {
+             return res.status(400).json({ message: "Invalid subject ID format" });
+        }
+        const id = rawId.trim(); 
+        // --- End Fix ---
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid subject ID format" });
@@ -112,3 +119,4 @@ module.exports = {
     getSubjects,
     getSubjectDetails
 };
+
