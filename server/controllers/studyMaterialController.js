@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
+// Get subjects based on category and department
 const getSubjects = async (req, res) => {
     try {
         const { category: rawCategory, department } = req.query;
@@ -10,8 +11,18 @@ const getSubjects = async (req, res) => {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        const category = rawCategory.trim();
+        // --- CRITICAL: Decode URL-encoded characters (e.g. %2F → /) ---
+        const category = decodeURIComponent(rawCategory).trim();
+
+        // --- Escape regex special characters ---
         const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+        // --- DEBUG: See exactly what's happening ---
+        console.log("=== GET SUBJECTS DEBUG ===");
+        console.log("Raw (encoded):", rawCategory);
+        console.log("Decoded category:", category);
+        console.log("Escaped regex:", escapeRegex(category));
+        console.log("Final RegExp:", new RegExp(escapeRegex(category), 'i').toString());
 
         const filter = { 
             category: { $regex: new RegExp(escapeRegex(category), 'i') } 
@@ -30,21 +41,23 @@ const getSubjects = async (req, res) => {
             filter.department = "Common"; 
         }
 
-        console.log("FINAL QUERY FILTER:", JSON.stringify(filter));
-        
+        console.log("FINAL QUERY FILTER (for MongoDB):", filter);
+        console.log("===========================\n");
+
         const subjects = await Subject.find(filter).select('_id subjectName');
         
         res.status(200).json({
-            message: "Subjects fetched successfully",
+            컨message: "Subjects fetched successfully",
             data: subjects
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("ERROR in getSubjects:", error);
         res.status(500).json({ message: "Error fetching subjects" });
     }
 };
 
+// Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
         const { id: rawId } = req.params;
@@ -66,7 +79,7 @@ const getSubjectDetails = async (req, res) => {
             return res.status(404).json({ message: "Subject not found" });
         }
 
-        // SAFE: enumValues
+        // SAFE: Get enum values
         const subCategoryPath = Resource.schema.path('subCategory');
         const allSubCategories = subCategoryPath?.enumValues || [];
 
@@ -75,7 +88,7 @@ const getSubjectDetails = async (req, res) => {
             return acc;
         }, {});
 
-        // SAFE: resources reduce
+        // SAFE: Handle resources array
         const resources = Array.isArray(subject.resources) ? subject.resources : [];
         const groupedResources = resources.reduce((acc, resource) => {
             const subCat = resource?.subCategory;
@@ -101,7 +114,7 @@ const getSubjectDetails = async (req, res) => {
         });
 
     } catch (error) {
-        console.error(error);
+        console.error("ERROR in getSubjectDetails:", error);
         res.status(500).json({ message: "Error fetching subject details" });
     }
 };
