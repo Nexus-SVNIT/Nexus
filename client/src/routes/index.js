@@ -10,6 +10,8 @@ import {
   RegisterForm,
   Teams,
 } from "../components";
+  Teams,
+} from "../components";
 
 import SignUpForm from "../components/SignUpForm/SignUpForm.jsx";
 import UserProfile from "../components/Profile/ProfilePage.jsx";
@@ -28,6 +30,8 @@ import Alumni from "../pages/Alumni/Alumni.jsx";
 
 import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
 import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
+
+
 
 export const DefaultRoutes = [
   { path: "/", title: "Home", component: Home },
