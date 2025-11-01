@@ -2,28 +2,40 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// Get subjects list based on category (and department if Semester Exams)
+// Get subjects based on category and department
 const getSubjects = async (req, res) => {
     try {
-        const { category, department } = req.query;
+    
+        const { category: rawCategory, department } = req.query;
 
-        if (!category) {
+       
+        if (!rawCategory) {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        const filter = { category };
+        // trim whitespace from the input ---
+        const category = rawCategory.trim();
 
-        if (category === "Semester Exams") {
+        
+        const filter = { 
+            category: { $regex: new RegExp(`^${category}$`, 'i') } 
+        };
+        
+        const lowerCaseCategory = category.toLowerCase();
+
+
+        if (lowerCaseCategory === "semester exams") {
             if (!department) {
                 return res.status(400).json({ message: "Department is required for Semester Exams" });
             }
-            filter.department = department;
+            
+            filter.department = department.trim();
         }
 
-        if (category === "Placements/Internships") {
+        if (lowerCaseCategory === "placements/internships") {
             filter.department = "Common"; 
         }
-
+        
         const subjects = await Subject.find(filter).select('_id subjectName');
         res.status(200).json({
             message: "Subjects fetched successfully",
