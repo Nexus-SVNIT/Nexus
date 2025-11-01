@@ -3,57 +3,25 @@ const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
 // Get subjects based on category and department
+// Get ALL subjects — NO FILTERS
 const getSubjects = async (req, res) => {
     try {
-        const { category: rawCategory, department } = req.query;
-
-        if (!rawCategory) {
-            return res.status(400).json({ message: "Category is required" });
-        }
-
-        // --- CRITICAL: Decode URL-encoded characters (e.g. %2F → /) ---
-        const category = decodeURIComponent(rawCategory).trim();
-
-        // --- Escape regex special characters ---
-        const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-
-        // --- DEBUG: See exactly what's happening ---
-        console.log("=== GET SUBJECTS DEBUG ===");
-        console.log("Raw (encoded):", rawCategory);
-        console.log("Decoded category:", category);
-        console.log("Escaped regex:", escapeRegex(category));
-        console.log("Final RegExp:", new RegExp(escapeRegex(category), 'i').toString());
-
-        const filter = { 
-            category: { $regex: new RegExp(escapeRegex(category), 'i') } 
-        };
         
-        const lowerCaseCategory = category.toLowerCase();
 
-        if (lowerCaseCategory === "semester exams") {
-            if (!department) {
-                return res.status(400).json({ message: "Department is required for Semester Exams" });
-            }
-            filter.department = department.trim();
-        }
+        const subjects = await Subject.find({}).select('_id subjectName');
 
-        if (lowerCaseCategory === "placements/internships") {
-            filter.department = "Common"; 
-        }
+        console.log("TOTAL SUBJECTS FOUND:", subjects.length);
+        console.log("SAMPLE SUBJECT:", subjects[0] || "None");
 
-        console.log("FINAL QUERY FILTER (for MongoDB):", filter);
-        console.log("===========================\n");
-
-        const subjects = await Subject.find(filter).select('_id subjectName');
-        
         res.status(200).json({
-            컨message: "Subjects fetched successfully",
+            message: "ALL subjects fetched (no filters)",
+            count: subjects.length,
             data: subjects
         });
 
     } catch (error) {
         console.error("ERROR in getSubjects:", error);
-        res.status(500).json({ message: "Error fetching subjects" });
+        res.status(500).json({ message: "Server error" });
     }
 };
 
