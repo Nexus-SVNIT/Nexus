@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { fetchSubjects } from "../services/studyMaterialService";
+import { fetchSubjectDetails } from "../services/studyMaterialService";
 import Dropdown from "../components/StudyMaterial/Dropdown";
 import SubjectCard from "../components/StudyMaterial/SubjectCard";
 import Loader from "../components/StudyMaterial/Loader";
