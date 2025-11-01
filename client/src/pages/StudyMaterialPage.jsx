@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react"; 
+import { useNavigate } from "react-router-dom"; 
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
@@ -7,13 +8,15 @@ import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
 
-
+// --- Constants ---
 const CATEGORIES = {
     PLACEMENTS: "Placements/Internships",
     SEMESTER: "Semester Exams",
 };
 const DEPARTMENTS = ["CSE", "AI"]; 
+// -----------------
 
+// Simple hero component for the page
 const StudyMaterialHero = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="space-y-6 text-center">
@@ -34,11 +37,10 @@ const StudyMaterialHero = () => (
     </div>
 );
 
-
+// Reusable card for category/department selection
 const SelectionCard = ({ title, icon, onClick }) => (
     <button
         onClick={onClick}
-        // --- EDIT: Added max-w-lg to prevent over-stretching, kept w-full for mobile ---
         className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
     >
         <div className="flex items-center justify-between">
@@ -56,74 +58,91 @@ const SelectionCard = ({ title, icon, onClick }) => (
 
 
 const StudyMaterialPage = () => {
-    const [step, setStep] = useState(1); // 1 Category, 2 Department, 3 Subjects
+    // State to manage which part of the flow we're in
+    const [step, setStep] = useState(1); // 1: Category, 2: Department, 3: Subjects
     const [category, setCategory] = useState(null);
     const [department, setDepartment] = useState(null);
+    const navigate = useNavigate(); 
 
-    // data Fetching with react query 
+    // Simple auth check on page load
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            // No token? Send 'em to login.
+            navigate('/login');
+        }
+    }, [navigate]); 
+    
+    // Fetch subjects with React Query
     const {
-        data: subjects,
+        data: subjects, // 'subjects' will be the array we need
         isLoading,
         isError,
         error,
     } = useQuery({
        
-        queryKey: ["subjects", category, department],
+        queryKey: ["subjects", category, department], // Re-fetches when these change
         queryFn: async () => {
             const response = await getSubjects({ category, department });
             if (!response.success) {
                 throw new Error(response.message || "Failed to fetch subjects");
             }
-            return response.data; // The array of subjects
+            // --- FIX for the "white screen" bug ---
+            // We need the 'data' array *inside* the response, not the whole { message, data } object
+            return response.data.data; 
         },
         
+        // Only run this query when we're on the final step
         enabled: step === 3 && !!category && !!department,
-        staleTime: 1000 * 60 * 15,
-        cacheTime: 1000 * 60 * 60,
+        staleTime: 1000 * 60 * 15, // Cache for 15 mins
+        cacheTime: 1000 * 60 * 60,  // Keep in cache for 1 hour
     });
 
+
+    // --- Step Navigation Handlers ---
 
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
         if (selectedCategory === CATEGORIES.PLACEMENTS) {
-           
+            // Placements are "Common", skip straight to subjects
             setDepartment("Common");
             setStep(3);
         } else {
-           
+            // Sem exams need a department
             setStep(2);
         }
     };
 
     const handleDepartmentSelect = (selectedDepartment) => {
         setDepartment(selectedDepartment);
-        setStep(3);
+        setStep(3); // Go to subjects list
     };
 
 
     const handleBack = () => {
         if (step === 3) {
-           
+            // If we came from placements, go to step 1
+            // If we came from semester, go to step 2
             if (category === CATEGORIES.SEMESTER) {
                 setStep(2);
-                setDepartment(null); 
+                setDepartment(null); // Clear selection
             } else {
-               
                 setStep(1);
                 setCategory(null);
                 setDepartment(null);
             }
         } else if (step === 2) {
-            
+            // From department choice, go back to category choice
             setStep(1);
             setCategory(null);
         }
     };
 
 
+    // --- Render Functions for Each Step ---
 
+    // Step 1: Show the two main categories
     const renderStep1_Category = () => (
-        // --- EDIT: Changed from 'grid' to 'flex' for better centering ---
         <div className="flex flex-wrap justify-center gap-6">
             <SelectionCard
                 title="Placements/Internships"
@@ -138,8 +157,8 @@ const StudyMaterialPage = () => {
         </div>
     );
 
+    // Step 2: Show department choices (only for Semester Exams)
     const renderStep2_Department = () => (
-        // --- EDIT: Changed from 'grid' to 'flex' for better centering ---
         <div className="flex flex-wrap justify-center gap-6">
             {DEPARTMENTS.map((dept) => (
                 <SelectionCard
@@ -152,7 +171,9 @@ const StudyMaterialPage = () => {
         </div>
     );
 
+    // Step 3: Show the final list of subjects
     const renderStep3_Subjects = () => {
+        // Handle loading state
         if (isLoading) {
             return (
                 <div className="flex h-64 w-full items-center justify-center">
@@ -160,15 +181,17 @@ const StudyMaterialPage = () => {
                 </div>
             );
         }
+        // Handle error state
         if (isError) {
             return <p className="text-center text-red-400">{error.message}</p>;
         }
-        if (subjects?.length === 0) {
+        // Handle no data (or empty array)
+        if (!subjects || subjects.length === 0) {
             return <p className="text-center text-gray-400">No subjects found.</p>;
         }
+
+        // Success: Render the grid of cards
         return (
-            // This grid is correct. It will create a professional-looking, left-aligned
-            // gallery of cards *within* the centered main container.
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {subjects.map((subject) => (
                     <SubjectCard key={subject._id} subject={subject} />
@@ -177,14 +200,15 @@ const StudyMaterialPage = () => {
         );
     };
 
+    // Main component render
     return (
         <div>
             <StudyMaterialHero />
 
-            {/* --- EDIT: Removed sidebar-specific margins (md:ml-20 lg:ml-auto) --- */}
+            {/* Main content area, centered */}
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 
-                {/* Back Button (appears on step 2 or 3) */}
+                {/* Show back button on any step after the first */}
                 {step > 1 && (
                     <button
                         onClick={handleBack}
@@ -195,7 +219,7 @@ const StudyMaterialPage = () => {
                     </button>
                 )}
                 
-                {/* Conditional Step Renderer */}
+                {/* Conditionally render the correct step */}
                 {step === 1 && renderStep1_Category()}
                 {step === 2 && renderStep2_Department()}
                 {step === 3 && renderStep3_Subjects()}
@@ -205,3 +229,4 @@ const StudyMaterialPage = () => {
 };
 
 export default StudyMaterialPage;
+
