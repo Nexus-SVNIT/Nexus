@@ -172,7 +172,7 @@ export const DefaultRoutes = [
   {
     path: 'study-material',
     title: 'Study Material',
-    component: SubjectMaterialPage
+    component: StudyMaterialPage
   },
   {
     path: 'study-material/:id',
