@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { fetchSubjects } from "../services/studyMaterialService";
 import Dropdown from "../components/StudyMaterial/Dropdown";
 import SubjectCard from "../components/StudyMaterial/SubjectCard";
-import Loader from "../components/Loader";
+import Loader from "../components/StudyMaterial/Loader";
 
 
 const StudyMaterialPage = () => {
