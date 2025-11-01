@@ -5,31 +5,27 @@ const Resource = require("../models/resourcesModel");
 // Get subjects based on category and department
 const getSubjects = async (req, res) => {
     try {
-    
         const { category: rawCategory, department } = req.query;
 
-       
         if (!rawCategory) {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        // trim whitespace from the input ---
         const category = rawCategory.trim();
 
-        
+        // --- ESCAPE REGEX SPECIAL CHARACTERS ---
+        const escapeRegex = (str) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
         const filter = { 
-            // --- FIX: Removed ^ and $ from RegExp to allow for dirty data in the DB ---
-            category: { $regex: new RegExp(category, 'i') } 
+            category: { $regex: new RegExp(escapeRegex(category), 'i') } 
         };
         
         const lowerCaseCategory = category.toLowerCase();
-
 
         if (lowerCaseCategory === "semester exams") {
             if (!department) {
                 return res.status(400).json({ message: "Department is required for Semester Exams" });
             }
-            
             filter.department = department.trim();
         }
 
@@ -37,12 +33,10 @@ const getSubjects = async (req, res) => {
             filter.department = "Common"; 
         }
 
-        // --- !! ULTIMATE DEBUG STEP !! ---
-        // Re-deploy with this log and check your server logs.
         console.log("FINAL QUERY FILTER:", JSON.stringify(filter));
-        // --- !! END DEBUG STEP !! ---
         
         const subjects = await Subject.find(filter).select('_id subjectName');
+        
         res.status(200).json({
             message: "Subjects fetched successfully",
             data: subjects
