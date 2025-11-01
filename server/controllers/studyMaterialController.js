@@ -1,4 +1,4 @@
-\const mongoose = require('mongoose');
+const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
@@ -6,35 +6,43 @@ const Resource = require("../models/resourcesModel");
 const getSubjects = async (req, res) => {
     try {
     
-        const { category: rawCategory, department } = req.query;
+        // Get category/dept from query params
+        const { category: rawCategory, department: rawDepartment } = req.query; // <-- Aliased department
 
        
         if (!rawCategory) {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        // trim whitespace from the input ---
+        // Always trim whitespace from client input
         const category = rawCategory.trim();
 
         
         const filter = { 
-            category: { $regex: new RegExp(`^${category}$`, 'i') } 
+            // Case-insensitive search, and loose regex to handle any whitespace in the DB
+            category: { $regex: new RegExp(category, 'i') } 
         };
         
+        // Standardize for logic checks
         const lowerCaseCategory = category.toLowerCase();
 
 
+        // Semester exams require a specific department
         if (lowerCaseCategory === "semester exams") {
-            if (!department) {
+            if (!rawDepartment) { // <-- Check rawDepartment
                 return res.status(400).json({ message: "Department is required for Semester Exams" });
             }
             
-            filter.department = department.trim();
+            // Trim dept input just in case
+            filter.department = rawDepartment.trim();
         }
 
+        // Placements all share the "Common" department
         if (lowerCaseCategory === "placements/internships") {
             filter.department = "Common"; 
         }
+        
+        console.log("FINAL QUERY FILTER:", JSON.stringify(filter)); // Debug log
         
         const subjects = await Subject.find(filter).select('_id subjectName');
         res.status(200).json({
@@ -51,8 +59,17 @@ const getSubjects = async (req, res) => {
 // Get full subject details: tips + grouped resources
 const getSubjectDetails = async (req, res) => {
     try {
-        const { id } = req.params;
+        // Get id from URL params
+        const { id: rawId } = req.params;
+        
+        if (!rawId) {
+             return res.status(400).json({ message: "Invalid subject ID format" });
+        }
+        // Trim whitespace from URL param
+        const id = rawId.trim(); 
+        // --- End Fix ---
 
+        // Check if it's a valid ObjectId *before* hitting the DB
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid subject ID format" });
         }
@@ -68,10 +85,10 @@ const getSubjectDetails = async (req, res) => {
             return res.status(404).json({ message: "Subject not found" });
         }
 
-        // Get all possible subCategories from your schema
+        // Get all possible subCats from the schema to build a template
         const allSubCategories = Resource.schema.path('subCategory').enumValues;
 
-        // Create a base object with all categories as empty arrays
+        // Create a base object, so all subCats are present, even if empty
         const baseGroups = allSubCategories.reduce((acc, category) => {
             acc[category] = [];
             return acc;
@@ -89,7 +106,7 @@ const getSubjectDetails = async (req, res) => {
         const formattedSubject = {
             _id: subject._id,
             subjectName: subject.subjectName,
-            // Sort tips by creation date and map to text
+            // Sort tips oldest to newest before sending
             tips: subject.tips
                       .sort((a, b) => a.createdAt - b.createdAt)
                       .map(t => t.text),
@@ -112,3 +129,5 @@ module.exports = {
     getSubjects,
     getSubjectDetails
 };
+
+
