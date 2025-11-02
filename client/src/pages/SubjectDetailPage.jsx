@@ -6,7 +6,7 @@ import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 
-import SearchBar from '../../components/Alumni/SearchBar'; 
+import SearchBar from '../components/Alumni/SearchBar.jsx'; 
 
 
 const ResourceLink = ({ resource }) => {
