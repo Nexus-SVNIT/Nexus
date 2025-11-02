@@ -24,9 +24,9 @@ const StudyMaterialHero = () => (
                 Study Resources
             </div>
             <h1 className="text-foreground text-4xl font-bold md:text-6xl">
-                Your Academic &
+                Ace Your Academic &
                 <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
-                    Career Prep Hub
+                    Placement Prep
                 </span>
             </h1>
             <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-300">
