@@ -64,7 +64,7 @@ const CustomSidebar = () => {
       link: "/projects",
     },
     {
-      title: "Study Material",
+      title: "Resources",
       icon: <FaFileLines className="text-2xl" />,
       link: "/study-material",
     },
