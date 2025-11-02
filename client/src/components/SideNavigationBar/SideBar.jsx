@@ -66,6 +66,11 @@ const CustomSidebar = () => {
       link: "/projects",
     },
     {
+      title: "Resources",
+      icon: <FaFileLines className="text-2xl" />,
+      link: "/study-material",
+    },
+    {
       title: "Coding Profile LeaderBoard",
       icon: <FaLaptopCode className="text-2xl" />,
       link: "/coding",

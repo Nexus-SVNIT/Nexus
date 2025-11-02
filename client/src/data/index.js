@@ -8,6 +8,7 @@ export const NavList = [
   { label: 'Projects', path: '/projects' },
   { label: 'Coding', path: '/coding' },
   { label: 'Interview Experience', path: '/interview-experiences' },
+  { label: 'Resources', path: '/study-material' },
   // { label: 'Merch Reference LeaderBoard',path: '/merch/reference-leaderboard'},
   { label: 'About', path: '/about' },
 ]
