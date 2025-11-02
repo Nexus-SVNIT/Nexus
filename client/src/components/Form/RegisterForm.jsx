@@ -189,7 +189,7 @@ const RegisterForm = () => {
 
       if (response.data.success) {
         setFlag(true);
-        setLink(response.data.WaLink);
+        setLink(response.data.WaLink || "NA");
         toast.success("Form submitted successfully!");
 
         // Clear storage
@@ -320,26 +320,32 @@ const RegisterForm = () => {
         description={formData.desc}
       />
       <h3 className="mb-4 mt-10 text-center text-2xl md:text-3xl">
-        Register For Event
+        Register For {formData.name || "Event"}
       </h3>
       {flag ? (
         <div className="flex min-h-[50vh] flex-col items-center justify-center p-4">
-          <h4 className="mb-4 text-lg font-bold">Thank you for registering!</h4>
-          <div className="flex flex-col items-center gap-4 rounded-lg border border-zinc-900 bg-zinc-800 p-6 shadow-lg">
-            <FaWhatsapp className="text-4xl text-green-500" />
-            <p className="text-center">
-              Join our WhatsApp group to stay updated!
-            </p>
-            <a
-              href={link}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 rounded-full bg-green-500 px-6 py-2 text-white transition-colors hover:bg-green-600"
-            >
-              <FaWhatsapp />
-              Join WhatsApp Group
-            </a>
-          </div>
+          <h4 className="mb-4 text-lg font-bold">Thank you for filling the form!</h4>
+            {link !== "NA" ? <>
+            <div className="flex flex-col items-center gap-4 rounded-lg border border-zinc-900 bg-zinc-800 p-6 shadow-lg">
+              <FaWhatsapp className="text-4xl text-green-500" />
+              <p className="text-center">
+                Join our WhatsApp group to stay updated!
+              </p>
+              <a
+                href={link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 rounded-full bg-green-500 px-6 py-2 text-white transition-colors hover:bg-green-600"
+              >
+                <FaWhatsapp />
+                Join WhatsApp Group
+              </a>
+            </div>
+            </> : <>
+              <p className="text-center">We have received your responses.</p>
+              <p className="text-center">Keep an eye here for more.</p>
+            </>
+          }
         </div>
       ) : (
         <form

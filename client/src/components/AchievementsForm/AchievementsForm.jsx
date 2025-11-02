@@ -5,7 +5,7 @@ import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import toast from "react-hot-toast";
 import increamentCounter from "../../libs/increamentCounter";
-import { useUser } from "../../context/userContext";
+import { addAchievement } from "../../services/achievementService";
 
 const AchievementsForm = () => {
   const [open, setOpen] = useState(false);
@@ -16,13 +16,13 @@ const AchievementsForm = () => {
     image: null,
   });
   const [image, setImage] = useState(null);
-  const { user } = useUser();
+  const token = localStorage.getItem("token");
 
   useEffect(()=>{
     increamentCounter();
   })
 
-  if(!user) {
+  if(!token) {
     toast.error("You need to login first!", { id: "loginToast" });
     toast.loading("Redirecting to login page...", { id: "a" });
     setTimeout(() => {
@@ -48,22 +48,15 @@ const AchievementsForm = () => {
 
   const mutation = useMutation({
     mutationFn: async (newAchievement) => {
-      const token = localStorage.getItem("token");
       const formData = new FormData();
       formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",").map(member => member.trim())));
       formData.append("desc", newAchievement.desc.trim());
       formData.append("proof", newAchievement.proof.trim());
       formData.append("image", newAchievement.image);
+
+      const response = await addAchievement(formData);
   
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}/achievements/add`, {
-        method: "POST",
-        headers: {
-          'Authorization': `Bearer ${token}`
-        },
-        body: formData,
-      });
-  
-      if (!response.ok) {
+      if (!response.success) {
         throw new Error("Failed to submit achievement details");
       }
   

@@ -13,7 +13,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
     : `https://lh3.googleusercontent.com/d/${profile.image}`;
 
   return (
-    <div className="relative h-[23rem] w-[18rem] flex-wrap overflow-hidden rounded-lg bg-white text-black shadow-lg transition-all hover:shadow-xl md:w-[16rem]">
+    <div className="relative inline-flex w-[18rem] flex-wrap overflow-hidden rounded-lg bg-white text-black shadow-lg transition-all hover:shadow-xl md:w-[16rem]">
       <figure className="absolute -left-[5%] top-0 h-[16rem] w-[20rem] overflow-hidden rounded-b-[50%] border-b-8 border-red-400 bg-red-500/20 md:h-[16rem] md:w-[18rem]">
         <img
           src={imageUrl}
@@ -21,7 +21,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
           className="-z-10 flex h-full w-full cursor-pointer object-cover object-top transition-all duration-300 hover:scale-110"
         />
       </figure>
-      <div className="mt-[15.5rem] px-5 py-4">
+      <div className="mt-[15.5rem] w-full px-5 py-4">
         <div className="mb-2 flex gap-2">
           {isFaculty ? (
             <>
@@ -56,7 +56,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
           )}
         </div>
         <h3 className="mb-0.5 text-xl font-bold">{profile?.name}</h3>
-        <div className="flex items-center justify-between">
+        <div className="flex justify-between">
           <h4 className="text-red-600">{profile?.role}</h4>
           {profile?.email && (
             <a href={`mailto:${profile.email}`}>
