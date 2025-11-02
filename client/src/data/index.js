@@ -5,6 +5,7 @@ export const NavList = [
 { label: 'Events', path: '/events' },
 { label: 'Forms', path: '/forms' },
 { label: 'Alumni Network', path: '/alumni-network' },
+{ label: 'Resources', path: '/study-material' },
 { label: 'Projects', path: '/projects' },
 { label: 'Coding', path: '/coding' },
 { label: 'Interview Experience', path: '/interview-experiences' },
