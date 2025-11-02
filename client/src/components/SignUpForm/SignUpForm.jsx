@@ -34,8 +34,19 @@ function SignUpForm() {
   }, [formData]);
 
   const handleChange = (e) => {
+
+    const nameToValue = () => {
+      if(e.target.value.length === 0) return "";
+      if(e.target.value.length === 1) return e.target.value.toUpperCase().trim();
+      if(e.target.value.charAt(e.target.value.length - 1) === ' ') return e.target.value.trim() + ' ';
+      if(e.target.value.charAt(e.target.value.length - 2) === ' ') return e.target.value.slice(0,e.target.value.length - 2).trim() + ' ' + e.target.value.charAt(e.target.value.length - 1).toUpperCase();
+      return e.target.value.trim();
+    };
+
     if (e.target.name === "admissionNumber") {
       e.target.value = e.target.value.toUpperCase().trim();
+    } else if (e.target.name === "fullName") {
+      e.target.value = nameToValue();
     }
 
     setFormData({

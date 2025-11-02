@@ -27,6 +27,8 @@ function AlumniSignUpForm() {
     password: "",
     shareCodingProfile: false,
   });
+  
+  const [showProfiles, setShowProfiles] = useState(false);
 
   // Same useEffect hooks as SignUpForm
   useEffect(() => {
@@ -63,11 +65,26 @@ function AlumniSignUpForm() {
   const handleChange = (e) => {
     let value;
 
+    const nameToValue = () => {
+      if(e.target.value.length === 0) return "";
+      if(e.target.value.length === 1) return e.target.value.toUpperCase().trim();
+      if(e.target.value.charAt(e.target.value.length - 1) === ' ') return e.target.value.trim() + ' ';
+      if(e.target.value.charAt(e.target.value.length - 2) === ' ') return e.target.value.slice(0,e.target.value.length - 2).trim() + ' ' + e.target.value.charAt(e.target.value.length - 1).toUpperCase();
+      return e.target.value.trim();
+    };
+
     switch (e.target.name) {
       case "expertise":
-      case "fullName":
+      // case "fullName":
+      case "currentCompany":
+      case "currentDesignation":
       case "password":
+      case "currentCompany":
+      case "currentDesignation":
         value = e.target.value;
+        break;
+      case "fullName":
+        value = nameToValue(e);
         break;
       case "admissionNumber":
         value = e.target.value.toUpperCase().trim();
@@ -83,6 +100,7 @@ function AlumniSignUpForm() {
       [e.target.name]: value,
     });
   };
+
 
   const validateForm = () => {
     const {
@@ -106,6 +124,10 @@ function AlumniSignUpForm() {
       toast.error("Full Name is required");
       return false;
     }
+    if (!fullName.match(/^[a-zA-Z ]*$/)){
+      toast.error("Full Name must have letters and spaces only");
+      return false;
+    }
     if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
       toast.error("Invalid Admission Number");
       return false;
@@ -118,10 +140,10 @@ function AlumniSignUpForm() {
       toast.error("Invalid Personal Email");
       return false;
     }
-    if (!branch) {
-      toast.error("Branch is required");
-      return false;
-    }
+    // if (!branch) {
+    //   toast.error("Branch is required");
+    //   return false;
+    // }
     if (!passingYear.match(/^(19|20)\d{2}$/)) {
       toast.error("Invalid Passing Year");
       return false;
@@ -184,6 +206,7 @@ function AlumniSignUpForm() {
       ...formData,
       fullName: formData.fullName.trim(),
       expertise: formData.expertise.split(",").map((exp) => exp.trim()),
+      branch: formData.admissionNumber.slice(3,5) === "AI" ? "AI" : "CSE"
     }
 
     if (!validateForm()) return;
@@ -326,7 +349,7 @@ function AlumniSignUpForm() {
             />
           </div>
 
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <label className="mb-2 block text-sm text-white" htmlFor="branch">
               Branch <span className="text-red-500">*</span>
             </label>
@@ -342,7 +365,7 @@ function AlumniSignUpForm() {
               <option value="CSE">CSE/COE</option>
               <option value="AI">AI</option>
             </select>
-          </div>
+          </div> */}
 
           <div className="mb-4">
             <label
@@ -447,76 +470,96 @@ function AlumniSignUpForm() {
               required
             />
           </div>
-
+          
           <div className="mb-4">
             <label
               className="mb-2 block text-sm text-white"
-              htmlFor="githubProfile"
+              htmlFor="showProfile"
             >
-              GitHub Profile
+              <input
+                type="checkbox"
+                id="showProfile"
+                name="showProfile"
+                checked={showProfiles}
+                onChange={() => {setShowProfiles(showProfiles => !showProfiles)}}
+              />{" "}
+              Would you like to add your Github and Coding Profiles?
             </label>
-            <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
-              type="url"
-              id="githubProfile"
-              name="githubProfile"
-              pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$"
-              value={formData.githubProfile}
-              onChange={handleChange}
-              placeholder="GitHub Profile URL"
-            />
           </div>
 
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm text-white"
-              htmlFor="leetcodeProfile"
-            >
-              LeetCode Profile
-            </label>
-            <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
-              id="leetcodeProfile"
-              name="leetcodeProfile"
-              value={formData.leetcodeProfile}
-              onChange={handleChange}
-              placeholder="LeetCode ID (e.g. neal_wu)"
-            />
-          </div>
+          {showProfiles && (
+            <>
+              <div className="mb-4">
+                <label
+                  className="mb-2 block text-sm text-white"
+                  htmlFor="githubProfile"
+                >
+                  GitHub Profile
+                </label>
+                <input
+                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  type="url"
+                  id="githubProfile"
+                  name="githubProfile"
+                  pattern="^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$"
+                  value={formData.githubProfile}
+                  onChange={handleChange}
+                  placeholder="GitHub Profile URL"
+                />
+              </div>
 
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm text-white"
-              htmlFor="codeforcesProfile"
-            >
-              Codeforces Profile
-            </label>
-            <input
-              className="w-full rounded bg-gray-2 p-2 text-black"
-              id="codeforcesProfile"
-              name="codeforcesProfile"
-              value={formData.codeforcesProfile}
-              onChange={handleChange}
-              placeholder="Codeforces ID (e.g. tourist)"
-            />
-          </div>
+              <div className="mb-4">
+                <label
+                  className="mb-2 block text-sm text-white"
+                  htmlFor="leetcodeProfile"
+                >
+                  LeetCode Profile
+                </label>
+                <input
+                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  id="leetcodeProfile"
+                  name="leetcodeProfile"
+                  value={formData.leetcodeProfile}
+                  onChange={handleChange}
+                  placeholder="LeetCode ID (e.g. neal_wu)"
+                />
+              </div>
 
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm text-white"
-              htmlFor="codechefProfile"
-            >
-              CodeChef Profile
-            </label>
-            <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
-              id="codechefProfile"
-              name="codechefProfile"
-              value={formData.codechefProfile}
-              onChange={handleChange}
-              placeholder="CodeChef ID (e.g. admin)"
-            />
-          </div>
+              <div className="mb-4">
+                <label
+                  className="mb-2 block text-sm text-white"
+                  htmlFor="codeforcesProfile"
+                >
+                  Codeforces Profile
+                </label>
+                <input
+                  className="w-full rounded bg-gray-2 p-2 text-black"
+                  id="codeforcesProfile"
+                  name="codeforcesProfile"
+                  value={formData.codeforcesProfile}
+                  onChange={handleChange}
+                  placeholder="Codeforces ID (e.g. tourist)"
+                />
+              </div>
+
+              <div className="mb-4">
+                <label
+                  className="mb-2 block text-sm text-white"
+                  htmlFor="codechefProfile"
+                >
+                  CodeChef Profile
+                </label>
+                <input
+                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  id="codechefProfile"
+                  name="codechefProfile"
+                  value={formData.codechefProfile}
+                  onChange={handleChange}
+                  placeholder="CodeChef ID (e.g. admin)"
+                />
+              </div>
+            </>
+          )}
 
           <div className="mb-4">
             <label className="mb-2 block text-sm text-white" htmlFor="password">
@@ -534,22 +577,24 @@ function AlumniSignUpForm() {
             />
           </div>
 
-          <div className="mb-4">
-            <label
-              className="mb-2 block text-sm text-white"
-              htmlFor="shareCodingProfile"
-            >
-              <input
-                type="checkbox"
-                id="shareCodingProfile"
-                name="shareCodingProfile"
-                checked={formData.shareCodingProfile}
-                onChange={handleChange}
-              />{" "}
-              I agree to share my coding profiles on NEXUS's coding profile
-              leaderboard for the analytics purpose.
-            </label>
-          </div>
+          {showProfiles && (
+            <div className="mb-4">
+              <label
+                className="mb-2 block text-sm text-white"
+                htmlFor="shareCodingProfile"
+              >
+                <input
+                  type="checkbox"
+                  id="shareCodingProfile"
+                  name="shareCodingProfile"
+                  checked={formData.shareCodingProfile}
+                  onChange={handleChange}
+                />{" "}
+                I agree to share my coding profiles on NEXUS's coding profile
+                leaderboard for the analytics purpose.
+              </label>
+            </div>
+          )}
 
           <button
             className="w-full rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
