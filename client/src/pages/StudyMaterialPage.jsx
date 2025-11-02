@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react"; 
-import { useNavigate } from "react-router-dom"; 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
@@ -8,15 +8,14 @@ import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
 
-// --- Constants ---
+
 const CATEGORIES = {
     PLACEMENTS: "Placements/Internships",
     SEMESTER: "Semester Exams",
 };
-const DEPARTMENTS = ["CSE", "AI"]; 
-// -----------------
+const DEPARTMENTS = ["CSE", "AI"];
 
-// Simple hero component for the page
+
 const StudyMaterialHero = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="space-y-6 text-center">
@@ -37,7 +36,6 @@ const StudyMaterialHero = () => (
     </div>
 );
 
-// Reusable card for category/department selection
 const SelectionCard = ({ title, icon, onClick }) => (
     <button
         onClick={onClick}
@@ -56,92 +54,90 @@ const SelectionCard = ({ title, icon, onClick }) => (
 );
 
 
-
 const StudyMaterialPage = () => {
-    // State to manage which part of the flow we're in
-    const [step, setStep] = useState(1); // 1: Category, 2: Department, 3: Subjects
+    const [step, setStep] = useState(1);
     const [category, setCategory] = useState(null);
     const [department, setDepartment] = useState(null);
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
-    // Simple auth check on page load
+    // Auth check on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
-            // No token? Send 'em to login.
             navigate('/login');
         }
-    }, [navigate]); 
-    
+    }, [navigate]);
+
     // Fetch subjects with React Query
     const {
-        data: subjects, // 'subjects' will be the array we need
+        data: subjects,
         isLoading,
         isError,
         error,
     } = useQuery({
-       
-        queryKey: ["subjects", category, department], // Re-fetches when these change
+        queryKey: ["subjects", category, department],
         queryFn: async () => {
             const response = await getSubjects({ category, department });
             if (!response.success) {
+                
                 throw new Error(response.message || "Failed to fetch subjects");
             }
-            // --- FIX for the "white screen" bug ---
-            // We need the 'data' array *inside* the response, not the whole { message, data } object
-            return response.data.data; 
+            
+            return response.data.data;
         },
         
-        // Only run this query when we're on the final step
+        
+        onError: (err) => {
+            const errorMsg = err.message.toLowerCase();
+            
+            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+            
+        },
+      
+
         enabled: step === 3 && !!category && !!department,
-        staleTime: 1000 * 60 * 15, // Cache for 15 mins
-        cacheTime: 1000 * 60 * 60,  // Keep in cache for 1 hour
+        staleTime: 1000 * 60 * 15,
+        cacheTime: 1000 * 60 * 60,
     });
 
-
-    // --- Step Navigation Handlers ---
+    
 
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
         if (selectedCategory === CATEGORIES.PLACEMENTS) {
-            // Placements are "Common", skip straight to subjects
             setDepartment("Common");
             setStep(3);
         } else {
-            // Sem exams need a department
             setStep(2);
         }
     };
 
     const handleDepartmentSelect = (selectedDepartment) => {
         setDepartment(selectedDepartment);
-        setStep(3); // Go to subjects list
+        setStep(3);
     };
-
 
     const handleBack = () => {
         if (step === 3) {
-            // If we came from placements, go to step 1
-            // If we came from semester, go to step 2
             if (category === CATEGORIES.SEMESTER) {
                 setStep(2);
-                setDepartment(null); // Clear selection
+                setDepartment(null);
             } else {
                 setStep(1);
                 setCategory(null);
                 setDepartment(null);
             }
         } else if (step === 2) {
-            // From department choice, go back to category choice
             setStep(1);
             setCategory(null);
         }
     };
 
+   
 
-    // --- Render Functions for Each Step ---
-
-    // Step 1: Show the two main categories
     const renderStep1_Category = () => (
         <div className="flex flex-wrap justify-center gap-6">
             <SelectionCard
@@ -157,7 +153,6 @@ const StudyMaterialPage = () => {
         </div>
     );
 
-    // Step 2: Show department choices (only for Semester Exams)
     const renderStep2_Department = () => (
         <div className="flex flex-wrap justify-center gap-6">
             {DEPARTMENTS.map((dept) => (
@@ -171,9 +166,8 @@ const StudyMaterialPage = () => {
         </div>
     );
 
-    // Step 3: Show the final list of subjects
+    
     const renderStep3_Subjects = () => {
-        // Handle loading state
         if (isLoading) {
             return (
                 <div className="flex h-64 w-full items-center justify-center">
@@ -181,16 +175,22 @@ const StudyMaterialPage = () => {
                 </div>
             );
         }
-        // Handle error state
+
         if (isError) {
+            // auth fix
+            const errorMsg = error.message.toLowerCase();
+            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+                return null; 
+            }
+        
             return <p className="text-center text-red-400">{error.message}</p>;
+      
         }
-        // Handle no data (or empty array)
+
         if (!subjects || subjects.length === 0) {
             return <p className="text-center text-gray-400">No subjects found.</p>;
         }
 
-        // Success: Render the grid of cards
         return (
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {subjects.map((subject) => (
@@ -200,15 +200,12 @@ const StudyMaterialPage = () => {
         );
     };
 
-    // Main component render
+   
+
     return (
         <div>
             <StudyMaterialHero />
-
-            {/* Main content area, centered */}
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                
-                {/* Show back button on any step after the first */}
                 {step > 1 && (
                     <button
                         onClick={handleBack}
@@ -219,7 +216,6 @@ const StudyMaterialPage = () => {
                     </button>
                 )}
                 
-                {/* Conditionally render the correct step */}
                 {step === 1 && renderStep1_Category()}
                 {step === 2 && renderStep2_Department()}
                 {step === 3 && renderStep3_Subjects()}
