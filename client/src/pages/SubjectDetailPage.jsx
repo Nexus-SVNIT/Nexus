@@ -1,20 +1,34 @@
-import { useEffect } from 'react'; // <-- 1. Import useEffect
-import { useParams, Link, useNavigate } from 'react-router-dom'; // <-- 2. Import useNavigate
+import { useState, useEffect, useMemo } from 'react'; // Added useState and useMemo
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
-import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft } from 'react-icons/lu';
+import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 
-// Reusable Resource Link 
+import SearchBar from '../../components/Alumni/SearchBar'; 
+
+
 const ResourceLink = ({ resource }) => {
     let icon;
-    switch (resource.resourceType) {
-        case 'Notes': icon = <LuFileText className="h-5 w-5" />; break;
-        case 'Video': icon = <LuYoutube className="h-5 w-5" />; break;
-        case 'Book': icon = <LuBook className="h-5 w-5" />; break;
-        default: icon = <LuLink className="h-5 w-5" />;
+    
+    switch (resource.subCategory) {
+        case 'Youtube Resources':
+            icon = <LuYoutube className="h-5 w-5" />;
+            break;
+        case 'Notes':
+        case 'PYQs':
+            icon = <LuFileText className="h-5 w-5" />;
+            break;
+        case 'Important topics':
+            icon = <LuBook className="h-5 w-5" />;
+            break;
+        default:
+  
+            icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />;
+            break;
     }
+
 
     return (
         <a
@@ -35,21 +49,24 @@ const ResourceLink = ({ resource }) => {
 
 const SubjectDetailPage = () => {
     const { id } = useParams();
-    const navigate = useNavigate(); // <-- 3. Get the navigate function
+    const navigate = useNavigate(); 
 
-    // --- Authentication Check ---
-    // (Matches the logic in StudyMaterialPage.jsx)
+    // 
+    const [searchTerm, setSearchTerm] = useState("");
+    const [subCategoryFilter, setSubCategoryFilter] = useState("All");
+    const [typeFilter, setTypeFilter] = useState("All");
+    
+
+  
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
-            // 4. If no token, redirect to the login page
             navigate('/login');
         }
-    }, [navigate]); // Run once on component mount
-    // ----------------------------
+    }, [navigate]); 
 
     const {
-        data: subject, // 'subject' will now be the correct object
+        data: subject, 
         isLoading,
         isError,
         error,
@@ -58,16 +75,63 @@ const SubjectDetailPage = () => {
         queryFn: async () => {
             const response = await getSubjectDetails(id);
             if (!response.success) {
+                
                 throw new Error(response.message || "Failed to fetch subject details");
             }
-            // --- 5. FIX for "white screen" bug ---
-            // Return the 'data' object *inside* the response
+           
             return response.data.data; 
         },
+        
+       
+        onError: (err) => {
+            const errorMsg = err.message.toLowerCase();
+            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+                localStorage.removeItem('token'); 
+                navigate('/login');
+            }
+        },
+  
+
         staleTime: 1000 * 60 * 15,
     });
 
-    // Handle loading state
+    
+    const filteredResources = useMemo(() => {
+        if (!subject) return {}; 
+
+        const allCategories = Object.keys(subject.resources);
+        const filtered = {};
+        const lowerSearch = searchTerm.toLowerCase();
+
+        allCategories.forEach(category => {
+            
+            let resources = subject.resources[category];
+
+            
+            if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
+                resources = []; 
+            }
+
+            
+            if (typeFilter !== "All") {
+                resources = resources.filter(res => res.resourceType === typeFilter);
+            }
+            
+           
+            if (lowerSearch) {
+                resources = resources.filter(res => 
+                    res.title.toLowerCase().includes(lowerSearch)
+                );
+            }
+            
+            filtered[category] = resources;
+        });
+        
+        return filtered;
+
+    }, [subject, searchTerm, subCategoryFilter, typeFilter]);
+
+   
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -75,16 +139,17 @@ const SubjectDetailPage = () => {
             </div>
         );
     }
-
-    // Handle error state
+ 
     if (isError) {
+
+        const errorMsg = error.message.toLowerCase();
+        if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+            return null; 
+        }
         console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
     }
-
-    // --- This check is important ---
-    // If the query succeeds but 'subject' is still null/undefined,
-    // (e.g., auth check is running), wait for it.
+    
     if (!subject) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -92,15 +157,20 @@ const SubjectDetailPage = () => {
             </div>
         );
     }
-
-    // Your backend already groups resources, so we just get the keys
-    const resourceCategories = Object.keys(subject.resources);
+    
+   
+    const resourceCategories = Object.keys(filteredResources);
+    
+    
+    const allSubCategories = subject ? Object.keys(subject.resources) : [];
+    const allResourceTypes = subject ? 
+        [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))] 
+        : [];
 
     return (
-        // Centered layout, matching the StudyMaterialPage
+      
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
             
-            {/* Back Button */}
             <Link
                 to="/study-material"
                 className="mb-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
@@ -109,28 +179,84 @@ const SubjectDetailPage = () => {
                 Back to Subjects
             </Link>
 
-            {/* Header */}
             <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
             
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
                 {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
+                    
+                    {/* --- 7. NEW FILTER BAR --- */}
+                    <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
+                        {/* Use your existing Alumni SearchBar */}
+                        <SearchBar 
+                            placeholder="Search resources by title..."
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                        />
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            {/* SubCategory Filter */}
+                            <div>
+                                <label htmlFor="subCategory" className="block text-sm font-medium text-gray-300 mb-1">Sub-Category</label>
+                                <select 
+                                    id="subCategory"
+                                    value={subCategoryFilter}
+                                    onChange={(e) => setSubCategoryFilter(e.g.target.value)}
+                                    // Style matches your Alumni SearchBar
+                                    className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="All" className="bg-gray-800">All Sub-Categories</option>
+                                    {allSubCategories.map(cat => (
+                                        <option key={cat} value={cat} className="bg-gray-800">{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {/* Type Filter */}
+                            <div>
+                                <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                                <select 
+                                    id="type"
+                                    value={typeFilter}
+                                    onChange={(e) => setTypeFilter(e.target.value)}
+                                    className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="All" className="bg-gray-800">All Types</option>
+                                    {allResourceTypes.map(type => (
+                                        <option key={type} value={type} className="bg-gray-800">{type}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {/* END FILTER BAR  */}
+                    
+                    {/* UPDATED RESOURCES LIST */}
+                    {/* Map over the filtered resources */}
                     {resourceCategories.map(category => (
-                        // Only render the section if it has resources
-                        subject.resources[category].length > 0 && (
+                        filteredResources[category].length > 0 && (
                             <section key={category}>
                                 <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                     {category}
                                 </h2>
                                 <div className="space-y-3">
-                                    {subject.resources[category].map(resource => (
+                                    {filteredResources[category].map(resource => (
                                         <ResourceLink key={resource._id} resource={resource} />
                                     ))}
                                 </div>
                             </section>
                         )
                     ))}
+                    
+                    {/* 9.  */}
+                    {Object.values(filteredResources).flat().length === 0 && (
+                        <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
+                            <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
+                            <h3 className="mt-2 text-xl font-semibold text-white">No resources found</h3>
+                            <p className="mt-1 text-gray-400">Try adjusting your search or filters.</p>
+                        </div>
+                    )}
+                    {/* --- END RESOURCES LIST --- */}
+
                 </div>
 
                 {/* --- Right Column: Tips --- */}
