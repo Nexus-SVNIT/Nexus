@@ -1,36 +1,37 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const resourceSchema = new Schema({
-    title: {
+const subjectSchema = new Schema({
+    category: {
+        type: String,
+        required: true,
+        enum: ['Semester Exams', 'Placements/Internships'],
+        trim: true
+    },
+    subjectName: {
         type: String,
         required: true,
         trim: true
     },
-    subCategory: {
+    department: {
         type: String,
         required: true,
-        enum: ['Notes', 'Important topics', 'Youtube Resources', 'PYQs', 'Other'],
+        enum: ['CSE', 'AI', 'Common'],
         trim: true
     },
-    resourceType: {  // consistent camelCase
-        type: String,
-        required: true,
-        enum: ['PDF', 'Link']
+    tips: {
+        type: [{ text: String, createdAt: { type: Date, default: Date.now } }],
+        default: []
     },
-    link: {  // lowercase field name
-        type: String,
-        required: true,
-        trim: true
-    },
-    subject: {
+    resources: [{
         type: Schema.Types.ObjectId,
-        ref: 'Subject',
-        required: true,
-        index: true
-    }
+        ref: 'Resource'
+    }],
 }, {
     timestamps: true
 });
 
-module.exports = mongoose.model('Resource', resourceSchema);
+// Prevent duplicate subjects in same department
+subjectSchema.index({ subjectName: 1, department: 1 }, { unique: true });
+
+module.exports = mongoose.model('Subject', subjectSchema);

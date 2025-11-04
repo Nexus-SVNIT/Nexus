@@ -34,6 +34,10 @@ import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
 import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
 
 
+import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
+import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
+
+
 export const DefaultRoutes = [
   { path: "/", title: "Home", component: Home },
   { path: "team", title: "Teams", component: Teams },
