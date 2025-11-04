@@ -21,6 +21,10 @@ import AlumniSignUpForm from '../components/AlumniSignUpForm/AlumniSignUpForm.js
 
 import Alumni from '../pages/Alumni/Alumni.jsx'
 
+import StudyMaterialPage from "../pages/StudyMaterialPage.jsx";
+import SubjectDetailPage from "../pages/SubjectDetailPage.jsx";
+
+
 export const DefaultRoutes = [
   {
     path: '/',
@@ -155,6 +159,13 @@ export const DefaultRoutes = [
     path: '/alumni/signup',
     title: 'Alumni SignUp',
     component: AlumniSignUpForm
+  },
+  { path: "study-material", title: "Study Material", component: StudyMaterialPage },
+  {
+    
+    path: "study-material/subject/:id",
+    title: "Subject Details",
+    component: SubjectDetailPage
   },
 
   {
