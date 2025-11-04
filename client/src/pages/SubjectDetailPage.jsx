@@ -36,35 +36,23 @@ const ResourceLink = React.memo(({ resource }) => {
         );
   }
 
-  const rightIcon =
-    resource.resourceType === "PDF" ? (
-      <LuFileText className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-all duration-300" />
-    ) : (
-      <LuLink className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-all duration-300" />
-    );
-
   return (
     <a
       href={resource.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:border-blue-400/50 hover:bg-white/5 hover:shadow-md"
+      className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 transition-all duration-300 hover:border-blue-400/50 hover:bg-white/5"
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <span className="text-blue-400 flex-shrink-0">{icon}</span>
-        <span
-          className="font-medium text-gray-100 line-clamp-2 leading-snug"
-          title={resource.title}
-        >
-          {resource.title}
-        </span>
+        <span className="font-medium text-gray-100 truncate">{resource.title}</span>
       </div>
-      {rightIcon}
+      <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
     </a>
   );
 });
 
-const LIMIT = 10;
+const LIMIT = 20;
 
 const SubjectDetailPage = () => {
   const { id } = useParams();
@@ -82,13 +70,11 @@ const SubjectDetailPage = () => {
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // fetch subject meta info
   const {
     data: subjectMeta,
     isLoading: isSubjectLoading,
@@ -102,17 +88,8 @@ const SubjectDetailPage = () => {
         throw new Error(response.message || "Failed to fetch subject details");
       return response.data;
     },
-    staleTime: 1000 * 60 * 15,
-    onError: (err) => {
-      const msg = err.message.toLowerCase();
-      if (msg.includes("token") || msg.includes("unauthorized")) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    },
   });
 
-  // fetch resources paginated
   const {
     data,
     isLoading,
@@ -138,8 +115,6 @@ const SubjectDetailPage = () => {
     getNextPageParam: (lastPage) =>
       lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
     enabled: !!id,
-    staleTime: 1000 * 60 * 10,
-    cacheTime: 1000 * 60 * 60,
   });
 
   // infinite scroll
@@ -153,40 +128,52 @@ const SubjectDetailPage = () => {
     return () => current && observer.unobserve(current);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  const resources = useMemo(
+  // flatten
+  const allResources = useMemo(
     () => data?.pages.flatMap((page) => page.data) || [],
     [data]
   );
 
-  // Loaders
-  if (isSubjectLoading || isLoading)
+  // group by subCategory
+  const groupedResources = useMemo(() => {
+    const groups = {};
+    for (const res of allResources) {
+      const cat = res.subCategory || "Other";
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(res);
+    }
+    return groups;
+  }, [allResources]);
+
+  // loaders
+  if (isSubjectLoading || isLoading) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
+  }
 
   if (isError || isSubjectError) {
     console.error("Error fetching subject/resources:", error || subjectError);
     return <MaintenancePage />;
   }
 
-  if (!subjectMeta)
+  if (!subjectMeta) {
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
+  }
 
-  // Filters
   const allSubCategories = subjectMeta?.resources
     ? Object.keys(subjectMeta.resources)
     : [];
   const allResourceTypes = [
-    ...new Set(resources.map((r) => r.resourceType)),
+    ...new Set(allResources.map((r) => r.resourceType)),
   ].filter(Boolean);
 
-  // ✅ Final UI
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
       <Link
@@ -197,14 +184,12 @@ const SubjectDetailPage = () => {
         Back to Subjects
       </Link>
 
-      <h1 className="mb-8 text-4xl font-bold">
-        {subjectMeta.subjectName || "Subject Details"}
-      </h1>
+      <h1 className="mb-8 text-4xl font-bold">{subjectMeta.subjectName}</h1>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Left Column */}
         <div className="space-y-8 lg:col-span-2">
-          {/* Filter Bar */}
+          {/* Filters */}
           <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
             <SearchBar
               placeholder="Search resources by title..."
@@ -229,7 +214,6 @@ const SubjectDetailPage = () => {
                   ))}
                 </select>
               </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Type
@@ -250,24 +234,20 @@ const SubjectDetailPage = () => {
             </div>
           </div>
 
-          {/* Resources */}
-          {resources.length > 0 ? (
-            <>
-              <div className="space-y-3">
-                {resources.map((resource) => (
-                  <ResourceLink key={resource._id} resource={resource} />
-                ))}
-              </div>
-
-              {hasNextPage && (
-                <div
-                  ref={loadMoreRef}
-                  className="mt-8 flex justify-center text-blue-400"
-                >
-                  {isFetchingNextPage ? "Loading more..." : "Scroll to load more..."}
+          {/* Grouped Resources */}
+          {Object.keys(groupedResources).length > 0 ? (
+            Object.entries(groupedResources).map(([category, resources]) => (
+              <div key={category} className="space-y-3">
+                <h2 className="text-2xl font-semibold text-blue-400 mt-8">
+                  {category}
+                </h2>
+                <div className="space-y-3">
+                  {resources.map((resource) => (
+                    <ResourceLink key={resource._id} resource={resource} />
+                  ))}
                 </div>
-              )}
-            </>
+              </div>
+            ))
           ) : (
             <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
               <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -277,6 +257,15 @@ const SubjectDetailPage = () => {
               <p className="mt-1 text-gray-400">
                 Try adjusting your search or filters.
               </p>
+            </div>
+          )}
+
+          {hasNextPage && (
+            <div
+              ref={loadMoreRef}
+              className="mt-8 flex justify-center text-blue-400"
+            >
+              {isFetchingNextPage ? "Loading more..." : "Scroll to load more..."}
             </div>
           )}
         </div>
