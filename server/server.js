@@ -74,7 +74,7 @@ app.use('/questions', questionRoutes);
 app.use('/questions', answerRoutes);
 app.use('/comments', commentRoutes);
 app.use('/contributors', contributorsRoute);
-app.use('/study-material', studyMaterialRoutes);
+app.use('/resources', studyMaterialRoutes);
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

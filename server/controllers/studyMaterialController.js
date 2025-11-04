@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// GET list of subjects with filtering and pagination
+// list of subjects with filtering and pagination
 const getSubjects = async (req, res) => {
   try {
     const { category, department, page = 1, limit = 10, search = "" } = req.query;
@@ -13,7 +13,7 @@ const getSubjects = async (req, res) => {
 
     const filter = { category: { $regex: new RegExp(category, "i") } };
 
-    // Department filtering logic
+    // department filtering logic
     if (category.toLowerCase() === "semester exams") {
       if (!department) {
         return res.status(400).json({ message: "Department is required for Semester Exams" });
@@ -53,7 +53,7 @@ const getSubjects = async (req, res) => {
   }
 };
 
-// GET paginated and filtered resources for a subject
+//paginated and filtered resources for a subject
 const getResourcesBySubject = async (req, res) => {
   try {
     const { id } = req.params;
