@@ -286,4 +286,3 @@ const SubjectDetailPage = () => {
 };
 
 export default SubjectDetailPage;
-

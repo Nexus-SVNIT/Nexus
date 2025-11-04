@@ -225,4 +225,3 @@ const StudyMaterialPage = () => {
 };
 
 export default StudyMaterialPage;
-

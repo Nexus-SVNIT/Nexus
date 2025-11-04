@@ -37,7 +37,7 @@ const getSubjects = async (req, res) => {
             filter.department = rawDepartment.trim();
         }
 
-        // placements all share the Common department
+        // placements all share the common department
         if (lowerCaseCategory === "placements/internships") {
             filter.department = "Common"; 
         }
@@ -56,10 +56,10 @@ const getSubjects = async (req, res) => {
     }
 };
 
-// Get full subject details
+// get full subject details
 const getSubjectDetails = async (req, res) => {
     try {
-        // Get id from url params
+        // get id from url params
         const { id: rawId } = req.params;
         
         if (!rawId) {
@@ -83,18 +83,18 @@ const getSubjectDetails = async (req, res) => {
             return res.status(404).json({ message: "Subject not found" });
         }
 
-        // Get all possible subCats from the schema to build a template
+        // get all possible subCats from the schema
         const allSubCategories = Resource.schema.path('subCategory').enumValues;
 
-        // Create a base object, so all subCats are present, even if empty
+        // create a base object, so all subcats are present
         const baseGroups = allSubCategories.reduce((acc, category) => {
             acc[category] = [];
             return acc;
         }, {});
 
-        // Group the populated resources into the base object
+
         const groupedResources = subject.resources.reduce((acc, resource) => {
-            // Check if subCategory exists in baseGroups to avoid errors
+            
             if (acc[resource.subCategory]) {
                 acc[resource.subCategory].push(resource);
             }
@@ -104,7 +104,7 @@ const getSubjectDetails = async (req, res) => {
         const formattedSubject = {
             _id: subject._id,
             subjectName: subject.subjectName,
-            // Sort tips oldest to newest before sending
+            // sort tips oldest to newest before sending
             tips: subject.tips
                       .sort((a, b) => a.createdAt - b.createdAt)
                       .map(t => t.text),
@@ -127,5 +127,3 @@ module.exports = {
     getSubjects,
     getSubjectDetails
 };
-
-

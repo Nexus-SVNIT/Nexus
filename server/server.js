@@ -26,7 +26,6 @@ const contributorsRoute=require("./routes/contributorsRoute.js");
 const rateLimit = require('express-rate-limit');
 const studyMaterialRoutes = require('./routes/studyMaterialRoutes.js')
 
-
 const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
@@ -76,7 +75,6 @@ app.use('/questions', answerRoutes);
 app.use('/comments', commentRoutes);
 app.use('/contributors', contributorsRoute);
 app.use('/study-material', studyMaterialRoutes);
-
 
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {

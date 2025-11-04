@@ -1,16 +1,16 @@
 export const NavList = [
-{ label: 'Home', path: '/' },
-{ label: 'Team', path: '/team' },
-{ label: 'Achievements', path: '/achievements' },
-{ label: 'Events', path: '/events' },
-{ label: 'Forms', path: '/forms' },
-{ label: 'Alumni Network', path: '/alumni-network' },
-{ label: 'Resources', path: '/study-material' },
-{ label: 'Projects', path: '/projects' },
-{ label: 'Coding', path: '/coding' },
-{ label: 'Interview Experience', path: '/interview-experiences' },
-// { label: 'Merch Reference LeaderBoard',path: '/merch/reference-leaderboard'},
-{ label: 'About', path: '/about' },
+  { label: 'Home', path: '/' },
+  { label: 'Team', path: '/team' },
+  { label: 'Achievements', path: '/achievements' },
+  { label: 'Events', path: '/events' },
+  { label: 'Forms', path: '/forms' },
+  { label: 'Alumni Network', path: '/alumni-network' },
+  { label: 'Projects', path: '/projects' },
+  { label: 'Coding', path: '/coding' },
+  { label: 'Interview Experience', path: '/interview-experiences' },
+  { label: 'Resources', path: '/study-material' },
+  // { label: 'Merch Reference LeaderBoard',path: '/merch/reference-leaderboard'},
+  { label: 'About', path: '/about' },
 ]
 export const FAQsList = [
 {
