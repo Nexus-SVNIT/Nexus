@@ -14,13 +14,14 @@ import {
   LuArrowRight,
 } from "react-icons/lu";
 
+// Constants
 const CATEGORIES = {
   PLACEMENTS: "Placements/Internships",
   SEMESTER: "Semester Exams",
 };
-
 const DEPARTMENTS = ["CSE", "AI"];
 
+// Hero Section
 const StudyMaterialHero = () => (
   <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div className="space-y-6 text-center">
@@ -29,7 +30,7 @@ const StudyMaterialHero = () => (
         Study Resources
       </div>
       <h1 className="text-foreground text-4xl font-bold md:text-6xl">
-        Ace Your Academic &{" "}
+        Ace Your Academic &
         <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
           Placement Prep
         </span>
@@ -41,6 +42,7 @@ const StudyMaterialHero = () => (
   </div>
 );
 
+// Selection Card
 const SelectionCard = ({ title, icon, onClick }) => (
   <button
     onClick={onClick}
@@ -64,13 +66,13 @@ const StudyMaterialPage = () => {
   const [department, setDepartment] = useState(null);
   const navigate = useNavigate();
 
-  // 🔹 Auth check
+  // 🔐 Auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // 🔹 Fetch subjects
+  // 🔹 Fetch subjects (server-side pagination + filters handled backend)
   const {
     data: subjects,
     isLoading,
@@ -82,11 +84,11 @@ const StudyMaterialPage = () => {
       const response = await getSubjects({ category, department });
       if (!response.success)
         throw new Error(response.message || "Failed to fetch subjects");
-      return response.data; // ✅ fixed
+      return response.data.data; // ✅ fixed — extract array properly
     },
     enabled: step === 3 && !!category && !!department,
-    staleTime: 1000 * 60 * 15,
-    cacheTime: 1000 * 60 * 60,
+    staleTime: 1000 * 60 * 15, // 15 mins
+    cacheTime: 1000 * 60 * 60, // 1 hour
     onError: (err) => {
       const msg = err.message.toLowerCase();
       if (
@@ -100,12 +102,15 @@ const StudyMaterialPage = () => {
     },
   });
 
+  // 🧭 Navigation Handlers
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
     if (selectedCategory === CATEGORIES.PLACEMENTS) {
       setDepartment("Common");
       setStep(3);
-    } else setStep(2);
+    } else {
+      setStep(2);
+    }
   };
 
   const handleDepartmentSelect = (selectedDepartment) => {
@@ -129,7 +134,8 @@ const StudyMaterialPage = () => {
     }
   };
 
-  const renderStep1 = () => (
+  // 🪜 Step 1: Category Selection
+  const renderStep1_Category = () => (
     <div className="flex flex-wrap justify-center gap-6">
       <SelectionCard
         title="Placements/Internships"
@@ -144,7 +150,8 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep2 = () => (
+  // 🧠 Step 2: Department Selection
+  const renderStep2_Department = () => (
     <div className="flex flex-wrap justify-center gap-6">
       {DEPARTMENTS.map((dept) => (
         <SelectionCard
@@ -157,23 +164,25 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep3 = () => {
-    if (isLoading)
+  // 📘 Step 3: Subjects
+  const renderStep3_Subjects = () => {
+    if (isLoading) {
       return (
         <div className="flex h-64 w-full items-center justify-center">
           <Loader />
         </div>
       );
+    }
 
     if (isError) {
-      const msg = error?.message?.toLowerCase() || "";
-      if (msg.includes("token") || msg.includes("unauthorized") || msg.includes("not valid"))
-        return null;
+      const msg = error.message.toLowerCase();
+      if (msg.includes("token") || msg.includes("unauthorized")) return null;
       return <MaintenancePage />;
     }
 
-    if (!subjects?.length)
+    if (!subjects || subjects.length === 0) {
       return <p className="text-center text-gray-400">No subjects found.</p>;
+    }
 
     return (
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
@@ -184,9 +193,11 @@ const StudyMaterialPage = () => {
     );
   };
 
+  // 🧩 Final Render
   return (
     <div>
       <StudyMaterialHero />
+
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {step > 1 && (
           <button
@@ -197,9 +208,10 @@ const StudyMaterialPage = () => {
             Back
           </button>
         )}
-        {step === 1 && renderStep1()}
-        {step === 2 && renderStep2()}
-        {step === 3 && renderStep3()}
+
+        {step === 1 && renderStep1_Category()}
+        {step === 2 && renderStep2_Department()}
+        {step === 3 && renderStep3_Subjects()}
       </div>
     </div>
   );
