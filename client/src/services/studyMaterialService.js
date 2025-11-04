@@ -15,14 +15,14 @@ export const getResourcesBySubject = async (id, options = {}) => {
   try {
     const params = {};
 
-    // Add only defined params to avoid sending empty strings
     if (options.page) params.page = options.page;
     if (options.limit) params.limit = options.limit;
     if (options.subCategory) params.subCategory = options.subCategory;
     if (options.type) params.type = options.type;
     if (options.search) params.search = options.search;
 
-    const response = await API.get(`/resources/subjects/${id}/resources`, { params });
+    
+    const response = await API.get(`/resources/subjects/${id}`, { params });
 
     if (response.data.success) {
       return response.data;

@@ -14,10 +14,8 @@ import {
 } from "react-icons/lu";
 import SearchBar from "../components/Alumni/SearchBar.jsx";
 
-//  Memoized Resource Card
 const ResourceLink = React.memo(({ resource }) => {
   let icon;
-
   switch (resource.subCategory) {
     case "Youtube Resources":
       icon = <LuYoutube className="h-5 w-5" />;
@@ -36,7 +34,6 @@ const ResourceLink = React.memo(({ resource }) => {
         ) : (
           <LuLink className="h-5 w-5" />
         );
-      break;
   }
 
   return (
@@ -46,9 +43,9 @@ const ResourceLink = React.memo(({ resource }) => {
       rel="noopener noreferrer"
       className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 transition-all duration-300 hover:border-blue-400/50 hover:bg-white/5"
     >
-      <div className="flex items-center gap-3">
-        <span className="text-blue-400">{icon}</span>
-        <span className="font-medium text-gray-100">{resource.title}</span>
+      <div className="flex items-center gap-3 overflow-hidden">
+        <span className="text-blue-400 flex-shrink-0">{icon}</span>
+        <span className="font-medium text-gray-100 truncate">{resource.title}</span>
       </div>
       <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
     </a>
@@ -62,30 +59,25 @@ const SubjectDetailPage = () => {
   const navigate = useNavigate();
   const loadMoreRef = useRef(null);
 
-  // Filters & search state
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
   const [subCategoryFilter, setSubCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
 
-  // 🧠 Debounce search (wait 500ms after typing)
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  // 🧠 Scroll to top when filters change
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [subCategoryFilter, typeFilter]);
 
-  // 🔹 Auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // 🔹 Fetch subject meta info
   const {
     data: subjectMeta,
     isLoading: isSubjectLoading,
@@ -97,7 +89,7 @@ const SubjectDetailPage = () => {
       const response = await getSubjectDetails(id);
       if (!response.success)
         throw new Error(response.message || "Failed to fetch subject details");
-      return response.data.data;
+      return response.data; // ✅ fixed
     },
     staleTime: 1000 * 60 * 15,
     onError: (err) => {
@@ -109,7 +101,6 @@ const SubjectDetailPage = () => {
     },
   });
 
-  // 🔹 Paginated + filtered resources (server-side)
   const {
     data,
     isLoading,
@@ -132,23 +123,13 @@ const SubjectDetailPage = () => {
         throw new Error(response.message || "Failed to fetch resources");
       return response;
     },
-    getNextPageParam: (lastPage) => {
-      if (lastPage.page < lastPage.totalPages) return lastPage.page + 1;
-      return undefined;
-    },
+    getNextPageParam: (lastPage) =>
+      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
     enabled: !!id,
     staleTime: 1000 * 60 * 10,
     cacheTime: 1000 * 60 * 60,
-    onError: (err) => {
-      const msg = err.message.toLowerCase();
-      if (msg.includes("token") || msg.includes("unauthorized")) {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }
-    },
   });
 
-  // 🔹 Infinite scroll observer (optional, replaces “Load More” button)
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;
     const observer = new IntersectionObserver((entries) => {
@@ -156,40 +137,33 @@ const SubjectDetailPage = () => {
     });
     const current = loadMoreRef.current;
     if (current) observer.observe(current);
-    return () => {
-      if (current) observer.unobserve(current);
-    };
+    return () => current && observer.unobserve(current);
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 🔹 Flatten paginated data
   const resources = useMemo(
     () => data?.pages.flatMap((page) => page.data) || [],
     [data]
   );
 
-  // Loader states
-  if (isSubjectLoading || isLoading) {
+  if (isSubjectLoading || isLoading)
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
-  }
 
   if (isError || isSubjectError) {
     console.error("Error fetching subject/resources:", error || subjectError);
     return <MaintenancePage />;
   }
 
-  if (!subjectMeta) {
+  if (!subjectMeta)
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
-  }
 
-  // Collect filter options
   const allSubCategories = subjectMeta?.resources
     ? Object.keys(subjectMeta.resources)
     : [];
@@ -221,47 +195,34 @@ const SubjectDetailPage = () => {
             />
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div>
-                <label
-                  htmlFor="subCategory"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Sub-Category
                 </label>
                 <select
-                  id="subCategory"
                   value={subCategoryFilter}
                   onChange={(e) => setSubCategoryFilter(e.target.value)}
-                  className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-3 text-white focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="All" className="bg-gray-800">
-                    All Sub-Categories
-                  </option>
+                  <option value="All">All Sub-Categories</option>
                   {allSubCategories.map((cat) => (
-                    <option key={cat} value={cat} className="bg-gray-800">
+                    <option key={cat} value={cat}>
                       {cat}
                     </option>
                   ))}
                 </select>
               </div>
-
               <div>
-                <label
-                  htmlFor="type"
-                  className="block text-sm font-medium text-gray-300 mb-1"
-                >
+                <label className="block text-sm font-medium text-gray-300 mb-1">
                   Type
                 </label>
                 <select
-                  id="type"
                   value={typeFilter}
                   onChange={(e) => setTypeFilter(e.target.value)}
-                  className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                  className="w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-3 text-white focus:ring-2 focus:ring-blue-500"
                 >
-                  <option value="All" className="bg-gray-800">
-                    All Types
-                  </option>
+                  <option value="All">All Types</option>
                   {allResourceTypes.map((type) => (
-                    <option key={type} value={type} className="bg-gray-800">
+                    <option key={type} value={type}>
                       {type}
                     </option>
                   ))}
@@ -270,7 +231,7 @@ const SubjectDetailPage = () => {
             </div>
           </div>
 
-          {/* Resources List */}
+          {/* Resources */}
           {resources.length > 0 ? (
             <>
               <div className="space-y-3">
@@ -279,7 +240,6 @@ const SubjectDetailPage = () => {
                 ))}
               </div>
 
-              {/* Load More (fallback) */}
               {hasNextPage && (
                 <div
                   ref={loadMoreRef}
@@ -308,11 +268,11 @@ const SubjectDetailPage = () => {
             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
               Tips & Advice
             </h2>
-            {subjectMeta.tips.length > 0 ? (
+            {subjectMeta.tips?.length > 0 ? (
               <ul className="space-y-4">
-                {subjectMeta.tips.map((tip, index) => (
-                  <li key={index} className="flex gap-3">
-                    <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-400"></span>
+                {subjectMeta.tips.map((tip, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400"></span>
                     <span className="text-gray-300">{tip}</span>
                   </li>
                 ))}
