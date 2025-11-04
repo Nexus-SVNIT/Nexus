@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useMemo, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import { getResourcesBySubject, getSubjectDetails } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
 import MaintenancePage from "../components/Error/MaintenancePage";
@@ -14,7 +14,8 @@ import {
 } from "react-icons/lu";
 import SearchBar from "../components/Alumni/SearchBar.jsx";
 
-const ResourceLink = React.memo(({ resource }) => {
+// Reusable resource link card
+const ResourceLink = ({ resource }) => {
   let icon;
   switch (resource.subCategory) {
     case "Youtube Resources":
@@ -28,12 +29,10 @@ const ResourceLink = React.memo(({ resource }) => {
       icon = <LuBook className="h-5 w-5" />;
       break;
     default:
-      icon =
-        resource.resourceType === "PDF" ? (
-          <LuFileText className="h-5 w-5" />
-        ) : (
-          <LuLink className="h-5 w-5" />
-        );
+      icon = resource.resourceType === "PDF"
+        ? <LuFileText className="h-5 w-5" />
+        : <LuLink className="h-5 w-5" />;
+      break;
   }
 
   return (
@@ -50,31 +49,29 @@ const ResourceLink = React.memo(({ resource }) => {
       <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
     </a>
   );
-});
-
-const LIMIT = 20;
+};
 
 const SubjectDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const loadMoreRef = useRef(null);
 
   const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const [subCategoryFilter, setSubCategoryFilter] = useState("All");
-  const [typeFilter, setTypeFilter] = useState("All");
 
-  // debounce search
+  // Debounce search
+  const [debouncedSearch, setDebouncedSearch] = useState("");
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
+  // Auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
+  // Fetch subject meta info
   const {
     data: subjectMeta,
     isLoading: isSubjectLoading,
@@ -90,72 +87,35 @@ const SubjectDetailPage = () => {
     },
   });
 
+  // Fetch grouped resources (no pagination now)
   const {
-    data,
-    isLoading,
-    isError,
-    error,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteQuery({
-    queryKey: ["resources", id, debouncedSearch, subCategoryFilter, typeFilter],
-    queryFn: async ({ pageParam = 1 }) => {
+    data: resourceResponse,
+    isLoading: isResourceLoading,
+    isError: isResourceError,
+    error: resourceError,
+  } = useQuery({
+    queryKey: ["resources", id, debouncedSearch, subCategoryFilter],
+    queryFn: async () => {
       const response = await getResourcesBySubject(id, {
-        page: pageParam,
-        limit: LIMIT,
         subCategory: subCategoryFilter !== "All" ? subCategoryFilter : undefined,
         search: debouncedSearch || undefined,
-        type: typeFilter !== "All" ? typeFilter : undefined,
       });
       if (!response.success)
         throw new Error(response.message || "Failed to fetch resources");
-      return response;
+      return response.data; // ✅ grouped data object
     },
-    getNextPageParam: (lastPage) =>
-      lastPage.page < lastPage.totalPages ? lastPage.page + 1 : undefined,
     enabled: !!id,
   });
 
-  // infinite scroll
-  useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
-    const observer = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting) fetchNextPage();
-    });
-    const current = loadMoreRef.current;
-    if (current) observer.observe(current);
-    return () => current && observer.unobserve(current);
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // flatten
-  const allResources = useMemo(
-    () => data?.pages.flatMap((page) => page.data) || [],
-    [data]
-  );
-
-  // group by subCategory
-  const groupedResources = useMemo(() => {
-    const groups = {};
-    for (const res of allResources) {
-      const cat = res.subCategory || "Other";
-      if (!groups[cat]) groups[cat] = [];
-      groups[cat].push(res);
-    }
-    return groups;
-  }, [allResources]);
-
-  // loaders
-  if (isSubjectLoading || isLoading) {
+  if (isSubjectLoading || isResourceLoading)
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
-  }
 
-  if (isError || isSubjectError) {
-    console.error("Error fetching subject/resources:", error || subjectError);
+  if (isSubjectError || isResourceError) {
+    console.error("Error fetching data:", subjectError || resourceError);
     return <MaintenancePage />;
   }
 
@@ -167,12 +127,9 @@ const SubjectDetailPage = () => {
     );
   }
 
-  const allSubCategories = subjectMeta?.resources
-    ? Object.keys(subjectMeta.resources)
-    : [];
-  const allResourceTypes = [
-    ...new Set(allResources.map((r) => r.resourceType)),
-  ].filter(Boolean);
+  // Extract categories from grouped data
+  const groupedResources = resourceResponse || {};
+  const allSubCategories = Object.keys(groupedResources);
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
@@ -187,67 +144,56 @@ const SubjectDetailPage = () => {
       <h1 className="mb-8 text-4xl font-bold">{subjectMeta.subjectName}</h1>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-        {/* Left Column */}
+        {/* Left column */}
         <div className="space-y-8 lg:col-span-2">
-          {/* Filters */}
+          {/* Filter bar */}
           <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
             <SearchBar
-              placeholder="Search resources by title..."
+              placeholder="Search resources..."
               value={searchTerm}
               onChange={setSearchTerm}
             />
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Sub-Category
-                </label>
-                <select
-                  value={subCategoryFilter}
-                  onChange={(e) => setSubCategoryFilter(e.target.value)}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-3 text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="All">All Sub-Categories</option>
-                  {allSubCategories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
-                  Type
-                </label>
-                <select
-                  value={typeFilter}
-                  onChange={(e) => setTypeFilter(e.target.value)}
-                  className="w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-3 text-white focus:ring-2 focus:ring-blue-500"
-                >
-                  <option value="All">All Types</option>
-                  {allResourceTypes.map((type) => (
-                    <option key={type} value={type}>
-                      {type}
-                    </option>
-                  ))}
-                </select>
-              </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-1">
+                Sub-Category
+              </label>
+              <select
+                value={subCategoryFilter}
+                onChange={(e) => setSubCategoryFilter(e.target.value)}
+                className="w-full rounded-lg bg-white/10 border border-white/20 py-2.5 px-3 text-white focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="All">All Sub-Categories</option>
+                {allSubCategories.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Grouped Resources */}
+          {/* Resources */}
           {Object.keys(groupedResources).length > 0 ? (
-            Object.entries(groupedResources).map(([category, resources]) => (
-              <div key={category} className="space-y-3">
-                <h2 className="text-2xl font-semibold text-blue-400 mt-8">
-                  {category}
-                </h2>
-                <div className="space-y-3">
-                  {resources.map((resource) => (
-                    <ResourceLink key={resource._id} resource={resource} />
-                  ))}
+            Object.entries(groupedResources)
+              .filter(
+                ([subCat]) => subCategoryFilter === "All" || subCat === subCategoryFilter
+              )
+              .map(([subCategory, resources]) => (
+                <div key={subCategory} className="space-y-4">
+                  <h2 className="text-2xl font-semibold text-blue-400">
+                    {subCategory}
+                  </h2>
+                  <div className="space-y-3">
+                    {resources.length > 0 ? (
+                      resources.map((resource) => (
+                        <ResourceLink key={resource._id} resource={resource} />
+                      ))
+                    ) : (
+                      <p className="text-gray-400">No resources available.</p>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))
+              ))
           ) : (
             <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
               <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -259,18 +205,9 @@ const SubjectDetailPage = () => {
               </p>
             </div>
           )}
-
-          {hasNextPage && (
-            <div
-              ref={loadMoreRef}
-              className="mt-8 flex justify-center text-blue-400"
-            >
-              {isFetchingNextPage ? "Loading more..." : "Scroll to load more..."}
-            </div>
-          )}
         </div>
 
-        {/* Right Column: Tips */}
+        {/* Right column */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
             <h2 className="mb-4 text-2xl font-semibold text-blue-400">
