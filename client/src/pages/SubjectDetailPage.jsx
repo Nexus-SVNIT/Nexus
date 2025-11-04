@@ -36,18 +36,30 @@ const ResourceLink = React.memo(({ resource }) => {
         );
   }
 
+  const rightIcon =
+    resource.resourceType === "PDF" ? (
+      <LuFileText className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-all duration-300" />
+    ) : (
+      <LuLink className="h-4 w-4 text-gray-500 group-hover:text-blue-400 transition-all duration-300" />
+    );
+
   return (
     <a
       href={resource.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 transition-all duration-300 hover:border-blue-400/50 hover:bg-white/5"
+      className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 shadow-sm transition-all duration-300 hover:-translate-y-[1px] hover:border-blue-400/50 hover:bg-white/5 hover:shadow-md"
     >
       <div className="flex items-center gap-3 overflow-hidden">
         <span className="text-blue-400 flex-shrink-0">{icon}</span>
-        <span className="font-medium text-gray-100 truncate">{resource.title}</span>
+        <span
+          className="font-medium text-gray-100 line-clamp-2 leading-snug"
+          title={resource.title}
+        >
+          {resource.title}
+        </span>
       </div>
-      <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
+      {rightIcon}
     </a>
   );
 });
@@ -64,20 +76,19 @@ const SubjectDetailPage = () => {
   const [subCategoryFilter, setSubCategoryFilter] = useState("All");
   const [typeFilter, setTypeFilter] = useState("All");
 
+  // debounce search
   useEffect(() => {
     const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
     return () => clearTimeout(handler);
   }, [searchTerm]);
 
-  useEffect(() => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  }, [subCategoryFilter, typeFilter]);
-
+  // auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
+  // fetch subject meta info
   const {
     data: subjectMeta,
     isLoading: isSubjectLoading,
@@ -89,7 +100,7 @@ const SubjectDetailPage = () => {
       const response = await getSubjectDetails(id);
       if (!response.success)
         throw new Error(response.message || "Failed to fetch subject details");
-      return response.data; // ✅ fixed
+      return response.data;
     },
     staleTime: 1000 * 60 * 15,
     onError: (err) => {
@@ -101,6 +112,7 @@ const SubjectDetailPage = () => {
     },
   });
 
+  // fetch resources paginated
   const {
     data,
     isLoading,
@@ -130,6 +142,7 @@ const SubjectDetailPage = () => {
     cacheTime: 1000 * 60 * 60,
   });
 
+  // infinite scroll
   useEffect(() => {
     if (!hasNextPage || isFetchingNextPage) return;
     const observer = new IntersectionObserver((entries) => {
@@ -145,6 +158,7 @@ const SubjectDetailPage = () => {
     [data]
   );
 
+  // Loaders
   if (isSubjectLoading || isLoading)
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -164,6 +178,7 @@ const SubjectDetailPage = () => {
       </div>
     );
 
+  // Filters
   const allSubCategories = subjectMeta?.resources
     ? Object.keys(subjectMeta.resources)
     : [];
@@ -171,6 +186,7 @@ const SubjectDetailPage = () => {
     ...new Set(resources.map((r) => r.resourceType)),
   ].filter(Boolean);
 
+  // ✅ Final UI
   return (
     <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
       <Link
@@ -181,7 +197,9 @@ const SubjectDetailPage = () => {
         Back to Subjects
       </Link>
 
-      <h1 className="mb-8 text-4xl font-bold">{subjectMeta.subjectName}</h1>
+      <h1 className="mb-8 text-4xl font-bold">
+        {subjectMeta.subjectName || "Subject Details"}
+      </h1>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
         {/* Left Column */}
@@ -211,6 +229,7 @@ const SubjectDetailPage = () => {
                   ))}
                 </select>
               </div>
+
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Type
