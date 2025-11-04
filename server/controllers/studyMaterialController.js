@@ -2,96 +2,88 @@ const mongoose = require("mongoose");
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// list of subjects with filtering and pagination
+// ✅ Get subjects with filtering + department-specific search
 const getSubjects = async (req, res) => {
   try {
-    const { category, department, page = 1, limit = 10, search = "" } = req.query;
+    const { category, department, search = "" } = req.query;
 
     if (!category) {
-      return res.status(400).json({ message: "Category is required" });
+      return res.status(400).json({ success: false, message: "Category is required" });
     }
 
-    const filter = { category: { $regex: new RegExp(category, "i") } };
+    const filter = { category: { $regex: new RegExp(`^${category}$`, "i") } };
 
-    // department filtering logic
     if (category.toLowerCase() === "semester exams") {
       if (!department) {
-        return res.status(400).json({ message: "Department is required for Semester Exams" });
+        return res.status(400).json({
+          success: false,
+          message: "Department is required for Semester Exams",
+        });
       }
       filter.department = department.trim();
     } else if (category.toLowerCase() === "placements/internships") {
       filter.department = "Common";
     }
 
-    // Optional search by subject name
     if (search.trim() !== "") {
       filter.subjectName = { $regex: search.trim(), $options: "i" };
     }
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-
     const subjects = await Subject.find(filter)
       .select("_id subjectName department category")
-      .sort({ createdAt: -1 }) // ensure consistent order
-      .skip(skip)
-      .limit(parseInt(limit))
+      .sort({ subjectName: 1 })
       .lean();
-
-    const total = await Subject.countDocuments(filter);
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
     res.status(200).json({
       success: true,
-      total,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / limit),
+      total: subjects.length,
       data: subjects,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error fetching subjects" });
+    console.error("Error fetching subjects:", error);
+    res.status(500).json({ success: false, message: "Error fetching subjects" });
   }
 };
 
-//paginated and filtered resources for a subject
+// ✅ Get all resources for a subject (grouped + filtered)
 const getResourcesBySubject = async (req, res) => {
   try {
     const { id } = req.params;
-    const { subCategory, page = 1, limit = 10 } = req.query;
+    const { subCategory, type, search = "" } = req.query;
 
     if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid subject ID" });
+      return res.status(400).json({ success: false, message: "Invalid subject ID" });
     }
 
     const filter = { subject: id };
-
-    const validSubCategories = Resource.schema.path("subCategory").enumValues;
-    if (subCategory && validSubCategories.includes(subCategory)) {
-      filter.subCategory = subCategory;
+    if (subCategory && subCategory !== "All") filter.subCategory = subCategory;
+    if (type && type !== "All") filter.resourceType = type;
+    if (search.trim() !== "") {
+      filter.title = { $regex: search.trim(), $options: "i" };
     }
 
-    const skip = (parseInt(page) - 1) * parseInt(limit);
-
     const resources = await Resource.find(filter)
-      .select("title link subCategory resourceType")
+      .select("title link subCategory resourceType createdAt")
       .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit))
       .lean();
 
-    const total = await Resource.countDocuments(filter);
+    const groupedResources = resources.reduce((acc, res) => {
+      const key = res.subCategory || "Other";
+      if (!acc[key]) acc[key] = [];
+      acc[key].push(res);
+      return acc;
+    }, {});
 
     res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
     res.status(200).json({
       success: true,
-      total,
-      page: parseInt(page),
-      totalPages: Math.ceil(total / limit),
-      data: resources,
+      total: resources.length,
+      data: groupedResources,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error fetching resources" });
+    console.error("Error fetching resources:", error);
+    res.status(500).json({ success: false, message: "Error fetching resources" });
   }
 };
 
