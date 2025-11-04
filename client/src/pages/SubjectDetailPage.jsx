@@ -12,9 +12,8 @@ import {
   LuArrowLeft,
   LuFilter,
 } from "react-icons/lu";
-import SearchBar from "../components/Alumni/SearchBar.jsx";
 
-// Reusable resource link card
+// Resource Card
 const ResourceLink = ({ resource }) => {
   let icon;
   switch (resource.subCategory) {
@@ -29,10 +28,10 @@ const ResourceLink = ({ resource }) => {
       icon = <LuBook className="h-5 w-5" />;
       break;
     default:
-      icon = resource.resourceType === "PDF"
-        ? <LuFileText className="h-5 w-5" />
-        : <LuLink className="h-5 w-5" />;
-      break;
+      icon =
+        resource.resourceType === "PDF"
+          ? <LuFileText className="h-5 w-5" />
+          : <LuLink className="h-5 w-5" />;
   }
 
   return (
@@ -54,16 +53,7 @@ const ResourceLink = ({ resource }) => {
 const SubjectDetailPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const [searchTerm, setSearchTerm] = useState("");
   const [subCategoryFilter, setSubCategoryFilter] = useState("All");
-
-  // Debounce search
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchTerm), 500);
-    return () => clearTimeout(handler);
-  }, [searchTerm]);
 
   // Auth check
   useEffect(() => {
@@ -71,7 +61,7 @@ const SubjectDetailPage = () => {
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // Fetch subject meta info
+  // Fetch subject info
   const {
     data: subjectMeta,
     isLoading: isSubjectLoading,
@@ -87,26 +77,26 @@ const SubjectDetailPage = () => {
     },
   });
 
-  // Fetch grouped resources (no pagination now)
+  // Fetch grouped resources
   const {
     data: resourceResponse,
     isLoading: isResourceLoading,
     isError: isResourceError,
     error: resourceError,
   } = useQuery({
-    queryKey: ["resources", id, debouncedSearch, subCategoryFilter],
+    queryKey: ["resources", id, subCategoryFilter],
     queryFn: async () => {
       const response = await getResourcesBySubject(id, {
         subCategory: subCategoryFilter !== "All" ? subCategoryFilter : undefined,
-        search: debouncedSearch || undefined,
       });
       if (!response.success)
         throw new Error(response.message || "Failed to fetch resources");
-      return response.data; // ✅ grouped data object
+      return response.data; // grouped object
     },
     enabled: !!id,
   });
 
+  // Loading + error handling
   if (isSubjectLoading || isResourceLoading)
     return (
       <div className="flex h-screen w-full items-center justify-center">
@@ -119,15 +109,13 @@ const SubjectDetailPage = () => {
     return <MaintenancePage />;
   }
 
-  if (!subjectMeta) {
+  if (!subjectMeta)
     return (
       <div className="flex h-screen w-full items-center justify-center">
         <Loader />
       </div>
     );
-  }
 
-  // Extract categories from grouped data
   const groupedResources = resourceResponse || {};
   const allSubCategories = Object.keys(groupedResources);
 
@@ -144,15 +132,10 @@ const SubjectDetailPage = () => {
       <h1 className="mb-8 text-4xl font-bold">{subjectMeta.subjectName}</h1>
 
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-        {/* Left column */}
+        {/* Left Column */}
         <div className="space-y-8 lg:col-span-2">
-          {/* Filter bar */}
-          <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
-            <SearchBar
-              placeholder="Search resources..."
-              value={searchTerm}
-              onChange={setSearchTerm}
-            />
+          {/* Filter */}
+          <div className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
             <div>
               <label className="block text-sm font-medium text-gray-300 mb-1">
                 Sub-Category
@@ -172,7 +155,7 @@ const SubjectDetailPage = () => {
             </div>
           </div>
 
-          {/* Resources */}
+          {/* Grouped Resources */}
           {Object.keys(groupedResources).length > 0 ? (
             Object.entries(groupedResources)
               .filter(
@@ -184,13 +167,9 @@ const SubjectDetailPage = () => {
                     {subCategory}
                   </h2>
                   <div className="space-y-3">
-                    {resources.length > 0 ? (
-                      resources.map((resource) => (
-                        <ResourceLink key={resource._id} resource={resource} />
-                      ))
-                    ) : (
-                      <p className="text-gray-400">No resources available.</p>
-                    )}
+                    {resources.map((resource) => (
+                      <ResourceLink key={resource._id} resource={resource} />
+                    ))}
                   </div>
                 </div>
               ))
@@ -200,14 +179,11 @@ const SubjectDetailPage = () => {
               <h3 className="mt-2 text-xl font-semibold text-white">
                 No resources found
               </h3>
-              <p className="mt-1 text-gray-400">
-                Try adjusting your search or filters.
-              </p>
             </div>
           )}
         </div>
 
-        {/* Right column */}
+        {/* Right Column: Tips */}
         <div className="lg:col-span-1">
           <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
             <h2 className="mb-4 text-2xl font-semibold text-blue-400">

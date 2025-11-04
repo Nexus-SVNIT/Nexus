@@ -5,7 +5,6 @@ import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
 import MaintenancePage from "../components/Error/MaintenancePage";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
-import SearchBar from "../components/Alumni/SearchBar.jsx";
 import {
   LuBookMarked,
   LuClipboardCheck,
@@ -22,6 +21,7 @@ const CATEGORIES = {
 };
 const DEPARTMENTS = ["CSE", "AI"];
 
+// Hero Section
 const StudyMaterialHero = () => (
   <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div className="space-y-6 text-center">
@@ -42,6 +42,7 @@ const StudyMaterialHero = () => (
   </div>
 );
 
+// Category/Department Selection Card
 const SelectionCard = ({ title, icon, onClick }) => (
   <button
     onClick={onClick}
@@ -63,8 +64,6 @@ const StudyMaterialPage = () => {
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(null);
   const [department, setDepartment] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
   const navigate = useNavigate();
 
   // Auth check
@@ -73,34 +72,37 @@ const StudyMaterialPage = () => {
     if (!token) navigate("/login");
   }, [navigate]);
 
-  // Debounce search
-  useEffect(() => {
-    const handler = setTimeout(() => setDebouncedSearch(searchTerm), 400);
-    return () => clearTimeout(handler);
-  }, [searchTerm]);
-
+  // Fetch subjects
   const {
     data: subjects,
     isLoading,
     isError,
     error,
   } = useQuery({
-    queryKey: ["subjects", category, department, debouncedSearch],
+    queryKey: ["subjects", category, department],
     queryFn: async () => {
-      const response = await getSubjects({
-        category,
-        department,
-        search: debouncedSearch || undefined,
-      });
+      const response = await getSubjects({ category, department });
       if (!response.success)
         throw new Error(response.message || "Failed to fetch subjects");
-      return response.data.data || response.data; // depending on API shape
+      return response.data.data || response.data; // backend compatibility
     },
     enabled: step === 3 && !!category && !!department,
     staleTime: 1000 * 60 * 15,
     cacheTime: 1000 * 60 * 60,
+    onError: (err) => {
+      const msg = err.message.toLowerCase();
+      if (
+        msg.includes("token") ||
+        msg.includes("unauthorized") ||
+        msg.includes("not valid")
+      ) {
+        localStorage.removeItem("token");
+        navigate("/login");
+      }
+    },
   });
 
+  // Step navigation logic
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
     if (selectedCategory === CATEGORIES.PLACEMENTS) {
@@ -132,6 +134,7 @@ const StudyMaterialPage = () => {
     }
   };
 
+  // Step 1: Category selection
   const renderStep1_Category = () => (
     <div className="flex flex-wrap justify-center gap-6">
       <SelectionCard
@@ -147,6 +150,7 @@ const StudyMaterialPage = () => {
     </div>
   );
 
+  // Step 2: Department selection
   const renderStep2_Department = () => (
     <div className="flex flex-wrap justify-center gap-6">
       {DEPARTMENTS.map((dept) => (
@@ -160,6 +164,7 @@ const StudyMaterialPage = () => {
     </div>
   );
 
+  // Step 3: Subjects
   const renderStep3_Subjects = () => {
     if (isLoading)
       return (
@@ -171,30 +176,18 @@ const StudyMaterialPage = () => {
     if (isError) return <MaintenancePage />;
 
     if (!subjects || subjects.length === 0)
-      return (
-        <p className="text-center text-gray-400">
-          No subjects found. Try a different search.
-        </p>
-      );
+      return <p className="text-center text-gray-400">No subjects found.</p>;
 
     return (
-      <>
-        <div className="mb-6">
-          <SearchBar
-            placeholder="Search subjects..."
-            value={searchTerm}
-            onChange={setSearchTerm}
-          />
-        </div>
-        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {subjects.map((subject) => (
-            <SubjectCard key={subject._id} subject={subject} />
-          ))}
-        </div>
-      </>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {subjects.map((subject) => (
+          <SubjectCard key={subject._id} subject={subject} />
+        ))}
+      </div>
     );
   };
 
+  // Render
   return (
     <div>
       <StudyMaterialHero />
