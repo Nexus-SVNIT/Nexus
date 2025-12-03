@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
@@ -39,10 +39,10 @@ const getSubjects = async (req, res) => {
             message: "Subjects fetched successfully",
             data: subjects
         });
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: "Error fetching subjects" });
+      }
+      filter.department = department.trim();
+    } else if (category.toLowerCase() === "placements/internships") {
+      filter.department = "Common";
     }
 };
 
@@ -84,7 +84,6 @@ const getSubjectDetails = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Error fetching details" });
     }
-};
 
 module.exports = {
     getSubjects,
