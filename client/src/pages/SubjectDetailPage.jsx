@@ -7,7 +7,6 @@ import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
-// Helper function (Runs in browser)
 const groupResources = (resourceList) => {
     const groups = {
         'Notes': [],
@@ -94,14 +93,8 @@ const SubjectDetailPage = () => {
             }
             return response.data.data;
         },
-        onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token');
-                navigate('/login');
-            }
-        },
-        staleTime: 1000 * 60 * 60 * 2, 
+        // All options separated by commas carefully
+        staleTime: 1000 * 60 * 60 * 2,
         cacheTime: 1000 * 60 * 60 * 2,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
@@ -171,10 +164,12 @@ const SubjectDetailPage = () => {
 
     const resourceCategories = Object.keys(filteredResources);
     
-    const allSubCategories = Object.keys(subject.resources);
-    const allResourceTypes = [...new Set(
-        Object.values(subject.resources).flat().map(r => r.resourceType)
-    )];
+    // Safety check for subject.resources before accessing
+    const allSubCategories = subject.resources ? Object.keys(subject.resources) : [];
+    
+    const allResourceTypes = subject.resources 
+        ? [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))]
+        : [];
 
   if (!subjectMeta)
     return (
@@ -190,9 +185,7 @@ const SubjectDetailPage = () => {
             <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
 
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-                
                 <div className="space-y-8 lg:col-span-2">
-                    
                     <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
                         <SearchBar 
                             placeholder="Search resources by title..."
