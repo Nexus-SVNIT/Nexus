@@ -83,7 +83,7 @@ const StudyMaterialPage = () => {
         refetchOnMount: false,
         refetchOnReconnect: false,
         retry: 1,
-        enabled: step === 3 && !!category && !!department,
+        enabled: step === 3 && !!category && !!department
     });
 
     const handleCategorySelect = (selectedCategory) => {
