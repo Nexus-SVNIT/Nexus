@@ -2,49 +2,39 @@ const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-//get subjects based on category and department
+
+
 const getSubjects = async (req, res) => {
     try {
-    
-        // get category/dept from query params
-        const { category: rawCategory, department: rawDepartment } = req.query; // <-- Aliased department
+        
+        res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
 
-       
+        const { category: rawCategory, department: rawDepartment } = req.query;
+
         if (!rawCategory) {
             return res.status(400).json({ message: "Category is required" });
         }
 
-        // always trim whitespace from client input
         const category = rawCategory.trim();
+        const filter = {};
 
-        
-        const filter = { 
-            // case-insensitive search, and loose regex to handle any whitespace in the DB
-            category: { $regex: new RegExp(category, 'i') } 
-        };
-        
-        // standardize for logic checks
-        const lowerCaseCategory = category.toLowerCase();
+       
+        filter.category = category; 
 
-
-        // semester exams require a specific department
-        if (lowerCaseCategory === "semester exams") {
-            if (!rawDepartment) { 
-                return res.status(400).json({ message: "Department is required for Semester Exams" });
+        if (category.toLowerCase() === "semester exams") {
+            if (!rawDepartment) {
+                return res.status(400).json({ message: "Department is required" });
             }
-            
-         
             filter.department = rawDepartment.trim();
         }
 
-        // placements all share the common department
-        if (lowerCaseCategory === "placements/internships") {
-            filter.department = "Common"; 
+        if (category.toLowerCase() === "placements/internships") {
+            filter.department = "Common";
         }
-        
-        console.log("FINAL QUERY FILTER:", JSON.stringify(filter)); // Debug log
-        
-        const subjects = await Subject.find(filter).select('_id subjectName');
+
+      
+        const subjects = await Subject.find(filter).select('_id subjectName').lean();
+
         res.status(200).json({
             message: "Subjects fetched successfully",
             data: subjects
@@ -56,72 +46,45 @@ const getSubjects = async (req, res) => {
     }
 };
 
-// get full subject details
 const getSubjectDetails = async (req, res) => {
     try {
-        // get id from url params
+        
+        res.setHeader('Cache-Control', 'public, s-maxage=3600, stale-while-revalidate=86400');
+
         const { id: rawId } = req.params;
-        
-        if (!rawId) {
-             return res.status(400).json({ message: "Invalid subject ID format" });
-        }
-        
-        const id = rawId.trim(); 
-        
-        if (!mongoose.Types.ObjectId.isValid(id)) {
-            return res.status(400).json({ message: "Invalid subject ID format" });
+        if (!rawId || !mongoose.Types.ObjectId.isValid(rawId)) {
+             return res.status(400).json({ message: "Invalid ID" });
         }
 
-        const subject = await Subject.findById(id)
-            .select('subjectName tips resources')
-            .populate({
-                path: 'resources',
-                select: 'title link subCategory resourceType'
-            });
+        const id = rawId.trim();
+
+        
+        const [subject, resources] = await Promise.all([
+            Subject.findById(id).select('subjectName tips').lean(),
+            Resource.find({ subject: id }).select('title link subCategory resourceType').lean()
+        ]);
 
         if (!subject) {
             return res.status(404).json({ message: "Subject not found" });
         }
 
-        // get all possible subCats from the schema
-        const allSubCategories = Resource.schema.path('subCategory').enumValues;
-
-        // create a base object, so all subcats are present
-        const baseGroups = allSubCategories.reduce((acc, category) => {
-            acc[category] = [];
-            return acc;
-        }, {});
-
-
-        const groupedResources = subject.resources.reduce((acc, resource) => {
-            
-            if (acc[resource.subCategory]) {
-                acc[resource.subCategory].push(resource);
-            }
-            return acc;
-        }, baseGroups);
+       
         
-        const formattedSubject = {
-            _id: subject._id,
-            subjectName: subject.subjectName,
-            // sort tips oldest to newest before sending
-            tips: subject.tips
-                      .sort((a, b) => a.createdAt - b.createdAt)
-                      .map(t => t.text),
-            resources: groupedResources 
-        };
-
         res.status(200).json({
             message: "Subject details fetched successfully",
-            data: formattedSubject
+            data: {
+                _id: subject._id,
+                subjectName: subject.subjectName,
+                tips: subject.tips.sort((a, b) => a.createdAt - b.createdAt).map(t => t.text),
+                resources: resources 
+            }
         });
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Error fetching subject details" });
+        res.status(500).json({ message: "Error fetching details" });
     }
 };
-
 
 module.exports = {
     getSubjects,

@@ -1,13 +1,34 @@
-import { useState, useEffect, useMemo } from 'react'; // Added useState and useMemo
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
+import SearchBar from '../components/Alumni/SearchBar.jsx';
 
-import SearchBar from '../components/Alumni/SearchBar.jsx'; 
 
+const groupResources = (resourceList) => {
+    const groups = {
+        'Notes': [],
+        'Important topics': [],
+        'Youtube Resources': [],
+        'PYQs': [],
+        'Other': []
+    };
+
+    if (!Array.isArray(resourceList)) return groups;
+
+    resourceList.forEach((res) => {
+        if (groups[res.subCategory]) {
+            groups[res.subCategory].push(res);
+        } else {
+            groups['Other'].push(res);
+        }
+    });
+
+    return groups;
+};
 
 const ResourceLink = ({ resource }) => {
     let icon;
@@ -24,11 +45,9 @@ const ResourceLink = ({ resource }) => {
             icon = <LuBook className="h-5 w-5" />;
             break;
         default:
-  
             icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />;
             break;
     }
-
 
     return (
         <a
@@ -46,27 +65,23 @@ const ResourceLink = ({ resource }) => {
     );
 };
 
-
 const SubjectDetailPage = () => {
     const { id } = useParams();
-    const navigate = useNavigate(); 
+    const navigate = useNavigate();
 
-    // 
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
-    
 
-  
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
             navigate('/login');
         }
-    }, [navigate]); 
+    }, [navigate]);
 
     const {
-        data: subject, 
+        data: rawSubject, // Note: We receive Raw Array here now
         isLoading,
         isError,
         error,
@@ -75,63 +90,68 @@ const SubjectDetailPage = () => {
         queryFn: async () => {
             const response = await getSubjectDetails(id);
             if (!response.success) {
-                
                 throw new Error(response.message || "Failed to fetch subject details");
             }
-           
-            return response.data.data; 
+            return response.data.data;
         },
-        
-       
         onError: (err) => {
             const errorMsg = err.message.toLowerCase();
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token'); 
+                localStorage.removeItem('token');
                 navigate('/login');
             }
         },
-  
 
-        staleTime: 1000 * 60 * 15,
+        // 🔥 OPTIMIZATION: 2 Hours Cache
+        staleTime: 1000 * 60 * 60 * 2,
+        cacheTime: 1000 * 60 * 60 * 2,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
     });
 
-    
+    // 🔥 PROCESS DATA: Convert Array -> Grouped Object
+    const subject = useMemo(() => {
+        if (!rawSubject) return null;
+        return {
+            ...rawSubject,
+            resources: groupResources(rawSubject.resources) 
+        };
+    }, [rawSubject]);
+
+    // FILTERING LOGIC (Works on grouped object)
     const filteredResources = useMemo(() => {
-        if (!subject) return {}; 
+        if (!subject) return {};
 
         const allCategories = Object.keys(subject.resources);
         const filtered = {};
         const lowerSearch = searchTerm.toLowerCase();
 
         allCategories.forEach(category => {
-            
             let resources = subject.resources[category];
 
-            
+            // Filter by SubCategory
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
-                resources = []; 
+                resources = [];
             }
 
-            
+            // Filter by Type (PDF/Link)
             if (typeFilter !== "All") {
                 resources = resources.filter(res => res.resourceType === typeFilter);
             }
-            
-           
+
+            // Search by Title
             if (lowerSearch) {
-                resources = resources.filter(res => 
+                resources = resources.filter(res =>
                     res.title.toLowerCase().includes(lowerSearch)
                 );
             }
-            
             filtered[category] = resources;
         });
-        
-        return filtered;
 
+        return filtered;
     }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
-   
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -139,17 +159,16 @@ const SubjectDetailPage = () => {
             </div>
         );
     }
- 
-    if (isError) {
 
+    if (isError) {
         const errorMsg = error.message.toLowerCase();
         if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-            return null; 
+            return null;
         }
         console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
     }
-    
+
     if (!subject) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -157,20 +176,17 @@ const SubjectDetailPage = () => {
             </div>
         );
     }
-    
-   
+
     const resourceCategories = Object.keys(filteredResources);
     
-    
-    const allSubCategories = subject ? Object.keys(subject.resources) : [];
-    const allResourceTypes = subject ? 
-        [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))] 
-        : [];
+    // Derived values for dropdowns
+    const allSubCategories = Object.keys(subject.resources);
+    const allResourceTypes = [...new Set(
+        Object.values(subject.resources).flat().map(r => r.resourceType)
+    )];
 
     return (
-      
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
-            
             <Link
                 to="/study-material"
                 className="mb-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
@@ -180,29 +196,26 @@ const SubjectDetailPage = () => {
             </Link>
 
             <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
-            
+
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
                 {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
                     
-                    {/* --- 7. NEW FILTER BAR --- */}
+                    {/* Filter Bar */}
                     <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
-                        {/* Use your existing Alumni SearchBar */}
                         <SearchBar 
                             placeholder="Search resources by title..."
                             value={searchTerm}
                             onChange={setSearchTerm}
                         />
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                            {/* SubCategory Filter */}
                             <div>
                                 <label htmlFor="subCategory" className="block text-sm font-medium text-gray-300 mb-1">Sub-Category</label>
                                 <select 
                                     id="subCategory"
                                     value={subCategoryFilter}
-                                    onChange={(e) => setSubCategoryFilter(e.g.target.value)}
-                                    // Style matches your Alumni SearchBar
+                                    onChange={(e) => setSubCategoryFilter(e.target.value)}
                                     className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="All" className="bg-gray-800">All Sub-Categories</option>
@@ -211,7 +224,6 @@ const SubjectDetailPage = () => {
                                     ))}
                                 </select>
                             </div>
-                            {/* Type Filter */}
                             <div>
                                 <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">Type</label>
                                 <select 
@@ -228,10 +240,8 @@ const SubjectDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                    {/* END FILTER BAR  */}
-                    
-                    {/* UPDATED RESOURCES LIST */}
-                    {/* Map over the filtered resources */}
+
+                    {/* Resources List */}
                     {resourceCategories.map(category => (
                         filteredResources[category].length > 0 && (
                             <section key={category}>
@@ -247,7 +257,7 @@ const SubjectDetailPage = () => {
                         )
                     ))}
                     
-                    {/* 9.  */}
+                    {/* No Results State */}
                     {Object.values(filteredResources).flat().length === 0 && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -255,8 +265,6 @@ const SubjectDetailPage = () => {
                             <p className="mt-1 text-gray-400">Try adjusting your search or filters.</p>
                         </div>
                     )}
-                    {/* --- END RESOURCES LIST --- */}
-
                 </div>
 
                 {/* --- Right Column: Tips --- */}
@@ -279,7 +287,6 @@ const SubjectDetailPage = () => {
                         )}
                     </div>
                 </div>
-
             </div>
         </div>
     );
