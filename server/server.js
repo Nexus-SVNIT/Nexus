@@ -79,9 +79,11 @@ app.use('/study-material', studyMaterialRoutes);
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         app.listen(PORT, (req, res) => {
+            console.log(`Server is running on port ${PORT}`);
         })
     })
     .catch((err) => {
+        console.error("Database connection error:", err);
     })
 
 app.all('*', (req, res, next) => {
