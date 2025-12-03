@@ -55,7 +55,6 @@ const StudyMaterialPage = () => {
     const [department, setDepartment] = useState(null);
     const navigate = useNavigate();
 
-    // Auth check on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -63,7 +62,6 @@ const StudyMaterialPage = () => {
         }
     }, [navigate]);
 
-    // Fetch subjects with React Query
     const {
         data: subjects,
         isLoading,
@@ -78,22 +76,12 @@ const StudyMaterialPage = () => {
             }
             return response.data.data;
         },
-        onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token');
-                navigate('/login');
-            }
-        },
-
-        // 🔥 OPTIMIZATION: 2 Hours Cache
         staleTime: 1000 * 60 * 60 * 2,
         cacheTime: 1000 * 60 * 60 * 2,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
         retry: 1,
-
         enabled: step === 3 && !!category && !!department,
     });
 
@@ -166,7 +154,7 @@ const StudyMaterialPage = () => {
         }
 
         if (isError) {
-            const errorMsg = error.message.toLowerCase();
+            const errorMsg = error?.message?.toLowerCase() || "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 return null;
             }
