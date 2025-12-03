@@ -30,7 +30,7 @@ const resourceSchema = new Schema({
         
     }
 }, {
-    timestamps: true
+  timestamps: true
 });
 
 

@@ -171,6 +171,7 @@ const SubjectDetailPage = () => {
         ? [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))]
         : [];
 
+  if (!subjectMeta)
     return (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
             <Link
@@ -267,8 +268,34 @@ const SubjectDetailPage = () => {
                     </div>
                 </div>
             </div>
+          )}
         </div>
-    );
+
+        {/* Right Column: Tips */}
+        <div className="lg:col-span-1">
+          <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
+            <h2 className="mb-4 text-2xl font-semibold text-blue-400">
+              Tips & Advice
+            </h2>
+            {subjectMeta.tips?.length > 0 ? (
+              <ul className="space-y-4">
+                {subjectMeta.tips.map((tip, i) => (
+                  <li key={i} className="flex gap-3">
+                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                    <span className="text-gray-300">{tip}</span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-gray-400">
+                No tips added yet. Be the first to contribute!
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default SubjectDetailPage;
