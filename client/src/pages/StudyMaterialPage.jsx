@@ -116,62 +116,13 @@ const StudyMaterialPage = () => {
         }
     };
 
-    const renderStep1_Category = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            <SelectionCard
-                title="Placements/Internships"
-                icon={<LuClipboardCheck className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
-            />
-            <SelectionCard
-                title="Semester Exams"
-                icon={<LuBuilding className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.SEMESTER)}
-            />
-        </div>
-    );
-
-    const renderStep2_Department = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            {DEPARTMENTS.map((dept) => (
-                <SelectionCard
-                    key={dept}
-                    title={dept}
-                    icon={<LuBrain className="h-6 w-6" />}
-                    onClick={() => handleDepartmentSelect(dept)}
-                />
-            ))}
-        </div>
-    );
-
-    const renderStep3_Subjects = () => {
-        if (isLoading) {
-            return (
-                <div className="flex h-64 w-full items-center justify-center">
-                    <Loader />
-                </div>
-            );
+    // Error rendering logic separated for cleanliness
+    const renderError = () => {
+        const errorMsg = error?.message?.toLowerCase() || "";
+        if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+            return null;
         }
-
-        if (isError) {
-            const errorMsg = error?.message?.toLowerCase() || "";
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                return null;
-            }
-            return <p className="text-center text-red-400">{error.message}</p>;
-        }
-
-        if (!subjects || subjects.length === 0) {
-            return <p className="text-center text-gray-400">No subjects found.</p>;
-        }
-
-        return (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {subjects.map((subject) => (
-                    <SubjectCard key={subject._id} subject={subject} />
-                ))}
-            </div>
-        );
+        return <p className="text-center text-red-400">{error.message}</p>;
     };
 
     return (
@@ -188,9 +139,53 @@ const StudyMaterialPage = () => {
                     </button>
                 )}
                 
-                {step === 1 && renderStep1_Category()}
-                {step === 2 && renderStep2_Department()}
-                {step === 3 && renderStep3_Subjects()}
+                {step === 1 && (
+                    <div className="flex flex-wrap justify-center gap-6">
+                        <SelectionCard
+                            title="Placements/Internships"
+                            icon={<LuClipboardCheck className="h-6 w-6" />}
+                            onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
+                        />
+                        <SelectionCard
+                            title="Semester Exams"
+                            icon={<LuBuilding className="h-6 w-6" />}
+                            onClick={() => handleCategorySelect(CATEGORIES.SEMESTER)}
+                        />
+                    </div>
+                )}
+
+                {step === 2 && (
+                    <div className="flex flex-wrap justify-center gap-6">
+                        {DEPARTMENTS.map((dept) => (
+                            <SelectionCard
+                                key={dept}
+                                title={dept}
+                                icon={<LuBrain className="h-6 w-6" />}
+                                onClick={() => handleDepartmentSelect(dept)}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <>
+                        {isLoading ? (
+                            <div className="flex h-64 w-full items-center justify-center">
+                                <Loader />
+                            </div>
+                        ) : isError ? (
+                            renderError()
+                        ) : !subjects || subjects.length === 0 ? (
+                            <p className="text-center text-gray-400">No subjects found.</p>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                {subjects.map((subject) => (
+                                    <SubjectCard key={subject._id} subject={subject} />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );
