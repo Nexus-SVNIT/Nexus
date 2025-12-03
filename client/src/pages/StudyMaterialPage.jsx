@@ -1,227 +1,268 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
-import { getSubjects } from "../services/studyMaterialService";
-import Loader from "../components/Loader/Loader";
-import MaintenancePage from "../components/Error/MaintenancePage";
-import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
+import { useState, useEffect, useMemo } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getSubjectDetails } from '../services/studyMaterialService';
+import Loader from '../components/Loader/Loader';
+import MaintenancePage from '../components/Error/MaintenancePage';
+import SearchBar from '../components/Alumni/SearchBar.jsx'; 
+import { 
+    LuLink, 
+    LuFileText, 
+    LuYoutube, 
+    LuBook, 
+    LuArrowLeft, 
+    LuFilter 
+} from 'react-icons/lu';
 
-import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
+// Helper component for rendering individual links
+const ResourceLink = ({ resource }) => {
+    let icon;
+    
+    switch (resource.subCategory) {
+        case 'Youtube Resources':
+            icon = <LuYoutube className="h-5 w-5" />;
+            break;
+        case 'Notes':
+        case 'PYQs':
+            icon = <LuFileText className="h-5 w-5" />;
+            break;
+        case 'Important topics':
+            icon = <LuBook className="h-5 w-5" />;
+            break;
+        default:
+            icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />;
+            break;
+    }
 
-
-const CATEGORIES = {
-    PLACEMENTS: "Placements/Internships",
-    SEMESTER: "Semester Exams",
+    return (
+        <a
+            href={resource.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4 transition-all duration-300 hover:border-blue-400/50 hover:bg-white/5"
+        >
+            <div className="flex items-center gap-3">
+                <span className="text-blue-400">{icon}</span>
+                <span className="font-medium text-gray-100">{resource.title}</span>
+            </div>
+            <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
+        </a>
+    );
 };
-const DEPARTMENTS = ["CSE", "AI"];
 
+const SubjectDetailPage = () => {
+    const { id } = useParams();
+    const navigate = useNavigate(); 
 
-const StudyMaterialHero = () => (
-    <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-        <div className="space-y-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-blue-400">
-                <LuBookMarked className="h-4 w-4" />
-                Study Resources
-            </div>
-            <h1 className="text-foreground text-4xl font-bold md:text-6xl">
-                Ace Your Academic &
-                <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
-                    Placement Prep
-                </span>
-            </h1>
-            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-300">
-                Find all the resources you need, from semester exams to placement preparation.
-            </p>
-        </div>
-    </div>
-);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [subCategoryFilter, setSubCategoryFilter] = useState("All");
+    const [typeFilter, setTypeFilter] = useState("All");
 
-const SelectionCard = ({ title, icon, onClick }) => (
-    <button
-        onClick={onClick}
-        className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
-    >
-        <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-400 group-hover:text-white">
-                    {icon}
-                </div>
-                <h3 className="text-xl font-semibold text-white">{title}</h3>
-            </div>
-            <LuArrowRight className="h-5 w-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-400" />
-        </div>
-    </button>
-);
-
-
-const StudyMaterialPage = () => {
-    const [step, setStep] = useState(1);
-    const [category, setCategory] = useState(null);
-    const [department, setDepartment] = useState(null);
-    const navigate = useNavigate();
-
-    // Auth check on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
             navigate('/login');
         }
-    }, [navigate]);
+    }, [navigate]); 
 
-    // Fetch subjects with React Query
     const {
-        data: subjects,
+        data: subject, 
         isLoading,
         isError,
         error,
     } = useQuery({
-        queryKey: ["subjects", category, department],
+        queryKey: ["subjectDetails", id],
         queryFn: async () => {
-            const response = await getSubjects({ category, department });
+            const response = await getSubjectDetails(id);
             if (!response.success) {
-                
-                throw new Error(response.message || "Failed to fetch subjects");
+                throw new Error(response.message || "Failed to fetch subject details");
             }
-            
-            return response.data.data;
+            return response.data.data; 
         },
-        
-        
         onError: (err) => {
             const errorMsg = err.message.toLowerCase();
-            
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token');
+                localStorage.removeItem('token'); 
                 navigate('/login');
             }
-            
         },
-      
-
-        enabled: step === 3 && !!category && !!department,
         staleTime: 1000 * 60 * 15,
-        cacheTime: 1000 * 60 * 60,
     });
 
-    
+    // Client-side filtering logic
+    const filteredResources = useMemo(() => {
+        if (!subject) return {}; 
 
-    const handleCategorySelect = (selectedCategory) => {
-        setCategory(selectedCategory);
-        if (selectedCategory === CATEGORIES.PLACEMENTS) {
-            setDepartment("Common");
-            setStep(3);
-        } else {
-            setStep(2);
-        }
-    };
+        const allCategories = Object.keys(subject.resources);
+        const filtered = {};
+        const lowerSearch = searchTerm.toLowerCase();
 
-    const handleDepartmentSelect = (selectedDepartment) => {
-        setDepartment(selectedDepartment);
-        setStep(3);
-    };
+        allCategories.forEach(category => {
+            let resources = subject.resources[category];
 
-    const handleBack = () => {
-        if (step === 3) {
-            if (category === CATEGORIES.SEMESTER) {
-                setStep(2);
-                setDepartment(null);
-            } else {
-                setStep(1);
-                setCategory(null);
-                setDepartment(null);
+            // Filter by SubCategory Dropdown
+            if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
+                resources = []; 
             }
-        } else if (step === 2) {
-            setStep(1);
-            setCategory(null);
-        }
-    };
+
+            // Filter by Type Dropdown
+            if (typeFilter !== "All") {
+                resources = resources.filter(res => res.resourceType === typeFilter);
+            }
+            
+            // Filter by Search Term
+            if (lowerSearch) {
+                resources = resources.filter(res => 
+                    res.title.toLowerCase().includes(lowerSearch)
+                );
+            }
+            
+            filtered[category] = resources;
+        });
+        
+        return filtered;
+    }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
    
-
-    const renderStep1_Category = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            <SelectionCard
-                title="Placements/Internships"
-                icon={<LuClipboardCheck className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
-            />
-            <SelectionCard
-                title="Semester Exams"
-                icon={<LuBuilding className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.SEMESTER)}
-            />
-        </div>
-    );
-
-    const renderStep2_Department = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            {DEPARTMENTS.map((dept) => (
-                <SelectionCard
-                    key={dept}
-                    title={dept}
-                    icon={<LuBrain className="h-6 w-6" />}
-                    onClick={() => handleDepartmentSelect(dept)}
-                />
-            ))}
-        </div>
-    );
-
-    
-    const renderStep3_Subjects = () => {
-        if (isLoading) {
-            return (
-                <div className="flex h-64 w-full items-center justify-center">
-                    <Loader />
-                </div>
-            );
-        }
-
-        if (isError) {
-            // auth fix
-            const errorMsg = error.message.toLowerCase();
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                return null; 
-            }
-        
-            return <p className="text-center text-red-400">{error.message}</p>;
-      
-        }
-
-        if (!subjects || subjects.length === 0) {
-            return <p className="text-center text-gray-400">No subjects found.</p>;
-        }
-
+    if (isLoading) {
         return (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {subjects.map((subject) => (
-                    <SubjectCard key={subject._id} subject={subject} />
-                ))}
+            <div className="flex h-screen w-full items-center justify-center">
+                <Loader />
             </div>
         );
-    };
-
-   
+    }
+ 
+    if (isError) {
+        const errorMsg = error.message.toLowerCase();
+        if (errorMsg.includes("token") || errorMsg.includes("unauthorized")) {
+            return null; 
+        }
+        return <MaintenancePage />;
+    }
+    
+    if (!subject) {
+        return <div className="flex h-screen w-full items-center justify-center"><Loader /></div>;
+    }
+    
+    // Get valid categories and types for the dropdowns
+    const resourceCategories = Object.keys(filteredResources);
+    const allSubCategories = subject ? Object.keys(subject.resources) : [];
+    const allResourceTypes = subject ? 
+        [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))] 
+        : [];
 
     return (
-        <div>
-            <StudyMaterialHero />
-            <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-                {step > 1 && (
-                    <button
-                        onClick={handleBack}
-                        className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
-                    >
-                        <LuArrowLeft className="h-4 w-4" />
-                        Back
-                    </button>
-                )}
+        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
+            <Link
+                to="/study-material"
+                className="mb-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
+            >
+                <LuArrowLeft className="h-4 w-4" />
+                Back to Subjects
+            </Link>
+
+            <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
+            
+            <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
-                {step === 1 && renderStep1_Category()}
-                {step === 2 && renderStep2_Department()}
-                {step === 3 && renderStep3_Subjects()}
+                {/* --- Left Column: Resources --- */}
+                <div className="space-y-8 lg:col-span-2">
+                    
+                    {/* --- FILTER BAR --- */}
+                    <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
+                        <SearchBar 
+                            placeholder="Search resources by title..."
+                            value={searchTerm}
+                            onChange={setSearchTerm}
+                        />
+                        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                            {/* SubCategory Filter */}
+                            <div>
+                                <label htmlFor="subCategory" className="block text-sm font-medium text-gray-300 mb-1">Sub-Category</label>
+                                <select 
+                                    id="subCategory"
+                                    value={subCategoryFilter}
+                                    /* FIX: Removed 'g' from e.g.target */
+                                    onChange={(e) => setSubCategoryFilter(e.target.value)}
+                                    className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="All" className="bg-gray-800">All Sub-Categories</option>
+                                    {allSubCategories.map(cat => (
+                                        <option key={cat} value={cat} className="bg-gray-800">{cat}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {/* Type Filter */}
+                            <div>
+                                <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">Type</label>
+                                <select 
+                                    id="type"
+                                    value={typeFilter}
+                                    onChange={(e) => setTypeFilter(e.target.value)}
+                                    className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
+                                >
+                                    <option value="All" className="bg-gray-800">All Types</option>
+                                    {allResourceTypes.map(type => (
+                                        <option key={type} value={type} className="bg-gray-800">{type}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    {/* END FILTER BAR  */}
+                    
+                    {/* RESOURCES LIST */}
+                    {resourceCategories.map(category => (
+                        filteredResources[category].length > 0 && (
+                            <section key={category}>
+                                <h2 className="mb-4 text-2xl font-semibold text-blue-400">
+                                    {category}
+                                </h2>
+                                <div className="space-y-3">
+                                    {filteredResources[category].map(resource => (
+                                        <ResourceLink key={resource._id} resource={resource} />
+                                    ))}
+                                </div>
+                            </section>
+                        )
+                    ))}
+                    
+                    {/* Empty State */}
+                    {Object.values(filteredResources).flat().length === 0 && (
+                        <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
+                            <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
+                            <h3 className="mt-2 text-xl font-semibold text-white">No resources found</h3>
+                            <p className="mt-1 text-gray-400">Try adjusting your search or filters.</p>
+                        </div>
+                    )}
+                    {/* --- END RESOURCES LIST --- */}
+
+                </div>
+
+                {/* --- Right Column: Tips --- */}
+                <div className="lg:col-span-1">
+                    <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
+                        <h2 className="mb-4 text-2xl font-semibold text-blue-400">
+                            Tips & Advice
+                        </h2>
+                        {subject.tips.length > 0 ? (
+                            <ul className="space-y-4">
+                                {subject.tips.map((tip, index) => (
+                                    <li key={index} className="flex gap-3">
+                                        <span className="mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-blue-400"></span>
+                                        <span className="text-gray-300">{tip}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        ) : (
+                            <p className="text-gray-400">No tips added yet.</p>
+                        )}
+                    </div>
+                </div>
+
             </div>
         </div>
     );
 };
 
-export default StudyMaterialPage;
+export default SubjectDetailPage;
