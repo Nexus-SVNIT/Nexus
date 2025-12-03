@@ -21,7 +21,7 @@ import {
 
 /* ---------------------------
    Constants
-   --------------------------- */
+--------------------------- */
 const CATEGORIES = {
   PLACEMENTS: "Placements/Internships",
   SEMESTER: "Semester Exams",
@@ -29,17 +29,16 @@ const CATEGORIES = {
 
 const DEPARTMENTS = ["CSE", "AI"];
 
-const QUERY_OPTIONS = {
-  staleTime: 1000 * 60 * 60, // 1 hour for all-subjects, 15m for filtered subjects (overridden below)
-  cacheTime: 1000 * 60 * 60,
+const COMMON_QUERY_OPTIONS = {
+  cacheTime: 1000 * 60 * 60, // 1 hour
   refetchOnWindowFocus: false,
   refetchOnReconnect: false,
   retry: 1,
 };
 
 /* ---------------------------
-   Presentational pieces
-   --------------------------- */
+   Hero Header
+--------------------------- */
 const StudyMaterialHero = () => (
   <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div className="space-y-6 text-center">
@@ -60,6 +59,9 @@ const StudyMaterialHero = () => (
   </div>
 );
 
+/* ---------------------------
+   Selection Card
+--------------------------- */
 const SelectionCard = ({ title, icon, onClick }) => (
   <button
     onClick={onClick}
@@ -67,40 +69,51 @@ const SelectionCard = ({ title, icon, onClick }) => (
   >
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-400 group-hover:text-white">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 group-hover:bg-blue-400 group-hover:text-white transition-all">
           {icon}
         </div>
         <h3 className="text-xl font-semibold text-white">{title}</h3>
       </div>
-      <LuArrowRight className="h-5 w-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-400" />
+      <LuArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-400 transition-transform group-hover:translate-x-1" />
     </div>
   </button>
 );
 
 /* ---------------------------
-   Main Page
-   --------------------------- */
+   MAIN COMPONENT
+--------------------------- */
 const StudyMaterialPage = () => {
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(null);
   const [department, setDepartment] = useState(null);
 
-  // searchTerm is the immediate value bound to input
   const [searchTerm, setSearchTerm] = useState("");
-  // debouncedSearch will update after user stops typing
   const [debouncedSearch, setDebouncedSearch] = useState("");
 
   const navigate = useNavigate();
 
-  // Debounce searchTerm -> debouncedSearch (300ms)
+  /* ---------------------------
+     LOGIN CHECK
+--------------------------- */
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
+
+  /* ---------------------------
+     Debounce search input
+--------------------------- */
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setDebouncedSearch(searchTerm.trim());
+    }, 300);
+
     return () => clearTimeout(t);
   }, [searchTerm]);
 
-  /* --------------------------
-     Fetch filtered subjects (category + department)
-     -------------------------- */
+  /* ---------------------------
+     FETCH filtered subjects
+--------------------------- */
   const {
     data: subjects = [],
     isLoading,
@@ -108,86 +121,84 @@ const StudyMaterialPage = () => {
     error,
   } = useQuery({
     queryKey: ["subjects", category, department],
-    queryFn: async () => {
-      const response = await getSubjects({ category, department });
-      if (!response?.success) {
-        throw new Error(response?.message || "Failed to fetch subjects");
-      }
-      return response.data.data;
-    },
     enabled: step === 3 && !!category && !!department,
     staleTime: 1000 * 60 * 15, // 15 minutes
-    cacheTime: 1000 * 60 * 60,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    retry: 1,
+    ...COMMON_QUERY_OPTIONS,
+
+    queryFn: async () => {
+      const response = await getSubjects({ category, department });
+      if (!response.success)
+        throw new Error(response.message || "Failed to fetch subjects");
+      return response.data.data;
+    },
+
     onError: (err) => {
-      const msg = (err?.message || "").toLowerCase();
+      const msg = err.message.toLowerCase();
       if (msg.includes("token") || msg.includes("unauthorized")) {
         localStorage.removeItem("token");
         navigate("/login");
       }
-      // otherwise we just let UI show error
     },
   });
 
-  /* --------------------------
-     Fetch ALL subjects (for Fuse.js)
-     This is intentionally lightweight and cached for a long time.
-     -------------------------- */
+  /* ---------------------------
+     FETCH ALL subjects for Fuse.js
+--------------------------- */
   const { data: allSubjects = [] } = useQuery({
     queryKey: ["all-subjects"],
+    staleTime: 1000 * 60 * 60, // 1 hour
+    ...COMMON_QUERY_OPTIONS,
+
     queryFn: async () => {
       const response = await getAllSubjects();
-      if (!response?.success) {
-        throw new Error(response?.message || "Failed to fetch all subjects");
-      }
       return response.data.data;
     },
-    ...QUERY_OPTIONS,
   });
 
-  /* --------------------------
-     Fuse.js instance (client-side fuzzy search)
-     -------------------------- */
+  /* ---------------------------
+     FUSE instance
+--------------------------- */
   const fuse = useMemo(() => {
-    if (!allSubjects || allSubjects.length === 0) return null;
+    if (!allSubjects.length) return null;
+
     return new Fuse(allSubjects, {
       keys: ["subjectName"],
-      threshold: 0.35, // adjust for more/less fuzziness
-      distance: 100,
+      threshold: 0.35,
+      distance: 90,
     });
   }, [allSubjects]);
 
-  /* --------------------------
-     Combine filtered subjects + fuzzy search
-     - If no search => show 'subjects' (backend filtered)
-     - If search exists => run fuse search across allSubjects, then restrict
-       to subjects belonging to the current filtered set (so category+department still apply)
-     -------------------------- */
+  /* ---------------------------
+     Combine backend filter + fuzzy search
+--------------------------- */
   const finalSubjects = useMemo(() => {
-    if (!subjects || subjects.length === 0) return [];
+    if (!subjects.length) return [];
 
     if (!debouncedSearch) {
       return subjects;
     }
 
     if (!fuse) {
-      // fallback to simple substring search on the filtered subjects
       const lower = debouncedSearch.toLowerCase();
-      return subjects.filter((s) => s.subjectName.toLowerCase().includes(lower));
+      return subjects.filter((s) =>
+        s.subjectName.toLowerCase().includes(lower)
+      );
     }
 
-    const results = fuse.search(debouncedSearch).map((r) => r.item);
-    const allowed = new Set(subjects.map((s) => s._id));
-    return results.filter((r) => allowed.has(r._id));
-  }, [debouncedSearch, fuse, subjects]);
+    const idsAllowed = new Set(subjects.map((s) => s._id));
 
-  /* --------------------------
+    return fuse
+      .search(debouncedSearch)
+      .map((r) => r.item)
+      .filter((sub) => idsAllowed.has(sub._id));
+  }, [subjects, debouncedSearch, fuse]);
+
+  /* ---------------------------
      Step handlers
-     -------------------------- */
+--------------------------- */
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
+
     if (selectedCategory === CATEGORIES.PLACEMENTS) {
       setDepartment("Common");
       setStep(3);
@@ -195,13 +206,12 @@ const StudyMaterialPage = () => {
       setStep(2);
     }
 
-    // clear previous search when switching flows
     setSearchTerm("");
     setDebouncedSearch("");
   };
 
-  const handleDepartmentSelect = (selectedDepartment) => {
-    setDepartment(selectedDepartment);
+  const handleDepartmentSelect = (dept) => {
+    setDepartment(dept);
     setStep(3);
     setSearchTerm("");
     setDebouncedSearch("");
@@ -221,20 +231,22 @@ const StudyMaterialPage = () => {
       setStep(1);
       setCategory(null);
     }
+
     setSearchTerm("");
     setDebouncedSearch("");
   };
 
-  /* --------------------------
-     Renderers for steps
-     -------------------------- */
-  const renderStep1_Category = () => (
+  /* ---------------------------
+     STEP RENDERERS
+--------------------------- */
+  const renderStep1 = () => (
     <div className="flex flex-wrap justify-center gap-6">
       <SelectionCard
         title="Placements/Internships"
         icon={<LuClipboardCheck className="h-6 w-6" />}
         onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
       />
+
       <SelectionCard
         title="Semester Exams"
         icon={<LuBuilding className="h-6 w-6" />}
@@ -243,7 +255,7 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep2_Department = () => (
+  const renderStep2 = () => (
     <div className="flex flex-wrap justify-center gap-6">
       {DEPARTMENTS.map((dept) => (
         <SelectionCard
@@ -256,7 +268,7 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep3_Subjects = () => {
+  const renderStep3 = () => {
     if (isLoading) {
       return (
         <div className="flex h-64 w-full items-center justify-center">
@@ -266,12 +278,14 @@ const StudyMaterialPage = () => {
     }
 
     if (isError) {
-      const msg = (error?.message || "").toLowerCase();
-      if (msg.includes("token")) return null;
-      return <p className="text-center text-red-400">{error?.message || "Error fetching subjects"}</p>;
+      return (
+        <p className="text-center text-red-400">
+          {error?.message || "Something went wrong"}
+        </p>
+      );
     }
 
-    if (!subjects || subjects.length === 0) {
+    if (!subjects.length) {
       return <p className="text-center text-gray-400">No subjects found.</p>;
     }
 
@@ -284,19 +298,23 @@ const StudyMaterialPage = () => {
         />
 
         <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {finalSubjects.length > 0 ? (
-            finalSubjects.map((subject) => <SubjectCard key={subject._id} subject={subject} />)
+          {finalSubjects.length ? (
+            finalSubjects.map((subject) => (
+              <SubjectCard key={subject._id} subject={subject} />
+            ))
           ) : (
-            <p className="col-span-full text-center text-gray-400">No matching subjects found.</p>
+            <p className="col-span-full text-center text-gray-400">
+              No matching subjects found.
+            </p>
           )}
         </div>
       </>
     );
   };
 
-  /* --------------------------
-     Main render
-     -------------------------- */
+  /* ---------------------------
+     MAIN RENDER
+--------------------------- */
   return (
     <div>
       <StudyMaterialHero />
@@ -305,16 +323,16 @@ const StudyMaterialPage = () => {
         {step > 1 && (
           <button
             onClick={handleBack}
-            className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
+            className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white hover:bg-white/20"
           >
             <LuArrowLeft className="h-4 w-4" />
             Back
           </button>
         )}
 
-        {step === 1 && renderStep1_Category()}
-        {step === 2 && renderStep2_Department()}
-        {step === 3 && renderStep3_Subjects()}
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
       </div>
     </div>
   );
