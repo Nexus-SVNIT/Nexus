@@ -1,94 +1,133 @@
-const mongoose = require("mongoose");
-const Subject = require("../models/subjectModel");
-const Resource = require("../models/resourcesModel");
+// controllers/studyMaterialController.js
+const mongoose = require('mongoose');
+const Subject = require('../models/subjectModel');
+const Resource = require('../models/resourcesModel');
 
-// ✅ Get subjects with filtering + department-specific search
-const getSubjects = async (req, res) => {
-  try {
-    const { category, department, search = "" } = req.query;
 
-    if (!category) {
-      return res.status(400).json({ success: false, message: "Category is required" });
-    }
+const listSubjects = async (req, res) => {
+    try {
+        const { category: rawCategory, department: rawDepartment } = req.query;
 
-    const filter = { category: { $regex: new RegExp(`^${category}$`, "i") } };
+        if (!rawCategory)
+            return res.status(400).json({ message: "Category is required" });
 
-    if (category.toLowerCase() === "semester exams") {
-      if (!department) {
-        return res.status(400).json({
-          success: false,
-          message: "Department is required for Semester Exams",
+        const category = rawCategory.trim();
+        const filter = { category };
+
+        // Semester exam route -> needs department
+        if (category === "Semester Exams") {
+            if (!rawDepartment)
+                return res.status(400).json({ message: "Department is required for Semester Exams" });
+
+            const dep = rawDepartment.trim();
+            if (!['CSE', 'AI', 'Common'].includes(dep))
+                return res.status(400).json({ message: "Invalid department" });
+
+            filter.department = dep;
+        }
+
+        // Placements -> always Common
+        if (category === "Placements/Internships") {
+            filter.department = "Common";
+        }
+
+        res.setHeader("Cache-Control", "s-maxage=600, stale-while-revalidate=86400");
+
+        const subjects = await Subject.find(filter)
+            .select("_id subjectName")
+            .lean();
+
+        return res.status(200).json({
+            message: "Subjects fetched successfully",
+            data: subjects
         });
-      }
-      filter.department = department.trim();
-    } else if (category.toLowerCase() === "placements/internships") {
-      filter.department = "Common";
-    }
 
-    if (search.trim() !== "") {
-      filter.subjectName = { $regex: search.trim(), $options: "i" };
-    }
-
-    const subjects = await Subject.find(filter)
-      .select("_id subjectName department category")
-      .sort({ subjectName: 1 })
-      .lean();
-
-    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
-    res.status(200).json({
-      success: true,
-      total: subjects.length,
-      data: subjects,
-    });
-  } catch (error) {
-    console.error("Error fetching subjects:", error);
-    res.status(500).json({ success: false, message: "Error fetching subjects" });
-  }
-};
-
-// ✅ Get all resources for a subject (grouped + filtered)
-const getResourcesBySubject = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { subCategory, type, search = "" } = req.query;
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid subject ID" });
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
 };
 
-    const filter = { subject: id };
-    if (subCategory && subCategory !== "All") filter.subCategory = subCategory;
-    if (type && type !== "All") filter.resourceType = type;
-    if (search.trim() !== "") {
-      filter.title = { $regex: search.trim(), $options: "i" };
+
+
+const listAllSubjects = async (req, res) => {
+    try {
+        res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate=86400");
+
+        const subjects = await Subject.find({})
+            .select("_id subjectName category department")
+            .lean();
+
+        return res.status(200).json({
+            message: "All subjects fetched successfully",
+            data: subjects
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
     }
+};
 
-    const resources = await Resource.find(filter)
-      .select("title link subCategory resourceType createdAt")
-      .sort({ createdAt: -1 })
-      .lean();
 
-    const groupedResources = resources.reduce((acc, res) => {
-      const key = res.subCategory || "Other";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(res);
-      return acc;
-    }, {});
+const getSubject = async (req, res) => {
+    try {
+        const { id } = req.params;
 
-    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
-    res.status(200).json({
-      success: true,
-      total: resources.length,
-      data: groupedResources,
-    });
-  } catch (error) {
-    console.error("Error fetching resources:", error);
-    res.status(500).json({ success: false, message: "Error fetching resources" });
-  }
+        if (!mongoose.Types.ObjectId.isValid(id))
+            return res.status(400).json({ message: "Invalid subject ID" });
+
+        res.setHeader("Cache-Control", "s-maxage=900, stale-while-revalidate=86400");
+
+        const subject = await Subject.findById(id)
+            .select("subjectName tips resources")
+            .lean();
+
+        if (!subject)
+            return res.status(404).json({ message: "Subject not found" });
+
+        const resources = await Resource.find({
+            _id: { $in: subject.resources }
+        })
+            .select("title link subCategory resourceType")
+            .lean();
+
+        // Grouping logic
+        const subCats = Resource.schema.path("subCategory").enumValues;
+        const grouped = {};
+        subCats.forEach(cat => grouped[cat] = []);
+
+        resources.forEach(r => {
+            if (!grouped[r.subCategory])
+                grouped[r.subCategory] = [];
+            grouped[r.subCategory].push(r);
+        });
+
+        // Optional improvement: sort resources alphabetically
+        Object.keys(grouped).forEach(cat => {
+            grouped[cat].sort((a, b) => a.title.localeCompare(b.title));
+        });
+
+        return res.status(200).json({
+            message: "Subject details fetched",
+            data: {
+                _id: subject._id,
+                subjectName: subject.subjectName,
+                tips: (subject.tips || [])
+                    .sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+                    .map(t => t.text),
+                resources: grouped
+            }
+        });
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).json({ message: "Internal server error", error: err.message });
+    }
 };
 
 module.exports = {
-  getSubjects,
-  getResourcesBySubject,
+    listSubjects,
+    listAllSubjects,
+    getSubject
 };

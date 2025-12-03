@@ -1,41 +1,40 @@
+// models/resourcesModel.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const resourceSchema = new Schema({
-  title: {
-    type: String,
-    required: true,
-    trim: true
-  },
-  subCategory: {
-    type: String,
-    required: true,
-    enum: ['Notes', 'Important topics', 'Youtube Resources', 'PYQs', 'Other'],
-    trim: true
-  },
-  resourceType: {  
-    type: String,
-    required: true,
-    enum: ['PDF', 'Link']
-  },
-  link: {  
-    type: String,
-    required: true,
-    trim: true
-  },
-  subject: {
-    type: Schema.Types.ObjectId,
-    ref: 'Subject',
-    required: true,
-    index: true 
-  }
-}, {
-  timestamps: true
-});
+    title: { type: String, required: true, trim: true },
 
+    subCategory: {
+        type: String,
+        required: true,
+        enum: ['Notes', 'Important Topics', 'YouTube Resources', 'PYQs', 'Other'],
+        trim: true
+    },
 
-resourceSchema.index({ subject: 1, subCategory: 1 }); 
-resourceSchema.index({ createdAt: -1 });              
-resourceSchema.index({ title: 1 });                   
+    resourceType: {
+        type: String,
+        required: true,
+        enum: ['PDF', 'Link']
+    },
+
+    link: {
+        type: String,
+        required: true,
+        trim: true,
+        validate: {
+            validator: v => /^https?:\/\//.test(v),
+            message: "Invalid URL format"
+        }
+    },
+
+    subject: {
+        type: Schema.Types.ObjectId,
+        ref: 'Subject',
+        required: true,
+        index: true
+    }
+
+}, { timestamps: true });
 
 module.exports = mongoose.model('Resource', resourceSchema);
