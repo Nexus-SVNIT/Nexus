@@ -8,8 +8,6 @@ import { getSubjects, getAllSubjects } from "../services/studyMaterialService";
 
 import Loader from "../components/Loader/Loader";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
-import SearchBar from "../components/Alumni/SearchBar.jsx";
-
 import {
   LuBookMarked,
   LuClipboardCheck,
@@ -19,9 +17,7 @@ import {
   LuArrowRight,
 } from "react-icons/lu";
 
-/* ---------------------------
-   Constants
---------------------------- */
+// Constants
 const CATEGORIES = {
   PLACEMENTS: "Placements/Internships",
   SEMESTER: "Semester Exams",
@@ -29,16 +25,7 @@ const CATEGORIES = {
 
 const DEPARTMENTS = ["CSE", "AI"];
 
-const COMMON_QUERY_OPTIONS = {
-  cacheTime: 1000 * 60 * 60, // 1 hour
-  refetchOnWindowFocus: false,
-  refetchOnReconnect: false,
-  retry: 1,
-};
-
-/* ---------------------------
-   Hero Header
---------------------------- */
+// Hero Section
 const StudyMaterialHero = () => (
   <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div className="space-y-6 text-center">
@@ -46,7 +33,7 @@ const StudyMaterialHero = () => (
         <LuBookMarked className="h-4 w-4" />
         Study Resources
       </div>
-      <h1 className="text-foreground text-4xl font-bold md:text-6xl text-white">
+      <h1 className="text-foreground text-4xl font-bold md:text-6xl">
         Ace Your Academic &
         <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
           Placement Prep
@@ -59,9 +46,7 @@ const StudyMaterialHero = () => (
   </div>
 );
 
-/* ---------------------------
-   Selection Card
---------------------------- */
+// Category/Department Selection Card
 const SelectionCard = ({ title, icon, onClick }) => (
   <button
     onClick={onClick}
@@ -79,43 +64,21 @@ const SelectionCard = ({ title, icon, onClick }) => (
   </button>
 );
 
-/* ---------------------------
-   MAIN COMPONENT
---------------------------- */
 const StudyMaterialPage = () => {
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(null);
   const [department, setDepartment] = useState(null);
-
-  const [searchTerm, setSearchTerm] = useState("");
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
   const navigate = useNavigate();
 
-  /* ---------------------------
-     LOGIN CHECK
---------------------------- */
+  // Auth check
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) navigate("/login");
   }, [navigate]);
 
-  /* ---------------------------
-     Debounce search input
---------------------------- */
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setDebouncedSearch(searchTerm.trim());
-    }, 300);
-
-    return () => clearTimeout(t);
-  }, [searchTerm]);
-
-  /* ---------------------------
-     FETCH filtered subjects
---------------------------- */
+  // Fetch subjects
   const {
-    data: subjects = [],
+    data: subjects,
     isLoading,
     isError,
     error,
@@ -129,73 +92,25 @@ const StudyMaterialPage = () => {
       const response = await getSubjects({ category, department });
       if (!response.success)
         throw new Error(response.message || "Failed to fetch subjects");
-      return response.data.data;
+      return response.data.data || response.data; // backend compatibility
     },
-
+    enabled: step === 3 && !!category && !!department,
+    staleTime: 1000 * 60 * 15,
+    cacheTime: 1000 * 60 * 60,
     onError: (err) => {
       const msg = err.message.toLowerCase();
-      if (msg.includes("token") || msg.includes("unauthorized")) {
+      if (
+        msg.includes("token") ||
+        msg.includes("unauthorized") ||
+        msg.includes("not valid")
+      ) {
         localStorage.removeItem("token");
         navigate("/login");
       }
     },
   });
 
-  /* ---------------------------
-     FETCH ALL subjects for Fuse.js
---------------------------- */
-  const { data: allSubjects = [] } = useQuery({
-    queryKey: ["all-subjects"],
-    staleTime: 1000 * 60 * 60, // 1 hour
-    ...COMMON_QUERY_OPTIONS,
-
-    queryFn: async () => {
-      const response = await getAllSubjects();
-      return response.data.data;
-    },
-  });
-
-  /* ---------------------------
-     FUSE instance
---------------------------- */
-  const fuse = useMemo(() => {
-    if (!allSubjects.length) return null;
-
-    return new Fuse(allSubjects, {
-      keys: ["subjectName"],
-      threshold: 0.35,
-      distance: 90,
-    });
-  }, [allSubjects]);
-
-  /* ---------------------------
-     Combine backend filter + fuzzy search
---------------------------- */
-  const finalSubjects = useMemo(() => {
-    if (!subjects.length) return [];
-
-    if (!debouncedSearch) {
-      return subjects;
-    }
-
-    if (!fuse) {
-      const lower = debouncedSearch.toLowerCase();
-      return subjects.filter((s) =>
-        s.subjectName.toLowerCase().includes(lower)
-      );
-    }
-
-    const idsAllowed = new Set(subjects.map((s) => s._id));
-
-    return fuse
-      .search(debouncedSearch)
-      .map((r) => r.item)
-      .filter((sub) => idsAllowed.has(sub._id));
-  }, [subjects, debouncedSearch, fuse]);
-
-  /* ---------------------------
-     Step handlers
---------------------------- */
+  // Step navigation logic
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
 
@@ -205,16 +120,11 @@ const StudyMaterialPage = () => {
     } else {
       setStep(2);
     }
-
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
   const handleDepartmentSelect = (dept) => {
     setDepartment(dept);
     setStep(3);
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
   const handleBack = () => {
@@ -231,15 +141,10 @@ const StudyMaterialPage = () => {
       setStep(1);
       setCategory(null);
     }
-
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
-  /* ---------------------------
-     STEP RENDERERS
---------------------------- */
-  const renderStep1 = () => (
+  // Step 1: Category selection
+  const renderStep1_Category = () => (
     <div className="flex flex-wrap justify-center gap-6">
       <SelectionCard
         title="Placements/Internships"
@@ -255,7 +160,8 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep2 = () => (
+  // Step 2: Department selection
+  const renderStep2_Department = () => (
     <div className="flex flex-wrap justify-center gap-6">
       {DEPARTMENTS.map((dept) => (
         <SelectionCard
@@ -268,57 +174,33 @@ const StudyMaterialPage = () => {
     </div>
   );
 
-  const renderStep3 = () => {
-    if (isLoading) {
+  // Step 3: Subjects
+  const renderStep3_Subjects = () => {
+    if (isLoading)
       return (
         <div className="flex h-64 w-full items-center justify-center">
           <Loader />
         </div>
       );
-    }
 
-    if (isError) {
-      return (
-        <p className="text-center text-red-400">
-          {error?.message || "Something went wrong"}
-        </p>
-      );
-    }
+    if (isError) return <MaintenancePage />;
 
-    if (!subjects.length) {
+    if (!subjects || subjects.length === 0)
       return <p className="text-center text-gray-400">No subjects found.</p>;
-    }
 
     return (
-      <>
-        <SearchBar
-          placeholder="Search subjects..."
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
-
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {finalSubjects.length ? (
-            finalSubjects.map((subject) => (
-              <SubjectCard key={subject._id} subject={subject} />
-            ))
-          ) : (
-            <p className="col-span-full text-center text-gray-400">
-              No matching subjects found.
-            </p>
-          )}
-        </div>
-      </>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {subjects.map((subject) => (
+          <SubjectCard key={subject._id} subject={subject} />
+        ))}
+      </div>
     );
   };
 
-  /* ---------------------------
-     MAIN RENDER
---------------------------- */
+  // Render
   return (
     <div>
       <StudyMaterialHero />
-
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {step > 1 && (
           <button

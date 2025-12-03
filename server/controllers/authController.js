@@ -42,7 +42,6 @@ const loginUser = async (req, res) => {
         // Final payload
         const payload = {
             id: foundUser._id,
-            fullName: foundUser.fullName,
             admissionNumber: foundUser.admissionNumber,
             isAlumni: foundUser.isAlumni || false,
         };
@@ -67,20 +66,6 @@ const loginUser = async (req, res) => {
         res.status(500).json({ message: 'Server error', error });
     }
 };
-
-const verifyLogin = async (req, res) => {
-    const token = req.headers.authorization?.split(' ')[1]; // Bearer token
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided, authorization denied' });
-    }
-
-    try {
-        const decoded = jwt.verify(token, process.env.SECRET || 'fallback_secret_key'); // Use your secret key here
-        return res.status(200).json({ message: 'Token is valid', decoded });
-    } catch (error) {
-        res.status(401).json({ message: 'Token is not valid' });
-    }
-}
 
 const signupUser = async (req, res) => {
     const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password, shareCodingProfile } = req.body;
@@ -471,5 +456,4 @@ module.exports = {
     forgotPassword,
     verifyPasswordResetEmail,
     resetPassword,
-    verifyLogin,
 };
