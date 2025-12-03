@@ -1,14 +1,19 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { NavList } from "../../data";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { CgClose, CgMenuLeftAlt } from "react-icons/cg";
 import Logo from "../../data/images/nexus.png";
 import { Button } from "@mui/joy";
-import { useUser } from "../../context/userContext";
 const Navbar = () => {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   const [mobileMenu, setMobileMenu] = useState(false);
-  const { user, logOut } = useUser();
+  const token = localStorage.getItem('token');
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    navigate(`/login?redirect_to=${encodeURIComponent(pathname)}`);
+  };
 
   return (
     <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full">
@@ -21,8 +26,8 @@ const Navbar = () => {
       <div className="relative flex items-center">
         <ul className="mr-5 hidden items-center gap-[3vw] text-sm md:flex lg:gap-12 lg:text-base">
           {
-            user ?
-              <Button onClick={logOut}>Logout</Button>
+            token ?
+              <Button onClick={handleLogout}>Logout</Button>
               : <Button ><a href="/login">Login</a></Button>
           }
         </ul>
@@ -52,7 +57,7 @@ const Navbar = () => {
               );
             })}
             {
-              user && <Link
+              token && <Link
                 key={'profile'}
                 to={'profile'}
                 onClick={(e) => setMobileMenu(false)}
@@ -69,8 +74,8 @@ const Navbar = () => {
               </Link>
             }
             {
-              user ?
-                <Button onClick={logOut}>Logout</Button>
+              token ?
+                <Button onClick={handleLogout}>Logout</Button>
                 : <Button ><a href="/login">Login</a></Button>
             }
           </ul>
