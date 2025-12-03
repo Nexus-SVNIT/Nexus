@@ -54,12 +54,12 @@ const SelectionCard = ({ title, icon, onClick }) => (
   >
     <div className="flex items-center justify-between">
       <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-400 group-hover:text-white">
+        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 group-hover:bg-blue-400 group-hover:text-white transition-all">
           {icon}
         </div>
         <h3 className="text-xl font-semibold text-white">{title}</h3>
       </div>
-      <LuArrowRight className="h-5 w-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-400" />
+      <LuArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-400 transition-transform group-hover:translate-x-1" />
     </div>
   </button>
 );
@@ -84,6 +84,10 @@ const StudyMaterialPage = () => {
     error,
   } = useQuery({
     queryKey: ["subjects", category, department],
+    enabled: step === 3 && !!category && !!department,
+    staleTime: 1000 * 60 * 15, // 15 minutes
+    ...COMMON_QUERY_OPTIONS,
+
     queryFn: async () => {
       const response = await getSubjects({ category, department });
       if (!response.success)
@@ -109,6 +113,7 @@ const StudyMaterialPage = () => {
   // Step navigation logic
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
+
     if (selectedCategory === CATEGORIES.PLACEMENTS) {
       setDepartment("Common");
       setStep(3);
@@ -117,8 +122,8 @@ const StudyMaterialPage = () => {
     }
   };
 
-  const handleDepartmentSelect = (selectedDepartment) => {
-    setDepartment(selectedDepartment);
+  const handleDepartmentSelect = (dept) => {
+    setDepartment(dept);
     setStep(3);
   };
 
@@ -146,6 +151,7 @@ const StudyMaterialPage = () => {
         icon={<LuClipboardCheck className="h-6 w-6" />}
         onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
       />
+
       <SelectionCard
         title="Semester Exams"
         icon={<LuBuilding className="h-6 w-6" />}
@@ -199,16 +205,16 @@ const StudyMaterialPage = () => {
         {step > 1 && (
           <button
             onClick={handleBack}
-            className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
+            className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white hover:bg-white/20"
           >
             <LuArrowLeft className="h-4 w-4" />
             Back
           </button>
         )}
 
-        {step === 1 && renderStep1_Category()}
-        {step === 2 && renderStep2_Department()}
-        {step === 3 && renderStep3_Subjects()}
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
       </div>
     </div>
   );
