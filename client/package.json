@@ -23,6 +23,7 @@
     "chart.js": "^4.4.6",
     "client": "file:",
     "dompurify": "^3.2.4",
+    "fuse.js": "^6.6.2",
     "html-react-parser": "^5.1.18",
     "js-cookie": "^3.0.5",
     "prettier": "^3.1.1",

@@ -1,93 +1,138 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const Subject = require("../models/subjectModel");
 const Resource = require("../models/resourcesModel");
 
-// ✅ Get subjects with filtering + department-specific search
+//get subjects based on category and departsment
 const getSubjects = async (req, res) => {
-  try {
-    const { category, department, search = "" } = req.query;
+    try {
+    
+        // get category/dept from query params
+        const { category: rawCategory, department: rawDepartment } = req.query; // <-- Aliased department
 
-    if (!category) {
-      return res.status(400).json({ success: false, message: "Category is required" });
-    }
+       
+        if (!rawCategory) {
+            return res.status(400).json({ message: "Category is required" });
+        }
 
-    const filter = { category: { $regex: new RegExp(`^${category}$`, "i") } };
+        // always trim whitespace from client input
+        const category = rawCategory.trim();
 
-    if (category.toLowerCase() === "semester exams") {
-      if (!department) {
-        return res.status(400).json({
-          success: false,
-          message: "Department is required for Semester Exams",
+        
+        const filter = { 
+            // case-insensitive search, and loose regex to handle any whitespace in the DB
+            category: { $regex: new RegExp(category, 'i') } 
+        };
+        
+        // standardize for logic checks
+        const lowerCaseCategory = category.toLowerCase();
+
+
+        // semester exams require a specific department
+        if (lowerCaseCategory === "semester exams") {
+            if (!rawDepartment) { 
+                return res.status(400).json({ message: "Department is required for Semester Exams" });
+            }
+            
+         
+            filter.department = rawDepartment.trim();
+        }
+
+        // placements all share the common department
+        if (lowerCaseCategory === "placements/internships") {
+            filter.department = "Common"; 
+        }
+        
+        console.log("FINAL QUERY FILTER:", JSON.stringify(filter)); // Debug log
+        
+        const subjects = await Subject.find(filter).select('_id subjectName');
+        res.status(200).json({
+            message: "Subjects fetched successfully",
+            data: subjects
         });
-      }
-      filter.department = department.trim();
-    } else if (category.toLowerCase() === "placements/internships") {
-      filter.department = "Common";
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching subjects" });
     }
-
-    if (search.trim() !== "") {
-      filter.subjectName = { $regex: search.trim(), $options: "i" };
-    }
-
-    const subjects = await Subject.find(filter)
-      .select("_id subjectName department category")
-      .sort({ subjectName: 1 })
-      .lean();
-
-    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
-    res.status(200).json({
-      success: true,
-      total: subjects.length,
-      data: subjects,
-    });
-  } catch (error) {
-    console.error("Error fetching subjects:", error);
-    res.status(500).json({ success: false, message: "Error fetching subjects" });
-  }
 };
 
-// ✅ Get all resources for a subject (grouped + filtered)
-const getResourcesBySubject = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { subCategory, type, search = "" } = req.query;
+// get full subject details
+const getSubjectDetails = async (req, res) => {
+    try {
+        // get id from url params
+        const { id: rawId } = req.params;
+        
+        if (!rawId) {
+             return res.status(400).json({ message: "Invalid subject ID format" });
+        }
+        
+        const id = rawId.trim(); 
+        
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ message: "Invalid subject ID format" });
+        }
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      return res.status(400).json({ success: false, message: "Invalid subject ID" });
+        const subject = await Subject.findById(id)
+            .select('subjectName tips resources')
+            .populate({
+                path: 'resources',
+                select: 'title link subCategory resourceType'
+            });
+
+        if (!subject) {
+            return res.status(404).json({ message: "Subject not found" });
+        }
+
+        // get all possible subCats from the schema
+        const allSubCategories = Resource.schema.path('subCategory').enumValues;
+
+        // create a base object, so all subcats are present
+        const baseGroups = allSubCategories.reduce((acc, category) => {
+            acc[category] = [];
+            return acc;
+        }, {});
+
+
+        const groupedResources = subject.resources.reduce((acc, resource) => {
+            
+            if (acc[resource.subCategory]) {
+                acc[resource.subCategory].push(resource);
+            }
+            return acc;
+        }, baseGroups);
+        
+        const formattedSubject = {
+            _id: subject._id,
+            subjectName: subject.subjectName,
+            // sort tips oldest to newest before sending
+            tips: subject.tips
+                      .sort((a, b) => a.createdAt - b.createdAt)
+                      .map(t => t.text),
+            resources: groupedResources 
+        };
+
+        res.status(200).json({
+            message: "Subject details fetched successfully",
+            data: formattedSubject
+        });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching subject details" });
     }
-
-    const filter = { subject: id };
-    if (subCategory && subCategory !== "All") filter.subCategory = subCategory;
-    if (type && type !== "All") filter.resourceType = type;
-    if (search.trim() !== "") {
-      filter.title = { $regex: search.trim(), $options: "i" };
-    }
-
-    const resources = await Resource.find(filter)
-      .select("title link subCategory resourceType createdAt")
-      .sort({ createdAt: -1 })
-      .lean();
-
-    const groupedResources = resources.reduce((acc, res) => {
-      const key = res.subCategory || "Other";
-      if (!acc[key]) acc[key] = [];
-      acc[key].push(res);
-      return acc;
-    }, {});
-
-    res.setHeader("Cache-Control", "s-maxage=3600, stale-while-revalidate");
-    res.status(200).json({
-      success: true,
-      total: resources.length,
-      data: groupedResources,
-    });
-  } catch (error) {
-    console.error("Error fetching resources:", error);
-    res.status(500).json({ success: false, message: "Error fetching resources" });
-  }
 };
+
 
 module.exports = {
-  getSubjects,
-  getResourcesBySubject,
-};
+    getSubjects,
+    getSubjectDetails
+};const express=require('express');
+const { getSubjects,getSubjectDetails }=require('../controllers/studyMaterialController');
+const router=express.Router();
+const authMiddleware = require('../middlewares/authMiddleware');
+
+router.get('/subjects', authMiddleware ,getSubjects);
+router.get('/subjects/:id', authMiddleware , getSubjectDetails);
+
+
+module.exports=router; 
