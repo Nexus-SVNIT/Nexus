@@ -3,11 +3,11 @@ import { useParams, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getForm, updateForm } from "../../services/formService";
 
 const EditForm = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("core-token");
   const [loading, setLoading] = useState(true);
 
   const [formData, setFormData] = useState({
@@ -35,17 +35,10 @@ const EditForm = () => {
   useEffect(() => {
     const fetchForm = async () => {
       try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-        if (!response.ok) throw new Error("Failed to fetch form");
-        
-        const data = await response.json();
+        const response = await getForm(id);
+        if (!response.success) throw new Error("Failed to fetch form");
+
+        const data = response.data;
         setFormData({
           name: data.name,
           desc: data.desc,
@@ -104,19 +97,9 @@ const EditForm = () => {
 
     const toastId = toast.loading("Updating form...");
     try {
-      const response = await fetch(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/forms/update/${id}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(formObject),
-        }
-      );
+      const response = await updateForm(id, formObject);
 
-      if (response.ok) {
+      if (response.success) {
         toast.success("Form updated successfully", { id: toastId });
         navigate("/core/admin/forms/all");
       } else {

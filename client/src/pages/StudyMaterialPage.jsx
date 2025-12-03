@@ -8,8 +8,6 @@ import { getSubjects, getAllSubjects } from "../services/studyMaterialService";
 
 import Loader from "../components/Loader/Loader";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
-import SearchBar from "../components/Alumni/SearchBar.jsx";
-
 import {
   LuBookMarked,
   LuClipboardCheck,
@@ -19,9 +17,7 @@ import {
   LuArrowRight,
 } from "react-icons/lu";
 
-/* ---------------------------
-   Constants
-   --------------------------- */
+// Constants
 const CATEGORIES = {
   PLACEMENTS: "Placements/Internships",
   SEMESTER: "Semester Exams",
@@ -29,17 +25,7 @@ const CATEGORIES = {
 
 const DEPARTMENTS = ["CSE", "AI"];
 
-const QUERY_OPTIONS = {
-  staleTime: 1000 * 60 * 60, // 1 hour for all-subjects, 15m for filtered subjects (overridden below)
-  cacheTime: 1000 * 60 * 60,
-  refetchOnWindowFocus: false,
-  refetchOnReconnect: false,
-  retry: 1,
-};
-
-/* ---------------------------
-   Presentational pieces
-   --------------------------- */
+// Hero Section
 const StudyMaterialHero = () => (
   <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
     <div className="space-y-6 text-center">
@@ -47,7 +33,7 @@ const StudyMaterialHero = () => (
         <LuBookMarked className="h-4 w-4" />
         Study Resources
       </div>
-      <h1 className="text-foreground text-4xl font-bold md:text-6xl text-white">
+      <h1 className="text-foreground text-4xl font-bold md:text-6xl">
         Ace Your Academic &
         <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
           Placement Prep
@@ -60,6 +46,7 @@ const StudyMaterialHero = () => (
   </div>
 );
 
+// Category/Department Selection Card
 const SelectionCard = ({ title, icon, onClick }) => (
   <button
     onClick={onClick}
@@ -77,32 +64,21 @@ const SelectionCard = ({ title, icon, onClick }) => (
   </button>
 );
 
-/* ---------------------------
-   Main Page
-   --------------------------- */
 const StudyMaterialPage = () => {
   const [step, setStep] = useState(1);
   const [category, setCategory] = useState(null);
   const [department, setDepartment] = useState(null);
-
-  // searchTerm is the immediate value bound to input
-  const [searchTerm, setSearchTerm] = useState("");
-  // debouncedSearch will update after user stops typing
-  const [debouncedSearch, setDebouncedSearch] = useState("");
-
   const navigate = useNavigate();
 
-  // Debounce searchTerm -> debouncedSearch (300ms)
+  // Auth check
   useEffect(() => {
-    const t = setTimeout(() => setDebouncedSearch(searchTerm.trim()), 300);
-    return () => clearTimeout(t);
-  }, [searchTerm]);
+    const token = localStorage.getItem("token");
+    if (!token) navigate("/login");
+  }, [navigate]);
 
-  /* --------------------------
-     Fetch filtered subjects (category + department)
-     -------------------------- */
+  // Fetch subjects
   const {
-    data: subjects = [],
+    data: subjects,
     isLoading,
     isError,
     error,
@@ -110,82 +86,27 @@ const StudyMaterialPage = () => {
     queryKey: ["subjects", category, department],
     queryFn: async () => {
       const response = await getSubjects({ category, department });
-      if (!response?.success) {
-        throw new Error(response?.message || "Failed to fetch subjects");
-      }
-      return response.data.data;
+      if (!response.success)
+        throw new Error(response.message || "Failed to fetch subjects");
+      return response.data.data || response.data; // backend compatibility
     },
     enabled: step === 3 && !!category && !!department,
-    staleTime: 1000 * 60 * 15, // 15 minutes
+    staleTime: 1000 * 60 * 15,
     cacheTime: 1000 * 60 * 60,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-    retry: 1,
     onError: (err) => {
-      const msg = (err?.message || "").toLowerCase();
-      if (msg.includes("token") || msg.includes("unauthorized")) {
+      const msg = err.message.toLowerCase();
+      if (
+        msg.includes("token") ||
+        msg.includes("unauthorized") ||
+        msg.includes("not valid")
+      ) {
         localStorage.removeItem("token");
         navigate("/login");
       }
-      // otherwise we just let UI show error
     },
   });
 
-  /* --------------------------
-     Fetch ALL subjects (for Fuse.js)
-     This is intentionally lightweight and cached for a long time.
-     -------------------------- */
-  const { data: allSubjects = [] } = useQuery({
-    queryKey: ["all-subjects"],
-    queryFn: async () => {
-      const response = await getAllSubjects();
-      if (!response?.success) {
-        throw new Error(response?.message || "Failed to fetch all subjects");
-      }
-      return response.data.data;
-    },
-    ...QUERY_OPTIONS,
-  });
-
-  /* --------------------------
-     Fuse.js instance (client-side fuzzy search)
-     -------------------------- */
-  const fuse = useMemo(() => {
-    if (!allSubjects || allSubjects.length === 0) return null;
-    return new Fuse(allSubjects, {
-      keys: ["subjectName"],
-      threshold: 0.35, // adjust for more/less fuzziness
-      distance: 100,
-    });
-  }, [allSubjects]);
-
-  /* --------------------------
-     Combine filtered subjects + fuzzy search
-     - If no search => show 'subjects' (backend filtered)
-     - If search exists => run fuse search across allSubjects, then restrict
-       to subjects belonging to the current filtered set (so category+department still apply)
-     -------------------------- */
-  const finalSubjects = useMemo(() => {
-    if (!subjects || subjects.length === 0) return [];
-
-    if (!debouncedSearch) {
-      return subjects;
-    }
-
-    if (!fuse) {
-      // fallback to simple substring search on the filtered subjects
-      const lower = debouncedSearch.toLowerCase();
-      return subjects.filter((s) => s.subjectName.toLowerCase().includes(lower));
-    }
-
-    const results = fuse.search(debouncedSearch).map((r) => r.item);
-    const allowed = new Set(subjects.map((s) => s._id));
-    return results.filter((r) => allowed.has(r._id));
-  }, [debouncedSearch, fuse, subjects]);
-
-  /* --------------------------
-     Step handlers
-     -------------------------- */
+  // Step navigation logic
   const handleCategorySelect = (selectedCategory) => {
     setCategory(selectedCategory);
     if (selectedCategory === CATEGORIES.PLACEMENTS) {
@@ -194,17 +115,11 @@ const StudyMaterialPage = () => {
     } else {
       setStep(2);
     }
-
-    // clear previous search when switching flows
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
   const handleDepartmentSelect = (selectedDepartment) => {
     setDepartment(selectedDepartment);
     setStep(3);
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
   const handleBack = () => {
@@ -221,13 +136,9 @@ const StudyMaterialPage = () => {
       setStep(1);
       setCategory(null);
     }
-    setSearchTerm("");
-    setDebouncedSearch("");
   };
 
-  /* --------------------------
-     Renderers for steps
-     -------------------------- */
+  // Step 1: Category selection
   const renderStep1_Category = () => (
     <div className="flex flex-wrap justify-center gap-6">
       <SelectionCard
@@ -243,6 +154,7 @@ const StudyMaterialPage = () => {
     </div>
   );
 
+  // Step 2: Department selection
   const renderStep2_Department = () => (
     <div className="flex flex-wrap justify-center gap-6">
       {DEPARTMENTS.map((dept) => (
@@ -256,51 +168,33 @@ const StudyMaterialPage = () => {
     </div>
   );
 
+  // Step 3: Subjects
   const renderStep3_Subjects = () => {
-    if (isLoading) {
+    if (isLoading)
       return (
         <div className="flex h-64 w-full items-center justify-center">
           <Loader />
         </div>
       );
-    }
 
-    if (isError) {
-      const msg = (error?.message || "").toLowerCase();
-      if (msg.includes("token")) return null;
-      return <p className="text-center text-red-400">{error?.message || "Error fetching subjects"}</p>;
-    }
+    if (isError) return <MaintenancePage />;
 
-    if (!subjects || subjects.length === 0) {
+    if (!subjects || subjects.length === 0)
       return <p className="text-center text-gray-400">No subjects found.</p>;
-    }
 
     return (
-      <>
-        <SearchBar
-          placeholder="Search subjects..."
-          value={searchTerm}
-          onChange={setSearchTerm}
-        />
-
-        <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {finalSubjects.length > 0 ? (
-            finalSubjects.map((subject) => <SubjectCard key={subject._id} subject={subject} />)
-          ) : (
-            <p className="col-span-full text-center text-gray-400">No matching subjects found.</p>
-          )}
-        </div>
-      </>
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {subjects.map((subject) => (
+          <SubjectCard key={subject._id} subject={subject} />
+        ))}
+      </div>
     );
   };
 
-  /* --------------------------
-     Main render
-     -------------------------- */
+  // Render
   return (
     <div>
       <StudyMaterialHero />
-
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
         {step > 1 && (
           <button
