@@ -77,8 +77,8 @@ const StudyMaterialPage = () => {
             }
             return response.data.data;
         },
-        staleTime: 1000 * 60 * 60 * 2,
-        cacheTime: 1000 * 60 * 60 * 2,
+        staleTime: 7200000, // 2 Hours
+        cacheTime: 7200000,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
@@ -115,15 +115,6 @@ const StudyMaterialPage = () => {
             setStep(1);
             setCategory(null);
         }
-    };
-
-    // Error rendering logic separated for cleanliness
-    const renderError = () => {
-        const errorMsg = error?.message?.toLowerCase() || "";
-        if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-            return null;
-        }
-        return <p className="text-center text-red-400">{error.message}</p>;
     };
 
     return (
@@ -175,7 +166,7 @@ const StudyMaterialPage = () => {
                                 <Loader />
                             </div>
                         ) : isError ? (
-                            renderError()
+                            <p className="text-center text-red-400">{error.message}</p>
                         ) : !subjects || subjects.length === 0 ? (
                             <p className="text-center text-gray-400">No subjects found.</p>
                         ) : (
