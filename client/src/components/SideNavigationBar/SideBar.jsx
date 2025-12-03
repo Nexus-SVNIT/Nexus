@@ -22,12 +22,10 @@ import {
 } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import Logo from "../../data/images/nexus.png";
-import { useUser } from "../../context/userContext";
 
 const CustomSidebar = () => {
   const [collapsed, setCollapsed] = useState(true); // State to toggle sidebar
   const [ignoreHover, setIgnoreHover] = useState(false); // Prevents hover expand after X
-  const { user } = useUser();
 
   const menuList = [
     {
@@ -181,7 +179,7 @@ const CustomSidebar = () => {
             {/*   <MenuItem className="hover:bg-gray-100">Component 2</MenuItem> */}
             {/* </SubMenu> */}
 
-            {user ? (
+            {localStorage.getItem("token") ? (
               <MenuItem
                 icon={<FaRightFromBracket className="hover-icon text-white" />}
                 className="hover:bg-gray-100 my-2 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
