@@ -7,7 +7,6 @@ import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
-// 🔥 HELPER: Groups raw array back into categories (Runs on Browser)
 const groupResources = (resourceList) => {
     const groups = {
         'Notes': [],
@@ -94,18 +93,11 @@ const SubjectDetailPage = () => {
             }
             return response.data.data;
         },
-        onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token');
-                navigate('/login');
-            }
-        },
-        staleTime: 1000 * 60 * 60 * 2, // 2 Hours
-        cacheTime: 1000 * 60 * 60 * 2, 
+        staleTime: 1000 * 60 * 60 * 2,
+        cacheTime: 1000 * 60 * 60 * 2,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
-        refetchOnReconnect: false,
+        refetchOnReconnect: false
     });
 
     const subject = useMemo(() => {
@@ -154,7 +146,7 @@ const SubjectDetailPage = () => {
     }
 
     if (isError) {
-        const errorMsg = error.message.toLowerCase();
+        const errorMsg = error?.message?.toLowerCase() || "";
         if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
             return null;
         }
