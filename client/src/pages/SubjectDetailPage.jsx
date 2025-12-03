@@ -1,13 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'; // Added useState and useMemo
+import { useState, useEffect, useMemo } from 'react'; 
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
-
 import SearchBar from '../components/Alumni/SearchBar.jsx'; 
-
 
 const ResourceLink = ({ resource }) => {
     let icon;
@@ -24,11 +22,9 @@ const ResourceLink = ({ resource }) => {
             icon = <LuBook className="h-5 w-5" />;
             break;
         default:
-  
             icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />;
             break;
     }
-
 
     return (
         <a
@@ -46,18 +42,16 @@ const ResourceLink = ({ resource }) => {
     );
 };
 
-
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); 
 
-    // 
+    // State for filtering
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
     
-
-  
+    // Auth Check
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -65,6 +59,7 @@ const SubjectDetailPage = () => {
         }
     }, [navigate]); 
 
+    // Data Fetching
     const {
         data: subject, 
         isLoading,
@@ -75,14 +70,10 @@ const SubjectDetailPage = () => {
         queryFn: async () => {
             const response = await getSubjectDetails(id);
             if (!response.success) {
-                
                 throw new Error(response.message || "Failed to fetch subject details");
             }
-           
             return response.data.data; 
         },
-        
-       
         onError: (err) => {
             const errorMsg = err.message.toLowerCase();
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
@@ -90,12 +81,10 @@ const SubjectDetailPage = () => {
                 navigate('/login');
             }
         },
-  
-
         staleTime: 1000 * 60 * 15,
     });
 
-    
+    // Filtering Logic
     const filteredResources = useMemo(() => {
         if (!subject) return {}; 
 
@@ -104,20 +93,19 @@ const SubjectDetailPage = () => {
         const lowerSearch = searchTerm.toLowerCase();
 
         allCategories.forEach(category => {
-            
             let resources = subject.resources[category];
 
-            
+            // Filter by SubCategory (Dropdown)
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
                 resources = []; 
             }
 
-            
+            // Filter by Type (Dropdown)
             if (typeFilter !== "All") {
                 resources = resources.filter(res => res.resourceType === typeFilter);
             }
             
-           
+            // Filter by Search Term (Input)
             if (lowerSearch) {
                 resources = resources.filter(res => 
                     res.title.toLowerCase().includes(lowerSearch)
@@ -131,7 +119,7 @@ const SubjectDetailPage = () => {
 
     }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
-   
+    // Loading State
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -140,8 +128,8 @@ const SubjectDetailPage = () => {
         );
     }
  
+    // Error State
     if (isError) {
-
         const errorMsg = error.message.toLowerCase();
         if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
             return null; 
@@ -150,6 +138,7 @@ const SubjectDetailPage = () => {
         return <MaintenancePage />;
     }
     
+    // Safety check if data is missing
     if (!subject) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -158,17 +147,15 @@ const SubjectDetailPage = () => {
         );
     }
     
-   
     const resourceCategories = Object.keys(filteredResources);
     
-    
+    // Derived lists for dropdown options
     const allSubCategories = subject ? Object.keys(subject.resources) : [];
     const allResourceTypes = subject ? 
         [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))] 
         : [];
 
     return (
-      
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
             
             <Link
@@ -186,9 +173,8 @@ const SubjectDetailPage = () => {
                 {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
                     
-                    {/* --- 7. NEW FILTER BAR --- */}
+                    {/* --- FILTER BAR --- */}
                     <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
-                        {/* Use your existing Alumni SearchBar */}
                         <SearchBar 
                             placeholder="Search resources by title..."
                             value={searchTerm}
@@ -201,8 +187,7 @@ const SubjectDetailPage = () => {
                                 <select 
                                     id="subCategory"
                                     value={subCategoryFilter}
-                                    onChange={(e) => setSubCategoryFilter(e.g.target.value)}
-                                    // Style matches your Alumni SearchBar
+                                    onChange={(e) => setSubCategoryFilter(e.target.value)} // Fixed typo here
                                     className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="All" className="bg-gray-800">All Sub-Categories</option>
@@ -211,6 +196,7 @@ const SubjectDetailPage = () => {
                                     ))}
                                 </select>
                             </div>
+                            
                             {/* Type Filter */}
                             <div>
                                 <label htmlFor="type" className="block text-sm font-medium text-gray-300 mb-1">Type</label>
@@ -228,10 +214,8 @@ const SubjectDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                    {/* END FILTER BAR  */}
                     
-                    {/* UPDATED RESOURCES LIST */}
-                    {/* Map over the filtered resources */}
+                    {/* --- RESOURCES LIST --- */}
                     {resourceCategories.map(category => (
                         filteredResources[category].length > 0 && (
                             <section key={category}>
@@ -247,7 +231,7 @@ const SubjectDetailPage = () => {
                         )
                     ))}
                     
-                    {/* 9.  */}
+                    {/* --- NO RESULTS STATE --- */}
                     {Object.values(filteredResources).flat().length === 0 && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -255,7 +239,6 @@ const SubjectDetailPage = () => {
                             <p className="mt-1 text-gray-400">Try adjusting your search or filters.</p>
                         </div>
                     )}
-                    {/* --- END RESOURCES LIST --- */}
 
                 </div>
 
