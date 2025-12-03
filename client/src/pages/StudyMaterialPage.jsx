@@ -1,12 +1,9 @@
-// src/pages/StudyMaterialPage.jsx
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import Fuse from "fuse.js";
-
-import { getSubjects, getAllSubjects } from "../services/studyMaterialService";
-
+import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
+import MaintenancePage from "../components/Error/MaintenancePage";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 import {
   LuBookMarked,
@@ -19,10 +16,9 @@ import {
 
 // Constants
 const CATEGORIES = {
-  PLACEMENTS: "Placements/Internships",
-  SEMESTER: "Semester Exams",
+    PLACEMENTS: "Placements/Internships",
+    SEMESTER: "Semester Exams",
 };
-
 const DEPARTMENTS = ["CSE", "AI"];
 
 // Hero Section
@@ -43,25 +39,24 @@ const StudyMaterialHero = () => (
         Find all the resources you need, from semester exams to placement preparation.
       </p>
     </div>
-  </div>
 );
 
 // Category/Department Selection Card
 const SelectionCard = ({ title, icon, onClick }) => (
-  <button
-    onClick={onClick}
-    className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
-  >
-    <div className="flex items-center justify-between">
-      <div className="flex items-center gap-4">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 group-hover:bg-blue-400 group-hover:text-white transition-all">
-          {icon}
+    <button
+        onClick={onClick}
+        className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+    >
+        <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-400 group-hover:text-white">
+                    {icon}
+                </div>
+                <h3 className="text-xl font-semibold text-white">{title}</h3>
+            </div>
+            <LuArrowRight className="h-5 w-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-400" />
         </div>
-        <h3 className="text-xl font-semibold text-white">{title}</h3>
-      </div>
-      <LuArrowRight className="h-5 w-5 text-gray-400 group-hover:text-blue-400 transition-transform group-hover:translate-x-1" />
-    </div>
-  </button>
+    </button>
 );
 
 const StudyMaterialPage = () => {

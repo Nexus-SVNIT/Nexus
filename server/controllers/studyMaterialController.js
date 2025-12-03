@@ -55,6 +55,7 @@ const getResourcesBySubject = async (req, res) => {
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ success: false, message: "Invalid subject ID" });
     }
+};
 
     const filter = { subject: id };
     if (subCategory && subCategory !== "All") filter.subCategory = subCategory;

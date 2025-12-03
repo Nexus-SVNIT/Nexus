@@ -6,4 +6,4 @@ const authMiddleware = require('../middlewares/authMiddleware');
 router.get('/subjects', authMiddleware ,getSubjects);
 router.get('/subjects/:id', authMiddleware , getResourcesBySubject);
 
-module.exports = router;
+module.exports=router;
