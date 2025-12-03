@@ -7,7 +7,7 @@ import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
-
+// 🔥 HELPER: Groups raw array back into categories (Runs on Browser)
 const groupResources = (resourceList) => {
     const groups = {
         'Notes': [],
@@ -81,7 +81,7 @@ const SubjectDetailPage = () => {
     }, [navigate]);
 
     const {
-        data: rawSubject, // Note: We receive Raw Array here now
+        data: rawSubject,
         isLoading,
         isError,
         error,
@@ -101,16 +101,13 @@ const SubjectDetailPage = () => {
                 navigate('/login');
             }
         },
-
-        // 🔥 OPTIMIZATION: 2 Hours Cache
-        staleTime: 1000 * 60 * 60 * 2,
-        cacheTime: 1000 * 60 * 60 * 2,
+        staleTime: 1000 * 60 * 60 * 2, // 2 Hours
+        cacheTime: 1000 * 60 * 60 * 2, 
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
     });
 
-    // 🔥 PROCESS DATA: Convert Array -> Grouped Object
     const subject = useMemo(() => {
         if (!rawSubject) return null;
         return {
@@ -119,7 +116,6 @@ const SubjectDetailPage = () => {
         };
     }, [rawSubject]);
 
-    // FILTERING LOGIC (Works on grouped object)
     const filteredResources = useMemo(() => {
         if (!subject) return {};
 
@@ -130,17 +126,14 @@ const SubjectDetailPage = () => {
         allCategories.forEach(category => {
             let resources = subject.resources[category];
 
-            // Filter by SubCategory
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
                 resources = [];
             }
 
-            // Filter by Type (PDF/Link)
             if (typeFilter !== "All") {
                 resources = resources.filter(res => res.resourceType === typeFilter);
             }
 
-            // Search by Title
             if (lowerSearch) {
                 resources = resources.filter(res =>
                     res.title.toLowerCase().includes(lowerSearch)
@@ -165,7 +158,6 @@ const SubjectDetailPage = () => {
         if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
             return null;
         }
-        console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
     }
 
@@ -179,7 +171,6 @@ const SubjectDetailPage = () => {
 
     const resourceCategories = Object.keys(filteredResources);
     
-    // Derived values for dropdowns
     const allSubCategories = Object.keys(subject.resources);
     const allResourceTypes = [...new Set(
         Object.values(subject.resources).flat().map(r => r.resourceType)
@@ -200,10 +191,8 @@ const SubjectDetailPage = () => {
 
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
-                {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
                     
-                    {/* Filter Bar */}
                     <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
                         <SearchBar 
                             placeholder="Search resources by title..."
@@ -242,7 +231,6 @@ const SubjectDetailPage = () => {
                         </div>
                     </div>
 
-                    {/* Resources List */}
                     {resourceCategories.map(category => (
                         filteredResources[category].length > 0 && (
                             <section key={category}>
@@ -258,7 +246,6 @@ const SubjectDetailPage = () => {
                         )
                     ))}
                     
-                    {/* No Results State */}
                     {Object.values(filteredResources).flat().length === 0 && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -268,7 +255,6 @@ const SubjectDetailPage = () => {
                     )}
                 </div>
 
-                {/* --- Right Column: Tips --- */}
                 <div className="lg:col-span-1">
                     <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
                         <h2 className="mb-4 text-2xl font-semibold text-blue-400">

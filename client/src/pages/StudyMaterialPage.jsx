@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
-import MaintenancePage from "../components/Error/MaintenancePage";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
 
@@ -88,9 +87,9 @@ const StudyMaterialPage = () => {
             }
         },
 
-        
-        staleTime: 1000 * 60 * 60 * 2, 
-        cacheTime: 1000 * 60 * 60 * 2, 
+        // 🔥 OPTIMIZATION: 2 Hours Cache
+        staleTime: 1000 * 60 * 60 * 2,
+        cacheTime: 1000 * 60 * 60 * 2,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,
@@ -159,7 +158,7 @@ const StudyMaterialPage = () => {
         if (isError) {
             const errorMsg = error.message.toLowerCase();
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                return null; 
+                return null;
             }
             return <p className="text-center text-red-400">{error.message}</p>;
         }
