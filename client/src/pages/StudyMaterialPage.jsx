@@ -4,10 +4,10 @@ import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
 import MaintenancePage from "../components/Error/MaintenancePage";
-// Make sure this path is correct based on your project structure
-import { SubjectCard } from "../components/StudyMaterial/SubjectCard"; 
+import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
+
 
 const CATEGORIES = {
     PLACEMENTS: "Placements/Internships",
@@ -15,17 +15,17 @@ const CATEGORIES = {
 };
 const DEPARTMENTS = ["CSE", "AI"];
 
-// --- HERO SECTION ---
+
 const StudyMaterialHero = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="space-y-6 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-400">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-blue-400">
                 <LuBookMarked className="h-4 w-4" />
                 Study Resources
             </div>
-            <h1 className="text-white text-4xl font-bold md:text-6xl">
+            <h1 className="text-foreground text-4xl font-bold md:text-6xl">
                 Ace Your Academic &
-                <span className="block bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
                     Placement Prep
                 </span>
             </h1>
@@ -36,11 +36,10 @@ const StudyMaterialHero = () => (
     </div>
 );
 
-// --- SELECTION CARD COMPONENT ---
 const SelectionCard = ({ title, icon, onClick }) => (
     <button
         onClick={onClick}
-        className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+        className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
     >
         <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
@@ -54,13 +53,14 @@ const SelectionCard = ({ title, icon, onClick }) => (
     </button>
 );
 
+
 const StudyMaterialPage = () => {
     const [step, setStep] = useState(1);
     const [category, setCategory] = useState(null);
     const [department, setDepartment] = useState(null);
     const navigate = useNavigate();
 
-    // 1. Initial Auth Check
+    // Auth check on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -68,7 +68,7 @@ const StudyMaterialPage = () => {
         }
     }, [navigate]);
 
-    // 2. Data Fetching
+    // Fetch subjects with React Query
     const {
         data: subjects,
         isLoading,
@@ -78,30 +78,33 @@ const StudyMaterialPage = () => {
         queryKey: ["subjects", category, department],
         queryFn: async () => {
             const response = await getSubjects({ category, department });
-            // Ensure your service returns { success: true, data: { data: [...] } }
             if (!response.success) {
+                
                 throw new Error(response.message || "Failed to fetch subjects");
             }
+            
             return response.data.data;
         },
-        enabled: step === 3 && !!category && !!department,
-        staleTime: 1000 * 60 * 15, // 15 minutes
-        // cacheTime is renamed to gcTime in v5, keeping cacheTime for v4 compatibility
-        cacheTime: 1000 * 60 * 60, 
-    });
-
-    // 3. Handle Auth Errors (Replaces onError for React Query v5 compatibility)
-    useEffect(() => {
-        if (isError && error) {
-            const errorMsg = error.message.toLowerCase();
+        
+        
+        onError: (err) => {
+            const errorMsg = err.message.toLowerCase();
+            
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token');
                 navigate('/login');
             }
-        }
-    }, [isError, error, navigate]);
+            
+        },
+      
 
-    // --- Handlers ---
+        enabled: step === 3 && !!category && !!department,
+        staleTime: 1000 * 60 * 15,
+        cacheTime: 1000 * 60 * 60,
+    });
+
+    
+
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
         if (selectedCategory === CATEGORIES.PLACEMENTS) {
@@ -133,9 +136,10 @@ const StudyMaterialPage = () => {
         }
     };
 
-    // --- Render Steps ---
+   
+
     const renderStep1_Category = () => (
-        <div className="flex flex-wrap justify-center gap-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+        <div className="flex flex-wrap justify-center gap-6">
             <SelectionCard
                 title="Placements/Internships"
                 icon={<LuClipboardCheck className="h-6 w-6" />}
@@ -150,7 +154,7 @@ const StudyMaterialPage = () => {
     );
 
     const renderStep2_Department = () => (
-        <div className="flex flex-wrap justify-center gap-6 animate-in fade-in slide-in-from-right-8 duration-500">
+        <div className="flex flex-wrap justify-center gap-6">
             {DEPARTMENTS.map((dept) => (
                 <SelectionCard
                     key={dept}
@@ -162,6 +166,7 @@ const StudyMaterialPage = () => {
         </div>
       );
 
+    
     const renderStep3_Subjects = () => {
         if (isLoading) {
             return (
@@ -172,26 +177,22 @@ const StudyMaterialPage = () => {
         }
 
         if (isError) {
-            // Return null if it's an auth error (useEffect handles navigation)
-            const errorMsg = error?.message?.toLowerCase() || "";
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized")) {
-                return null;
+            // auth fix
+            const errorMsg = error.message.toLowerCase();
+            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+                return null; 
             }
-            // Use the imported MaintenancePage for other errors
-            return <MaintenancePage />;
+        
+            return <p className="text-center text-red-400">{error.message}</p>;
+      
         }
 
         if (!subjects || subjects.length === 0) {
-            return (
-                <div className="text-center py-12 bg-[#0f0f0f] rounded-xl border border-white/10">
-                    <LuBrain className="mx-auto h-12 w-12 text-gray-600 mb-3" />
-                    <p className="text-gray-400 text-lg">No subjects found for this selection.</p>
-                </div>
-            );
+            return <p className="text-center text-gray-400">No subjects found.</p>;
         }
 
         return (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 animate-in fade-in slide-in-from-bottom-4 duration-500">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                 {subjects.map((subject) => (
                     <SubjectCard key={subject._id} subject={subject} />
                 ))}
@@ -199,18 +200,19 @@ const StudyMaterialPage = () => {
         );
     };
 
+   
+
     return (
-        <div className="min-h-screen bg-black text-white">
+        <div>
             <StudyMaterialHero />
-            
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 {step > 1 && (
                     <button
                         onClick={handleBack}
-                        className="mb-8 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 text-sm font-medium text-white transition-all hover:bg-white/20 hover:gap-3"
+                        className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
                     >
                         <LuArrowLeft className="h-4 w-4" />
-                        Back to {step === 3 && category === CATEGORIES.SEMESTER ? "Departments" : "Categories"}
+                        Back
                     </button>
                 )}
                 
