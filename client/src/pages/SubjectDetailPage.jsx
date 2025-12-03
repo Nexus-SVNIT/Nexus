@@ -51,7 +51,7 @@ const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); 
 
-    
+    // 
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
