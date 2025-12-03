@@ -1,42 +1,49 @@
-import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getSubjectDetails } from '../services/studyMaterialService';
+// src/pages/SubjectDetailPage.jsx
 
-import Loader from '../components/Loader/Loader';
-import MaintenancePage from '../components/Error/MaintenancePage';
-import SearchBar from '../components/Alumni/SearchBar.jsx'; 
+import { useState, useEffect, useMemo } from "react";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 
-import { 
-    LuLink, 
-    LuFileText, 
-    LuYoutube, 
-    LuBook, 
-    LuArrowLeft, 
-    LuFilter 
-} from 'react-icons/lu';
+import { getSubjectDetails } from "../services/studyMaterialService";
 
-// ----------------------------------------------
-// RESOURCE LINK COMPONENT
-// ----------------------------------------------
+import Loader from "../components/Loader/Loader";
+import MaintenancePage from "../components/Error/MaintenancePage";
+import SearchBar from "../components/Alumni/SearchBar.jsx";
+
+import {
+    LuLink,
+    LuFileText,
+    LuYoutube,
+    LuBook,
+    LuArrowLeft,
+    LuFilter
+} from "react-icons/lu";
+
+
+// ------------------------------------------------------
+// ResourceLink Component
+// ------------------------------------------------------
 const ResourceLink = ({ resource }) => {
     let icon;
 
     switch (resource.subCategory) {
-        case 'Youtube Resources':
+        case "Youtube Resources":
             icon = <LuYoutube className="h-5 w-5" />;
             break;
-        case 'Notes':
-        case 'PYQs':
+        case "Notes":
+        case "PYQs":
             icon = <LuFileText className="h-5 w-5" />;
             break;
-        case 'Important topics':
+        case "Important topics":
             icon = <LuBook className="h-5 w-5" />;
             break;
         default:
-            icon = resource.resourceType === 'PDF'
-                ? <LuFileText className="h-5 w-5" />
-                : <LuLink className="h-5 w-5" />;
+            icon =
+                resource.resourceType === "PDF" ? (
+                    <LuFileText className="h-5 w-5" />
+                ) : (
+                    <LuLink className="h-5 w-5" />
+                );
     }
 
     return (
@@ -55,9 +62,10 @@ const ResourceLink = ({ resource }) => {
     );
 };
 
-// ----------------------------------------------
-// MAIN COMPONENT
- // ---------------------------------------------
+
+// ------------------------------------------------------
+// Main Component
+// ------------------------------------------------------
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -66,18 +74,19 @@ const SubjectDetailPage = () => {
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
 
-    // ------------------------------------------
-    // LOGIN CHECK
-    // ------------------------------------------
+    // Redirect if token missing
     useEffect(() => {
         const token = localStorage.getItem("token");
         if (!token) navigate("/login");
     }, [navigate]);
 
-    // ------------------------------------------
-    // FETCH SUBJECT DETAILS
-    // ------------------------------------------
-    const { data: subject, isLoading, isError, error } = useQuery({
+    // Fetch subject details
+    const {
+        data: subject,
+        isLoading,
+        isError,
+        error
+    } = useQuery({
         queryKey: ["subjectDetails", id],
         queryFn: async () => {
             const response = await getSubjectDetails(id);
@@ -91,46 +100,60 @@ const SubjectDetailPage = () => {
                 localStorage.removeItem("token");
                 navigate("/login");
             }
-        },
+        }
     });
 
-    // ------------------------------------------
-    // FILTER RESOURCES (Client-side)
-    // ------------------------------------------
+    // Filtering logic
     const filteredResources = useMemo(() => {
         if (!subject) return {};
 
         const result = {};
-        const searchLower = searchTerm.toLowerCase();
+        const query = searchTerm.toLowerCase();
 
-        for (const category of Object.keys(subject.resources)) {
+        Object.keys(subject.resources).forEach((category) => {
             let list = subject.resources[category];
 
-            if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
+            if (subCategoryFilter !== "All" && subCategoryFilter !== category) {
                 list = [];
             }
 
             if (typeFilter !== "All") {
-                list = list.filter(r => r.resourceType === typeFilter);
+                list = list.filter((res) => res.resourceType === typeFilter);
             }
 
-            if (searchLower) {
-                list = list.filter(r => 
-                    r.title.toLowerCase().includes(searchLower)
+            if (query) {
+                list = list.filter((res) =>
+                    res.title.toLowerCase().includes(query)
                 );
             }
 
             result[category] = list;
-        }
+        });
 
         return result;
     }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
-    // ------------------------------------------
-    // LOADING + ERROR STATES
-    // ------------------------------------------
+    const allSubCategories =
+        subject ? Object.keys(subject.resources) : [];
+
+    const allTypes =
+        subject
+            ? [...new Set(Object.values(subject.resources).flat().map((r) => r.resourceType))]
+            : [];
+
+    const noResults =
+        Object.values(filteredResources).flat().length === 0;
+
+
+    // --------------------------------------------------
+    // Rendering states
+    // --------------------------------------------------
     if (isLoading) {
-        return <div className="flex h-screen items-center justify-center"><Loader /></div>;
+        return (
+            <div className="flex h-screen items-center justify-center">
+                <Loader />
+            </div>
+        );
     }
 
     if (isError) {
@@ -141,18 +164,12 @@ const SubjectDetailPage = () => {
 
     if (!subject) return null;
 
-    const allSubCategories = Object.keys(subject.resources);
-    const allTypes = [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))];
-
-    const hasNoResults = Object.values(filteredResources).flat().length === 0;
-
-    // ------------------------------------------
-    // RENDER UI
-    // ------------------------------------------
+    // --------------------------------------------------
+    // Final Render
+    // --------------------------------------------------
     return (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
-
-            {/* BACK BUTTON */}
+            
             <Link
                 to="/study-material"
                 className="mb-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium hover:bg-white/20"
@@ -161,24 +178,26 @@ const SubjectDetailPage = () => {
                 Back to Subjects
             </Link>
 
-            <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
+            <h1 className="mb-8 text-4xl font-bold">
+                {subject.subjectName}
+            </h1>
 
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
-
-                {/* LEFT COLUMN */}
+                
+                {/* Left Column - Resources */}
                 <div className="lg:col-span-2 space-y-8">
-
-                    {/* FILTER BAR */}
-                    <div className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4 space-y-4">
-                        <SearchBar 
-                            placeholder="Search resources by title..."
+                    
+                    {/* Filter bar */}
+                    <div className="p-4 rounded-lg border border-white/10 bg-[#0f0f0f] space-y-4">
+                        <SearchBar
+                            placeholder="Search resources..."
                             value={searchTerm}
                             onChange={setSearchTerm}
                         />
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-                            {/* SUBCATEGORY FILTER */}
+                            
+                            {/* Subcategory */}
                             <div>
                                 <label className="block text-sm mb-1 text-gray-300">Sub-Category</label>
                                 <select
@@ -186,14 +205,16 @@ const SubjectDetailPage = () => {
                                     onChange={(e) => setSubCategoryFilter(e.target.value)}
                                     className="w-full bg-white/10 border border-white/20 rounded-lg py-2.5 px-3 text-white focus:ring-blue-500"
                                 >
-                                    <option value="All" className="bg-gray-800">All Sub-Categories</option>
-                                    {allSubCategories.map(cat => (
-                                        <option key={cat} value={cat} className="bg-gray-800">{cat}</option>
+                                    <option value="All">All</option>
+                                    {allSubCategories.map((cat) => (
+                                        <option key={cat} value={cat}>
+                                            {cat}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
 
-                            {/* TYPE FILTER */}
+                            {/* Type */}
                             <div>
                                 <label className="block text-sm mb-1 text-gray-300">Type</label>
                                 <select
@@ -201,9 +222,11 @@ const SubjectDetailPage = () => {
                                     onChange={(e) => setTypeFilter(e.target.value)}
                                     className="w-full bg-white/10 border border-white/20 rounded-lg py-2.5 px-3 text-white focus:ring-blue-500"
                                 >
-                                    <option value="All" className="bg-gray-800">All Types</option>
-                                    {allTypes.map(type => (
-                                        <option key={type} value={type} className="bg-gray-800">{type}</option>
+                                    <option value="All">All</option>
+                                    {allTypes.map((t) => (
+                                        <option key={t} value={t}>
+                                            {t}
+                                        </option>
                                     ))}
                                 </select>
                             </div>
@@ -211,13 +234,16 @@ const SubjectDetailPage = () => {
                         </div>
                     </div>
 
-                    {/* RESOURCES LIST */}
-                    {Object.keys(filteredResources).map(category =>
-                        filteredResources[category].length > 0 && (
-                            <section key={category}>
-                                <h2 className="text-2xl text-blue-400 font-semibold mb-4">{category}</h2>
+                    {/* Resource list */}
+                    {Object.keys(filteredResources).map((cat) =>
+                        filteredResources[cat].length > 0 && (
+                            <section key={cat}>
+                                <h2 className="text-2xl font-semibold text-blue-400 mb-4">
+                                    {cat}
+                                </h2>
+
                                 <div className="space-y-3">
-                                    {filteredResources[category].map(res => (
+                                    {filteredResources[cat].map((res) => (
                                         <ResourceLink key={res._id} resource={res} />
                                     ))}
                                 </div>
@@ -225,20 +251,27 @@ const SubjectDetailPage = () => {
                         )
                     )}
 
-                    {/* EMPTY STATE */}
-                    {hasNoResults && (
+                    {/* Empty */}
+                    {noResults && (
                         <div className="text-center py-10 border border-dashed border-white/10 rounded-lg">
-                            <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
-                            <h3 className="text-xl font-semibold mt-2">No resources found</h3>
-                            <p className="text-gray-400">Try adjusting your filters or search query.</p>
+                            <LuFilter className="h-12 w-12 mx-auto text-gray-500" />
+                            <h3 className="text-xl font-semibold mt-3">
+                                No resources found
+                            </h3>
+                            <p className="text-gray-400 mt-1">
+                                Try changing search or filters.
+                            </p>
                         </div>
                     )}
                 </div>
 
-                {/* RIGHT COLUMN — TIPS */}
+                {/* Right Column — Tips */}
                 <div>
-                    <div className="sticky top-24 bg-[#0f0f0f] border border-white/10 rounded-2xl p-6">
-                        <h2 className="text-2xl font-semibold text-blue-400 mb-4">Tips & Advice</h2>
+                    <div className="sticky top-24 p-6 bg-[#0f0f0f] border border-white/10 rounded-2xl">
+                        
+                        <h2 className="text-2xl font-semibold text-blue-400 mb-4">
+                            Tips & Advice
+                        </h2>
 
                         {subject.tips.length > 0 ? (
                             <ul className="space-y-4">
@@ -250,7 +283,7 @@ const SubjectDetailPage = () => {
                                 ))}
                             </ul>
                         ) : (
-                            <p className="text-gray-400">No tips added yet.</p>
+                            <p className="text-gray-400">No tips yet.</p>
                         )}
                     </div>
                 </div>
