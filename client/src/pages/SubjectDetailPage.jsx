@@ -7,6 +7,7 @@ import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
+// Helper function (Runs in browser)
 const groupResources = (resourceList) => {
     const groups = {
         'Notes': [],
@@ -93,7 +94,14 @@ const SubjectDetailPage = () => {
             }
             return response.data.data;
         },
-        staleTime: 1000 * 60 * 60 * 2,
+        onError: (err) => {
+            const errorMsg = err.message.toLowerCase();
+            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
+                localStorage.removeItem('token');
+                navigate('/login');
+            }
+        },
+        staleTime: 1000 * 60 * 60 * 2, 
         cacheTime: 1000 * 60 * 60 * 2,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
