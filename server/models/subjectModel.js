@@ -35,8 +35,4 @@ const subjectSchema = new Schema({
 subjectSchema.index({ subjectName: 1, department: 1 }, { unique: true });
 
 
-subjectSchema.index({ category: 1, department: 1 }); 
-subjectSchema.index({ subjectName: 1 });            
-subjectSchema.index({ createdAt: -1 });           
-
-module.exports = mongoose.model('Subject', subjectSchema);
+module.exports = mongoose.models.Subject || mongoose.model('Subject', subjectSchema);
