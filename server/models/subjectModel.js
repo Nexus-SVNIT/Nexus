@@ -1,3 +1,4 @@
+// models/subjectModel.js
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -19,19 +20,17 @@ const subjectSchema = new Schema({
         enum: ['CSE', 'AI', 'Common'],
         trim: true
     },
-    tips: {
-        type: [{ text: String, createdAt: { type: Date, default: Date.now } }],
-        default: []
-    },
+    tips: [{
+        text: { type: String, required: true },
+        createdAt: { type: Date, default: Date.now }
+    }],
     resources: [{
         type: Schema.Types.ObjectId,
         ref: 'Resource'
     }],
-}, {
-    timestamps: true
-});
+}, { timestamps: true });
 
-// Prevent duplicate subjects in same department
 subjectSchema.index({ subjectName: 1, department: 1 }, { unique: true });
+subjectSchema.index({ category: 1, department: 1 }); 
 
 module.exports = mongoose.model('Subject', subjectSchema);

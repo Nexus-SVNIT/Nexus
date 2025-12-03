@@ -1,10 +1,21 @@
-const express=require('express');
-const { getSubjects,getSubjectDetails }=require('../controllers/studyMaterialController');
-const router=express.Router();
-const authMiddleware = require('../middlewares/authMiddleware');
+const express = require('express');
+const router = express.Router();
 
-router.get('/subjects', authMiddleware ,getSubjects);
-router.get('/subjects/:id', authMiddleware , getSubjectDetails);
+const {
+    listSubjects,
+    listAllSubjects,
+    getSubject
+} = require('../controllers/studyMaterialController');
 
+const auth = require('../middlewares/authMiddleware');
 
-module.exports=router;
+// GET /subjects?category=Semester Exams&department=CSE
+router.get('/subjects', auth, listSubjects);
+
+// GET /subjects/all
+router.get('/subjects/all', auth, listAllSubjects);
+
+// GET /subjects/:id
+router.get('/subjects/:id', auth, getSubject);
+
+module.exports = router;
