@@ -6,7 +6,6 @@ import parse from "html-react-parser";
 import PostDetailWrapper from "./PostDetailWrapper";
 import Loader from "../Loader/Loader";
 import increamentCounter from "../../libs/increamentCounter";
-import { useUser } from "../../context/userContext";
 
 // Utility functions
 const formatCompensation = (compensation) => {
@@ -67,7 +66,6 @@ const InterviewPost = () => {
   const [questionsWithAnswers, setQuestionsWithAnswers] = useState([]);
   const [answers, setAnswers] = useState({});
   const token = localStorage.getItem("token");
-  const { user } = useUser();
 
   useEffect(() => {
     increamentCounter();
@@ -143,7 +141,7 @@ const InterviewPost = () => {
 
   const handleCommentSubmit = async (postId) => {
     try {
-      if (!user) {
+      if (!token) {
         toast.error("Please login to comment");
         navigate('/login');
         return;
@@ -193,7 +191,7 @@ const InterviewPost = () => {
 
   const handleQuestionSubmit = async (postId) => {
     try {
-      if (!user) {
+      if (!token) {
         toast.error("Please login to ask a question");
         navigate('/login');
         return;
@@ -242,7 +240,7 @@ const InterviewPost = () => {
 
   const handleAnswerSubmit = async (questionId) => {
     try {
-      if (!user) {
+      if (!token) {
         toast.error("Please login to answer questions");
         navigate('/login');
         return;
@@ -354,7 +352,7 @@ const InterviewPost = () => {
 
             {/* Comments and Questions */}
             <div className="space-y-6 border-t border-zinc-700 pt-8">
-              {user ? (
+              {token ? (
                 <>
                   <div className="mt-6">
                     <textarea
@@ -534,7 +532,7 @@ const InterviewPost = () => {
                             </button>
                           </div>
                         ) : (
-                          user && (
+                          token && (
                             <p className="text-gray-400 mt-4 text-sm italic">
                               Only the original post author can answer questions
                             </p>
