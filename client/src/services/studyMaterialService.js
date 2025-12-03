@@ -12,7 +12,3 @@ export const getSubjectDetails = async (id) => {
     
     return API.get(`/study-material/subjects/${id}`);
 };
-
-export const getAllSubjects = async () => {
-    return API.get('/study-material/subjects-all');
-};
