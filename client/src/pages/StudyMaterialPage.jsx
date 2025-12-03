@@ -160,7 +160,7 @@ const StudyMaterialPage = () => {
                 />
             ))}
         </div>
-    );
+      );
 
     const renderStep3_Subjects = () => {
         if (isLoading) {
@@ -220,6 +220,29 @@ const StudyMaterialPage = () => {
             </div>
         </div>
     );
+  };
+
+  // Render
+  return (
+    <div>
+      <StudyMaterialHero />
+      <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
+        {step > 1 && (
+          <button
+            onClick={handleBack}
+            className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white hover:bg-white/20"
+          >
+            <LuArrowLeft className="h-4 w-4" />
+            Back
+          </button>
+        )}
+
+        {step === 1 && renderStep1()}
+        {step === 2 && renderStep2()}
+        {step === 3 && renderStep3()}
+      </div>
+    </div>
+  );
 };
 
 export default StudyMaterialPage;

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Toaster, toast } from 'react-hot-toast';
 import increamentCounter from '../../libs/increamentCounter';
+import { sendforgotPasswordEmail } from '../../services/forgotPasswordService';
 
 const ForgotPasswordForm = () => {
   const [admissionNumber, setAdmissionNumber] = useState('');
@@ -15,7 +16,13 @@ const ForgotPasswordForm = () => {
 
     try {
       const toastId = toast.loading('Sending reset instructions...');
-      const response = await axios.post(`${process.env.REACT_APP_BACKEND_BASE_URL}/auth/forgot-password`, { admissionNumber });
+      const response = await sendforgotPasswordEmail(admissionNumber);
+      if(!response.success) {
+        toast.remove();
+        console.error('Error sending reset email:', response.message);
+        toast.error(response.message || 'Failed to send reset email. Please try again later.', { id: toastId });
+        return;
+      }
       toast.success('Password reset email sent!', { id: toastId });
     } catch (error) {
       toast.remove();
