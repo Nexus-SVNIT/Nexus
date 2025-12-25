@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
+import MaintenancePage from "../components/Error/MaintenancePage";
+import HeadTags from "../components/HeadTags/HeadTags";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
 
@@ -119,6 +121,10 @@ const StudyMaterialPage = () => {
 
     return (
         <div>
+            <HeadTags
+                title="Study Materials | Nexus - NIT Surat"
+                description="Access study material for your placement as well as semester exams."
+            />
             <StudyMaterialHero />
             <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
                 {step > 1 && (
