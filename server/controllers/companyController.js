@@ -103,7 +103,7 @@ Your goal: Give the **most accurate, context-driven preparation strategy** for $
    
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const result = await model.generateContent([prompt]);
+    const result = await model.generateContent(prompt);
     const answer = result.response.candidates[0].content.parts[0].text;
 
     res.json({ answer });
