@@ -189,7 +189,7 @@ const StudyMaterialPage = () => {
     );
   };
 
-  // Render
+//   Render
 //   return (
 //     <div>
 //       <StudyMaterialHero />

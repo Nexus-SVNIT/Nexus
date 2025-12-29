@@ -39,10 +39,9 @@ const getSubjects = async (req, res) => {
             message: "Subjects fetched successfully",
             data: subjects
         });
-      }
-      filter.department = department.trim();
-    } else if (category.toLowerCase() === "placements/internships") {
-      filter.department = "Common";
+    }   catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error fetching subjects" });
     }
 };
 
@@ -84,6 +83,7 @@ const getSubjectDetails = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Error fetching details" });
     }
+};
 
 module.exports = {
     getSubjects,
