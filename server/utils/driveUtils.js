@@ -52,17 +52,20 @@ const getDriveClient = () => {
  * @param {String} folderId - Optional Google Drive folder ID to store the file in
  * @returns {Promise<Object>} Upload result with success status and fileId
  */
-const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER) => {
+const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER, customName) => {
   try {
     if (!req.file) {
       return { success: false, error: 'No file provided' };
     }
 
     const drive = getDriveClient();
+
+    const ext = path.extname(req.file.originalname || '');
     
+    const finalName = customName ? `${customName}${ext}` : req.file.originalname;
     // Create file metadata
     const fileMetadata = {
-      name: req.file.originalname || `image-${Date.now()}${path.extname(req.file.originalname || '')}`,
+      name: finalName || `image-${Date.now()}${ext}`,
       parents: folderId ? [folderId] : [] // Add to specific folder if provided
     };
 

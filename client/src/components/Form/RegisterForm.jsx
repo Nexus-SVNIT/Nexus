@@ -181,7 +181,7 @@ const RegisterForm = () => {
         finalResponse,
         {
           headers: {
-            "Content-Type": "multipart/form-data",
+            // "Content-Type": "multipart/form-data",
             Authorization: token ? `Bearer ${token}` : "",
           },
         },
