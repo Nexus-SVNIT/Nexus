@@ -9,7 +9,8 @@ const {
 
 const router = express.Router();
 const multer = require('multer');
-const upload = multer({ storage: multer.memoryStorage() });
+// const upload = multer({ storage: multer.memoryStorage() });
+const upload = multer({ dest: 'uploads/'})
 
 router.get('/', getPublicForms);
 router.get('/:id', getFormFields);
