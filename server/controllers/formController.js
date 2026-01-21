@@ -135,11 +135,7 @@ const submitResponse = async (req, res) => {
             }
             
             // Use driveUtils to upload file
-            let customName = "";
-            if (req.user?.admissionNumber) {
-                customName = `${req.user?.admissionNumber}_${Date.now()}`;
-            }
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, customName);
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }
