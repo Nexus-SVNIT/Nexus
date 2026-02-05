@@ -20,6 +20,7 @@ const Terminal = () => {
     "projects",
     "coding",
     "interview-experiences",
+    "study-material",
     "about",
   ];
   // const nexusSubcommands = ["--help", "about"];
@@ -336,6 +337,7 @@ const PageList = () => (
       "cd projects",
       "cd coding",
       "cd interview-experiences",
+      "cd study-material",
       "cd about",
     ].map((item, i) =>
       Array.isArray(item) ? (
