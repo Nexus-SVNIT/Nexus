@@ -2,9 +2,7 @@ import {
   Card,
   CardHeader,
   CardBody,
-  CardFooter,
-  Typography,
-  Button,
+  Typography
 } from "@material-tailwind/react";
 
 function CheckIcon() {

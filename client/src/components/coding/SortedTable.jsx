@@ -1,6 +1,6 @@
 import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
-import { useSearchParams } from "react-router-dom";
+
 
 const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
   const currentPage = parseInt(searchParams.get("page") || "1");
@@ -12,9 +12,6 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
     headerGroups,
     page,
     prepareRow,
-    gotoPage,
-    setPageSize,
-    state: { pageIndex, pageSize, sortBy },
   } = useTable(
     {
       columns,
