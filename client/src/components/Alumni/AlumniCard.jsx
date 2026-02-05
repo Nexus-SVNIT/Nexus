@@ -1,6 +1,6 @@
-import { LuBuilding, LuMapPin, LuExternalLink } from "react-icons/lu";
+import { LuBuilding, LuMapPin } from "react-icons/lu";
 import { Badge } from "./Badge";
-import { FaLinkedin, FaLinkedinIn } from "react-icons/fa6";
+import { FaLinkedinIn } from "react-icons/fa6";
 
 export function AlumniCard({ alumni, setFilters }) {
   const getInitials = (name) =>

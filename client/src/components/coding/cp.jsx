@@ -1,17 +1,16 @@
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import "tailwindcss/tailwind.css";
-import CustomBarChart from "./BarChart";
-import { BatchCard } from "./BatchCard";
+
 import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
 import { useSearchParams } from "react-router-dom";
-import increamentCounter from "../../libs/increamentCounter";
+
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 import NoticeBar from "./NoticeBar";
 import FilterSection from "./FilterSection";
 import PlateformButtons from "./PlateformButtons";
-import axios from "axios";
+
 import SortableTable from "./SortedTable";
 import RatingLegend from "./RatingLegend";
 import { getProfiles } from "../../services/codingService";
@@ -20,7 +19,7 @@ const Cp = () => {
   // Add new state for rank display preference
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const [batchData, setBatchData] = useState({});
+
   const [codeforcesLeaderboard, setCodeforcesLeaderboard] = useState([]);
   const [leetcodeLeaderboard, setLeetcodeLeaderboard] = useState([]);
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
@@ -70,7 +69,7 @@ const Cp = () => {
           throw new Error(response.message || "Failed to fetch data");
         }
 
-        const { data, totalProfiles } = response.data;
+        const { data } = response.data;
 
         // Update the appropriate leaderboard based on platform
         const currentPlatform = params.get("platform") || activePlatform;
