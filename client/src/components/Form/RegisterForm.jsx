@@ -433,6 +433,8 @@ const RegisterForm = () => {
               <input
                 type="file"
                 accept="image/*"
+                id="formfile"
+                name="formfile"
                 onChange={handleImageChange}
                 className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
                 required

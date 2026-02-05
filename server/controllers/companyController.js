@@ -1,8 +1,10 @@
 const Company = require('../models/CompanyModel');
-const { GoogleGenerativeAI } = require('@google/generative-ai');
+// const { GoogleGenerativeAI } = require('@google/generative-ai');
+const GROQ = require('groq-sdk');
 
 // Initialize client
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+// const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+const groq = new GROQ({ apiKey: process.env.GROQ_API_KEY });
 
 // Get all companies
 const getAllCompanies = async (req, res) => {
@@ -101,10 +103,24 @@ Your goal: Give the **most accurate, context-driven preparation strategy** for $
 
 
    
-    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    // const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-    const result = await model.generateContent(prompt);
-    const answer = result.response.candidates[0].content.parts[0].text;
+    // const result = await model.generateContent(prompt);
+    // const answer = result.response.candidates[0].content.parts[0].text;
+
+    // res.json({ answer });
+
+    const completion = await groq.chat.completions.create({
+      model: "llama-3.1-8b-instant",
+      messages: [
+        { role: "system", content: "You are NexusAI, an AI interview prep assistant." },
+        { role: "user", content: prompt }
+      ],
+      max_tokens: 1500,
+      temperature: 0.4,
+    });
+
+    const answer = completion.choices[0].message.content;
 
     res.json({ answer });
   } catch (error) {
