@@ -2,7 +2,7 @@ import React from "react";
 import { VscBracketError } from "react-icons/vsc";
 
 const Error = () => {
-  const currentUrl = window.location.pathname + window.location.search;
+  
   return (
     <div className="flex h-[80vh] w-full items-center justify-center">
       <div className="flex h-1/2 w-3/4 flex-col items-center justify-center rounded-lg  px-10 md:w-1/3">

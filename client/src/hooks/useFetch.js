@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import API from "../services/apiService"; 
+import API from "../services/apiService";
 
 const useFetch = (path) => {
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true); 
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -12,25 +12,24 @@ const useFetch = (path) => {
       setError(null);
 
       try {
-        const response = await API.get(path);
-        
        
-        if (response.success) {
-            setData(response.data);
-        } else {
-            
-            setError(response.message);
-        }
+        const data = await API.get(path);
+        setData(data);
+
       } catch (err) {
-        
-        setError(err.message || "An error occurred");
+        const status = err.response?.status;
+
+       
+        if (status === 401) return;
+
+    
+        setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
     };
 
     if (path) fetchData();
-    
   }, [path]);
 
   return { data, loading, error };
