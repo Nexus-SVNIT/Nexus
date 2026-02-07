@@ -8,48 +8,36 @@ import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 're
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
 // --- Helpers ---
-
-// Fixed: Dynamic grouping instead of hardcoded keys
 const groupResources = (resourceList) => {
-    if (!Array.isArray(resourceList)) {
-        console.warn("Expected resourceList to be an array, got:", resourceList);
-        return {};
-    }
+    const groups = {
+        'Notes': [],
+        'Important topics': [],
+        'Youtube Resources': [],
+        'PYQs': [],
+        'Other': []
+    };
 
-    const groups = {};
+    if (!Array.isArray(resourceList)) return groups;
 
     resourceList.forEach((res) => {
-        // Use the backend's subCategory directly, or 'Others' if missing/null
-        // Trimming ensures "Notes " and "Notes" are treated as the same group
-        const category = res.subCategory ? res.subCategory.trim() : 'Others';
-
-        if (!groups[category]) {
-            groups[category] = [];
+        if (groups[res.subCategory]) {
+            groups[res.subCategory].push(res);
+        } else {
+            groups['Other'].push(res);
         }
-        groups[category].push(res);
     });
 
     return groups;
 };
 
 const ResourceLink = ({ resource }) => {
-    if (!resource) return null;
-
     let icon;
-    // Determine icon based on subCategory or fallback to resourceType
-    // Convert to lowercase for safer checking
-    const subCatLower = resource.subCategory ? resource.subCategory.toLowerCase() : '';
-    
-    if (subCatLower.includes('youtube')) {
-        icon = <LuYoutube className="h-5 w-5" />;
-    } else if (subCatLower.includes('notes') || subCatLower.includes('pyqs')) {
-        icon = <LuFileText className="h-5 w-5" />;
-    } else if (subCatLower.includes('important')) {
-        icon = <LuBook className="h-5 w-5" />;
-    } else {
-        icon = resource.resourceType === 'PDF' 
-            ? <LuFileText className="h-5 w-5" /> 
-            : <LuLink className="h-5 w-5" />;
+    switch (resource.subCategory) {
+        case 'Youtube Resources': icon = <LuYoutube className="h-5 w-5" />; break;
+        case 'Notes':
+        case 'PYQs': icon = <LuFileText className="h-5 w-5" />; break;
+        case 'Important topics': icon = <LuBook className="h-5 w-5" />; break;
+        default: icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />; break;
     }
 
     return (
@@ -61,7 +49,7 @@ const ResourceLink = ({ resource }) => {
         >
             <div className="flex items-center gap-3">
                 <span className="text-blue-400">{icon}</span>
-                <span className="font-medium text-gray-100">{resource.title || "Untitled Resource"}</span>
+                <span className="font-medium text-gray-100">{resource.title}</span>
             </div>
             <LuLink className="h-4 w-4 text-gray-500 transition-all duration-300 group-hover:text-blue-400" />
         </a>
@@ -69,7 +57,6 @@ const ResourceLink = ({ resource }) => {
 };
 
 // --- Main Component ---
-
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -100,7 +87,7 @@ const SubjectDetailPage = () => {
             return response.data.data;
         },
         staleTime: 7200000,
-        gcTime: 7200000,
+        cacheTime: 7200000,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false
@@ -108,44 +95,33 @@ const SubjectDetailPage = () => {
 
     const subject = useMemo(() => {
         if (!rawSubject) return null;
-        
-        // Debugging: Check if resources exist in the API response
-        console.log("Raw Subject Data:", rawSubject); 
-        
         return {
             ...rawSubject,
-            // Ensure we pass an array, defaulting to empty if undefined
-            resources: groupResources(rawSubject.resources || []) 
+            resources: groupResources(rawSubject.resources) 
         };
     }, [rawSubject]);
 
     const filteredResources = useMemo(() => {
-        if (!subject || !subject.resources) return {};
+        if (!subject) return {};
 
         const allCategories = Object.keys(subject.resources);
         const filtered = {};
-        const lowerSearch = searchTerm ? searchTerm.toLowerCase() : "";
+        const lowerSearch = searchTerm.toLowerCase();
 
         allCategories.forEach(category => {
-            let resources = subject.resources[category] || [];
+            let resources = subject.resources[category];
 
-            // 1. Filter by SubCategory (Dropdown)
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
                 resources = [];
             }
-
-            // 2. Filter by Type (Dropdown)
             if (typeFilter !== "All") {
                 resources = resources.filter(res => res.resourceType === typeFilter);
             }
-
-            // 3. Filter by Search Term
             if (lowerSearch) {
                 resources = resources.filter(res =>
-                    res.title && res.title.toLowerCase().includes(lowerSearch)
+                    res.title.toLowerCase().includes(lowerSearch)
                 );
             }
-
             filtered[category] = resources;
         });
         return filtered;
@@ -161,16 +137,10 @@ const SubjectDetailPage = () => {
     if (!subject) return <div className="flex h-screen w-full items-center justify-center"><Loader /></div>;
 
     const resourceCategories = Object.keys(filteredResources);
-    
-    // Helpers for dropdowns
     const allSubCategories = subject.resources ? Object.keys(subject.resources) : [];
-    
-    // Safely extract resource types
-    const allResourceTypes = rawSubject && Array.isArray(rawSubject.resources)
-        ? [...new Set(rawSubject.resources.map(r => r.resourceType).filter(Boolean))]
+    const allResourceTypes = subject.resources 
+        ? [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))]
         : [];
-
-    const hasAnyResources = Object.values(filteredResources).flat().length > 0;
 
     return (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
@@ -211,9 +181,9 @@ const SubjectDetailPage = () => {
                         </div>
                     </div>
 
-                    {/* Resources List */}
+                    {/* Resources */}
                     {resourceCategories.map(category => (
-                        filteredResources[category] && filteredResources[category].length > 0 && (
+                        filteredResources[category].length > 0 && (
                             <section key={category}>
                                 <h2 className="mb-4 text-2xl font-semibold text-blue-400">{category}</h2>
                                 <div className="space-y-3">
@@ -225,23 +195,21 @@ const SubjectDetailPage = () => {
                         )
                     ))}
 
-                    {!hasAnyResources && (
+                    {Object.values(filteredResources).flat().length === 0 && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
                             <h3 className="mt-2 text-xl font-semibold text-white">No resources found</h3>
-                            <p className="text-gray-400">Try adjusting your filters or search term.</p>
                         </div>
                     )}
                 </div>
 
-                {/* Sidebar Tips */}
                 <div className="lg:col-span-1">
                     <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
                         <h2 className="mb-4 text-2xl font-semibold text-blue-400">Tips & Advice</h2>
                         <ul className="space-y-4">
-                            {subject.tips && subject.tips.length > 0 ? subject.tips.map((tip, index) => (
+                            {subject.tips.length > 0 ? subject.tips.map((tip, index) => (
                                 <li key={index} className="flex gap-3">
-                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400 shrink-0"></span>
+                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400"></span>
                                     <span className="text-gray-300">{tip}</span>
                                 </li>
                             )) : <p className="text-gray-400">No tips added yet.</p>}
