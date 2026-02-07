@@ -25,6 +25,21 @@ API.interceptors.response.use(
         }
     },
     (error) => {
+        
+        if (error.response && error.response.status === 401) {
+            
+            localStorage.clear(); 
+            
+            
+            window.location.href = '/login'; 
+            
+            return {
+                success: false,
+                message: 'Session Expired',
+            };
+        }
+     
+
         const message = error.response?.data?.message || 'Something went Wrong.';
 
         return {
