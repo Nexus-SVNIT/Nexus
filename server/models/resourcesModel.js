@@ -26,11 +26,15 @@ const resourceSchema = new Schema({
     subject: {
         type: Schema.Types.ObjectId,
         ref: 'Subject',
-        required: true,
-        index: true
+        required: true
+        
     }
 }, {
-    timestamps: true
+  timestamps: true
 });
 
-module.exports = mongoose.model('Resource', resourceSchema);
+
+resourceSchema.index({ subject: 1, subCategory: 1 }); 
+
+
+module.exports = mongoose.models.Resource || mongoose.model('Resource', resourceSchema);

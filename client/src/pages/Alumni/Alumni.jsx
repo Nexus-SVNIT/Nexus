@@ -1,9 +1,9 @@
 import { AlumniCard } from "../../components/Alumni/AlumniCard.jsx";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react"; // Added useCallback
 import { useQuery } from "@tanstack/react-query";
 import { AlumniHero } from "../../components/Alumni/AlumniHero.jsx";
 import MaintenancePage from "../../components/Error/MaintenancePage.jsx";
-import axios from "axios";
+// REMOVED: import axios from "axios"; 
 import { useSearchParams } from "react-router-dom";
 import { Badge } from "../../components/Alumni/Badge.jsx";
 import { FaFilter } from "react-icons/fa";
@@ -33,7 +33,8 @@ const Alumni = () => {
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [hasInitialData, setHasInitialData] = useState(false);
 
-  const clearFilters = () => {
+  // FIXED: Wrapped in useCallback to safely use in useEffect
+  const clearFilters = useCallback(() => {
     setBatchFrom("");
     setBatchTo("");
     setExpertise("");
@@ -47,7 +48,7 @@ const Alumni = () => {
       page: "1",
       limit: pageLimit.toString(),
     });
-  };
+  }, [pageLimit, setSearchParams]);
 
   // Initialize currentPage and pageLimit from URL params if available
   useEffect(() => {
@@ -65,7 +66,7 @@ const Alumni = () => {
   const {
     isLoading,
     isError,
-    data: data,
+    data, // FIXED: Removed unnecessary renaming { data: data }
   } = useQuery({
     queryKey: [
       "alumniDetails",
@@ -123,7 +124,7 @@ const Alumni = () => {
     };
 
     fetchCompanies();
-  }, []);
+  }, [clearFilters]); // FIXED: Added clearFilters to dependency array
 
   // Debounce logic
   useEffect(() => {

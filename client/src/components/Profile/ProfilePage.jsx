@@ -43,8 +43,8 @@ const ProfilePage = () => {
   return (
     <div className="px-6">
       <HeadTags
-        title="Profile - CodeStrike | Nexus - NIT Surat"
-        description="Update your profile and coding profiles on CodeStrike."
+        title={`Profile - ${profile.admissionNumber} | Nexus - NIT Surat`}
+        description="Update your profile and coding profiles on Nexus."
       />
       <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
         <Toaster position="top-right" reverseOrder={false} />

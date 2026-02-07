@@ -29,7 +29,8 @@ const FormCard = ({ form }) => {
         </div>
 
         <div className="ml-2">
-          <Link to={whatsappLink} rel="nofollow noopener" target="_blank">
+          {/* Fixed: Added noreferrer */}
+          <Link to={whatsappLink} rel="nofollow noopener noreferrer" target="_blank">
             <WhatsappIcon size={24} round={true} />
           </Link>
         </div>
@@ -77,7 +78,8 @@ const FormCard = ({ form }) => {
           <a
             href={groupLink}
             target="_blank"
-            rel="nofollow noopener"
+            // Fixed: Added noreferrer
+            rel="nofollow noopener noreferrer"
             className="text-blue-600 underline"
           >
             Join our WhatsApp Group

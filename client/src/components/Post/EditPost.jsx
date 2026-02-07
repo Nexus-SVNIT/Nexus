@@ -292,7 +292,7 @@ const EditPost = () => {
       toast.loading("Updating post...");
       const token = localStorage.getItem("token");
       
-      const tagsArray = formData.tags;
+      // Fixed: Removed unused variable 'tagsArray'
 
       const processedData = {
         ...formData,

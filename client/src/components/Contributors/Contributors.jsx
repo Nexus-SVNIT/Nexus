@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+
 import { FaGithub } from 'react-icons/fa';
 import { getContributors } from '../../services/contributorService';
 

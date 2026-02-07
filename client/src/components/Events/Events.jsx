@@ -1,6 +1,5 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
-import Error from "../Error/Error";
+
 import Title from "../Title/Title";
 import "./events.css";
 import HeadTags from "../HeadTags/HeadTags";
@@ -17,7 +16,6 @@ const Events = () => {
   const [data, setData] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [activeImages, setActiveImages] = useState([]);
-  const [initialImageIndex, setInitialImageIndex] = useState(0);
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -195,7 +193,7 @@ const Events = () => {
       {modalOpen && (
         <Modal
           images={activeImages}
-          initialIndex={initialImageIndex}
+          initialIndex={0}
           onClose={closeModal}
         />
       )}

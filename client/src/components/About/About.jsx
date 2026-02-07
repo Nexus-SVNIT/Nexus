@@ -1,12 +1,12 @@
 import React, { useEffect } from "react";
-import { FaFacebookF, FaInstagram, FaLinkedinIn } from "react-icons/fa";
+import { FaInstagram, FaLinkedinIn } from "react-icons/fa";
 import { GoGoal } from "react-icons/go";
 import { Link } from "react-router-dom";
 import NexusLogo from "../../data/images/nexus.png";
 import SVNITLogo from "../../data/images/svnit.svg";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
-import Contributors from "../Contributors/Contributors";
+
 
 const About = () => {
   useEffect(() => {

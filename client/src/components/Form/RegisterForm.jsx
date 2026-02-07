@@ -7,11 +7,11 @@ import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import parse from "html-react-parser";
+
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
-import DOMPurify from "dompurify";
-import "react-quill/dist/quill.snow.css"; // Add this import
+
+import "react-quill/dist/quill.snow.css"; 
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -287,16 +287,6 @@ const RegisterForm = () => {
     }
   }, [isOpenForAll]);
 
-  const sanitizeAndRenderHTML = (content) => {
-    const sanitizedContent = DOMPurify.sanitize(content);
-    return (
-      <div
-        className="prose-blockquote:border-gray-300 prose max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-ol:list-decimal prose-ul:list-disc"
-        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-      />
-    );
-  };
-
   if (loading)
     return (
       <div>
@@ -376,6 +366,7 @@ const RegisterForm = () => {
                 <a
                   href={formData.extraLink}
                   target="_blank"
+                  rel="noreferrer"
                   className="font-bold italic text-blue-700 hover:underline"
                 >
                   {formData.extraLinkName}
@@ -433,6 +424,8 @@ const RegisterForm = () => {
               <input
                 type="file"
                 accept="image/*"
+                id="formfile"
+                name="formfile"
                 onChange={handleImageChange}
                 className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
                 required

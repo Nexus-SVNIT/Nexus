@@ -142,7 +142,7 @@ const CreatePost = () => {
     };
 
     fetchCompanies();
-  }, [token]);
+  }, [token, navigate]); // Fixed: Added navigate to dependencies
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -279,7 +279,8 @@ const CreatePost = () => {
         },
       };
 
-      const response = await axios.post(
+      // Fixed: Removed unused 'response' variable
+      await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/posts`,
         processedData,
         { headers: { Authorization: `Bearer ${token}` } },

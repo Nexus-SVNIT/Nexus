@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import axios from "axios";
+
 import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
 import { FaInfoCircle } from "react-icons/fa";
@@ -75,12 +75,9 @@ function AlumniSignUpForm() {
 
     switch (e.target.name) {
       case "expertise":
-      // case "fullName":
       case "currentCompany":
       case "currentDesignation":
       case "password":
-      case "currentCompany":
-      case "currentDesignation":
         value = e.target.value;
         break;
       case "fullName":
@@ -108,7 +105,6 @@ function AlumniSignUpForm() {
       admissionNumber,
       mobileNumber,
       personalEmail,
-      branch,
       passingYear,
       currentCompany,
       currentDesignation,
@@ -118,7 +114,7 @@ function AlumniSignUpForm() {
       password,
     } = formData;
 
-    const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const emailPattern = /^[\w-]+@([\w-]+\.)+[\w-]{2,4}$/;
 
     if (!fullName) {
       toast.error("Full Name is required");

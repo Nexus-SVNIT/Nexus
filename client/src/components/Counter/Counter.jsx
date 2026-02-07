@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
-import axios from 'axios';
+
 import { getCounter, incrementCounter } from '../../services/counterService';
 
 const Counter = ({ onComplete }) => {

@@ -12,7 +12,7 @@ const AchievementsForm = () => {
   const [AchievementForm, setAchievementForm] = useState({
     teamMembers: "",
     desc: "",
-    proof: "",
+    proof: null,
     image: null,
   });
   const [image, setImage] = useState(null);
@@ -20,7 +20,7 @@ const AchievementsForm = () => {
 
   useEffect(()=>{
     increamentCounter();
-  })
+  }, [])
 
   if(!token) {
     toast.error("You need to login first!", { id: "loginToast" });
@@ -40,10 +40,13 @@ const AchievementsForm = () => {
 
   const handleImageChange = (event) => {
     const file = event.target.files[0];
-    setAchievementForm((prev) => ({ ...prev, image: file }));
-    const reader = new FileReader();
-    reader.onload = () => setImage(reader.result);
-    reader.readAsDataURL(file);
+    const fieldid = event.target.id
+    setAchievementForm((prev) => ({ ...prev, [fieldid]: file }));
+    if(fieldid === 'image' && file){
+      const reader = new FileReader();
+      reader.onload = () => setImage(reader.result);
+      reader.readAsDataURL(file);
+    }
   };
 
   const mutation = useMutation({
@@ -51,16 +54,24 @@ const AchievementsForm = () => {
       const formData = new FormData();
       formData.append("teamMembers", JSON.stringify(newAchievement.teamMembers.split(",").map(member => member.trim())));
       formData.append("desc", newAchievement.desc.trim());
-      formData.append("proof", newAchievement.proof.trim());
       formData.append("image", newAchievement.image);
+      formData.append("proof", newAchievement.proof);
 
       const response = await addAchievement(formData);
-  
-      if (!response.success) {
-        throw new Error("Failed to submit achievement details");
+
+      const data = response.data;
+
+      if (!data || (data.success === false)) {
+        throw new Error(data?.message || "Failed to submit achievement details");
       }
+
+      return data;
   
-      return response.json(); // or response if you need the full response object
+      // if (!response.success) {
+      //   throw new Error("Failed to submit achievement details");
+      // }
+  
+      // return response.json(); // or response if you need the full response object
     },
     onMutate: () => {
       toast.loading("Uploading your details...", { id: "submitToast" });
@@ -69,7 +80,8 @@ const AchievementsForm = () => {
       setOpen(true);
       toast.success("Achievement details submitted successfully!", { id: "submitToast" });
     },
-    onError: () => {
+    onError: (error) => {
+      console.log("Submission Failed:", error);
       toast.error("Something went wrong! Please try again.", { id: "submitToast" });
     },
   });
@@ -119,7 +131,7 @@ const AchievementsForm = () => {
                 className="h-56 w-56 rounded-md object-cover object-center md:h-80 md:w-80"
               />
             </label>
-            <input type="file" accept="image/*" id="image" hidden onChange={handleImageChange} />
+            <input type="file" accept="image/*" id="image" name="image" hidden onChange={handleImageChange} />
             <p className="mt-4 text-xs text-gray-400">Note: Your image will be shown as above*</p>
           </div>
           <div className="mx-auto flex flex-wrap items-center justify-between gap-2 ">
@@ -145,7 +157,7 @@ const AchievementsForm = () => {
                 onChange={handleInputChange}
               />
             </div>
-            <div className="m-4 flex w-full flex-col gap-2 ">
+            {/* <div className="m-4 flex w-full flex-col gap-2 ">
               <label htmlFor="proof" className="uppercase">Proof of Achievement</label>
               <input
                 type="text"
@@ -154,6 +166,18 @@ const AchievementsForm = () => {
                 onChange={handleInputChange}
                 placeholder="Provide a public drive link"
                 className="w-full border-b border-blue-500/50 bg-transparent text-sm outline-none"
+              />
+            </div> */}
+            <div className="file-upload-section">
+              <h4 className="mt-4 text-xl">Upload Proof of Achievement:</h4>
+              <input
+                type="file"
+                accept="image/*"
+                id = "proof"
+                name = "proof"
+                onChange={handleImageChange}
+                className="border-gray-300 my-2 w-full rounded-md border p-2 text-black"
+                required
               />
             </div>
           </div>

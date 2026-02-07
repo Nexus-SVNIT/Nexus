@@ -135,7 +135,7 @@ const submitResponse = async (req, res) => {
             }
             
             // Use driveUtils to upload file
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
+            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }
@@ -270,7 +270,7 @@ const submitOpenResponse = async (req, res) => {
             }
             
             // Use driveUtils to upload file
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
+            const uploadResult = await uploadImageToDrive(req.files['formfile'][0], formDetails.driveFolderId);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }

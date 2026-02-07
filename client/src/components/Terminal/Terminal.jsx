@@ -6,7 +6,7 @@ const Terminal = () => {
   const [prevCommands, setPrevCommands] = useState([]); // Displayed commands
   const [commandHistory, setCommandHistory] = useState([]); // All entered commands
   const [count, setCount] = useState(0);
-  const [historyIndex, setHistoryIndex] = useState(null); // For up/down navigation
+  const [setHistoryIndex] = useState(null); // For up/down navigation
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
 
@@ -20,6 +20,7 @@ const Terminal = () => {
     "projects",
     "coding",
     "interview-experiences",
+    "study-material",
     "about",
   ];
   // const nexusSubcommands = ["--help", "about"];
@@ -120,6 +121,8 @@ const Terminal = () => {
             case "1":
               codingProfile.status = "alumni";
               break;
+            default:
+              break;
           }
           break;
         case "-g":
@@ -155,7 +158,7 @@ const Terminal = () => {
   const terminalFunction = (inputStr) => {
     // splitting the input with to check whether it is correct command or not
     const args = inputStr.split(" ");
-    const [command, ...rest] = args;
+    const [command] = args;
 
     // iterating through commands whether it matches any of the commands in the list
     switch (command) {
@@ -336,6 +339,7 @@ const PageList = () => (
       "cd projects",
       "cd coding",
       "cd interview-experiences",
+      "cd study-material",
       "cd about",
     ].map((item, i) =>
       Array.isArray(item) ? (
@@ -372,12 +376,6 @@ const AboutMessage = () => (
 
 const ErrorMsg = ({ text }) => (
   <div className="mt-0.5 text-red-900">
-    <p>{text}</p>
-  </div>
-);
-
-const SimpleMsg = ({ text }) => (
-  <div className="mt-0.5">
     <p>{text}</p>
   </div>
 );

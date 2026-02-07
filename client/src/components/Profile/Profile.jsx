@@ -21,7 +21,8 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const [profileResponse, postsResponse] = await Promise.all([
+        // Fixed: Removed unused 'postsResponse'
+        const [profileResponse] = await Promise.all([
           axios.get(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
             {
@@ -43,7 +44,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     };
 
     fetchUserData();
-  }, []);
+  }, [setProfile, setErr]); // Fixed: Added dependencies
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -71,9 +72,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       isAlumni,
     } = profile;
 
-    const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const instituteEmailPattern =
-      /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
+    // Fixed: Removed unnecessary escape character inside []
+    const emailPattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    
+    // Fixed: Removed unused 'instituteEmailPattern' since validation logic is commented out
 
     if (!fullName) {
       toast.error("Full Name is required");
@@ -184,7 +186,8 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       }
 
       // 👇️ Send updatedProfile to the backend
-      const response = await axios.put(
+      // Fixed: Removed unused 'response' variable
+      await axios.put(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
         updatedProfile,
         {

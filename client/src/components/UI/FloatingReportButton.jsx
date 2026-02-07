@@ -81,8 +81,7 @@ export default function FloatingReportButton() {
       }
       
      
-      for (let [key, value] of formData.entries()) {
-      }
+      
       
       const headers = {};
       if (token) {
@@ -103,7 +102,7 @@ export default function FloatingReportButton() {
         throw new Error(data.error || data.message || 'Failed to submit report.');
       }
       
-      const data = await response.json();
+      
     
       
       setSuccess(true)
