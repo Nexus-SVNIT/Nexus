@@ -7,10 +7,10 @@ import ScrollToTop from "../ScrollToTop/ScrollToTop";
 import QuestionBox from "./QuestionBox";
 import axios from "axios";
 import { Navigate } from "react-router-dom";
-import parse from "html-react-parser";
+
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
-import DOMPurify from "dompurify";
+
 import "react-quill/dist/quill.snow.css"; // Add this import
 
 const RegisterForm = () => {
@@ -286,16 +286,6 @@ const RegisterForm = () => {
       setGotoLogin(`/login?redirect_to=${currentPath}`);
     }
   }, [isOpenForAll]);
-
-  const sanitizeAndRenderHTML = (content) => {
-    const sanitizedContent = DOMPurify.sanitize(content);
-    return (
-      <div
-        className="prose-blockquote:border-gray-300 prose max-w-none prose-headings:font-bold prose-h1:text-4xl prose-h2:text-3xl prose-h3:text-2xl prose-h4:text-xl prose-h5:text-lg prose-h6:text-base prose-a:text-blue-600 prose-blockquote:border-l-4 prose-blockquote:pl-4 prose-blockquote:italic prose-ol:list-decimal prose-ul:list-disc"
-        dangerouslySetInnerHTML={{ __html: sanitizedContent }}
-      />
-    );
-  };
 
   if (loading)
     return (

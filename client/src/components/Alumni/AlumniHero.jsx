@@ -1,5 +1,3 @@
-import { HiUsers } from "react-icons/hi2";
-import { LuBuilding } from "react-icons/lu";
 import { HiOutlineSparkles } from "react-icons/hi";
 import { FaUserPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";

@@ -18,20 +18,17 @@ API.interceptors.request.use(
 );
 
 API.interceptors.response.use(
-    (response) => {
-        return {
-            success: true,
-            data: response.data,
-        }
-    },
-    (error) => {
-        const message = error.response?.data?.message || 'Something went Wrong.';
+  (response) => response.data,
 
-        return {
-            success: false,
-            message,
-        };
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.replace("/login");
     }
+
+    return Promise.reject(error);
+  }
 );
+
 
 export default API;
