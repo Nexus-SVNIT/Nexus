@@ -31,7 +31,8 @@ const subjectSchema = new Schema({
     timestamps: true
 });
 
-// Prevent duplicate subjects in same department
+
 subjectSchema.index({ subjectName: 1, department: 1 }, { unique: true });
 
-module.exports = mongoose.model('Subject', subjectSchema);
+
+module.exports = mongoose.models.Subject || mongoose.model('Subject', subjectSchema);

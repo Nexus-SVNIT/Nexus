@@ -1,19 +1,15 @@
 import React, { useState } from "react";
 import { GrFormView } from "react-icons/gr";
 
-import Button from "@mui/joy/Button";
+
 import Modal from "@mui/joy/Modal";
-import ModalClose from "@mui/joy/ModalClose";
-import Typography from "@mui/joy/Typography";
-import Sheet from "@mui/joy/Sheet";
+
 import ProfileDetail from "./ProfileDetail";
 
 const Profile = ({ profile }) => {
   
   const [open, setOpen] = useState(false);
-  const toggleOpen = () => {
-    setOpen((state) => !state);
-  };
+  
   return (
     <>
 

@@ -6,7 +6,7 @@ const Terminal = () => {
   const [prevCommands, setPrevCommands] = useState([]); // Displayed commands
   const [commandHistory, setCommandHistory] = useState([]); // All entered commands
   const [count, setCount] = useState(0);
-  const [historyIndex, setHistoryIndex] = useState(null); // For up/down navigation
+  const [setHistoryIndex] = useState(null); // For up/down navigation
   const scrollContainerRef = useRef();
   const navigate = useNavigate();
 
@@ -155,7 +155,7 @@ const Terminal = () => {
   const terminalFunction = (inputStr) => {
     // splitting the input with to check whether it is correct command or not
     const args = inputStr.split(" ");
-    const [command, ...rest] = args;
+    const [command] = args;
 
     // iterating through commands whether it matches any of the commands in the list
     switch (command) {

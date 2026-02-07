@@ -68,7 +68,7 @@ const EditForm = () => {
     };
 
     fetchForm();
-  }, [id, token, navigate]);
+  }, [id, navigate]);
 
   const handleFormSubmit = async () => {
     if (!formData.name || !formData.desc || !formData.deadline || !formData.WaLink) {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+
 import { Toaster, toast } from 'react-hot-toast';
 import increamentCounter from '../../libs/increamentCounter';
 import { sendforgotPasswordEmail } from '../../services/forgotPasswordService';

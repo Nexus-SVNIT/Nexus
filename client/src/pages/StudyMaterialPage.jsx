@@ -3,18 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
-import MaintenancePage from "../components/Error/MaintenancePage";
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
-
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
-
 
 const CATEGORIES = {
     PLACEMENTS: "Placements/Internships",
     SEMESTER: "Semester Exams",
 };
 const DEPARTMENTS = ["CSE", "AI"];
-
 
 const StudyMaterialHero = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -53,14 +49,12 @@ const SelectionCard = ({ title, icon, onClick }) => (
     </button>
 );
 
-
 const StudyMaterialPage = () => {
     const [step, setStep] = useState(1);
     const [category, setCategory] = useState(null);
     const [department, setDepartment] = useState(null);
     const navigate = useNavigate();
 
-    // Auth check on initial load
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -68,7 +62,6 @@ const StudyMaterialPage = () => {
         }
     }, [navigate]);
 
-    // Fetch subjects with React Query
     const {
         data: subjects,
         isLoading,
@@ -79,31 +72,18 @@ const StudyMaterialPage = () => {
         queryFn: async () => {
             const response = await getSubjects({ category, department });
             if (!response.success) {
-                
                 throw new Error(response.message || "Failed to fetch subjects");
             }
-            
             return response.data.data;
         },
-        
-        
-        onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
-            
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                localStorage.removeItem('token');
-                navigate('/login');
-            }
-            
-        },
-      
-
-        enabled: step === 3 && !!category && !!department,
-        staleTime: 1000 * 60 * 15,
-        cacheTime: 1000 * 60 * 60,
+        staleTime: 7200000, // 2 Hours
+        cacheTime: 7200000,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+        refetchOnReconnect: false,
+        retry: 1,
+        enabled: step === 3 && !!category && !!department
     });
-
-    
 
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
@@ -136,72 +116,6 @@ const StudyMaterialPage = () => {
         }
     };
 
-   
-
-    const renderStep1_Category = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            <SelectionCard
-                title="Placements/Internships"
-                icon={<LuClipboardCheck className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
-            />
-            <SelectionCard
-                title="Semester Exams"
-                icon={<LuBuilding className="h-6 w-6" />}
-                onClick={() => handleCategorySelect(CATEGORIES.SEMESTER)}
-            />
-        </div>
-    );
-
-    const renderStep2_Department = () => (
-        <div className="flex flex-wrap justify-center gap-6">
-            {DEPARTMENTS.map((dept) => (
-                <SelectionCard
-                    key={dept}
-                    title={dept}
-                    icon={<LuBrain className="h-6 w-6" />}
-                    onClick={() => handleDepartmentSelect(dept)}
-                />
-            ))}
-        </div>
-    );
-
-    
-    const renderStep3_Subjects = () => {
-        if (isLoading) {
-            return (
-                <div className="flex h-64 w-full items-center justify-center">
-                    <Loader />
-                </div>
-            );
-        }
-
-        if (isError) {
-            // auth fix
-            const errorMsg = error.message.toLowerCase();
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                return null; 
-            }
-        
-            return <p className="text-center text-red-400">{error.message}</p>;
-      
-        }
-
-        if (!subjects || subjects.length === 0) {
-            return <p className="text-center text-gray-400">No subjects found.</p>;
-        }
-
-        return (
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {subjects.map((subject) => (
-                    <SubjectCard key={subject._id} subject={subject} />
-                ))}
-            </div>
-        );
-    };
-
-   
-
     return (
         <div>
             <StudyMaterialHero />
@@ -216,9 +130,53 @@ const StudyMaterialPage = () => {
                     </button>
                 )}
                 
-                {step === 1 && renderStep1_Category()}
-                {step === 2 && renderStep2_Department()}
-                {step === 3 && renderStep3_Subjects()}
+                {step === 1 && (
+                    <div className="flex flex-wrap justify-center gap-6">
+                        <SelectionCard
+                            title="Placements/Internships"
+                            icon={<LuClipboardCheck className="h-6 w-6" />}
+                            onClick={() => handleCategorySelect(CATEGORIES.PLACEMENTS)}
+                        />
+                        <SelectionCard
+                            title="Semester Exams"
+                            icon={<LuBuilding className="h-6 w-6" />}
+                            onClick={() => handleCategorySelect(CATEGORIES.SEMESTER)}
+                        />
+                    </div>
+                )}
+
+                {step === 2 && (
+                    <div className="flex flex-wrap justify-center gap-6">
+                        {DEPARTMENTS.map((dept) => (
+                            <SelectionCard
+                                key={dept}
+                                title={dept}
+                                icon={<LuBrain className="h-6 w-6" />}
+                                onClick={() => handleDepartmentSelect(dept)}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                {step === 3 && (
+                    <>
+                        {isLoading ? (
+                            <div className="flex h-64 w-full items-center justify-center">
+                                <Loader />
+                            </div>
+                        ) : isError ? (
+                            <p className="text-center text-red-400">{error.message}</p>
+                        ) : !subjects || subjects.length === 0 ? (
+                            <p className="text-center text-gray-400">No subjects found.</p>
+                        ) : (
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                                {subjects.map((subject) => (
+                                    <SubjectCard key={subject._id} subject={subject} />
+                                ))}
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
         </div>
     );
