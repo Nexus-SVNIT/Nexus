@@ -55,7 +55,7 @@ const StudyMaterialPage = () => {
     const [department, setDepartment] = useState(null);
     const navigate = useNavigate();
 
-    // Auth check on initial load
+    // Initial Auth Check
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -63,7 +63,7 @@ const StudyMaterialPage = () => {
         }
     }, [navigate]);
 
-    // Fetch subjects with React Query
+    // Fetch subjects
     const {
         data: subjects,
         isLoading,
@@ -73,35 +73,38 @@ const StudyMaterialPage = () => {
         queryKey: ["subjects", category, department],
         queryFn: async () => {
             const response = await getSubjects({ category, department });
-            
-            // --- FIX 1: Check if Data Exists (Removed !response.success) ---
+            // Validation: Check if data exists
             if (!response || !response.data) {
                 throw new Error(response?.message || "Failed to fetch subjects");
             }
-            
-            // Return the data array directly
             return response.data;
         },
-        
-        onError: (err) => {
-            // --- FIX 2: Check Status Code for Redirect ---
-            if (err.response?.status === 401 || err.response?.status === 403) {
+        enabled: step === 3 && !!category && !!department,
+        staleTime: 1000 * 60 * 15,
+        cacheTime: 1000 * 60 * 60,
+        // REMOVED 'onError' entirely to avoid version conflicts
+    });
+
+    // --- NEW: Handle Errors with useEffect (Works everywhere) ---
+    useEffect(() => {
+        if (isError && error) {
+            // Check for 401/403 status code
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                console.log("Token expired. Redirecting...");
                 localStorage.removeItem('token');
                 navigate('/login');
                 return;
             }
 
-            const errorMsg = err.message ? err.message.toLowerCase() : "";
+            // Fallback for text-based errors
+            const errorMsg = error.message ? error.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token');
                 navigate('/login');
             }
-        },
-
-        enabled: step === 3 && !!category && !!department,
-        staleTime: 1000 * 60 * 15,
-        cacheTime: 1000 * 60 * 60,
-    });
+        }
+    }, [isError, error, navigate]);
+    // -----------------------------------------------------------
 
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
@@ -172,15 +175,10 @@ const StudyMaterialPage = () => {
         }
 
         if (isError) {
-             // Auth error handling for display
-             if (error?.response?.status === 401 || error?.response?.status === 403) {
+            // If it's an auth error, return null so we don't show "Error" before redirect happens
+            if (error?.response?.status === 401 || error?.response?.status === 403) {
                 return null;
             }
-            const errorMsg = error.message ? error.message.toLowerCase() : "";
-            if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-                return null; 
-            }
-        
             return <p className="text-center text-red-400">{error.message}</p>;
         }
 

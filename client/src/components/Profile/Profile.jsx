@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { Toaster, toast } from "react-hot-toast"; // Import react-hot-toast
+import { Toaster, toast } from "react-hot-toast"; 
 import AlumnusBadge from "./AlumniBadge";
 
-const ProfilePage = ({ profile, setProfile, setErr }) => {
+const Profile = ({ profile, setProfile, setErr }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [buttonLoading, setButtonLoading] = useState(false); // New state for button loading
+  const [buttonLoading, setButtonLoading] = useState(false); 
   const navigate = useNavigate();
 
   const [expertiseInput, setExpertiseInput] = useState("");
@@ -21,7 +21,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const [profileResponse, postsResponse] = await Promise.all([
+        const [profileResponse] = await Promise.all([
           axios.get(
             `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
             {
@@ -37,13 +37,19 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       } catch (error) {
         console.error("Error fetching data:", error);
         setLoading(false);
-        setErr(true);
+        
+        // --- THE FIX IS HERE ---
+        // OLD: setErr(true); 
+        // NEW: Pass the actual error object so the parent can check the status code
+        setErr(error); 
+        // -----------------------
+        
         toast.error("Error fetching profile data.");
       }
     };
 
     fetchUserData();
-  }, []);
+  }, [setProfile, setErr]); // Added dependencies for safety
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -57,10 +63,8 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   const validateForm = () => {
     const {
       fullName,
-      // admissionNumber,
       mobileNumber,
       personalEmail,
-      // instituteEmail,
       currentCompany,
       currentDesignation,
       githubProfile,
@@ -72,17 +76,11 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     } = profile;
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
-    const instituteEmailPattern =
-      /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 
     if (!fullName) {
       toast.error("Full Name is required");
       return false;
     }
-    // if (!admissionNumber.match(/[UIPD]\d{2}(?:CS|AI|CO|DS|IS)\d{3}/)) {
-    //   toast.error("Invalid Admission Number");
-    //   return false;
-    // } // validation not needed
     if (!mobileNumber.match(/^[0-9]{10}$/)) {
       toast.error("Invalid Mobile Number");
       return false;
@@ -91,10 +89,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Invalid Personal Email");
       return false;
     }
-    // if (!isAlumni && !instituteEmail.match(instituteEmailPattern)) {
-    //   toast.error("Invalid Institute Email");
-    //   return false;
-    // }
     if (!linkedInProfile || !linkedInProfile.includes("linkedin.com")) {
       toast.error("LinkedIn Profile URL is required");
       return false;
@@ -119,7 +113,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Github profile is compulsory");
     }
     if (leetcodeProfile && leetcodeProfile.includes("leetcode.com/")) {
-      toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
+      toast.error("Invalid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
     if(!isAlumni && !leetcodeProfile){
@@ -127,7 +121,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       return false;
     }
     if (codeforcesProfile && codeforcesProfile.includes("codeforces.com/")) {
-      toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
     if (!isAlumni && !codeforcesProfile){
@@ -135,14 +129,10 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       return false;
     }
     if (codechefProfile && codechefProfile.includes("codechef.com/")) {
-      toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
-    // if(!isAlumni && instituteEmail.split("@")[0] !== admissionNumber.toLowerCase()) {
-    //   return false;
-    // } // validation not needed
 
-    // Add URL validation for coding profiles
     const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
     
     if (leetcodeProfile && urlPattern.test(leetcodeProfile)) {
@@ -158,63 +148,59 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       return false;
     }
 
-    // if (password.length < 8) {
-    //   toast.error("Password must be at least 8 characters");
-    //   return false;
-    // }
-
     return true;
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setButtonLoading(true); // Show loading state in the button
+    e.preventDefault();
+    setButtonLoading(true); 
 
-  try {
-    if (validateForm()) {
-      // 👇️ Prepare the updated profile locally
-      let updatedProfile = { ...profile };
+    try {
+      if (validateForm()) {
+        let updatedProfile = { ...profile };
 
-      if (profile.isAlumni) {
-        const expertiseArray = expertiseInput
-          .split(',')
-          .map((exp) => exp.trim())
-          .filter((exp) => exp);
-        updatedProfile.expertise = expertiseArray;
-      }
-
-      // 👇️ Send updatedProfile to the backend
-      const response = await axios.put(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
-        updatedProfile,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
-          },
+        if (profile.isAlumni) {
+          const expertiseArray = expertiseInput
+            .split(',')
+            .map((exp) => exp.trim())
+            .filter((exp) => exp);
+          updatedProfile.expertise = expertiseArray;
         }
+
+        await axios.put(
+          `${process.env.REACT_APP_BACKEND_BASE_URL}/user/profile`,
+          updatedProfile,
+          {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        setProfile(updatedProfile);
+        setIsEditing(false);
+        toast.success("Profile updated successfully!");
+      }
+    } catch (error) {
+      console.error(
+        "Error updating profile:",
+        error.response?.data?.message || error.message
       );
-
-      // 👇️ Update profile in state only after a successful update
-      setProfile(updatedProfile);
-      setIsEditing(false);
-      toast.success("Profile updated successfully!");
+      toast.error("Failed to update profile. Please try again.");
+      
+      // OPTIONAL: If updating fails due to Auth, you might want to trigger the redirect here too
+      if (error.response?.status === 401) {
+          setErr(error);
+      }
+      
+    } finally {
+      setButtonLoading(false); 
     }
-  } catch (error) {
-   
-    console.error(
-      "Error updating profile:",
-      error.response?.data?.message || error.message
-    );
-    toast.error("Failed to update profile. Please try again.");
-  } finally {
-    setButtonLoading(false); // Hide loading state in the button
-  }
-};
-
+  };
 
   const handleForgotPassword = () => {
-    navigate("/forgot-password"); // Redirect to Forgot Password page
+    navigate("/forgot-password"); 
   };
 
   const SkeletonLoader = () => (
@@ -247,8 +233,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
           {profile['isAlumni'] && <AlumnusBadge/>}
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <Toaster />{" "}
-          {/* Toast notification container */}
+          <Toaster />
           <div>
             <label className="text-gray-700 block">Full Name</label>
             <input
@@ -306,15 +291,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
           )}
           <div>
             <label className="text-gray-700 block">Branch</label>
-            {/* <input
-              type="text"
-              name="branch"
-              value={profile.branch}
-              onChange={handleChange}
-              disabled={!isEditing}
-              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
-            /> */}
             <select name="branch"
               value={profile.branch}
               onChange={handleChange}
@@ -405,7 +381,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
           </div>
           <div>
             <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>{" "}
-            {/* Added CodeChef Profile field */}
             <input
               name="codechefProfile"
               value={profile.codechefProfile}
@@ -418,7 +393,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                name="subscribed" // Corrected to subscribed field
+                name="subscribed" 
                 checked={profile.subscribed}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -431,7 +406,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <label className="flex items-center">
               <input
                 type="checkbox"
-                name="shareCodingProfile" // New checkbox for shareCodingProfile
+                name="shareCodingProfile" 
                 checked={profile.shareCodingProfile}
                 onChange={handleChange}
                 disabled={!isEditing}
@@ -446,9 +421,9 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
                 <button
                   type="submit"
                   className="rounded-md bg-blue-500 px-4 py-2 text-white"
-                  disabled={buttonLoading} // Disable button while loading
+                  disabled={buttonLoading} 
                 >
-                  {buttonLoading ? "Saving..." : "Save"} {/* Show loading text */}
+                  {buttonLoading ? "Saving..." : "Save"} 
                 </button>
                 <button
                   type="button"
@@ -481,4 +456,4 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
   );
 };
 
-export default ProfilePage;
+export default Profile;
