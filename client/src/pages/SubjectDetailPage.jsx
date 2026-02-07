@@ -50,6 +50,7 @@ const SubjectDetailPage = () => {
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
     
+    // Initial Auth Check
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -66,32 +67,36 @@ const SubjectDetailPage = () => {
         queryKey: ["subjectDetails", id],
         queryFn: async () => {
             const response = await getSubjectDetails(id);
-            
-            // --- FIX 1: Check if Data Exists (Removed !response.success) ---
+            // Validation: Check if data exists
             if (!response || !response.data) {
                 throw new Error(response?.message || "Failed to fetch subject details");
             }
-           
             return response.data; 
         },
-        
-        onError: (err) => {
-            // --- FIX 2: Check Status Code for Redirect ---
-            if (err.response?.status === 401 || err.response?.status === 403) {
+        staleTime: 1000 * 60 * 15,
+        // REMOVED 'onError' entirely
+    });
+
+    // --- NEW: Handle Errors with useEffect ---
+    useEffect(() => {
+        if (isError && error) {
+            // Check for 401/403 status code
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                console.log("Token expired. Redirecting...");
                 localStorage.removeItem('token');
                 navigate('/login');
                 return;
             }
 
-            const errorMsg = err.message ? err.message.toLowerCase() : "";
+            // Fallback for text
+            const errorMsg = error.message ? error.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token'); 
                 navigate('/login');
             }
-        },
-  
-        staleTime: 1000 * 60 * 15,
-    });
+        }
+    }, [isError, error, navigate]);
+    // ----------------------------------------
 
     const filteredResources = useMemo(() => {
         if (!subject || !subject.resources) return {}; 
@@ -135,13 +140,11 @@ const SubjectDetailPage = () => {
     }
  
     if (isError) {
+        // Prevent flashing Error page if redirect is about to happen
         if (error?.response?.status === 401 || error?.response?.status === 403) {
             return null;
         }
-        const errorMsg = error.message ? error.message.toLowerCase() : "";
-        if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-            return null; 
-        }
+        
         console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
     }
@@ -156,8 +159,6 @@ const SubjectDetailPage = () => {
     
     const resources = subject.resources || {};
     const resourceCategories = Object.keys(filteredResources);
-    
-    // Calculate dropdown options safely
     const allSubCategories = Object.keys(resources);
     const allResourceTypes = [...new Set(Object.values(resources).flat().map(r => r.resourceType))];
 
@@ -191,7 +192,6 @@ const SubjectDetailPage = () => {
                                 <select 
                                     id="subCategory"
                                     value={subCategoryFilter}
-                                    // --- FIX 3: Typo fix (e.g.target -> e.target) ---
                                     onChange={(e) => setSubCategoryFilter(e.target.value)} 
                                     className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
                                 >
