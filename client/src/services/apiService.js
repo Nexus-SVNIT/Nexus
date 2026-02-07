@@ -4,6 +4,8 @@ const API = axios.create({
   baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
 });
 
+console.log("API instance loaded");
+
 /* ---------------- REQUEST ---------------- */
 API.interceptors.request.use(
   (config) => {
