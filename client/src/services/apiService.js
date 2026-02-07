@@ -1,42 +1,46 @@
 import axios from "axios";
 
 const API = axios.create({
-    baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
+  baseURL: process.env.REACT_APP_BACKEND_BASE_URL,
 });
 
 /* ---------------- REQUEST ---------------- */
 API.interceptors.request.use(
-    (config) => {
-        const token = localStorage.getItem("token");
+  (config) => {
+    const token = localStorage.getItem("token");
 
-        if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-        }
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-        return config;
-    },
-    (error) => Promise.reject(error)
+    return config;
+  },
+  (error) => Promise.reject(error)
 );
 
+/* ---------------- RESPONSE ---------------- */
+let isRedirecting = false;
 
 API.interceptors.response.use(
-    (response) => response.data,
+  (response) => response.data,
 
-    (error) => {
-        const status = error.response?.status;
+  (error) => {
+    const status = error.response?.status;
 
-        console.log("Interceptor hit:", status);
+    console.log("Interceptor hit:", status);
 
-        if (status === 401) {
-            console.warn("Session expired → redirecting");
+    
+    if (status === 401 && !isRedirecting) {
+      isRedirecting = true;
 
-            localStorage.removeItem("token");
+      localStorage.removeItem("token");
 
-            window.location.pathname = "/login";
-        }
-
-        return Promise.reject(error);
+      
+      window.location.pathname = "/login";
     }
+
+    return Promise.reject(error);
+  }
 );
 
 export default API;
