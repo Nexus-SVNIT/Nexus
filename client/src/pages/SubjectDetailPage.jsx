@@ -5,8 +5,6 @@ import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
-
-// Assuming SearchBar is a simple input component you have
 import SearchBar from '../components/Alumni/SearchBar.jsx'; 
 
 const ResourceLink = ({ resource }) => {
@@ -69,19 +67,22 @@ const SubjectDetailPage = () => {
         queryFn: async () => {
             const response = await getSubjectDetails(id);
             
-            // --- FIX START ---
-            // Removed: if (!response.success) ...
-            
-            // Added check for data existence
+            // --- FIX 1: Check if Data Exists (Removed !response.success) ---
             if (!response || !response.data) {
                 throw new Error(response?.message || "Failed to fetch subject details");
             }
            
-            return response.data; // Assuming data is directly here based on previous fix
-            // --- FIX END ---
+            return response.data; 
         },
         
         onError: (err) => {
+            // --- FIX 2: Check Status Code for Redirect ---
+            if (err.response?.status === 401 || err.response?.status === 403) {
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+            }
+
             const errorMsg = err.message ? err.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token'); 
@@ -103,10 +104,8 @@ const SubjectDetailPage = () => {
             let resources = subject.resources[category];
 
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
-                // If filter doesn't match, this category is empty
                 resources = []; 
             } else {
-                 // Important: We only filter by type/search if the category matches or is "All"
                  if (typeFilter !== "All") {
                     resources = resources.filter(res => res.resourceType === typeFilter);
                 }
@@ -118,7 +117,6 @@ const SubjectDetailPage = () => {
                 }
             }
 
-            // Only add the category if it has resources left
             if (resources.length > 0 || (subCategoryFilter === "All" && typeFilter === "All" && !lowerSearch)) {
                  filtered[category] = resources;
             }
@@ -128,7 +126,6 @@ const SubjectDetailPage = () => {
 
     }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
-   
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -138,6 +135,9 @@ const SubjectDetailPage = () => {
     }
  
     if (isError) {
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+            return null;
+        }
         const errorMsg = error.message ? error.message.toLowerCase() : "";
         if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
             return null; 
@@ -154,7 +154,6 @@ const SubjectDetailPage = () => {
         );
     }
     
-    // Safety check for resources
     const resources = subject.resources || {};
     const resourceCategories = Object.keys(filteredResources);
     
@@ -176,7 +175,6 @@ const SubjectDetailPage = () => {
             
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
-                {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
                     
                     {/* --- FILTER BAR --- */}
@@ -184,7 +182,7 @@ const SubjectDetailPage = () => {
                         <SearchBar 
                             placeholder="Search resources by title..."
                             value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)} // Fixed: standard onChange for input usually passes event
+                            onChange={(e) => setSearchTerm(e.target.value)} 
                         />
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             {/* SubCategory Filter */}
@@ -193,7 +191,8 @@ const SubjectDetailPage = () => {
                                 <select 
                                     id="subCategory"
                                     value={subCategoryFilter}
-                                    onChange={(e) => setSubCategoryFilter(e.target.value)} // --- TYPO FIXED HERE (was e.g.target) ---
+                                    // --- FIX 3: Typo fix (e.g.target -> e.target) ---
+                                    onChange={(e) => setSubCategoryFilter(e.target.value)} 
                                     className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="All" className="bg-gray-800">All Sub-Categories</option>
@@ -219,7 +218,6 @@ const SubjectDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                    {/* END FILTER BAR  */}
                     
                     {/* RESOURCES LIST */}
                     {resourceCategories.map(category => (

@@ -74,23 +74,24 @@ const StudyMaterialPage = () => {
         queryFn: async () => {
             const response = await getSubjects({ category, department });
             
-            // --- FIX START ---
-            // Removed the 'if (!response.success)' check because your API 
-            // returns { message: "...", data: [...] } without a 'success' boolean.
-            
-            // Instead, we check if the data array exists.
+            // --- FIX 1: Check if Data Exists (Removed !response.success) ---
             if (!response || !response.data) {
                 throw new Error(response?.message || "Failed to fetch subjects");
             }
-
-            // Your JSON shows the array is directly at response.data
-            return response.data; 
-            // --- FIX END ---
+            
+            // Return the data array directly
+            return response.data;
         },
         
         onError: (err) => {
+            // --- FIX 2: Check Status Code for Redirect ---
+            if (err.response?.status === 401 || err.response?.status === 403) {
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+            }
+
             const errorMsg = err.message ? err.message.toLowerCase() : "";
-            
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token');
                 navigate('/login');
@@ -171,11 +172,15 @@ const StudyMaterialPage = () => {
         }
 
         if (isError) {
-            // auth fix
+             // Auth error handling for display
+             if (error?.response?.status === 401 || error?.response?.status === 403) {
+                return null;
+            }
             const errorMsg = error.message ? error.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 return null; 
             }
+        
             return <p className="text-center text-red-400">{error.message}</p>;
         }
 
