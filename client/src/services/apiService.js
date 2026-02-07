@@ -22,11 +22,29 @@ API.interceptors.response.use(
         return {
             success: true,
             data: response.data,
-        }
+        };
     },
     (error) => {
+       
+        if (error.response && error.response.status === 401) {
+            console.warn("Session expired. Logging out...");
+            
+            
+            localStorage.removeItem('token');
+            
+            window.location.href = '/login'; 
+            
+           
+            return {
+                success: false,
+                message: 'Session expired. Redirecting...',
+            };
+        }
+    
+
         const message = error.response?.data?.message || 'Something went Wrong.';
 
+        
         return {
             success: false,
             message,
