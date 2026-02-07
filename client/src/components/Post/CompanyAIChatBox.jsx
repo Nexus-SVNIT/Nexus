@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from "framer-motion";
 const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
   const [company, setCompany] = useState(defaultCompany || "");
   const [question, setQuestion] = useState("");
-  const [answer, setAnswer] = useState("");
+  // Fixed: Removed unused 'answer' state
   const [limitMsg, setLimitMsg] = useState("");
   const [loading, setLoading] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -52,7 +52,7 @@ const CompanyAIChatBox = ({ companies = [], defaultCompany = "" }) => {
 
       const aiResponse = res.data?.answer || "No answer.";
       setMessages((prev) => [...prev, { type: "ai", content: aiResponse }]);
-      setAnswer(aiResponse);
+      // Fixed: Removed setAnswer(aiResponse)
       scrollToBottom();
     } catch (err) {
       if (err?.response?.status === 429) {

@@ -1,23 +1,23 @@
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { faculty_advisors } from "../../data";
-import Error from "../Error/Error";
+// Removed unused Error import
 import HeadTags from "../HeadTags/HeadTags";
 import Loader from "../Loader/Loader";
 import { Title } from "../index";
 import TeamCard from "./TeamCard";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
-import { useSearchParams, useLocation } from "react-router-dom";
+import { useSearchParams } from "react-router-dom"; // Removed unused useLocation
 
 const Teams = () => {
-  const [selectedYear, setSelectedYear] = useState(""); // Default year set after fetching unique years
-  const [years, setYears] = useState([]); // State for unique years
+  const [selectedYear, setSelectedYear] = useState("");
+  const [years, setYears] = useState([]);
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchParams, setSearchParams] = useSearchParams();
-  const location = useLocation();
+  // Removed unused location variable
 
   const handleYearChange = (event) => {
     setSelectedYear(event.target.value);
@@ -30,14 +30,16 @@ const Teams = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/team/unique-years`,
         );
-        setYears(response.data.years); // Assuming 'years' is returned in the API response
-        // setSelectedYear(response.data.years[response.data.years.length - 1]); // Default to the first available year
+        setYears(response.data.years);
+        
         if (searchParams.has("year")) {
           setSelectedYear(searchParams.get("year"));
         } else {
-          setSelectedYear(response.data.years[response.data.years.length - 1]);
+          // Default to the most recent year
+          const latestYear = response.data.years[response.data.years.length - 1];
+          setSelectedYear(latestYear);
           setSearchParams((prev) => {
-            prev.set("year", response.data.years[response.data.years.length - 1]);
+            prev.set("year", latestYear);
             return prev;
           });
         }
@@ -49,9 +51,10 @@ const Teams = () => {
     };
 
     fetchYears();
-  
     increamentCounter();
-  }, []);
+    
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Intentionally empty to run only once on mount
 
   useEffect(() => {
     if (!selectedYear) return;
@@ -64,7 +67,7 @@ const Teams = () => {
         const response = await axios.get(
           `${process.env.REACT_APP_BACKEND_BASE_URL}/team/${selectedYear}`,
         );
-        setData(response.data.data); // Access the 'data' key from response
+        setData(response.data.data);
       } catch (err) {
         setError(err);
       } finally {
@@ -78,7 +81,7 @@ const Teams = () => {
     });
 
     fetchData();
-  }, [selectedYear]); // Refetch data when selectedYear changes
+  }, [selectedYear, setSearchParams]); // Added setSearchParams to dependencies
 
   if (error) return <MaintenancePage />;
   if (loading)
@@ -88,7 +91,6 @@ const Teams = () => {
       </div>
     );
 
-  // Sort team members by priority (ascending: 0, 1, 2, ...)
   // Group team members by priority level
   const priorityGroups = {};
   data.forEach(member => {
@@ -96,6 +98,7 @@ const Teams = () => {
     if (!priorityGroups[p]) priorityGroups[p] = [];
     priorityGroups[p].push(member);
   });
+  
   // Get sorted priority levels (0, 1, 2, ...)
   const sortedPriorities = Object.keys(priorityGroups)
     .map(Number)

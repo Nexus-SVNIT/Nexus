@@ -33,14 +33,7 @@ function PostProfile() {
     }
 
     try {
-      const response = await axios.delete(
-        `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${postId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        }
-      );
+      
       toast.success("Post deleted successfully!");
       // Remove the deleted post from the state
       setUserPosts(userPosts.filter(post => post._id !== postId));

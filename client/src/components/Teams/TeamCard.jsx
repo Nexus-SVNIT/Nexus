@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ModernProfile from "../ProfileCard/ModernProfile";
 
 const TeamCard = ({ data, isFaculty = false }) => {

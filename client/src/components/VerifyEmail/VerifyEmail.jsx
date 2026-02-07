@@ -33,7 +33,7 @@ function VerifyEmail() {
         setTimeout(() => {
             verifyEmail();
         }, 1500);
-    }, []);
+    }, [token, navigate]); // <--- Fixed: Added dependencies here
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-black-2">
