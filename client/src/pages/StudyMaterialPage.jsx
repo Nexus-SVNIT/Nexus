@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
-import MaintenancePage from "../components/Error/MaintenancePage";
+
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
 
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
