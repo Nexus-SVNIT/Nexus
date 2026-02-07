@@ -6,7 +6,7 @@ import AlumnusBadge from "./AlumniBadge";
 // ADDED: Import the centralized API service
 import API from "../../services/apiService"; 
 
-const ProfilePage = ({ profile, setProfile, setErr }) => {
+const Profile = ({ profile, setProfile, setErr }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
   const [buttonLoading, setButtonLoading] = useState(false); 
@@ -132,7 +132,6 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       return false;
     }
 
-    // Add URL validation for coding profiles
     const urlPattern = /^https?:\/\/|www\.|\.com|\/|@/i;
     
     if (leetcodeProfile && urlPattern.test(leetcodeProfile)) {

@@ -1,13 +1,11 @@
-import { useState, useEffect, useMemo } from 'react'; // Added useState and useMemo
+import { useState, useEffect, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
 import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
-
 import SearchBar from '../components/Alumni/SearchBar.jsx'; 
-
 
 const ResourceLink = ({ resource }) => {
     let icon;
@@ -24,11 +22,9 @@ const ResourceLink = ({ resource }) => {
             icon = <LuBook className="h-5 w-5" />;
             break;
         default:
-  
             icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />;
             break;
     }
-
 
     return (
         <a
@@ -46,18 +42,15 @@ const ResourceLink = ({ resource }) => {
     );
 };
 
-
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); 
 
-    // 
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
     
-
-  
+    // Initial Auth Check
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -74,64 +67,70 @@ const SubjectDetailPage = () => {
         queryKey: ["subjectDetails", id],
         queryFn: async () => {
             const response = await getSubjectDetails(id);
-            if (!response.success) {
-                
-                throw new Error(response.message || "Failed to fetch subject details");
+            // Validation: Check if data exists
+            if (!response || !response.data) {
+                throw new Error(response?.message || "Failed to fetch subject details");
             }
-           
-            return response.data.data; 
+            return response.data; 
         },
-        
-       
-        onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
+        staleTime: 1000 * 60 * 15,
+        // REMOVED 'onError' entirely
+    });
+
+    // --- NEW: Handle Errors with useEffect ---
+    useEffect(() => {
+        if (isError && error) {
+            // Check for 401/403 status code
+            if (error.response?.status === 401 || error.response?.status === 403) {
+                console.log("Token expired. Redirecting...");
+                localStorage.removeItem('token');
+                navigate('/login');
+                return;
+            }
+
+            // Fallback for text
+            const errorMsg = error.message ? error.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token'); 
                 navigate('/login');
             }
-        },
-  
+        }
+    }, [isError, error, navigate]);
+    // ----------------------------------------
 
-        staleTime: 1000 * 60 * 15,
-    });
-
-    
     const filteredResources = useMemo(() => {
-        if (!subject) return {}; 
+        if (!subject || !subject.resources) return {}; 
 
         const allCategories = Object.keys(subject.resources);
         const filtered = {};
         const lowerSearch = searchTerm.toLowerCase();
 
         allCategories.forEach(category => {
-            
             let resources = subject.resources[category];
 
-            
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
                 resources = []; 
+            } else {
+                 if (typeFilter !== "All") {
+                    resources = resources.filter(res => res.resourceType === typeFilter);
+                }
+                
+                if (lowerSearch) {
+                    resources = resources.filter(res => 
+                        res.title.toLowerCase().includes(lowerSearch)
+                    );
+                }
             }
 
-            
-            if (typeFilter !== "All") {
-                resources = resources.filter(res => res.resourceType === typeFilter);
+            if (resources.length > 0 || (subCategoryFilter === "All" && typeFilter === "All" && !lowerSearch)) {
+                 filtered[category] = resources;
             }
-            
-           
-            if (lowerSearch) {
-                resources = resources.filter(res => 
-                    res.title.toLowerCase().includes(lowerSearch)
-                );
-            }
-            
-            filtered[category] = resources;
         });
         
         return filtered;
 
     }, [subject, searchTerm, subCategoryFilter, typeFilter]);
 
-   
     if (isLoading) {
         return (
             <div className="flex h-screen w-full items-center justify-center">
@@ -141,11 +140,11 @@ const SubjectDetailPage = () => {
     }
  
     if (isError) {
-
-        const errorMsg = error.message.toLowerCase();
-        if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
-            return null; 
+        // Prevent flashing Error page if redirect is about to happen
+        if (error?.response?.status === 401 || error?.response?.status === 403) {
+            return null;
         }
+        
         console.error("Error fetching subject details:", error);
         return <MaintenancePage />;
     }
@@ -158,19 +157,13 @@ const SubjectDetailPage = () => {
         );
     }
     
-   
+    const resources = subject.resources || {};
     const resourceCategories = Object.keys(filteredResources);
-    
-    
-    const allSubCategories = subject ? Object.keys(subject.resources) : [];
-    const allResourceTypes = subject ? 
-        [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))] 
-        : [];
+    const allSubCategories = Object.keys(resources);
+    const allResourceTypes = [...new Set(Object.values(resources).flat().map(r => r.resourceType))];
 
     return (
-      
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
-            
             <Link
                 to="/study-material"
                 className="mb-6 inline-flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
@@ -183,16 +176,14 @@ const SubjectDetailPage = () => {
             
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 
-                {/* --- Left Column: Resources --- */}
                 <div className="space-y-8 lg:col-span-2">
                     
-                    {/* --- 7. NEW FILTER BAR --- */}
+                    {/* --- FILTER BAR --- */}
                     <div className="space-y-4 rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
-                        {/* Use your existing Alumni SearchBar */}
                         <SearchBar 
                             placeholder="Search resources by title..."
                             value={searchTerm}
-                            onChange={setSearchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)} 
                         />
                         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                             {/* SubCategory Filter */}
@@ -201,8 +192,7 @@ const SubjectDetailPage = () => {
                                 <select 
                                     id="subCategory"
                                     value={subCategoryFilter}
-                                    onChange={(e) => setSubCategoryFilter(e.g.target.value)}
-                                    // Style matches your Alumni SearchBar
+                                    onChange={(e) => setSubCategoryFilter(e.target.value)} 
                                     className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2.5 px-3 text-white outline-none focus:ring-2 focus:ring-blue-500"
                                 >
                                     <option value="All" className="bg-gray-800">All Sub-Categories</option>
@@ -228,12 +218,10 @@ const SubjectDetailPage = () => {
                             </div>
                         </div>
                     </div>
-                    {/* END FILTER BAR  */}
                     
-                    {/* UPDATED RESOURCES LIST */}
-                    {/* Map over the filtered resources */}
+                    {/* RESOURCES LIST */}
                     {resourceCategories.map(category => (
-                        filteredResources[category].length > 0 && (
+                        filteredResources[category] && filteredResources[category].length > 0 && (
                             <section key={category}>
                                 <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                                     {category}
@@ -247,7 +235,7 @@ const SubjectDetailPage = () => {
                         )
                     ))}
                     
-                    {/* 9.  */}
+                    {/* No Results Message */}
                     {Object.values(filteredResources).flat().length === 0 && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
@@ -255,8 +243,6 @@ const SubjectDetailPage = () => {
                             <p className="mt-1 text-gray-400">Try adjusting your search or filters.</p>
                         </div>
                     )}
-                    {/* --- END RESOURCES LIST --- */}
-
                 </div>
 
                 {/* --- Right Column: Tips --- */}
@@ -265,7 +251,7 @@ const SubjectDetailPage = () => {
                         <h2 className="mb-4 text-2xl font-semibold text-blue-400">
                             Tips & Advice
                         </h2>
-                        {subject.tips.length > 0 ? (
+                        {subject.tips && subject.tips.length > 0 ? (
                             <ul className="space-y-4">
                                 {subject.tips.map((tip, index) => (
                                     <li key={index} className="flex gap-3">
