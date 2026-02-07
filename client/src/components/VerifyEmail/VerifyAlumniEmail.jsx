@@ -33,7 +33,7 @@ function VerifyAlumniEmail() {
         setTimeout(() => {
             verifyEmail();
         }, 1500);
-    }, []);
+    }, [token, navigate]);
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-black-2">

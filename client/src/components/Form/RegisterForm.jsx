@@ -11,7 +11,7 @@ import { Navigate } from "react-router-dom";
 import increamentCounter from "../../libs/increamentCounter";
 import { FaWhatsapp } from "react-icons/fa";
 
-import "react-quill/dist/quill.snow.css"; // Add this import
+import "react-quill/dist/quill.snow.css"; 
 
 const RegisterForm = () => {
   const { formId } = useParams();
@@ -366,6 +366,7 @@ const RegisterForm = () => {
                 <a
                   href={formData.extraLink}
                   target="_blank"
+                  rel="noreferrer"
                   className="font-bold italic text-blue-700 hover:underline"
                 >
                   {formData.extraLinkName}

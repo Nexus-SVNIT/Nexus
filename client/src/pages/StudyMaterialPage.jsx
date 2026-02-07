@@ -77,7 +77,7 @@ const StudyMaterialPage = () => {
             return response.data.data;
         },
         staleTime: 7200000, // 2 Hours
-        cacheTime: 7200000,
+        gcTime: 7200000,    // FIXED: Renamed cacheTime to gcTime for React Query v5
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false,

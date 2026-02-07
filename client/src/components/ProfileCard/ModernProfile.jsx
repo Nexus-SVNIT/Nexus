@@ -1,10 +1,9 @@
-import { FaLinkedinIn } from "react-icons/fa";
-import { FaXTwitter } from "react-icons/fa6";
+
 import { MdOutgoingMail } from "react-icons/md";
 import { SiGooglescholar } from "react-icons/si";
 import { ImProfile } from "react-icons/im";
 
-import { Link } from "react-router-dom";
+
 import { SocialIcon } from "react-social-icons";
 
 const ModernProfile = ({ profile, isFaculty }) => {

@@ -120,6 +120,8 @@ const Terminal = () => {
             case "1":
               codingProfile.status = "alumni";
               break;
+            default:
+              break;
           }
           break;
         case "-g":
@@ -372,12 +374,6 @@ const AboutMessage = () => (
 
 const ErrorMsg = ({ text }) => (
   <div className="mt-0.5 text-red-900">
-    <p>{text}</p>
-  </div>
-);
-
-const SimpleMsg = ({ text }) => (
-  <div className="mt-0.5">
     <p>{text}</p>
   </div>
 );
