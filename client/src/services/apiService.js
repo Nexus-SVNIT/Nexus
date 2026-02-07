@@ -18,35 +18,17 @@ API.interceptors.request.use(
 );
 
 API.interceptors.response.use(
-    (response) => {
-        return {
-            success: true,
-            data: response.data,
-        }
-    },
-    (error) => {
-        
-        if (error.response && error.response.status === 401) {
-            
-            localStorage.clear(); 
-            
-            
-            window.location.href = '/login'; 
-            
-            return {
-                success: false,
-                message: 'Session Expired',
-            };
-        }
-     
+  (response) => response.data,
 
-        const message = error.response?.data?.message || 'Something went Wrong.';
-
-        return {
-            success: false,
-            message,
-        };
+  (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("token");
+      window.location.replace("/login");
     }
+
+    return Promise.reject(error);
+  }
 );
+
 
 export default API;

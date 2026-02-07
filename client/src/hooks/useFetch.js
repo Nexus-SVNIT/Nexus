@@ -1,26 +1,38 @@
 import { useEffect, useState } from "react";
+import API from "../services/apiService"; 
 
 const useFetch = (path) => {
-  const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true); 
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = () => {
+    const fetchData = async () => {
       setLoading(true);
+      setError(null);
 
       try {
-        fetch(`${process.env.REACT_APP_BACKEND_BASE_URL}${path}`)
-          .then((res) => res.json())
-          .then((res) => setData(res));
-      } catch (error) {
-        setError(error);
+        const response = await API.get(path);
+        
+       
+        if (response.success) {
+            setData(response.data);
+        } else {
+            
+            setError(response.message);
+        }
+      } catch (err) {
+        
+        setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
       }
     };
-    fetchData();
-  }, [path, loading]);
+
+    if (path) fetchData();
+    
+  }, [path]);
+
   return { data, loading, error };
 };
 
