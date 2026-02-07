@@ -3,18 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
-
 import { SubjectCard } from "../components/StudyMaterial/SubjectCard";
-
 import { LuBookMarked, LuClipboardCheck, LuBuilding, LuArrowLeft, LuBrain, LuArrowRight } from "react-icons/lu";
-
 
 const CATEGORIES = {
     PLACEMENTS: "Placements/Internships",
     SEMESTER: "Semester Exams",
 };
 const DEPARTMENTS = ["CSE", "AI"];
-
 
 const StudyMaterialHero = () => (
     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
@@ -53,7 +49,6 @@ const SelectionCard = ({ title, icon, onClick }) => (
     </button>
 );
 
-
 const StudyMaterialPage = () => {
     const [step, setStep] = useState(1);
     const [category, setCategory] = useState(null);
@@ -78,32 +73,34 @@ const StudyMaterialPage = () => {
         queryKey: ["subjects", category, department],
         queryFn: async () => {
             const response = await getSubjects({ category, department });
-            if (!response.success) {
-                
-                throw new Error(response.message || "Failed to fetch subjects");
-            }
             
-            return response.data.data;
+            // --- FIX START ---
+            // Removed the 'if (!response.success)' check because your API 
+            // returns { message: "...", data: [...] } without a 'success' boolean.
+            
+            // Instead, we check if the data array exists.
+            if (!response || !response.data) {
+                throw new Error(response?.message || "Failed to fetch subjects");
+            }
+
+            // Your JSON shows the array is directly at response.data
+            return response.data; 
+            // --- FIX END ---
         },
         
-        
         onError: (err) => {
-            const errorMsg = err.message.toLowerCase();
+            const errorMsg = err.message ? err.message.toLowerCase() : "";
             
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 localStorage.removeItem('token');
                 navigate('/login');
             }
-            
         },
-      
 
         enabled: step === 3 && !!category && !!department,
         staleTime: 1000 * 60 * 15,
         cacheTime: 1000 * 60 * 60,
     });
-
-    
 
     const handleCategorySelect = (selectedCategory) => {
         setCategory(selectedCategory);
@@ -136,8 +133,6 @@ const StudyMaterialPage = () => {
         }
     };
 
-   
-
     const renderStep1_Category = () => (
         <div className="flex flex-wrap justify-center gap-6">
             <SelectionCard
@@ -166,7 +161,6 @@ const StudyMaterialPage = () => {
         </div>
     );
 
-    
     const renderStep3_Subjects = () => {
         if (isLoading) {
             return (
@@ -178,13 +172,11 @@ const StudyMaterialPage = () => {
 
         if (isError) {
             // auth fix
-            const errorMsg = error.message.toLowerCase();
+            const errorMsg = error.message ? error.message.toLowerCase() : "";
             if (errorMsg.includes("token") || errorMsg.includes("unauthorized") || errorMsg.includes("not valid")) {
                 return null; 
             }
-        
             return <p className="text-center text-red-400">{error.message}</p>;
-      
         }
 
         if (!subjects || subjects.length === 0) {
@@ -199,8 +191,6 @@ const StudyMaterialPage = () => {
             </div>
         );
     };
-
-   
 
     return (
         <div>
