@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-hot-toast";
@@ -71,7 +71,8 @@ const InterviewPost = () => {
     increamentCounter();
   }, []);
 
-  const incrementView = async () => {
+  // Fixed: Wrapped in useCallback to serve as a stable dependency
+  const incrementView = useCallback(async () => {
     try {
       await axios.post(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/posts/${id}/increment-view`
@@ -79,7 +80,7 @@ const InterviewPost = () => {
     } catch (error) {
       console.error('Error incrementing view:', error);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -118,7 +119,7 @@ const InterviewPost = () => {
     };
 
     fetchPost();
-  }, [id]);
+  }, [id, incrementView]); // Fixed: Added incrementView to dependencies
 
   if (loading) return <div className="text-white min-h-screen minw-full"><Loader/></div>;
   if (error) return <div className="text-red-500">{error}</div>;
@@ -128,9 +129,7 @@ const InterviewPost = () => {
     // handle company click
   };
 
-  const handleTagClick = (tag) => {
-    // handle tag click
-  };
+  // Removed unused handleTagClick function
 
   const handleCommentChange = (postId, value) => {
     setComments((prevComments) => ({

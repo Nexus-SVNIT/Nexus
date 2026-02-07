@@ -72,7 +72,7 @@ function SignUpForm() {
       codechefProfile,
     } = formData;
 
-    const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
+    const emailPattern = /^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/;
     const instituteEmailPattern =
       /^(((u|i)\d{2}(cs|ai))|(p\d{2}(cs|is|ds)))\d{3}@(coed|aid)\.svnit\.ac\.in$/;
 

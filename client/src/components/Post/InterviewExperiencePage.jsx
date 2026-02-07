@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
-import { Link, useSearchParams, useNavigate } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import InterviewPostCard from "./InterviewPostCard";
 import { FaPenToSquare } from "react-icons/fa6";
 import { FaFilter, FaChevronUp, FaChevronDown } from "react-icons/fa";
@@ -34,8 +34,8 @@ const InterviewExperiencePage = () => {
     locationFilter: "",
   });
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const navigate = useNavigate();
+  // Fixed: Correctly destructure to get the setter function (second element)
+  const [, setSearchParams] = useSearchParams();
 
   // New function to sync form state to URL
   const updateURLParams = (newFormState) => {
@@ -44,29 +44,6 @@ const InterviewExperiencePage = () => {
       if (value) params.set(key, value);
     });
     setSearchParams(params);
-  };
-
-  // New function to load filters from URL
-  const loadFiltersFromURL = () => {
-    const params = Object.fromEntries(searchParams.entries());
-    const initialState = {
-      companyFilter: params.companyFilter || "",
-      tagFilter: params.tagFilter || "",
-      admissionFilter: params.admissionFilter || "",
-      startDate: params.startDate || "",
-      endDate: params.endDate || "",
-      campusTypeFilter: params.campusTypeFilter || "",
-      jobTypeFilter: params.jobTypeFilter || "",
-      minStipendFilter: params.minStipendFilter || "",
-      maxStipendFilter: params.maxStipendFilter || "",
-      locationFilter: params.locationFilter || "",
-    };
-    setFormState(initialState);
-    
-    // Apply filters if any params exist
-    if (Object.values(params).some(value => value)) {
-      fetchPosts(params);
-    }
   };
 
   // Load saved form state from localStorage on component mount
@@ -80,7 +57,8 @@ const InterviewExperiencePage = () => {
     localStorage.setItem("formState", JSON.stringify(formState));
   }, [formState]);
 
-  const fetchPosts = async (filters = {}) => {
+  // Fixed: Wrapped in useCallback to resolve useEffect dependency warning
+  const fetchPosts = useCallback(async (filters = {}) => {
     try {
       toast.loading("Loading posts...");
       const response = await axios.get(
@@ -134,12 +112,13 @@ const InterviewExperiencePage = () => {
       toast.error("Error fetching posts.");
       console.error("Error fetching posts:", error.response?.data || error);
     }
-  };
+  }, [currentPage, pageLimit]);
 
-  // Fetch all posts on component mount
+  // Fetch all posts on component mount or when dependencies change
+  // Fixed: Added fetchPosts to dependency array
   useEffect(() => {
     fetchPosts();
-  }, [currentPage, pageLimit]);
+  }, [fetchPosts]);
 
   useEffect(() => {
     increamentCounter();
