@@ -4,40 +4,49 @@ import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
 import MaintenancePage from '../components/Error/MaintenancePage';
-import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter } from 'react-icons/lu';
+import { LuLink, LuFileText, LuYoutube, LuBook, LuArrowLeft, LuFilter, LuBug } from 'react-icons/lu';
 import SearchBar from '../components/Alumni/SearchBar.jsx';
 
 // --- Helpers ---
-const groupResources = (resourceList) => {
-    const groups = {
-        'Notes': [],
-        'Important topics': [],
-        'Youtube Resources': [],
-        'PYQs': [],
-        'Other': []
-    };
 
-    if (!Array.isArray(resourceList)) return groups;
+// Robust grouping function that doesn't rely on hardcoded keys
+const groupResources = (resourceList) => {
+    if (!Array.isArray(resourceList)) return {};
+
+    const groups = {};
 
     resourceList.forEach((res) => {
-        if (groups[res.subCategory]) {
-            groups[res.subCategory].push(res);
-        } else {
-            groups['Other'].push(res);
+        // Get category, trim whitespace, default to 'Other' if missing
+        const rawCat = res.subCategory || 'Other';
+        const category = rawCat.trim();
+
+        if (!groups[category]) {
+            groups[category] = [];
         }
+        groups[category].push(res);
     });
 
     return groups;
 };
 
 const ResourceLink = ({ resource }) => {
+    if (!resource) return null;
+
     let icon;
-    switch (resource.subCategory) {
-        case 'Youtube Resources': icon = <LuYoutube className="h-5 w-5" />; break;
-        case 'Notes':
-        case 'PYQs': icon = <LuFileText className="h-5 w-5" />; break;
-        case 'Important topics': icon = <LuBook className="h-5 w-5" />; break;
-        default: icon = resource.resourceType === 'PDF' ? <LuFileText className="h-5 w-5" /> : <LuLink className="h-5 w-5" />; break;
+    // Safe lowercase check for icons
+    const subCat = (resource.subCategory || "").toLowerCase();
+    const type = (resource.resourceType || "").toLowerCase();
+
+    if (subCat.includes('youtube')) {
+        icon = <LuYoutube className="h-5 w-5" />;
+    } else if (subCat.includes('notes') || subCat.includes('pyqs')) {
+        icon = <LuFileText className="h-5 w-5" />;
+    } else if (subCat.includes('important')) {
+        icon = <LuBook className="h-5 w-5" />;
+    } else {
+        icon = type === 'pdf' 
+            ? <LuFileText className="h-5 w-5" /> 
+            : <LuLink className="h-5 w-5" />;
     }
 
     return (
@@ -57,6 +66,7 @@ const ResourceLink = ({ resource }) => {
 };
 
 // --- Main Component ---
+
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
@@ -64,6 +74,7 @@ const SubjectDetailPage = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
     const [typeFilter, setTypeFilter] = useState("All");
+    const [showDebug, setShowDebug] = useState(true); // Default true to see the error
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -87,7 +98,7 @@ const SubjectDetailPage = () => {
             return response.data.data;
         },
         staleTime: 7200000,
-        cacheTime: 7200000,
+        gcTime: 7200000,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false
@@ -95,22 +106,27 @@ const SubjectDetailPage = () => {
 
     const subject = useMemo(() => {
         if (!rawSubject) return null;
+        
+        // Safety: Ensure resources is an array
+        const safeResources = Array.isArray(rawSubject.resources) ? rawSubject.resources : [];
+
         return {
             ...rawSubject,
-            resources: groupResources(rawSubject.resources) 
+            resources: groupResources(safeResources) 
         };
     }, [rawSubject]);
 
     const filteredResources = useMemo(() => {
-        if (!subject) return {};
+        if (!subject || !subject.resources) return {};
 
         const allCategories = Object.keys(subject.resources);
         const filtered = {};
         const lowerSearch = searchTerm.toLowerCase();
 
         allCategories.forEach(category => {
-            let resources = subject.resources[category];
+            let resources = subject.resources[category] || [];
 
+            // Filter logic
             if (subCategoryFilter !== "All" && category !== subCategoryFilter) {
                 resources = [];
             }
@@ -137,10 +153,14 @@ const SubjectDetailPage = () => {
     if (!subject) return <div className="flex h-screen w-full items-center justify-center"><Loader /></div>;
 
     const resourceCategories = Object.keys(filteredResources);
+    
+    // Helpers for dropdowns
     const allSubCategories = subject.resources ? Object.keys(subject.resources) : [];
-    const allResourceTypes = subject.resources 
-        ? [...new Set(Object.values(subject.resources).flat().map(r => r.resourceType))]
+    const allResourceTypes = rawSubject?.resources 
+        ? [...new Set(rawSubject.resources.map(r => r.resourceType).filter(Boolean))]
         : [];
+
+    const hasAnyResources = Object.values(filteredResources).flat().length > 0;
 
     return (
         <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8 text-white">
@@ -148,7 +168,40 @@ const SubjectDetailPage = () => {
                 <LuArrowLeft className="h-4 w-4" /> Back to Subjects
             </Link>
 
-            <h1 className="mb-8 text-4xl font-bold">{subject.subjectName}</h1>
+            <div className="flex justify-between items-start mb-8">
+                <h1 className="text-4xl font-bold">{subject.subjectName}</h1>
+                <button 
+                    onClick={() => setShowDebug(!showDebug)}
+                    className="flex items-center gap-2 text-xs text-red-400 border border-red-900 bg-red-900/20 px-3 py-1 rounded hover:bg-red-900/40"
+                >
+                    <LuBug /> {showDebug ? "Hide Debug Info" : "Show Debug Info"}
+                </button>
+            </div>
+
+            {/* --- DEBUG BOX --- */}
+            {showDebug && (
+                <div className="mb-8 p-4 bg-gray-900 border border-red-500/50 rounded-lg font-mono text-xs overflow-x-auto">
+                    <h3 className="text-red-400 font-bold text-sm mb-2">Debug Diagnostic</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <p className="text-gray-400">Total Resources (Raw): <span className="text-white">{rawSubject?.resources?.length || 0}</span></p>
+                            <p className="text-gray-400">Groups Found: <span className="text-white">{allSubCategories.join(", ")}</span></p>
+                            <p className="text-gray-400">SubCategory Filter: <span className="text-white">{subCategoryFilter}</span></p>
+                        </div>
+                        <div>
+                            <p className="text-gray-400">Filtered Categories Count: <span className="text-white">{resourceCategories.length}</span></p>
+                            <p className="text-gray-400">Visible Resources: <span className="text-white">{Object.values(filteredResources).flat().length}</span></p>
+                        </div>
+                    </div>
+                    <details className="mt-2">
+                        <summary className="cursor-pointer text-blue-400 hover:text-blue-300">Click to view raw data sample</summary>
+                        <pre className="mt-2 text-green-400">
+                            {JSON.stringify(rawSubject?.resources?.[0], null, 2)}
+                        </pre>
+                    </details>
+                </div>
+            )}
+            {/* ----------------- */}
 
             <div className="grid grid-cols-1 gap-12 lg:grid-cols-3">
                 <div className="space-y-8 lg:col-span-2">
@@ -181,35 +234,37 @@ const SubjectDetailPage = () => {
                         </div>
                     </div>
 
-                    {/* Resources */}
+                    {/* Resources List */}
                     {resourceCategories.map(category => (
-                        filteredResources[category].length > 0 && (
+                        filteredResources[category] && filteredResources[category].length > 0 && (
                             <section key={category}>
                                 <h2 className="mb-4 text-2xl font-semibold text-blue-400">{category}</h2>
                                 <div className="space-y-3">
-                                    {filteredResources[category].map(resource => (
-                                        <ResourceLink key={resource._id} resource={resource} />
+                                    {filteredResources[category].map((resource, index) => (
+                                        <ResourceLink key={resource._id || index} resource={resource} />
                                     ))}
                                 </div>
                             </section>
                         )
                     ))}
 
-                    {Object.values(filteredResources).flat().length === 0 && (
+                    {!hasAnyResources && (
                         <div className="text-center py-10 rounded-lg border border-dashed border-white/10">
                             <LuFilter className="mx-auto h-12 w-12 text-gray-500" />
                             <h3 className="mt-2 text-xl font-semibold text-white">No resources found</h3>
+                            <p className="text-gray-400">Try adjusting your filters or search term.</p>
                         </div>
                     )}
                 </div>
 
+                {/* Sidebar Tips */}
                 <div className="lg:col-span-1">
                     <div className="sticky top-24 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6">
                         <h2 className="mb-4 text-2xl font-semibold text-blue-400">Tips & Advice</h2>
                         <ul className="space-y-4">
-                            {subject.tips.length > 0 ? subject.tips.map((tip, index) => (
+                            {subject.tips && subject.tips.length > 0 ? subject.tips.map((tip, index) => (
                                 <li key={index} className="flex gap-3">
-                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400"></span>
+                                    <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-blue-400 shrink-0"></span>
                                     <span className="text-gray-300">{tip}</span>
                                 </li>
                             )) : <p className="text-gray-400">No tips added yet.</p>}
