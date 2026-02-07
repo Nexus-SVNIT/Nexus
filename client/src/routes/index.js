@@ -13,7 +13,7 @@ import {
 
 
 import SignUpForm from "../components/SignUpForm/SignUpForm.jsx";
-import UserProfile from "../components/Profile/ProfilePage.jsx";
+import UserProfile from "../components/Profile/UserProfile.jsx";
 import LoginForm from "../components/LogInForm/LogInForm.jsx";
 import ShowProject from "../components/Project/showProject.jsx";
 import ForgotPasswordForm from "../components/ForgotPasswordForm/ForgotPasswordForm.jsx";
