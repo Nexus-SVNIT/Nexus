@@ -9,23 +9,24 @@ import SearchBar from '../components/Alumni/SearchBar.jsx';
 
 // --- Helpers ---
 
+// Fixed: Dynamic grouping instead of hardcoded keys
 const groupResources = (resourceList) => {
-    const groups = {
-        'Notes': [],
-        'Important topics': [],
-        'Youtube Resources': [],
-        'PYQs': [],
-        'Other': []
-    };
+    if (!Array.isArray(resourceList)) {
+        console.warn("Expected resourceList to be an array, got:", resourceList);
+        return {};
+    }
 
-    if (!Array.isArray(resourceList)) return groups;
+    const groups = {};
 
     resourceList.forEach((res) => {
-        // Ensure subCategory exists and matches a key, otherwise default to 'Other'
-        const key = res.subCategory && groups.hasOwnProperty(res.subCategory) 
-            ? res.subCategory 
-            : 'Other';
-        groups[key].push(res);
+        // Use the backend's subCategory directly, or 'Others' if missing/null
+        // Trimming ensures "Notes " and "Notes" are treated as the same group
+        const category = res.subCategory ? res.subCategory.trim() : 'Others';
+
+        if (!groups[category]) {
+            groups[category] = [];
+        }
+        groups[category].push(res);
     });
 
     return groups;
@@ -36,22 +37,19 @@ const ResourceLink = ({ resource }) => {
 
     let icon;
     // Determine icon based on subCategory or fallback to resourceType
-    switch (resource.subCategory) {
-        case 'Youtube Resources': 
-            icon = <LuYoutube className="h-5 w-5" />; 
-            break;
-        case 'Notes':
-        case 'PYQs': 
-            icon = <LuFileText className="h-5 w-5" />; 
-            break;
-        case 'Important topics': 
-            icon = <LuBook className="h-5 w-5" />; 
-            break;
-        default: 
-            icon = resource.resourceType === 'PDF' 
-                ? <LuFileText className="h-5 w-5" /> 
-                : <LuLink className="h-5 w-5" />; 
-            break;
+    // Convert to lowercase for safer checking
+    const subCatLower = resource.subCategory ? resource.subCategory.toLowerCase() : '';
+    
+    if (subCatLower.includes('youtube')) {
+        icon = <LuYoutube className="h-5 w-5" />;
+    } else if (subCatLower.includes('notes') || subCatLower.includes('pyqs')) {
+        icon = <LuFileText className="h-5 w-5" />;
+    } else if (subCatLower.includes('important')) {
+        icon = <LuBook className="h-5 w-5" />;
+    } else {
+        icon = resource.resourceType === 'PDF' 
+            ? <LuFileText className="h-5 w-5" /> 
+            : <LuLink className="h-5 w-5" />;
     }
 
     return (
@@ -101,8 +99,8 @@ const SubjectDetailPage = () => {
             }
             return response.data.data;
         },
-        staleTime: 7200000, // 2 Hours
-        gcTime: 7200000,    // Renamed for v5 support (was cacheTime)
+        staleTime: 7200000,
+        gcTime: 7200000,
         refetchOnWindowFocus: false,
         refetchOnMount: false,
         refetchOnReconnect: false
@@ -110,9 +108,14 @@ const SubjectDetailPage = () => {
 
     const subject = useMemo(() => {
         if (!rawSubject) return null;
+        
+        // Debugging: Check if resources exist in the API response
+        console.log("Raw Subject Data:", rawSubject); 
+        
         return {
             ...rawSubject,
-            resources: groupResources(rawSubject.resources) 
+            // Ensure we pass an array, defaulting to empty if undefined
+            resources: groupResources(rawSubject.resources || []) 
         };
     }, [rawSubject]);
 
@@ -161,7 +164,9 @@ const SubjectDetailPage = () => {
     
     // Helpers for dropdowns
     const allSubCategories = subject.resources ? Object.keys(subject.resources) : [];
-    const allResourceTypes = rawSubject && rawSubject.resources 
+    
+    // Safely extract resource types
+    const allResourceTypes = rawSubject && Array.isArray(rawSubject.resources)
         ? [...new Set(rawSubject.resources.map(r => r.resourceType).filter(Boolean))]
         : [];
 
