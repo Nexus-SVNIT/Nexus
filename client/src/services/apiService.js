@@ -19,29 +19,23 @@ API.interceptors.request.use(
 );
 
 
-/* ---------------- RESPONSE ---------------- */
 API.interceptors.response.use(
-    (response) => response.data,   // simpler, don't wrap
+    (response) => response.data,
 
     (error) => {
         const status = error.response?.status;
 
-        /* ---- 401 → logout ---- */
+        console.log("Interceptor hit:", status);
+
         if (status === 401) {
-            console.warn("Session expired. Logging out...");
+            console.warn("Session expired → redirecting");
 
             localStorage.removeItem("token");
 
-            // safer than window.location.href
-            window.location.replace("/login");
+            window.location.pathname = "/login";
         }
 
-        /* ---- forward proper error ---- */
-        return Promise.reject({
-            message: error.response?.data?.message || "Something went wrong",
-            status,
-            original: error,
-        });
+        return Promise.reject(error);
     }
 );
 
