@@ -6,6 +6,7 @@ import Loader from "../Loader/Loader"; // Assuming you have a Loader component
 import UpcomingContests from "./UpcomingContests"; // Import the new component
 import { useSearchParams } from "react-router-dom";
 import increamentCounter from "../../libs/increamentCounter";
+import incrementCount from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import HeadTags from "../HeadTags/HeadTags";
 import NoticeBar from "./NoticeBar";

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import CountUp from 'react-countup';
-import axios from 'axios';
+// Removed unused axios import
 import { getCounter, incrementCounter } from '../../services/counterService';
 
 const Counter = ({ onComplete }) => {
@@ -9,11 +9,35 @@ const Counter = ({ onComplete }) => {
   const fetchCount = async () => {
     try {
       const response = await getCounter();
-      if(!response.success) {
+      
+      // DEBUG: See what the backend actually sends
+      console.log("FETCH COUNTER RESPONSE:", response);
+
+      // CASE 1: Response IS the data (e.g. { count: 123 } or just 123)
+      if (typeof response === 'number') {
+          setCount(response);
+          return;
+      }
+      if (response.count !== undefined) {
+          setCount(response.count);
+          return;
+      }
+
+      // CASE 2: Response is wrapped ({ success: true, data: 123 })
+      if (response.data !== undefined) {
+          setCount(response.data);
+          return;
+      }
+
+      // CASE 3: It failed (explicit success: false)
+      if (response.success === false) {
         console.error('Error fetching count:', response.message);
         return;
       }
-      setCount(response.data);
+      
+      // Fallback: If we got an object but no specific fields, maybe the object IS the data?
+      // But for counter, we need a number. Safer to do nothing or set 0.
+      
     } catch (error) {
       console.error('Error fetching count:', error);
     }
@@ -22,19 +46,37 @@ const Counter = ({ onComplete }) => {
   const incrementCount = async () => {
     try {
       const response = await incrementCounter();
-      if(!response.success) {
-        console.error('Error incrementing count:', response.message);
+      console.log("INCREMENT RESPONSE:", response);
+
+      // Same robust checks as above
+      if (typeof response === 'number') {
+        setCount(response);
         return;
       }
-      setCount(response.data);
+      if (response.count !== undefined) {
+        setCount(response.count);
+        return;
+      }
+      if (response.data !== undefined) {
+        setCount(response.data);
+        return;
+      }
+      
+      if (response.success === false) {
+        console.error('Error incrementing count:', response.message);
+      }
+
     } catch (error) {
       console.error('Error incrementing count:', error);
     }
   };
 
   useEffect(() => {
-    incrementCount();
-    fetchCount();
+    // Increment first, then just use that result. 
+    // No need to fetch immediately after if increment returns the new count.
+    incrementCount(); 
+    // You can keep fetchCount() if increment doesn't return the updated value
+    // fetchCount(); 
   }, []);
 
   return (

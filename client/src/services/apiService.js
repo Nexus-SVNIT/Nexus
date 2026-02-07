@@ -27,7 +27,7 @@ API.interceptors.response.use(
   (error) => {
     const status = error.response?.status;
 
-    console.log("Interceptor hit:", status);
+    
 
     
     if (status === 401 && !isRedirecting) {

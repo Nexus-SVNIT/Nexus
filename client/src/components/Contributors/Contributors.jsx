@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+// Removed unused imports
 import { FaGithub } from 'react-icons/fa';
 import { getContributors } from '../../services/contributorService';
 
@@ -11,21 +11,40 @@ const Contributors = () => {
         const fetchContributors = async () => {
             try {
                 const response = await getContributors();
+                console.log("CONTRIBUTORS RESPONSE:", response);
 
-                if(!response.success) {
+                // CASE 1: Response IS the data object (e.g. { "2024": [...], "2023": [...] })
+                // We check if it has keys that look like years, or just assume the object is the map if success is undefined
+                if (response && !response.success && !response.data && typeof response === 'object') {
+                    setContributorsByYear(response);
+                    setLoading(false);
+                    return;
+                }
+
+                // CASE 2: Wrapped response ({ success: true, data: { ... } })
+                if (response.data) {
+                     setContributorsByYear(response.data);
+                     setLoading(false);
+                     return;
+                }
+                
+                // CASE 3: Explicit failure
+                if(response.success === false) {
                     console.error('Error fetching contributors:', response.message);
                     return;
                 }
-                setContributorsByYear(response.data || {});
+                
+                // Fallback
+                setContributorsByYear(response || {});
                 setLoading(false);
+
             } catch (error) {
                 console.error('Error fetching contributors:', error);
+                setLoading(false);
             }
         };
 
-        fetchContributors().catch((error) => {
-            console.error('Error fetching contributors:', error);
-        });
+        fetchContributors();
     }, []);
 
     if (loading) {
@@ -63,16 +82,18 @@ const Contributors = () => {
                             {/* Year Header */}
                             <div className="flex items-baseline gap-4 mb-6">
                                 <h3 className="text-2xl font-bold text-white/90">{year}</h3>
+                                {/* Check if yearData has total, safely access it */}
                                 <div className="px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
                                     <span className="text-sm font-medium text-blue-400">
-                                        {yearData.total} commits
+                                        {yearData?.total || 0} commits
                                     </span>
                                 </div>
                             </div>
                             
                             {/* Contributors Grid */}
                             <div className="grid gap-3 md:grid-cols-2">
-                                {yearData.contributors
+                                {yearData?.contributors && Array.isArray(yearData.contributors) ? 
+                                    yearData.contributors
                                     .sort((a, b) => b.contributions - a.contributions)
                                     .map((contributor) => (
                                     <div key={contributor.githubId} 
@@ -101,7 +122,7 @@ const Contributors = () => {
                                             {contributor.contributions}
                                         </span>
                                     </div>
-                                ))}
+                                )) : <div className="text-gray-500">No contributors found for this year.</div>}
                             </div>
                         </div>
                     </div>
