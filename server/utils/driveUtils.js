@@ -1,6 +1,6 @@
 const { google } = require('googleapis');
-const fs = require('fs');
 const path = require('path');
+const { PassThrough } = require('stream');
 
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
@@ -32,7 +32,7 @@ const getCredentials = () => {
 const getDriveClient = () => {
   try {
     const credentials = getCredentials();
-    
+
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: SCOPES,
@@ -52,30 +52,36 @@ const getDriveClient = () => {
  * @param {String} folderId - Optional Google Drive folder ID to store the file in
  * @returns {Promise<Object>} Upload result with success status and fileId
  */
-const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER) => {
+const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER, admissionNumber) => {
   try {
     if (!req.file) {
       return { success: false, error: 'No file provided' };
     }
 
     const drive = getDriveClient();
-    
+
     // Create file metadata
     const fileMetadata = {
-      name: req.file.originalname || `image-${Date.now()}${path.extname(req.file.originalname || '')}`,
+      name: `${admissionNumber}-image-${Date.now()}${path.extname(req.file.originalname || '')}`,
       parents: folderId ? [folderId] : [] // Add to specific folder if provided
     };
 
-    // Create media object
-    const media = {
-      mimeType: req.file.mimetype,
-      body: fs.createReadStream(req.file.path)
-    };
+    // // Create media object
+    // const media = {
+    //   mimeType: req.file.mimetype,
+    //   body: fs.createReadStream(req.file.path)
+    // };
+
+    const bufferStream = new PassThrough();
+    bufferStream.end(req.file.buffer);
 
     // Upload file to Drive
     const response = await drive.files.create({
       requestBody: fileMetadata,
-      media: media,
+      media: {
+        mimeType: req.file.mimeType,
+        body: bufferStream,
+      },
       fields: 'id'
     });
 
@@ -88,10 +94,10 @@ const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIE
       }
     });
 
-    // Clean up temporary file
-    fs.unlink(req.file.path, (err) => {
-      if (err) console.error('Error deleting temp file:', err);
-    });
+    // // Clean up temporary file
+    // fs.unlink(req.file.path, (err) => {
+    //   if (err) console.error('Error deleting temp file:', err);
+    // });
 
     return { 
       success: true, 
@@ -117,7 +123,7 @@ const getFileFromDrive = async (fileId) => {
       fileId: fileId,
       fields: 'id, name, mimeType, webViewLink, webContentLink'
     });
-    
+
     return { success: true, file: response.data };
   } catch (error) {
     console.error('Error getting file from Drive:', error);
