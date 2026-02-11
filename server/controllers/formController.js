@@ -85,7 +85,7 @@ const submitResponse = async (req, res) => {
             if (!existingForm && formDetails.enableTeams) {
                 const teamMembers = JSON.parse(req.body.teamMembers);
                 req.body.teamMembers = teamMembers;
-
+                
                 // Verify each team member doesn't already exist in another team
                 for (const admissionNumber of teamMembers) {
                     const existingMemberForm = await Forms.findOne({
@@ -117,7 +117,7 @@ const submitResponse = async (req, res) => {
                 _id: id,
                 "responses.teamName": teamName
             });
-
+            
             if (existingTeam) {
                 return res.status(400).json({
                     success: false,
@@ -126,14 +126,14 @@ const submitResponse = async (req, res) => {
             }
         }
 
-
+        
 
         // Handle file upload if required
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
                 return res.status(400).json({ message: "File upload is required" });
             }
-
+            
             // Use driveUtils to upload file
             const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId, admissionNumber);
             if (!uploadResult.success) {
@@ -162,13 +162,13 @@ const submitResponse = async (req, res) => {
         // Extract fields for Google Sheet
         const resTeamName = body.teamName;
         delete body.teamName;
-
+        
         const resTeamMembers = body.teamMembers;
         delete body.teamMembers;
 
         const resFiles = body.files;
         delete body.files;
-
+        
         const resDate = body.dateTime;
         delete body.dateTime;
 
@@ -178,7 +178,7 @@ const submitResponse = async (req, res) => {
             if(admissionNumber){
                 userData = await User.findOne({admissionNumber});
             }
-
+            
             const values = Object.values({
                 admissionNumber,
                 name: userData?.fullName || 'Guest User',
@@ -187,16 +187,16 @@ const submitResponse = async (req, res) => {
                 branch: userData?.branch || 'N/A',
                 ...body,
             });
-
+            
             if(form.enableTeams){
                 values.push(resTeamName)
                 values.push(JSON.stringify(resTeamMembers))
             }
-
+            
             if(form.fileUploadEnabled){
                 values.push(`https://drive.google.com/file/d/${resFiles}/view`)
             }
-
+            
             values.push(new Date(resDate).toLocaleString())
 
             await sheets.spreadsheets.values.append({
@@ -253,7 +253,7 @@ const submitOpenResponse = async (req, res) => {
                 _id: id,
                 "responses.teamName": teamName
             });
-
+            
             if (existingTeam) {
                 return res.status(400).json({
                     success: false,
@@ -262,15 +262,15 @@ const submitOpenResponse = async (req, res) => {
             }
         }
 
-
+       
         // Handle file upload
         if (formDetails.fileUploadEnabled) {
             if (!req.file && !req.files?.file) {
                 return res.status(400).json({ message: "File upload is required" });
             }
-
+            
             // Use driveUtils to upload file
-            const uploadResult = await uploadImageToDrive(req, formDetails.driveFolderId);
+            const uploadResult = await uploadImageToDrive(req.files['formfile'][0], formDetails.driveFolderId);
             if (!uploadResult.success) {
                 return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
             }
@@ -297,7 +297,7 @@ const submitOpenResponse = async (req, res) => {
         // Extract fields for Google Sheet
         const resTeamName = body.teamName;
         delete body.teamName;
-
+        
         const resTeamMembers = body.teamMember;
         delete body.teamMembers;
 
@@ -318,7 +318,7 @@ const submitOpenResponse = async (req, res) => {
                 values.push(`https://drive.google.com/file/d/${resFiles}/view`)
             }
             values.push(new Date(resDate).toLocaleString())
-
+            
             await sheets.spreadsheets.values.append({
                 spreadsheetId: form.sheetId,
                 range: 'Sheet1',

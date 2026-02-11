@@ -32,7 +32,7 @@ const getCredentials = () => {
 const getDriveClient = () => {
   try {
     const credentials = getCredentials();
-
+    
     const auth = new google.auth.GoogleAuth({
       credentials,
       scopes: SCOPES,
@@ -52,17 +52,17 @@ const getDriveClient = () => {
  * @param {String} folderId - Optional Google Drive folder ID to store the file in
  * @returns {Promise<Object>} Upload result with success status and fileId
  */
-const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER, admissionNumber) => {
+const uploadImageToDrive = async (fileObj, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER_ID, admissionNumber) => {
   try {
-    if (!req.file) {
+    if (!fileObj) {
       return { success: false, error: 'No file provided' };
     }
 
     const drive = getDriveClient();
-
+    
     // Create file metadata
     const fileMetadata = {
-      name: `${admissionNumber}-image-${Date.now()}${path.extname(req.file.originalname || '')}`,
+      name: `${admissionNumber}-image-${Date.now()}${path.extname(fileObj.originalname || '')}`,
       parents: folderId ? [folderId] : [] // Add to specific folder if provided
     };
 
@@ -73,13 +73,13 @@ const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIE
     // };
 
     const bufferStream = new PassThrough();
-    bufferStream.end(req.file.buffer);
+    bufferStream.end(fileObj.buffer);
 
     // Upload file to Drive
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: {
-        mimeType: req.file.mimeType,
+        mimeType: fileObj.mimetype,
         body: bufferStream,
       },
       fields: 'id'
@@ -123,7 +123,7 @@ const getFileFromDrive = async (fileId) => {
       fileId: fileId,
       fields: 'id, name, mimeType, webViewLink, webContentLink'
     });
-
+    
     return { success: true, file: response.data };
   } catch (error) {
     console.error('Error getting file from Drive:', error);

@@ -1,4 +1,4 @@
-const fs = require('fs');
+
 const Achievement = require('../models/achievementModel');
 const userSchema = require('../models/userModel');
 const { sendEmail } = require('../utils/emailUtils');
@@ -42,9 +42,26 @@ const allAchievements = async (req, res) => {
 
 const addAchievement = async (req, res) => {
     try {
-        const uploadResult = await uploadImageToDrive(req);
-        if (!uploadResult.success) {
-            return res.status(500).json({ message: `Error uploading file: ${uploadResult.error}` });
+        if (!req.user || !req.user.admissionNumber){
+            return res.status(401).json({
+                message: "User not authenticated or invalid token."
+            });
+        }
+        const imageFile = req.files && req.files['image'] ? req.files['image'][0] : null;
+        const proofFile = req.files && req.files['proof'] ? req.files['proof'][0] : null;
+
+        if (!imageFile || !proofFile) {
+            return res.status(400).json({ message: 'Image and proof files are required' });
+        }
+        
+        const imageUploadResult = await uploadImageToDrive(imageFile, undefined, req.user.admissionNumber);
+        const proofUploadResult = await uploadImageToDrive(proofFile, undefined, req.user.admissionNumber);
+
+        if (!imageUploadResult.success) {
+            return res.status(500).json({ message: `Error uploading file: ${imageUploadResult.error}` });
+        }
+        if (!proofUploadResult.success) {
+            return res.status(500).json({ message: `Error uploading file: ${proofUploadResult.error}` });
         }
 
         // Parse teamMembers and ensure it's an array of strings (admission numbers)
@@ -54,8 +71,8 @@ const addAchievement = async (req, res) => {
             admissionNumber: req.user.admissionNumber,
             teamMembers: teamMembersArray,
             desc: req.body.desc,
-            image: uploadResult.fileId,
-            proof: req.body.proof,
+            image: imageUploadResult.fileId,
+            proof: `https://drive.google.com/file/d/${proofUploadResult.fileId}`,
         };
 
         await Achievement.create(achievement);
@@ -71,7 +88,10 @@ const addAchievement = async (req, res) => {
             ...emailContent
         });
 
-        return res.status(200).json({ message: "Waiting for Review" });
+        return res.status(200).json({ 
+            success: true,
+            message: "Waiting for Review" 
+        });
     } catch (err) {
         console.error('Error adding achievement:', err.message);
         return res.status(500).json({ message: "Error adding achievement", error: err.message });
