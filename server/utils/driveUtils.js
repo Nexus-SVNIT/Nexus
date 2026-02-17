@@ -1,6 +1,7 @@
 const { google } = require('googleapis');
+const fs = require('fs');
 const path = require('path');
-const { PassThrough } = require('stream');
+const { Readable, PassThrough } = require('stream');
 
 // Initialize Google Drive API
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
@@ -52,9 +53,9 @@ const getDriveClient = () => {
  * @param {String} folderId - Optional Google Drive folder ID to store the file in
  * @returns {Promise<Object>} Upload result with success status and fileId
  */
-const uploadImageToDrive = async (fileObj, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER_ID, admissionNumber) => {
+const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIEVEMENTS_FOLDER, admissionNumber) => {
   try {
-    if (!fileObj) {
+    if (!req.file) {
       return { success: false, error: 'No file provided' };
     }
 
@@ -62,7 +63,7 @@ const uploadImageToDrive = async (fileObj, folderId = process.env.GOOGLE_DRIVE_A
     
     // Create file metadata
     const fileMetadata = {
-      name: `${admissionNumber}-image-${Date.now()}${path.extname(fileObj.originalname || '')}`,
+      name: `${admissionNumber}-image-${Date.now()}${path.extname(req.file.originalname || '')}` || req.file.originalname,
       parents: folderId ? [folderId] : [] // Add to specific folder if provided
     };
 
@@ -73,13 +74,13 @@ const uploadImageToDrive = async (fileObj, folderId = process.env.GOOGLE_DRIVE_A
     // };
 
     const bufferStream = new PassThrough();
-    bufferStream.end(fileObj.buffer);
+    bufferStream.end(req.file.buffer);
 
     // Upload file to Drive
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: {
-        mimeType: fileObj.mimetype,
+        mimeType: req.file.mimeType,
         body: bufferStream,
       },
       fields: 'id'
