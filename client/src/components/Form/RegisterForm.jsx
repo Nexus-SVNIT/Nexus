@@ -197,6 +197,16 @@ const RegisterForm = () => {
         sessionStorage.removeItem("teamMembers");
         sessionStorage.removeItem("teamName");
         sessionStorage.removeItem("filePreview");
+      } else if (response.data.message === "Already Registered.") {
+        setFlag(true);
+        setLink(response.data.WaLink || "NA");
+        toast.success("You are already registered!");
+
+        // Clear storage
+        sessionStorage.removeItem("formResponse");
+        sessionStorage.removeItem("teamMembers");
+        sessionStorage.removeItem("teamName");
+        sessionStorage.removeItem("filePreview");
       } else {
         handleFormError(response.data);
       }
@@ -213,9 +223,6 @@ const RegisterForm = () => {
       setTimeout(() => {
         setGotoLogin(true);
       }, 2000);
-    } else if (res.message === "Already Registered.") {
-      toast.error("Already Registered!");
-      setFormResponse({});
     } else if (res.message === "Team Name already exists.") {
       toast.error("Team Name already exists.");
     } else if (res.message.startsWith("The deadline has")) {
