@@ -6,46 +6,44 @@ import AlumnusBadge from "./AlumniBadge";
 // ADDED: Import the centralized API service
 import API from "../../services/apiService"; 
 
-const ProfilePage = ({ profile, setProfile, setErr }) => {
+const ProfilePage = ({ profile, setProfile }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [buttonLoading, setButtonLoading] = useState(false); 
   const navigate = useNavigate();
 
   const [expertiseInput, setExpertiseInput] = useState("");
 
   useEffect(() => {
-    if (profile.expertise && Array.isArray(profile.expertise)) {
+    if (profile?.expertise && Array.isArray(profile.expertise)) {
       setExpertiseInput(profile.expertise.join(", "));
     }
-  }, [profile.isAlumni, profile.expertise]);
+  }, [profile?.isAlumni, profile?.expertise]);
+
+  const fetchUserData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await API.get("/user/profile");
+      
+      if (response.success) {
+          setProfile(response.data);
+      } else {
+          console.error("Error fetching data:", response.message);
+          setError(response.message || "Error fetching profile data.");
+          toast.error(response.message || "Error fetching profile data.");
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Failed to load profile data. Please try again.");
+      toast.error("Error fetching profile data.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        // CHANGED: Use API.get instead of axios.get
-        // No need to pass headers manually; the interceptor does it.
-        const response = await API.get("/user/profile");
-        
-        // CHECK SUCCESS FLAG (from apiService)
-        if (response.success) {
-            setProfile(response.data);
-            setLoading(false);
-        } else {
-            console.error("Error fetching data:", response.message);
-            setLoading(false);
-            // Pass the error message or object to parent
-            setErr(response.message); 
-            toast.error(response.message || "Error fetching profile data.");
-        }
-
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        setLoading(false);
-        setErr(error);
-        toast.error("Error fetching profile data.");
-      }
-    };
 
     fetchUserData();
   }, []); // Removed dependency array warning by keeping it empty as intended for mount
@@ -72,7 +70,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       codeforcesProfile,
       codechefProfile,
       isAlumni,
-    } = profile;
+    } = profile || {};
 
     const emailPattern = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/;
 
@@ -80,11 +78,11 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       toast.error("Full Name is required");
       return false;
     }
-    if (!mobileNumber.match(/^[0-9]{10}$/)) {
+    if (mobileNumber && !mobileNumber.match(/^[0-9]{10}$/)) {
       toast.error("Invalid Mobile Number");
       return false;
     }
-    if (!personalEmail.match(emailPattern)) {
+    if (personalEmail && !personalEmail.match(emailPattern)) {
       toast.error("Invalid Personal Email");
       return false;
     }
@@ -159,7 +157,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
       if (validateForm()) {
         let updatedProfile = { ...profile };
 
-        if (profile.isAlumni) {
+        if (profile?.isAlumni) {
           const expertiseArray = expertiseInput
             .split(',')
             .map((exp) => exp.trim())
@@ -215,13 +213,35 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="space-y-8">
+        <div className="rounded-lg bg-zinc-800/50 border border-red-500/30 p-6 backdrop-blur-sm">
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <svg className="h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <p className="text-red-400 text-lg font-medium mb-2">Failed to load profile data</p>
+            <p className="text-gray-500 text-sm mb-4">{error}</p>
+            <button
+              onClick={fetchUserData}
+              className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Profile Form Box */}
       <div className="rounded-lg bg-zinc-800/50 border border-zinc-700/50 p-6 backdrop-blur-sm">
         <div className="flex justify-between items-center mb-6">
           <h3 className="text-xl font-semibold text-gray-200">Personal Information</h3>
-          {profile['isAlumni'] && <AlumnusBadge/>}
+          {profile?.isAlumni && <AlumnusBadge/>}
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <Toaster />
@@ -230,7 +250,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="text"
               name="fullName"
-              value={profile.fullName}
+              value={profile?.fullName || ""}
               onChange={handleChange}
               disabled={!isEditing}
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -241,7 +261,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="text"
               name="admissionNumber"
-              value={profile.admissionNumber}
+              value={profile?.admissionNumber || ""}
               disabled
               className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
             />
@@ -251,7 +271,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="text"
               name="mobileNumber"
-              value={profile.mobileNumber}
+              value={profile?.mobileNumber || ""}
               onChange={handleChange}
               disabled={!isEditing}
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -262,19 +282,19 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="email"
               name="personalEmail"
-              value={profile.personalEmail}
+              value={profile?.personalEmail || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
-          {!profile['isAlumni'] && (
+          {!profile?.isAlumni && (
             <div>
               <label className="text-gray-700 block">Institute Email</label>
               <input
                 type="email"
                 name="instituteEmail"
-                value={profile.instituteEmail}
+                value={profile?.instituteEmail || ""}
                 disabled
                 className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
               />
@@ -283,9 +303,9 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
           <div>
             <label className="text-gray-700 block">Branch</label>
             <select name="branch"
-              value={profile.branch}
+              value={profile?.branch || ""}
               onChange={handleChange}
-              disabled            
+              disabled           
               className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white">
                 <option value="CSE">CSE/COE</option>
                 <option value="AI">AI</option>
@@ -296,20 +316,20 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="url"
               name="linkedInProfile"
-              value={profile.linkedInProfile}
+              value={profile?.linkedInProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
             />
           </div>
-          {profile['isAlumni'] && (
+          {profile?.isAlumni && (
             <>
               <div>
                 <label className="text-gray-700 block">Current Company</label>
                 <input
                   type="text"
                   name="currentCompany"
-                  value={profile.currentCompany}
+                  value={profile?.currentCompany || ""}
                   onChange={handleChange}
                   disabled={!isEditing}                
                   className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -320,7 +340,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
                 <input
                   type="text"
                   name="currentDesignation"
-                  value={profile.currentDesignation}
+                  value={profile?.currentDesignation || ""}
                   onChange={handleChange}
                   disabled={!isEditing}                
                   className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -344,7 +364,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <input
               type="url"
               name="githubProfile"
-              value={profile.githubProfile}
+              value={profile?.githubProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -354,7 +374,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <label className="text-gray-700 block">LeetCode Profile (Only ID not Link)</label>
             <input
               name="leetcodeProfile"
-              value={profile.leetcodeProfile}
+              value={profile?.leetcodeProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -364,7 +384,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <label className="text-gray-700 block">Codeforces Profile (Only ID not Link)</label>
             <input
               name="codeforcesProfile"
-              value={profile.codeforcesProfile}
+              value={profile?.codeforcesProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -374,7 +394,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
             <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>
             <input
               name="codechefProfile"
-              value={profile.codechefProfile}
+              value={profile?.codechefProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}
               className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
@@ -385,7 +405,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               <input
                 type="checkbox"
                 name="subscribed" 
-                checked={profile.subscribed}
+                checked={!!profile?.subscribed}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="mr-2"
@@ -398,7 +418,7 @@ const ProfilePage = ({ profile, setProfile, setErr }) => {
               <input
                 type="checkbox"
                 name="shareCodingProfile" 
-                checked={profile.shareCodingProfile}
+                checked={!!profile?.shareCodingProfile}
                 onChange={handleChange}
                 disabled={!isEditing}
                 className="mr-2"
