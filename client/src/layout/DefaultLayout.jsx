@@ -5,7 +5,7 @@ import CustomSideBar from "../components/SideNavigationBar/SideBar";
 
 const DefaultLayout = () => {
   return (
-    <div className="">
+    <div className="bg-black min-h-screen">
       <div className="hidden md:block">
         <CustomSideBar />
       </div>

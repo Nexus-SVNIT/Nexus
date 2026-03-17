@@ -29,11 +29,16 @@
 * {
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
   box-sizing: border-box;
   left: 0;
   right: 0;
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+}
+
+html,
+body {
+  background-color: #000000;
+  min-height: 100%;
 }
 
 ::-webkit-scrollbar {
@@ -252,4 +257,13 @@ span.flatpickr-weekday,
 
 [x-cloak] {
   display: none !important;
+}
+
+/* Fade-in animation for step transitions */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }

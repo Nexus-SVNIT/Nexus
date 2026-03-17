@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { lazy } from "react";
 import { Toaster } from "react-hot-toast";
+import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import {
   Navigate,
   Route,
@@ -29,7 +30,7 @@ const token = localStorage.getItem("token");
 function App() {
  
   return (
-    <>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothTouch: true }}>
       <QueryClientProvider client={queryClient}>
         <Router>
           <Routes>
@@ -81,8 +82,7 @@ function App() {
         </Router>
       </QueryClientProvider>
       <FloatingReportButton />
-      
-    </>
+    </ReactLenis>
   );
 }
 
