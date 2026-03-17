@@ -434,7 +434,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                   className="rounded-md bg-blue-500 px-4 py-2 text-white"
                   disabled={buttonLoading} 
                 >
-                  {buttonLoading ? "Saving..." : "Save"} 
+                  {buttonLoading ? "Verifying & Saving..." : "Save"} 
                 </button>
                 <button
                   type="button"
