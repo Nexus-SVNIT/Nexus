@@ -243,15 +243,16 @@ const Terminal = () => {
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 ">
-      <h2 className="text-2xl font-semibold">$ Nexus Terminal</h2>
-      <p className="text-gray-400 text-base md:text-[1.25rem]">
+      <h2 className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-2xl font-semibold text-transparent">$ Nexus Terminal</h2>
+      <p className="text-gray-500 text-sm md:text-base">
         Interact to know more about Nexus...
       </p>
-      <div className="flex h-[50vh] w-[90%] flex-col overflow-y-auto rounded-2xl bg-white/95 text-black md:h-[75vh] md:w-[70vw] ">
-        <div className="flex h-10 list-none items-center gap-2 bg-black/25 pl-6">
-          <li className="h-4 w-4 rounded-full bg-red-600"></li>
-          <li className="h-4 w-4 rounded-full bg-yellow-300"></li>
-          <li className="h-4 w-4 rounded-full bg-green-600"></li>
+      <div className="flex h-[50vh] w-[90%] flex-col overflow-y-auto rounded-2xl border border-zinc-700/50 bg-zinc-900/95 text-gray-200 shadow-2xl shadow-blue-500/5 md:h-[75vh] md:w-[70vw] ">
+        <div className="flex h-10 list-none items-center gap-2 rounded-t-2xl bg-zinc-800 pl-6">
+          <li className="h-3 w-3 rounded-full bg-red-500/80"></li>
+          <li className="h-3 w-3 rounded-full bg-yellow-400/80"></li>
+          <li className="h-3 w-3 rounded-full bg-green-500/80"></li>
+          <span className="ml-4 text-xs text-gray-500 font-mono">nexus-terminal</span>
         </div>
 
         <div ref={scrollContainerRef} className="flex-1 overflow-y-auto">
@@ -259,23 +260,22 @@ const Terminal = () => {
           {prevCommands.map((command, index) => (
             <div
               key={index}
-              className="text-orange-500 px-4 py-2 font-semibold"
+              className="px-4 py-2 font-mono"
             >
               <div className="mb-0.5">
-                <p className="text-orange-500 text-xs md:text-base">
-                  SVNIT/DoCSE \& DoAI/Nexus/User:~${command.input}
+                <p className="text-green-400 text-xs md:text-sm">
+                  <span className="text-blue-400">SVNIT/DoCSE \& DoAI/Nexus</span><span className="text-gray-500">/User:~$</span> <span className="text-gray-200">{command.input}</span>
                 </p>
               </div>
-              {/* <div className='mt-0.5'><p>{command.output}</p></div> */}
-              {command.output}
+              <div className="text-gray-300">{command.output}</div>
             </div>
           ))}
 
           {/* Form for new input */}
           <form onSubmit={handleTerminalSubmit}>
-            <div className="text-orange-500 flex px-4 py-2 font-semibold ">
-              <p className="text-orange-500 text-xs md:text-base">
-                SVNIT/DoCSE \& DoAI/Nexus/User:~$
+            <div className="flex px-4 py-2 font-mono items-center">
+              <p className="text-xs md:text-sm whitespace-nowrap">
+                <span className="text-blue-400">SVNIT/DoCSE \& DoAI/Nexus</span><span className="text-gray-500">/User:~$</span>
               </p>
               <input
                 type="text"
@@ -283,7 +283,7 @@ const Terminal = () => {
                 value={input}
                 onChange={handleInputChange}
                 onKeyDown={handleInputKeyDown}
-                className="ml-1 w-full basis-1/2 border-none bg-transparent text-xs outline-none md:text-base"
+                className="ml-2 w-full border-none bg-transparent text-xs text-green-400 outline-none placeholder-gray-600 caret-green-400 md:text-sm font-mono"
               />
             </div>
           </form>
@@ -296,8 +296,8 @@ const Terminal = () => {
 // Components
 
 const HelpMessage = () => (
-  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
-    <p>
+  <div className="mt-1 flex flex-col gap-1.5 text-xs md:text-sm font-mono">
+    <p className="text-gray-400">
       The Nexus Terminal lets you navigate the website via command-line
       interface. Use the following commands:
     </p>
@@ -316,16 +316,15 @@ const HelpMessage = () => (
       ["nexus about", "About Nexus"],
     ].map(([cmd, desc], i) => (
       <div key={i} className="flex gap-4">
-        <span>{cmd}</span>
-        <span>{desc}</span>
+        <span className="text-green-400 min-w-[10rem]">{cmd}</span>
+        <span className="text-gray-400">{desc}</span>
       </div>
     ))}
   </div>
 );
 
 const PageList = () => (
-  // list of all pages of nexus
-  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
+  <div className="mt-1 flex flex-col gap-1.5 text-xs md:text-sm font-mono">
     {[
       ["cd home", "You are here"],
       "cd team",
@@ -340,18 +339,18 @@ const PageList = () => (
     ].map((item, i) =>
       Array.isArray(item) ? (
         <div key={i} className="flex gap-4">
-          <span className="text-teal-300">{item[0]}</span>
-          <span>{item[1]}</span>
+          <span className="text-cyan-400">{item[0]}</span>
+          <span className="text-gray-500">{item[1]}</span>
         </div>
       ) : (
-        <div key={i}>{item}</div>
+        <div key={i} className="text-cyan-400">{item}</div>
       ),
     )}
   </div>
 );
 
 const AboutMessage = () => (
-  <div className="mt-0.5 flex flex-col gap-2 text-xs md:text-sm">
+  <div className="mt-1 flex flex-col gap-2 text-xs md:text-sm text-gray-300 font-mono">
     <p>
       Nexus is the buzzing hub for computer science minds at SVNIT Surat. We
       bring together CSE and AI students who are passionate about tech,
@@ -371,8 +370,8 @@ const AboutMessage = () => (
 );
 
 const ErrorMsg = ({ text }) => (
-  <div className="mt-0.5 text-red-900">
-    <p>{text}</p>
+  <div className="mt-1 font-mono">
+    <p className="text-red-400">Error: {text}</p>
   </div>
 );
 
