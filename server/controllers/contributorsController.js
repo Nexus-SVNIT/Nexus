@@ -30,7 +30,8 @@ const getContributors = async (req, res) => {
                 const yearData = commitsByYear[currentYear];
                 await contributorsSchema.findOneAndUpdate(
                     { year: currentYear },
-                    { total: yearData.total, contributors: yearData.contributors }
+                    { total: yearData.total, contributors: yearData.contributors },
+                    { upsert: true }
                 );
             }
         }
