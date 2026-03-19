@@ -54,8 +54,8 @@ const addAchievement = async (req, res) => {
             return res.status(400).json({ message: 'Image and proof files are required' });
         }
         
-        const imageUploadResult = await uploadImageToDrive(imageFile, undefined, req.user.admissionNumber);
-        const proofUploadResult = await uploadImageToDrive(proofFile, undefined, req.user.admissionNumber);
+        const imageUploadResult = await uploadImageToDrive({ file: imageFile }, undefined, req.user.admissionNumber);
+        const proofUploadResult = await uploadImageToDrive({ file: proofFile }, undefined, req.user.admissionNumber);
 
         if (!imageUploadResult.success) {
             return res.status(500).json({ message: `Error uploading file: ${imageUploadResult.error}` });

@@ -1,22 +1,12 @@
 import React, { useState } from "react";
-import { GrFormView } from "react-icons/gr";
-
-import Button from "@mui/joy/Button";
 import Modal from "@mui/joy/Modal";
-import ModalClose from "@mui/joy/ModalClose";
-import Typography from "@mui/joy/Typography";
-import Sheet from "@mui/joy/Sheet";
 import ProfileDetail from "./ProfileDetail";
 
 const Profile = ({ profile }) => {
-  
   const [open, setOpen] = useState(false);
-  const toggleOpen = () => {
-    setOpen((state) => !state);
-  };
+
   return (
     <>
-
       <Modal
         aria-describedby="modal-desc"
         open={open}
@@ -30,29 +20,42 @@ const Profile = ({ profile }) => {
         <ProfileDetail profile={profile} />
       </Modal>
 
-      <div className="group relative flex w-72 cursor-pointer flex-col items-center justify-center rounded-2xl border border-zinc-800/60 bg-zinc-900/40 p-6 py-8 shadow-xl backdrop-blur-md transition-all duration-300 hover:-translate-y-2 hover:border-blue-500/40 hover:bg-zinc-800/40 hover:shadow-2xl hover:shadow-blue-900/20">
-        <span
-          className="absolute left-0 top-0 flex items-center justify-center w-fit rounded-br-2xl rounded-tl-2xl bg-gradient-to-br from-blue-600 to-indigo-600 opacity-0 transition-opacity duration-300 group-hover:opacity-100 shadow-lg text-white p-1"
-          title="View Profile"
-          onClick={(e) => setOpen(true)}
-        >
-          <GrFormView size={36} />
-        </span>
-        <div className="relative mb-4">
-          <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-blue-500 to-emerald-500 opacity-20 blur group-hover:opacity-60 transition duration-300"></div>
+      <div 
+        className="group w-full relative flex cursor-pointer flex-col items-center overflow-hidden rounded-2xl border border-zinc-800/60 bg-[#09090b]/80 p-6 shadow-xl backdrop-blur-md transition-all duration-500 hover:-translate-y-1 hover:border-cyan-500/30 hover:bg-zinc-900 hover:shadow-[0_8px_30px_rgba(34,211,238,0.12)]"
+        onClick={() => setOpen(true)}
+      >
+        {/* Top Accent Line */}
+        <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-blue-500 to-cyan-400 opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        
+        {/* Background glow on hover */}
+        <div className="absolute inset-0 bg-gradient-to-b from-cyan-500/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 pointer-events-none" />
+
+        <div className="relative mb-6 mt-4 pointer-events-none">
+          <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-cyan-500 to-blue-500 opacity-0 blur-md transition-opacity duration-500 group-hover:opacity-40"></div>
           <img
             src={profile.ImageLink}
             alt="profile"
-            className="relative h-44 w-44 rounded-full object-cover object-center ring-2 ring-zinc-800/50 group-hover:ring-blue-500/50 transition-all duration-300"
+            className="relative h-32 w-32 rounded-full object-cover shadow-lg ring-1 ring-zinc-700/50 transition-all duration-500 group-hover:ring-cyan-500/50"
           />
         </div>
-        <div className="mt-2 flex flex-col items-center justify-center gap-1.5 text-center">
-          <p className="text-xl font-bold tracking-wide text-zinc-100 group-hover:text-white transition-colors">
+        
+        <div className="flex flex-col items-center text-center space-y-1 z-10 w-full px-2 pointer-events-none">
+          <h3 className="text-lg font-bold tracking-tight text-zinc-100 transition-colors duration-300 group-hover:text-cyan-300 truncate w-full">
             {profile['Name']}
-          </p>
-          <p className="line-clamp-2 text-sm font-medium text-blue-400/90 leading-snug">
+          </h3>
+          <p className="text-sm font-medium text-cyan-500/80 truncate w-full">
             {profile['Current Role']}
           </p>
+        </div>
+
+        {/* View Details Button overlay */}
+        <div className="mt-6 w-full opacity-0 transform translate-y-4 transition-all duration-500 group-hover:opacity-100 group-hover:translate-y-0">
+          <button
+            onClick={(e) => { e.stopPropagation(); setOpen(true); }}
+            className="w-full rounded-xl bg-zinc-800/80 hover:bg-zinc-700 py-2.5 text-sm font-semibold text-white transition-colors border border-zinc-700 hover:border-zinc-600 shadow-sm"
+          >
+            View Profile
+          </button>
         </div>
       </div>
     </>

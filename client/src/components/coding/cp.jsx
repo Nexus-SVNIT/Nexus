@@ -212,9 +212,9 @@ const Cp = () => {
           <Loader />
         </div>
       ) : (
-        <>
+        <div className="w-full flex flex-col gap-8 max-w-[90rem] mx-auto px-4 md:px-0">
           <NoticeBar />
-          <div className="bg-gray-800 mt-12 rounded-lg p-6 pt-0 shadow-lg">
+          <div className="w-full flex flex-col gap-6">
             {/* Upcoming Contests Component */}
             <UpcomingContests />
             {/*             
@@ -237,22 +237,18 @@ const Cp = () => {
             </div> 
             */}
 
-            <h1 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold  text-blue-400">
-              Coding Profile Leaderboard
-            </h1>
-
-            {/* Search and Filter Controls */}
-            <FilterSection
-              activePlatform={activePlatform}
-              searchParams={searchParams}
-              setSearchParams={setSearchParams}
-            />
-
-            {/* Platform Toggle Buttons */}
-            <PlateformButtons
-              handlePlatformChange={handlePlatformChange}
-              activePlatform={activePlatform}
-            />
+            {/* Platform Toggle and Search Filters wrapper matches Screenshot 3 where they are adjacent/styled */}
+            <div className="flex flex-col xl:flex-row w-full gap-4 xl:items-center xl:justify-between mb-2">
+              <FilterSection
+                activePlatform={activePlatform}
+                searchParams={searchParams}
+                setSearchParams={setSearchParams}
+              />
+              <PlateformButtons
+                handlePlatformChange={handlePlatformChange}
+                activePlatform={activePlatform}
+              />
+            </div>
 
             {activePlatform === "codeforces" && (
               <>
@@ -268,9 +264,6 @@ const Cp = () => {
 
             {activePlatform === "leetcode" && (
               <>
-                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-                  LeetCode Leaderboard
-                </h2>
                 <RatingLegend platform="leetcode" />
                 <SortableTable
                   columns={columns.leetcode}
@@ -283,9 +276,6 @@ const Cp = () => {
 
             {activePlatform === "codechef" && (
               <>
-                <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-                  CodeChef Leaderboard
-                </h2>
                 <RatingLegend platform="codechef" />
                 <SortableTable
                   columns={columns.codechef}
@@ -296,7 +286,7 @@ const Cp = () => {
               </>
             )}
           </div>
-        </>
+        </div>
       )}
     </div>
   );

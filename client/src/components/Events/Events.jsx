@@ -94,7 +94,7 @@ const Events = () => {
   }
 
   return (
-    <div className="mx-auto overflow-hidden bg-[#111] pb-20 md:pb-48">
+    <div className="mx-auto overflow-hidden bg-black pb-20 md:pb-48">
       <HeadTags
         title="Events | Nexus - NIT Surat"
         description="Nexus Events page. Stay updated with the latest events happening at Nexus, NIT Surat."
@@ -210,12 +210,12 @@ const LoadingPlaceholders = () => (
       <li key={index}>
         <div className="timeline-content">
           <div className="date">
-            <p className="h-6 w-44 animate-pulse rounded-sm bg-slate-500" />
-            <span className="btn h-6 w-20 animate-pulse bg-slate-500 text-xs" />
+            <p className="h-6 w-44 animate-pulse rounded-sm bg-zinc-700" />
+            <span className="btn h-6 w-20 animate-pulse bg-zinc-700 text-xs" />
           </div>
-          <span className="h-6 w-44 animate-pulse rounded-md bg-slate-500" />
-          <p className="h-40 w-full animate-pulse rounded-md bg-slate-500" />
-          <div className="mt-4 min-h-[20rem] w-full animate-pulse rounded-md bg-slate-500" />
+          <span className="h-6 w-44 animate-pulse rounded-md bg-zinc-700" />
+          <p className="h-40 w-full animate-pulse rounded-md bg-zinc-700" />
+          <div className="mt-4 min-h-[20rem] w-full animate-pulse rounded-md bg-zinc-700" />
         </div>
       </li>
     ))}

@@ -38,16 +38,20 @@ const Counter = ({ onComplete }) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center justify-center p-4">
-      <h2 className="mb-2 text-lg font-medium tracking-wide text-zinc-400">VISITOR COUNT</h2>
-      <div className="mb-2 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-4xl font-bold text-transparent drop-shadow-lg md:text-5xl">
-        <CountUp
-          end={count}
-          duration={2.5}
-          separator=","
-          enableScrollSpy
-          onEnd={onComplete}
-        />
+    <div className="rounded-2xl border border-zinc-700/40 bg-zinc-900/40 px-8 py-5 backdrop-blur-md shadow-lg">
+      <div className="flex flex-col items-center justify-center">
+        <h2 className="mb-2 text-xs font-semibold uppercase tracking-[0.25em] text-zinc-500">
+          Visitor Count
+        </h2>
+        <div className="bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-4xl font-bold text-transparent drop-shadow-lg md:text-5xl">
+          <CountUp
+            end={count}
+            duration={2.5}
+            separator=","
+            enableScrollSpy
+            onEnd={onComplete}
+          />
+        </div>
       </div>
     </div>
   );

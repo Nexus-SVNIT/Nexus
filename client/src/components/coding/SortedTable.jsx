@@ -146,12 +146,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
   const isNexusRanking = rankingScheme === "nexus";
 
   return (
-    <div className="mb-16 overflow-x-auto px-10">
+    <div className="mb-16 w-full overflow-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]">
       <table
         {...getTableProps()}
-        className="bg-gray-800 mb-4 mt-4 min-w-full rounded-lg text-sm sm:text-base"
+        className="min-w-full text-left text-sm text-zinc-300 border-collapse"
       >
-        <thead className="text-xs uppercase text-blue-400 sm:text-sm">
+        <thead className="bg-[#09090b] text-[0.7rem] uppercase tracking-widest text-zinc-500 border-b border-zinc-800/60 font-semibold">
           {headerGroups.map((headerGroup, idx) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id || idx}>
               {headerGroup.headers.map((column) => (
@@ -211,7 +211,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               <tr
                 {...row.getRowProps()}
                 key={key}
-                className="hover:bg-gray-700/50 text-gray-200 transition duration-200 ease-in-out"
+                className="hover:bg-zinc-900/40 transition-colors border-b border-zinc-800/40 last:border-0"
               >
                 {row.cells.map((cell) => (
                   <td
@@ -243,9 +243,9 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
           })}
         </tbody>
       </table>
-      {/* Updated Pagination Controls */}
-      <div className="mt-6 flex flex-col items-center justify-between gap-4 px-4 sm:flex-row">
-        <div className="bg-gray-800 flex items-center gap-3 rounded-lg p-3">
+      {/* Refined Minimalist Pagination */}
+      <div className="bg-[#09090b] border-t border-zinc-800/60 px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+        <div className="flex items-center gap-1">
           <button
             onClick={() => {
               const params = new URLSearchParams(searchParams);
@@ -253,9 +253,9 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
-            {"<<"}
+            First
           </button>
           <button
             onClick={() => {
@@ -264,13 +264,15 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
-            {"<"}
+            Prev
           </button>
-          <span className="mx-2">
-            Page <strong>{currentPage}</strong>
-          </span>
+          
+          <div className="flex items-center justify-center px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-zinc-800 rounded-md">
+            Page <strong className="text-white mx-1">{currentPage}</strong> of <strong className="text-white mx-1">{Math.ceil(data.length / currentPageSize) || 1}</strong>
+          </div>
+
           <button
             onClick={() => {
               const params = new URLSearchParams(searchParams);
@@ -278,13 +280,13 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               setSearchParams(params);
             }}
             disabled={data.length < currentPageSize}
-            className="disabled:bg-gray-700 disabled:text-gray-500 rounded-md bg-blue-600 px-3 py-2 transition-colors hover:bg-blue-700"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
-            {">"}
+            Next
           </button>
         </div>
 
-        <div className="bg-gray-800 flex items-center gap-2 rounded-lg p-3">
+        <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
           <span>Show</span>
           <select
             value={currentPageSize}
@@ -294,10 +296,10 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               params.set("page", "1"); // Reset to first page when changing page size
               setSearchParams(params);
             }}
-            className="text-gray-200 border-gray-700 rounded border bg-slate-950 px-2 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="appearance-none rounded border border-zinc-800 bg-[#09090b] px-2 py-1 text-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors outline-none cursor-pointer text-center"
           >
             {[10, 20, 30, 40, 50].map((size) => (
-              <option key={size} value={size} className="bg-transparent">
+              <option key={size} value={size} className="bg-[#09090b] text-center">
                 {size}
               </option>
             ))}

@@ -53,21 +53,32 @@ const CodingProfile = ({
   }, [leetcodeProfile, codeforcesProfile, codechefProfile]);
 
   if (loading) {
-    return <div className="text-white">Loading...</div>;
+    return (
+      <div className="space-y-4 p-4">
+        {Array(3).fill().map((_, i) => (
+          <div key={i} className="space-y-3">
+            <div className="h-5 w-32 animate-pulse rounded bg-zinc-700" />
+            <div className="h-24 w-24 animate-pulse rounded-full bg-zinc-700" />
+            <div className="h-4 w-48 animate-pulse rounded bg-zinc-700" />
+            <div className="h-4 w-40 animate-pulse rounded bg-zinc-700" />
+          </div>
+        ))}
+      </div>
+    );
   }
 
   if (error) {
     return (
-      <div className="rounded-lg p-6 text-white">
+      <div className="rounded-xl border border-red-500/20 bg-zinc-900/40 p-6">
         <div className="flex flex-col items-center justify-center py-8 text-center">
-          <svg className="h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="h-10 w-10 text-red-400/80 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
           </svg>
-          <p className="text-red-400 text-lg font-medium mb-2">Failed to load coding profiles</p>
-          <p className="text-gray-500 text-sm mb-4">{error}</p>
+          <p className="text-red-400 text-lg font-medium mb-1">Failed to load coding profiles</p>
+          <p className="text-zinc-500 text-sm mb-4">{error}</p>
           <button
             onClick={fetchData}
-            className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 transition-colors"
+            className="rounded-lg bg-blue-600 px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700"
           >
             Retry
           </button>
@@ -91,8 +102,25 @@ const CodingProfile = ({
   
   const codechefUser = Array.isArray(codechefData) ? codechefData[0] : null;
 
+  // Empty state: no coding profiles set
+  const hasAnyProfile = leetcodeUser || codeforcesProfileData || codechefUser;
+
+  if (!hasAnyProfile) {
+    return (
+      <div className="rounded-xl border border-zinc-700/30 bg-zinc-800/30 p-6">
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <svg className="mb-4 h-10 w-10 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
+          </svg>
+          <p className="text-zinc-300 text-lg font-medium mb-1">No coding profiles found</p>
+          <p className="text-zinc-500 text-sm">Add your LeetCode, Codeforces, or CodeChef usernames above and save to see your stats here.</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="rounded-lg p-6 text-white">
+    <div className="space-y-8 text-white">
       {/* LeetCode Profile */}
       {leetcodeUser && (
         <div className="mb-6">
@@ -214,7 +242,7 @@ const CodingProfile = ({
               <YAxis />
               <Tooltip
                 content={({ payload, label }) => {
-                  if (payload.length) {
+                  if (payload?.length) {
                     return (
                       <div
                         style={{
