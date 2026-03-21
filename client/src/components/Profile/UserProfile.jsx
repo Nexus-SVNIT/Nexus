@@ -6,6 +6,7 @@ import increamentCounter from "../../libs/increamentCounter";
 import HeadTags from "../HeadTags/HeadTags";
 import PostProfile from "./PostProfile"; 
 import { Navigate } from "react-router-dom"; 
+import ErrorBoundary from "../UI/ErrorBoundary";
 
 const UserProfile = () => {
   const token = localStorage.getItem("token");
@@ -39,25 +40,37 @@ const UserProfile = () => {
         title="Profile - CodeStrike | Nexus - NIT Surat"
         description="Update your profile and coding profiles on CodeStrike."
       />
-      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
-        <Toaster position="top-right" reverseOrder={false} />
-        <h2 className="text-gray-800 mb-6 text-2xl font-semibold">Profile</h2>
+      <Toaster position="top-right" reverseOrder={false} />
 
-        <Profile profile={profile} setProfile={setProfile} />
+      {/* Personal Information Section */}
+      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+        <h2 className="mb-6 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-2xl font-semibold text-transparent">
+          Profile
+        </h2>
+        <ErrorBoundary title="Failed to load profile form">
+          <Profile profile={profile} setProfile={setProfile} />
+        </ErrorBoundary>
       </div>
-      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
-        <PostProfile /> 
+
+      {/* Interview Experiences Section */}
+      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+        <ErrorBoundary title="Failed to load interview experiences">
+          <PostProfile />
+        </ErrorBoundary>
       </div>
-      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
-        <h2 className="text-gray-800 mb-6 text-2xl font-semibold">
+
+      {/* Coding Profiles Section */}
+      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+        <h2 className="mb-6 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-2xl font-semibold text-transparent">
           Coding Profiles
         </h2>
-
-        <CodingProfile
-          leetcodeProfile={profile.leetcodeProfile || ""}
-          codeforcesProfile={profile.codeforcesProfile || ""}
-          codechefProfile={profile.codechefProfile || ""}
-        />
+        <ErrorBoundary title="Failed to load coding profiles">
+          <CodingProfile
+            leetcodeProfile={profile.leetcodeProfile || ""}
+            codeforcesProfile={profile.codeforcesProfile || ""}
+            codechefProfile={profile.codechefProfile || ""}
+          />
+        </ErrorBoundary>
       </div>
     </div>
   );

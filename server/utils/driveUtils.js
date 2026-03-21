@@ -80,7 +80,7 @@ const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIE
     const response = await drive.files.create({
       requestBody: fileMetadata,
       media: {
-        mimeType: req.file.mimeType,
+        mimeType: req.file.mimetype,
         body: bufferStream,
       },
       fields: 'id'

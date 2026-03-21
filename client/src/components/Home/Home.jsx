@@ -28,32 +28,43 @@ const Home = () => {
       />
 
       {/* ─── Hero Section ─── */}
-      <div className="flex h-screen flex-col items-center">
-        <Suspense fallback={<div className="h-full w-full bg-black/50" />}>
-          <Three />
+      <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden pb-16 pt-24 md:pb-24 md:pt-32">
+        {/* Background Animation Canvas */}
+        <Suspense fallback={<div className="absolute inset-0 z-0 bg-black/50" />}>
+          <div className="absolute inset-0 z-0 h-full w-full opacity-80 mix-blend-screen">
+            <Three />
+          </div>
         </Suspense>
-        <div className="relative z-10 my-8 mt-8 flex w-fit max-w-7xl justify-between md:px-4">
-          <div className="mt-10 flex w-fit flex-col items-center justify-center gap-6 md:mt-4">
-            <h1 
-              data-text="NEXUS" 
-              className="cyberpunk-glitch max-auto flex items-center justify-center text-[6rem] md:text-[8rem] font-bold tracking-tight text-white drop-shadow-[0_0_15px_rgba(0,255,249,0.3)]"
-            >
-              NEXUS
-            </h1>
-            <p className="w-[75%] font-mono text-center text-lg leading-relaxed text-blue-100 sm:w-3/4 md:w-[28rem] md:text-xl">
-              A community for the students of Computer Science and Engineering
-              and Artificial Intelligence NIT Surat.
-            </p>
-            <p className="w-[80%] font-mono text-center text-sm leading-relaxed text-cyan-400/80 sm:w-10/12 md:w-[24rem] md:text-base">
-              We foster engagement with students from all years to create a
-              connected and inclusive learning community.
-            </p>
-            <Button to={"#terminal"} isButton={false}>
+        
+        {/* Responsive Content Container */}
+        <div className="relative z-10 flex w-full max-w-5xl flex-col items-center justify-center text-center px-6 sm:px-8">
+          
+          <h1 
+            className="mb-4 bg-[linear-gradient(to_right,#3b82f6,#22d3ee,#4ade80,#facc15,#f97316)] bg-clip-text text-transparent drop-shadow-sm text-[5.5rem] leading-[1.1] sm:mb-6 sm:text-[7rem] md:text-[8.5rem] lg:text-[10rem] font-serif tracking-normal"
+          >
+            NEXUS
+          </h1>
+          
+          <p className="mb-6 mx-auto max-w-[22rem] font-sans text-base leading-relaxed text-zinc-200 sm:mb-8 sm:max-w-2xl sm:text-xl lg:text-2xl sm:leading-loose">
+            A community for the students of Computer Science and Engineering
+            and Artificial Intelligence NIT Surat.
+          </p>
+          
+          <p className="mb-8 mx-auto max-w-[20rem] font-sans text-sm leading-relaxed text-zinc-400 sm:mb-10 sm:max-w-xl sm:text-base lg:text-lg">
+            We foster engagement with students from all years to create a
+            connected and inclusive learning community.
+          </p>
+          
+          <div className="mt-4 flex w-full items-center justify-center sm:w-auto">
+            <Button to={"#terminal"} isButton={false} className="w-full sm:w-auto px-10 py-3.5 text-lg font-semibold tracking-wide">
               Explore More
             </Button>
           </div>
+          
         </div>
-        <div className="relative z-[1000] mt-4">
+        
+        {/* Visitor Counter component correctly layered */}
+        <div className="relative z-20 mt-12 flex w-full justify-center px-4 sm:mt-16 md:mt-20">
           <Counter />
         </div>
       </div>

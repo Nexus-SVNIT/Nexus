@@ -199,7 +199,7 @@ const ProfilePage = ({ profile, setProfile }) => {
         .map((_, index) => (
           <div
             key={index}
-            className="bg-gray-300 h-10 animate-pulse rounded-md"
+            className="bg-zinc-700 h-10 animate-pulse rounded-md"
           ></div>
         ))}
     </div>
@@ -246,7 +246,7 @@ const ProfilePage = ({ profile, setProfile }) => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <Toaster />
           <div>
-            <label className="text-gray-700 block">Full Name</label>
+            <label className="text-zinc-400 block">Full Name</label>
             <input
               type="text"
               name="fullName"
@@ -257,17 +257,17 @@ const ProfilePage = ({ profile, setProfile }) => {
             />
           </div>
           <div>
-            <label className="text-gray-700 block">Admission Number</label>
+            <label className="text-zinc-400 block">Admission Number</label>
             <input
               type="text"
               name="admissionNumber"
               value={profile?.admissionNumber || ""}
               disabled
-              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800/50 border border-zinc-700 p-2 text-zinc-400"
             />
           </div>
           <div>
-            <label className="text-gray-700 block">Mobile Number</label>
+            <label className="text-zinc-400 block">Mobile Number</label>
             <input
               type="text"
               name="mobileNumber"
@@ -278,7 +278,7 @@ const ProfilePage = ({ profile, setProfile }) => {
             />
           </div>
           <div>
-            <label className="text-gray-700 block">Personal Email</label>
+            <label className="text-zinc-400 block">Personal Email</label>
             <input
               type="email"
               name="personalEmail"
@@ -290,29 +290,29 @@ const ProfilePage = ({ profile, setProfile }) => {
           </div>
           {!profile?.isAlumni && (
             <div>
-              <label className="text-gray-700 block">Institute Email</label>
+              <label className="text-zinc-400 block">Institute Email</label>
               <input
                 type="email"
                 name="instituteEmail"
                 value={profile?.instituteEmail || ""}
                 disabled
-                className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white"
+                className="mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800/50 border border-zinc-700 p-2 text-zinc-400"
               />
             </div>
           )}
           <div>
-            <label className="text-gray-700 block">Branch</label>
+            <label className="text-zinc-400 block">Branch</label>
             <select name="branch"
               value={profile?.branch || ""}
               onChange={handleChange}
               disabled           
-              className="bg-gray-200 mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800 p-2 text-white">
+              className="mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800/50 border border-zinc-700 p-2 text-zinc-400">
                 <option value="CSE">CSE/COE</option>
                 <option value="AI">AI</option>
               </select>
           </div>
           <div>
-            <label className="text-gray-700 block">LinkedIn Profile (Link)</label>
+            <label className="text-zinc-400 block">LinkedIn Profile (Link)</label>
             <input
               type="url"
               name="linkedInProfile"
@@ -325,7 +325,7 @@ const ProfilePage = ({ profile, setProfile }) => {
           {profile?.isAlumni && (
             <>
               <div>
-                <label className="text-gray-700 block">Current Company</label>
+                <label className="text-zinc-400 block">Current Company</label>
                 <input
                   type="text"
                   name="currentCompany"
@@ -336,7 +336,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                 />
               </div>
               <div>
-                <label className="text-gray-700 block">Designation</label>
+                <label className="text-zinc-400 block">Designation</label>
                 <input
                   type="text"
                   name="currentDesignation"
@@ -347,7 +347,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                 />
               </div>
               <div>
-                <label className="text-gray-700 block">Expertise</label>
+                <label className="text-zinc-400 block">Expertise</label>
                 <input
                   type="text"
                   name="expertise"
@@ -360,7 +360,7 @@ const ProfilePage = ({ profile, setProfile }) => {
             </>
           )}
           <div>
-            <label className="text-gray-700 block">GitHub Profile (Link)</label>
+            <label className="text-zinc-400 block">GitHub Profile (Link)</label>
             <input
               type="url"
               name="githubProfile"
@@ -371,7 +371,7 @@ const ProfilePage = ({ profile, setProfile }) => {
             />
           </div>
           <div>
-            <label className="text-gray-700 block">LeetCode Profile (Only ID not Link)</label>
+            <label className="text-zinc-400 block">LeetCode Profile (Only ID not Link)</label>
             <input
               name="leetcodeProfile"
               value={profile?.leetcodeProfile || ""}
@@ -381,7 +381,7 @@ const ProfilePage = ({ profile, setProfile }) => {
             />
           </div>
           <div>
-            <label className="text-gray-700 block">Codeforces Profile (Only ID not Link)</label>
+            <label className="text-zinc-400 block">Codeforces Profile (Only ID not Link)</label>
             <input
               name="codeforcesProfile"
               value={profile?.codeforcesProfile || ""}
@@ -391,7 +391,7 @@ const ProfilePage = ({ profile, setProfile }) => {
             />
           </div>
           <div>
-            <label className="text-gray-700 block">CodeChef Profile (Only ID not Link)</label>
+            <label className="text-zinc-400 block">CodeChef Profile (Only ID not Link)</label>
             <input
               name="codechefProfile"
               value={profile?.codechefProfile || ""}
@@ -439,7 +439,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="bg-gray-500 rounded-md px-4 py-2 text-white"
+                  className="rounded-lg bg-zinc-600 px-4 py-2 text-white transition-colors hover:bg-zinc-500"
                 >
                   Cancel
                 </button>
