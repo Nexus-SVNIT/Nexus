@@ -38,23 +38,16 @@ const Counter = ({ onComplete }) => {
   }, []);
 
   return (
-    <div className="flex justify-center items-center min-h-[200px] p-8">
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-[20px] p-8 md:p-12 
-                      shadow-2xl text-center text-white transform transition-transform duration-300 
-                      hover:-translate-y-2">
-        <h2 className="text-2xl mb-4 text-gray-400 font-medium">Visitor Count</h2>
-        <div className="text-5xl font-bold mb-4 bg-gradient-to-r from-blue-500 to-cyan-400 
-                        bg-clip-text text-transparent">
-          <CountUp
-            end={count}
-            duration={2.5}
-            separator=","
-            enableScrollSpy
-            scrollSpyOnce
-            onEnd={onComplete}
-          />
-        </div>
-        <p className="text-sm text-gray-500 mt-2">Total Visits</p>
+    <div className="flex flex-col items-center justify-center p-4">
+      <h2 className="mb-2 text-lg font-medium tracking-wide text-zinc-400">VISITOR COUNT</h2>
+      <div className="mb-2 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-4xl font-bold text-transparent drop-shadow-lg md:text-5xl">
+        <CountUp
+          end={count}
+          duration={2.5}
+          separator=","
+          enableScrollSpy
+          onEnd={onComplete}
+        />
       </div>
     </div>
   );

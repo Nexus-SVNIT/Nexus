@@ -19,47 +19,77 @@ const CodingProfile = ({
   const [codeforcesData, setCodeforcesData] = useState(null);
   const [codechefData, setCodechefData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    try {
+      setError(null);
+      setLoading(true);
+      const response = await fetch(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profile`,
+        {
+          headers: {
+            "Authorization": `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Server responded with ${response.status}`);
+      }
+      const data = await response.json();
+      setLeetcodeData(data?.data?.leetcode);
+      setCodeforcesData(data?.data?.codeforces);
+      setCodechefData(data?.data?.codechef);
+    } catch (err) {
+      console.error("Error fetching coding profiles:", err);
+      setError("Failed to load coding profiles. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/coding-profiles/get-profile`,
-          {
-            headers: {
-              "Authorization": `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-        const data = await response.json();
-        setLeetcodeData(data?.data?.leetcode);
-        setCodeforcesData(data?.data?.codeforces);
-        setCodechefData(data?.data?.codechef);
-      } catch (error) {
-        console.error("Error fetching coding profiles:", error);
-      }
-      setLoading(false);
-    };
     fetchData();
   }, [leetcodeProfile, codeforcesProfile, codechefProfile]);
 
   if (loading) {
     return <div className="text-white">Loading...</div>;
   }
+
+  if (error) {
+    return (
+      <div className="rounded-lg p-6 text-white">
+        <div className="flex flex-col items-center justify-center py-8 text-center">
+          <svg className="h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+          </svg>
+          <p className="text-red-400 text-lg font-medium mb-2">Failed to load coding profiles</p>
+          <p className="text-gray-500 text-sm mb-4">{error}</p>
+          <button
+            onClick={fetchData}
+            className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 transition-colors"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   const leetcodeUser = leetcodeData?.data?.matchedUser;
   const leetcodeStats = leetcodeUser?.submitStats?.acSubmissionNum;
   const leetcodeLanguages = leetcodeUser?.languageProblemCount;
   const leetcodeContestRanking = leetcodeData?.data?.userContestRanking;
 
-  const codeforcesProfileData = codeforcesData ? codeforcesData?.data[0] : null;
-  const codeforcesRatings = codeforcesData ? codeforcesData?.data[1]?.ratings?.map((rating) => ({
+  const codeforcesProfileData = Array.isArray(codeforcesData?.data) ? codeforcesData.data[0] : null;
+  const codeforcesRatings = Array.isArray(codeforcesData?.data) ? codeforcesData.data[1]?.ratings?.map((rating) => ({
     date: new Date(rating.ratingUpdateTimeSeconds * 1000).toLocaleDateString(),
     contestName: rating.contestName,
     oldRating: rating.oldRating, // Comment to hide old rating
     newRating: rating.newRating,
-  })) : [];
+  })) || [] : [];
   
-  const codechefUser = codechefData?.[0];
+  const codechefUser = Array.isArray(codechefData) ? codechefData[0] : null;
 
   return (
     <div className="rounded-lg p-6 text-white">
@@ -90,7 +120,7 @@ const CodingProfile = ({
           {/* Submission stats */}
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
-              data={leetcodeStats}
+              data={leetcodeStats || []}
               margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
@@ -169,7 +199,7 @@ const CodingProfile = ({
           {/* Rating Progress */}
           <ResponsiveContainer width="100%" height={300}>
             <LineChart
-              data={codeforcesRatings}
+              data={codeforcesRatings || []}
               margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
             >
               <CartesianGrid strokeDasharray="3 3" />

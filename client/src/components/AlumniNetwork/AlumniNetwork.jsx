@@ -58,18 +58,18 @@ const AlumniNetwork = () => {
           "Nexus NIT Surat, Alumni, Alumni Network, CSE, AI, Community, vibrant, legacy, join, mark, journey"
         }
       />
-      <div className="mx-4 mt-10 flex w-fit items-center  gap-3 rounded-md bg-yellow-400/25 p-2 px-4">
-        <FaInfoCircle size={42} className="h-auto text-yellow-500" />
-        <p className="w-fit text-xs text-white/80 md:w-full md:text-base">
+      <div className="mx-4 mt-12 flex w-fit items-center gap-4 rounded-xl border border-blue-500/20 bg-blue-900/20 backdrop-blur-md p-4 px-6 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+        <FaInfoCircle size={36} className="h-auto text-blue-400 flex-shrink-0" />
+        <p className="w-fit text-sm text-blue-100/80 md:w-full md:text-base leading-relaxed tracking-wide">
           Enhance your CSE & AI alumni journey! Join our vibrant community.
           <Link
             to="/alumni-network/alumni"
-            className="mx-1 font-bold text-blue-500  underline underline-offset-4"
+            className="mx-1 font-bold text-blue-400 transition-colors hover:text-blue-300 underline decoration-blue-500/50 underline-offset-4"
           >
             {" "}
             Click here
           </Link>{" "}
-          to join our vibrant community and leave your mark in the legacy! .
+          to connect and leave your mark in the legacy!
         </p>
       </div>
       <Title>Alumni Network</Title>{" "}

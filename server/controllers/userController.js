@@ -38,16 +38,9 @@ const updateUserProfile = async (req, res) => {
             leetcodeProfile,
             codeforcesProfile,
             codechefProfile,
-            shareCodingProfile,  // Include codechefProfile in the request body
+            shareCodingProfile,
             subscribed
         } = req.body;
-
-        // Validate coding profile IDs
-        try {
-            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
-        } catch (error) {
-            return res.status(400).json({ message: error.message });
-        }
 
         // Step 1: Find the user by their ID
         let foundUser = await user.findById(userId);
@@ -56,7 +49,28 @@ const updateUserProfile = async (req, res) => {
             return res.status(404).json({ message: 'User not found' });
         }
 
-        // Step 2: Update the fields
+        // Step 2: Only verify coding profiles that have actually changed
+        const leetcodeToVerify = (leetcodeProfile && leetcodeProfile !== foundUser.leetcodeProfile) ? leetcodeProfile : null;
+        const codeforcesToVerify = (codeforcesProfile && codeforcesProfile !== foundUser.codeforcesProfile) ? codeforcesProfile : null;
+        const codechefToVerify = (codechefProfile && codechefProfile !== foundUser.codechefProfile) ? codechefProfile : null;
+
+        // Validate changed coding profile IDs (URL check + existence verification)
+        if (leetcodeToVerify || codeforcesToVerify || codechefToVerify) {
+            try {
+                const result = await validateCodingProfiles(
+                    leetcodeToVerify,
+                    codeforcesToVerify,
+                    codechefToVerify
+                );
+                if (!result.valid) {
+                    return res.status(400).json({ message: result.errors.join(', ') });
+                }
+            } catch (error) {
+                return res.status(400).json({ message: error.message });
+            }
+        }
+
+        // Step 3: Update the fields
         foundUser.fullName = fullName || foundUser.fullName;
         foundUser.mobileNumber = mobileNumber || foundUser.mobileNumber;
         foundUser.personalEmail = personalEmail || foundUser.personalEmail;
@@ -65,7 +79,7 @@ const updateUserProfile = async (req, res) => {
         foundUser.githubProfile = githubProfile || foundUser.githubProfile;
         foundUser.leetcodeProfile = leetcodeProfile || foundUser.leetcodeProfile;
         foundUser.codeforcesProfile = codeforcesProfile || foundUser.codeforcesProfile;
-        foundUser.codechefProfile = codechefProfile || foundUser.codechefProfile;  // Update codechefProfile
+        foundUser.codechefProfile = codechefProfile || foundUser.codechefProfile;
         foundUser.subscribed = subscribed;
         foundUser.shareCodingProfile = shareCodingProfile;
         foundUser.currentCompany = currentCompany || foundUser.currentCompany;
@@ -73,7 +87,7 @@ const updateUserProfile = async (req, res) => {
         foundUser.expertise = expertise || foundUser.expertise;
 
 
-        // Step 3: Save the updated user profile
+        // Step 4: Save the updated user profile
         await foundUser.save();
 
         res.status(200).json({ message: 'Profile updated successfully', user: foundUser });

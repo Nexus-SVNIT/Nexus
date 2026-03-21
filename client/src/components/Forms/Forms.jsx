@@ -77,7 +77,7 @@ const Forms = () => {
   inactiveForms.reverse();
   
   return (
-    <div className="relative mx-auto mb-20 max-w-7xl space-y-8 pb-12">
+    <div className="relative mx-auto mb-20 max-w-7xl space-y-12 px-4 py-8 md:px-8 pb-12">
       <HeadTags
         title={"Forms - Nexus NIT Surat"}
         description={
@@ -90,29 +90,31 @@ const Forms = () => {
       <Title>Forms</Title>
 
       {/* Display active forms */}
-      <h2 className="text-center text-2xl font-semibold">Active Forms</h2>
-      {
-          activeForms.length === 0 ? (
-            <div className="text-center text-gray-500 text-lg">
-              No active forms available at the moment
-            </div>
-          ) : (
-            <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
-              {activeForms.map((form) => (
-                <FormCard key={form._id} form={form} />
-              ))}
-            </div>
-          )
-      }
+      <h2 className="text-center text-xl font-bold uppercase tracking-widest text-emerald-400 drop-shadow-sm md:text-2xl mt-12 mb-8">
+        Active Forms
+      </h2>
+      {activeForms.length === 0 ? (
+        <div className="text-center text-zinc-500 text-lg">
+          No active forms available at the moment
+        </div>
+      ) : (
+        <div className="flex flex-wrap items-stretch justify-center gap-10 md:px-12">
+          {activeForms.map((form) => (
+            <FormCard key={form._id} form={form} />
+          ))}
+        </div>
+      )}
 
       {/* Display inactive forms */}
-      <h2 className="text-center text-2xl font-semibold">Inactive Forms</h2>
+      <h2 className="text-center text-xl font-bold uppercase tracking-widest text-zinc-500 drop-shadow-sm md:text-2xl mt-24 mb-8">
+        Archived Forms
+      </h2>
       {inactiveForms.length === 0 ? (
-        <div className="text-center text-gray-500 text-lg">
+        <div className="text-center text-zinc-500 text-lg">
           No inactive forms available at the moment
         </div>
       ) : (
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-12 px-20">
+        <div className="flex flex-wrap items-stretch justify-center gap-10 md:px-12">
           {inactiveForms.map((form) => (
             <FormCard key={form._id} form={form} />
           ))}
