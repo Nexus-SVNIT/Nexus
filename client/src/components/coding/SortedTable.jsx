@@ -147,7 +147,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   const isNexusRanking = rankingScheme === "nexus";
 
   return (
-    <div className="mb-16 w-full overflow-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]">
+    <div className="mb-16 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]">
       <table
         {...getTableProps()}
         className="min-w-full text-left text-sm text-zinc-300 border-collapse"
