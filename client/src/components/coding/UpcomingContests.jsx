@@ -100,7 +100,7 @@ const UpcomingContests = () => {
                 <div className="mt-2 flex flex-col gap-1.5 text-[0.75rem] font-medium text-zinc-400">
                   <div className="flex items-center gap-1.5">
                     <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <circle cx="12" cy="12" r="10" strokeWidth="2"/><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6l4 2"/>
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
                     {new Date(contest.startTime).toString().replace('India Standard Time','IST').split('GMT')[0].trim()}
                   </div>
