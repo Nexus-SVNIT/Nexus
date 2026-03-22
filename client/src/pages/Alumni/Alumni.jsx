@@ -199,43 +199,43 @@ const Alumni = () => {
   }
 
   return (
-    <div>
+    <div className="bg-[#000000] mb-36 min-h-screen p-4 sm:p-6 md:mx-auto md:max-w-7xl">
       {/* Hero Section */}
       <AlumniHero />
 
       {/* Main Content */}
       <div
         id="alumni-directory"
-        className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:ml-20 lg:ml-auto lg:px-8"
+        className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8"
       >
         <div className="space-y-6">
-          <div className="flex items-center gap-2">
-            <h2 className="text-foreground text-2xl font-bold">
+          <div className="flex items-center gap-2 mb-2">
+            <h2 className="text-white text-2xl font-bold">
               Alumni Directory
             </h2>
-            <Badge variant="secondary" className="bg-primary/10 text-blue-400">
+            <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border border-blue-500/20">
               {totalAlumni} Alumni
             </Badge>
           </div>
 
-          {/* Filters Toggle Button */}
-          <div className="flex items-center justify-center gap-4">
-            <SearchBar
-              placeholder="Search by name, company, skills..."
-              value={searchTerm}
-              onChange={handleSearchChange}
-            />
+          {/* Controls & Filters Row */}
+          <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-900/40 p-3 rounded-2xl border border-zinc-800/50 backdrop-blur-sm">
+            <div className="w-full sm:w-1/2 lg:w-1/3">
+              <SearchBar
+                placeholder="Search by name, company, skills..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+              />
+            </div>
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+              className={`flex items-center gap-2 rounded-xl px-5 py-2.5 font-medium transition-all duration-300 ${
                 showFilters
-                  ? "bg-blue-600 hover:bg-blue-500"
-                  : "bg-white/10 hover:bg-white/20"
+                  ? "bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]"
+                  : "bg-zinc-800/50 text-gray-300 border border-zinc-700/50 hover:bg-zinc-800 hover:text-white"
               }`}
             >
-              <FaFilter
-                className={showFilters ? "text-white" : "text-gray-300"}
-              />
+              <FaFilter className={showFilters ? "text-blue-400" : "text-gray-400"} />
               <span>Filters</span>
             </button>
           </div>
@@ -284,21 +284,21 @@ const Alumni = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="mb-24 mt-10 flex justify-center gap-2">
+      <div className="mt-16 mb-24 flex items-center justify-center gap-3">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="disabled:bg-gray-600 rounded bg-blue-600 px-3 py-1 text-white"
+          className="flex items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/50 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50"
         >
           Previous
         </button>
-        <span className="text-white">
-          Page {currentPage} of {totalPages}
-        </span>
+        <div className="flex items-center justify-center rounded-xl bg-zinc-900/60 border border-zinc-800 px-5 py-2.5 text-sm font-medium text-gray-400">
+          Page <span className="text-white mx-1">{currentPage}</span> of <span className="text-white mx-1">{totalPages}</span>
+        </div>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="disabled:bg-gray-600 rounded bg-blue-600 px-3 py-1 text-white"
+          className="flex items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/50 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50"
         >
           Next
         </button>

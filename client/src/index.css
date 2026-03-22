@@ -29,11 +29,32 @@
 * {
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
   box-sizing: border-box;
   left: 0;
   right: 0;
   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+}
+
+html,
+body {
+  background-color: #000000;
+  min-height: 100%;
+}
+
+/* Smooth transitions for interactive elements */
+a, button, select, input {
+  transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Intersection Observer fade-in utility */
+.fade-in-section {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+.fade-in-section.is-visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 ::-webkit-scrollbar {
@@ -144,6 +165,89 @@ canvas {
 .apexcharts-legend-series {
   @apply !inline-flex gap-1.5;
 }
+
+/* -------------------------------------CYBERPUNK GLITCH EFFECT--------------------- */
+.cyberpunk-glitch {
+  position: relative;
+  color: white;
+  font-weight: bold;
+  letter-spacing: 2px;
+  z-index: 1;
+}
+
+.cyberpunk-glitch::before,
+.cyberpunk-glitch::after {
+  content: attr(data-text);
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.cyberpunk-glitch::before {
+  left: 3px;
+  text-shadow: -2px 0 #ff00c1;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim 5s infinite linear alternate-reverse;
+  z-index: -1;
+}
+
+.cyberpunk-glitch::after {
+  left: -3px;
+  text-shadow: -2px 0 #00fff9;
+  clip: rect(44px, 450px, 56px, 0);
+  animation: glitch-anim2 5s infinite linear alternate-reverse;
+  z-index: -2;
+}
+
+@keyframes glitch-anim {
+  0% { clip: rect(21px, 9999px, 99px, 0); }
+  5% { clip: rect(61px, 9999px, 52px, 0); }
+  10% { clip: rect(44px, 9999px, 11px, 0); }
+  15% { clip: rect(98px, 9999px, 78px, 0); }
+  20% { clip: rect(2px, 9999px, 12px, 0); }
+  25% { clip: rect(15px, 9999px, 81px, 0); }
+  30% { clip: rect(58px, 9999px, 16px, 0); }
+  35% { clip: rect(83px, 9999px, 34px, 0); }
+  40% { clip: rect(100px, 9999px, 16px, 0); }
+  45% { clip: rect(43px, 9999px, 58px, 0); }
+  50% { clip: rect(72px, 9999px, 35px, 0); }
+  55% { clip: rect(1px, 9999px, 96px, 0); }
+  60% { clip: rect(75px, 9999px, 20px, 0); }
+  65% { clip: rect(32px, 9999px, 84px, 0); }
+  70% { clip: rect(19px, 9999px, 48px, 0); }
+  75% { clip: rect(81px, 9999px, 9px, 0); }
+  80% { clip: rect(49px, 9999px, 63px, 0); }
+  85% { clip: rect(91px, 9999px, 53px, 0); }
+  90% { clip: rect(11px, 9999px, 86px, 0); }
+  95% { clip: rect(39px, 9999px, 75px, 0); }
+  100% { clip: rect(62px, 9999px, 3px, 0); }
+}
+
+@keyframes glitch-anim2 {
+  0% { clip: rect(100px, 9999px, 40px, 0); }
+  5% { clip: rect(56px, 9999px, 7px, 0); }
+  10% { clip: rect(2px, 9999px, 88px, 0); }
+  15% { clip: rect(89px, 9999px, 55px, 0); }
+  20% { clip: rect(34px, 9999px, 19px, 0); }
+  25% { clip: rect(71px, 9999px, 96px, 0); }
+  30% { clip: rect(12px, 9999px, 23px, 0); }
+  35% { clip: rect(45px, 9999px, 66px, 0); }
+  40% { clip: rect(93px, 9999px, 41px, 0); }
+  45% { clip: rect(7px, 9999px, 82px, 0); }
+  50% { clip: rect(50px, 9999px, 14px, 0); }
+  55% { clip: rect(80px, 9999px, 90px, 0); }
+  60% { clip: rect(26px, 9999px, 37px, 0); }
+  65% { clip: rect(67px, 9999px, 59px, 0); }
+  70% { clip: rect(18px, 9999px, 72px, 0); }
+  75% { clip: rect(98px, 9999px, 5px, 0); }
+  80% { clip: rect(42px, 9999px, 81px, 0); }
+  85% { clip: rect(5px, 9999px, 29px, 0); }
+  90% { clip: rect(61px, 9999px, 95px, 0); }
+  95% { clip: rect(88px, 9999px, 47px, 0); }
+  100% { clip: rect(31px, 9999px, 68px, 0); }
+}
 .apexcharts-tooltip.apexcharts-theme-light {
   @apply dark:!bg-boxdark dark:!border-strokedark;
 }
@@ -252,4 +356,13 @@ span.flatpickr-weekday,
 
 [x-cloak] {
   display: none !important;
+}
+
+/* Fade-in animation for step transitions */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
 }

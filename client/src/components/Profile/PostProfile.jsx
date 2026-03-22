@@ -6,26 +6,34 @@ import { toast } from "react-hot-toast";
 
 function PostProfile() {
   const navigate = useNavigate();
-  const [userPosts, setUserPosts] = useState([]); // Add this line
+  const [userPosts, setUserPosts] = useState([]);
+  const [error, setError] = useState(null);
+
+  const fetchUserPosts = async () => {
+    try {
+      setError(null);
+      const response = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/user/posts`,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        },
+      );
+      if (Array.isArray(response.data)) {
+        setUserPosts(response.data);
+      } else {
+        setUserPosts([]);
+      }
+    } catch (err) {
+      console.error("Error fetching user posts:", err);
+      setError("Failed to load your interview experiences. Please try again.");
+    }
+  };
 
   useEffect(() => {
-    const fetchUserPosts = async () => {
-      try {
-        const response = await axios.get(
-          `${process.env.REACT_APP_BACKEND_BASE_URL}/user/posts`,
-          {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          },
-        );
-        setUserPosts(response.data); // Set the fetched posts to state
-      } catch (error) {
-        console.error("Error fetching user posts:", error);
-      }
-    };
     fetchUserPosts();
-  }, []); // Add this line
+  }, []);
 
   const handleDelete = async (postId) => {
     if (!window.confirm("Are you sure you want to delete this post? This action cannot be undone.")) {
@@ -79,7 +87,21 @@ function PostProfile() {
           </button>
         </div>
 
-        {userPosts.length === 0 ? (
+        {error ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <svg className="h-12 w-12 text-red-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+            </svg>
+            <p className="text-red-400 text-lg font-medium mb-2">Failed to load posts</p>
+            <p className="text-gray-500 text-sm mb-4">{error}</p>
+            <button
+              onClick={fetchUserPosts}
+              className="rounded-md bg-blue-500 px-4 py-2 text-white hover:bg-blue-600 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        ) : userPosts.length === 0 ? (
           <div className="py-8 text-center">
             <p className="text-gray-400 mb-4">
               You haven't shared any interview experiences yet.

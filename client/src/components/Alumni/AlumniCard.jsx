@@ -22,24 +22,19 @@ export function AlumniCard({ alumni, setFilters }) {
   };
 
   return (
-    <div className="text-gray-100 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant">
+    <div className="group text-gray-100 rounded-2xl border border-zinc-800/60 bg-[#09090b]/80 p-6 shadow-xl backdrop-blur-md transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/30 hover:bg-zinc-900/90 hover:shadow-[0_8px_30px_rgba(34,211,238,0.12)]">
       {/* Header Section */}
 
       <div className="mb-4 flex items-center gap-4">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-500/80 text-xl font-bold text-white">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-500/30 bg-gradient-to-br from-cyan-900/80 to-blue-900/80 object-cover ring-2 ring-zinc-800/50 transition-all duration-300 group-hover:ring-cyan-500/50 text-xl font-bold text-cyan-100 shadow-[0_0_15px_rgba(34,211,238,0.15)]">
           {getInitials(alumni.fullName)}
         </div>
 
-        {/* Name and Graduation Year */}
-        <div className="min-w-0 flex-1">
-          <h3 className="text-xl font-semibold text-white">
+        {/* Name */}
+        <div className="min-w-0 flex-1 flex flex-col justify-center">
+          <h3 className="text-lg font-bold tracking-tight text-white transition-colors group-hover:text-cyan-300">
             {alumni.fullName}
           </h3>
-          {alumni.passingYear && (
-            <p className="text-gray-400 text-sm">
-              Class of {alumni.passingYear}
-            </p>
-          )}
         </div>
 
         {/* LinkedIn Button */}
@@ -57,18 +52,18 @@ export function AlumniCard({ alumni, setFilters }) {
       <div className="space-y-4">
         <div className="space-y-2">
           {/* Position and Company */}
-          <div className="flex items-center gap-2 text-sm">
-            <LuBuilding className="h-4 w-4 text-blue-400" />
-            <span className="font-medium">
+          <div className="flex items-center gap-2 text-sm text-zinc-300">
+            <LuBuilding className="h-4 w-4 text-cyan-400" />
+            <span className="font-medium tracking-wide">
               {alumni.currentDesignation || "N/A"}
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <LuMapPin className="h-4 w-4 flex-shrink-0 text-[#6c757d]" />
-            <span className="">
+            <LuMapPin className="h-4 w-4 flex-shrink-0 text-cyan-500/70" />
+            <span className="text-sm tracking-wide text-zinc-400">
               {alumni.currentCompany || "N/A"}{" "}
               {alumni.location && " • " && (
-                <span className="text-md text-[#6c757d]">
+                <span className="text-sm text-zinc-500">
                   {alumni.location}
                 </span>
               )}

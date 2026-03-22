@@ -71,9 +71,12 @@ const signupUser = async (req, res) => {
     const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password, shareCodingProfile } = req.body;
 
     try {
-        // Validate coding profile IDs
+        // Validate coding profile IDs (URL check + existence verification)
         try {
-            validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
+            const result = await validateCodingProfiles(leetcodeProfile, codeforcesProfile, codechefProfile);
+            if (!result.valid) {
+                return res.status(400).json({ message: result.errors.join(', ') });
+            }
         } catch (error) {
             return res.status(400).json({ message: error.message });
         }
@@ -176,9 +179,15 @@ const signUpAlumni = async (req, res) => {
             });
         }
 
-        // Coding profiles
+        // Validate coding profiles
         try {
-            validateCodingProfiles(req.body['LeetcodeId'], req.body['codeforcesId']);
+            const result = await validateCodingProfiles(req.body['LeetcodeId'], req.body['codeforcesId'], null);
+            if (!result.valid) {
+                return res.status(400).json({
+                    success: false,
+                    message: result.errors.join(', ')
+                });
+            }
         } catch (error) {
             return res.status(400).json({
                 success: false,

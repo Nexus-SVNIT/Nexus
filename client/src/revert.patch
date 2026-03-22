@@ -1,0 +1,544 @@
+diff --git a/client/src/components/Alumni/AlumniCard.jsx b/client/src/components/Alumni/AlumniCard.jsx
+index e29282a..ca2e3ca 100644
+--- a/client/src/components/Alumni/AlumniCard.jsx
++++ b/client/src/components/Alumni/AlumniCard.jsx
+@@ -21,18 +21,18 @@ export function AlumniCard({ alumni, setFilters }) {
+     })
+   };
+ 
+-  return (
+-    <div className="text-gray-100 rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-elegant">
++    <div className="group relative overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-6 backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-blue-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12),0_0_20px_rgba(59,130,246,0.3)]">
++      <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
++      
+       {/* Header Section */}
+-
+-      <div className="mb-4 flex items-center gap-4">
+-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-500/80 text-xl font-bold text-white">
++      <div className="relative z-10 mb-6 flex items-center gap-5">
++        <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-blue-500 to-blue-600 text-xl font-bold text-white shadow-lg transition-all duration-500 group-hover:scale-110 group-hover:shadow-[0_0_20px_rgba(59,130,246,0.5)]">
+           {getInitials(alumni.fullName)}
+         </div>
+ 
+         {/* Name and Graduation Year */}
+         <div className="min-w-0 flex-1">
+-          <h3 className="text-xl font-semibold text-white">
++          <h3 className="text-xl font-semibold tracking-wide text-white transition-colors duration-300 group-hover:text-blue-100">
+             {alumni.fullName}
+           </h3>
+           {alumni.passingYear && (
+@@ -46,15 +46,15 @@ export function AlumniCard({ alumni, setFilters }) {
+         {alumni.linkedInProfile && (
+           <button
+             onClick={handleLinkedInClick}
+-            className="group flex h-10 w-10 items-center justify-center rounded-2xl border border-white/[0.12] bg-white/[0.08] backdrop-blur-xl transition-all duration-300 hover:border-white/[0.2] hover:bg-white/[0.15] hover:shadow-lg hover:shadow-white/[0.05] active:scale-95"
++            className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl border border-white-[0.12] bg-white/5 text-gray-400 backdrop-blur-xl transition-all duration-300 hover:rotate-12 hover:scale-110 hover:border-blue-400/50 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_15px_rgba(59,130,246,0.5)] active:scale-95"
+           >
+-            <FaLinkedinIn className="h-4 w-4" />
++            <FaLinkedinIn className="h-5 w-5" />
+           </button>
+         )}
+       </div>
+ 
+       {/* Content Section */}
+-      <div className="space-y-4">
++      <div className="relative z-10 space-y-5">
+         <div className="space-y-2">
+           {/* Position and Company */}
+           <div className="flex items-center gap-2 text-sm">
+@@ -77,7 +77,6 @@ export function AlumniCard({ alumni, setFilters }) {
+           </div>
+         </div>
+ 
+-        {/* Expertise Badges */}
+         {alumni.expertise && alumni.expertise.length > 0 && (
+           <div className="space-y-2">
+             <h4 className="text-foreground text-sm font-medium">Expertise</h4>
+diff --git a/client/src/components/Alumni/AlumniFilters.jsx b/client/src/components/Alumni/AlumniFilters.jsx
+index 0352092..15e8a6d 100644
+--- a/client/src/components/Alumni/AlumniFilters.jsx
++++ b/client/src/components/Alumni/AlumniFilters.jsx
+@@ -44,15 +44,15 @@ const Filters = ({
+   if (!showFilters) return null;
+ 
+   return (
+-    <div className="mb-6 rounded-lg border border-white/10 bg-white/5 p-6 backdrop-blur-sm">
+-      <div className="mb-4">
+-        <h3 className="text-lg font-semibold text-white">Filter Alumni</h3>
++    <div className="mb-8 rounded-2xl border border-white/5 bg-white/5 p-6 backdrop-blur-xl shadow-[0_8px_30px_rgb(0,0,0,0.12)]">
++      <div className="mb-6 border-b border-white/5 pb-4">
++        <h3 className="text-xl font-semibold tracking-wide text-white drop-shadow-sm">Filter Alumni</h3>
+       </div>
+ 
+       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+         {/* Batch From */}
+         <div className="space-y-2">
+-          <label className="text-gray-300 block text-sm font-medium">
++          <label className="text-gray-400 block text-sm font-medium tracking-wide">
+             Batch From
+           </label>
+           <input
+@@ -62,13 +62,13 @@ const Filters = ({
+             placeholder="e.g., 2020"
+             min="1990"
+             max="2025"
+-            className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
++            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-600 outline-none transition-all hover:border-white/20 hover:bg-white/10 focus:border-blue-500/50 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10"
+           />
+         </div>
+ 
+         {/* Batch To */}
+         <div className="space-y-2">
+-          <label className="text-gray-300 block text-sm font-medium">
++          <label className="text-gray-400 block text-sm font-medium tracking-wide">
+             Batch To
+           </label>
+           <input
+@@ -78,25 +78,25 @@ const Filters = ({
+             placeholder="e.g., 2024"
+             min="1990"
+             max="2025"
+-            className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
++            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-2.5 text-white placeholder-gray-600 outline-none transition-all hover:border-white/20 hover:bg-white/10 focus:border-blue-500/50 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10"
+           />
+         </div>
+ 
+         {/* Company */}
+         <div className="space-y-2">
+-          <label className="text-gray-300 block text-sm font-medium">
++          <label className="text-gray-400 block text-sm font-medium tracking-wide">
+             Company
+           </label>
+           <select
+             value={localCompany}
+             onChange={(e) => setLocalCompany(e.target.value)}
+-            className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
++            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all hover:border-white/20 hover:bg-white/10 focus:border-blue-500/50 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10"
+           >
+-            <option value="" className="bg-gray-800">
++            <option value="" className="bg-gray-900 text-gray-300">
+               Any Company
+             </option>
+             {companies.map((comp, index) => (
+-              <option key={index} value={comp} className="bg-gray-800">
++              <option key={index} value={comp} className="bg-gray-900 text-gray-300">
+                 {comp}
+               </option>
+             ))}
+@@ -105,19 +105,19 @@ const Filters = ({
+ 
+         {/* Expertise */}
+         <div className="space-y-2">
+-          <label className="text-gray-300 block text-sm font-medium">
++          <label className="text-gray-400 block text-sm font-medium tracking-wide">
+             Expertise
+           </label>
+           <select
+             value={localExpertise}
+             onChange={(e) => setLocalExpertise(e.target.value)}
+-            className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
++            className="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-white placeholder-gray-600 outline-none transition-all hover:border-white/20 hover:bg-white/10 focus:border-blue-500/50 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10"
+           >
+-            <option value="" className="bg-gray-800">
++            <option value="" className="bg-gray-900 text-gray-300">
+               Any Expertise
+             </option>
+             {expertiseOptions.map((exp, index) => (
+-              <option key={index} value={exp} className="bg-gray-800">
++              <option key={index} value={exp} className="bg-gray-900 text-gray-300">
+                 {exp}
+               </option>
+             ))}
+@@ -126,19 +126,19 @@ const Filters = ({
+       </div>
+ 
+       {/* Apply Filters Button */}
+-      <div className="mt-6 flex justify-end gap-4">
++      <div className="mt-8 border-t border-white/5 pt-6 flex justify-end gap-4">
+         <button
+-          onClick={handleApplyFilters}
+-          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-500"
++          onClick={handleClearFilters}
++          className="rounded-xl border border-white/10 bg-white/5 px-6 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-white/10 hover:text-white"
+         >
+-          Apply Filters
++          Clear All
+         </button>
+ 
+         <button
+-          onClick={handleClearFilters}
+-          className="rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
++          onClick={handleApplyFilters}
++          className="rounded-xl border border-blue-500/50 bg-blue-600/80 px-6 py-2.5 text-sm font-medium tracking-wide text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:-translate-y-0.5 hover:bg-blue-500 hover:shadow-[0_0_20px_rgba(37,99,235,0.5)]"
+         >
+-          Clear All
++          Apply Filters
+         </button>
+       </div>
+     </div>
+diff --git a/client/src/components/Alumni/AlumniHero.jsx b/client/src/components/Alumni/AlumniHero.jsx
+index bea0aa6..33fc948 100644
+--- a/client/src/components/Alumni/AlumniHero.jsx
++++ b/client/src/components/Alumni/AlumniHero.jsx
+@@ -8,31 +8,34 @@ import { Button } from "@mui/joy";
+ export const AlumniHero = () => {
+   return (
+     <div className="relative max-h-screen overflow-hidden">
+-      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
+-        <div className="space-y-6 text-center">
+-          <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-blue-400">
++      <div className="absolute inset-0 -z-10 flex items-center justify-center">
++        <div className="h-96 w-96 rounded-full bg-blue-500/20 blur-[120px]"></div>
++      </div>
++      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 lg:px-8">
++        <div className="space-y-8 text-center">
++          <div className="animate-fade-in inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-5 py-2 text-sm font-medium text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+             <HiOutlineSparkles className="h-4 w-4" />
+             Alumni Network
+           </div>
+ 
+-          <h1 className="text-foreground text-4xl font-bold md:text-6xl">
++          <h1 className="text-foreground text-5xl font-bold tracking-tight md:text-7xl">
+             Connect with Our
+-            <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
++            <span className="mt-2 block bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
+               Alumni Community
+             </span>
+           </h1>
+ 
+-          <p className="mx-auto max-w-3xl text-xl leading-relaxed md:mx-20 lg:mx-auto">
++          <p className="mx-auto max-w-3xl text-xl font-light leading-relaxed text-gray-400 md:mx-20 lg:mx-auto">
+             Discover and connect with our talented alumni working at top
+             companies worldwide. Build meaningful professional relationships and
+             grow your network.
+           </p>
+ 
+-          <div className="mx-auto flex max-w-3xl items-center justify-center text-xl">
++          <div className="mx-auto flex max-w-3xl items-center justify-center pt-4 text-xl">
+             <Link to="/alumni/signup">
+-              <Button className="gap-2">
+-                <FaUserPlus className="text-sm" />
+-                <span>Join Alumni Network</span>
++              <Button className="group gap-3 rounded-xl bg-blue-600 px-8 py-4 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)] transition-all hover:-translate-y-1 hover:bg-blue-500 hover:shadow-[0_0_30px_rgba(37,99,235,0.6)]">
++                <FaUserPlus className="text-lg transition-transform group-hover:scale-110" />
++                <span className="font-semibold tracking-wide">Join Alumni Network</span>
+               </Button>
+             </Link>
+           </div>
+diff --git a/client/src/components/Alumni/SearchBar.jsx b/client/src/components/Alumni/SearchBar.jsx
+index fde7329..031477d 100644
+--- a/client/src/components/Alumni/SearchBar.jsx
++++ b/client/src/components/Alumni/SearchBar.jsx
+@@ -12,13 +12,13 @@ const SearchBar = ({ placeholder, onChange, value }) => {
+   return (
+     <div className="relative w-full max-w-md">
+       <div className="relative flex items-center">
+-        <FaSearch className="absolute left-3 text-gray-400 z-10" />
++        <FaSearch className="absolute left-4 text-gray-400 z-10" />
+         <input
+           type="text"
+           value={value}
+           onChange={handleChange}
+           placeholder={placeholder}
+-          className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2 pl-10 pr-10 text-white outline-none focus:ring-2 focus:ring-blue-500"
++          className="w-full rounded-xl bg-white/5 backdrop-blur-md border border-white/10 py-3 pl-12 pr-10 text-white outline-none transition-all placeholder:text-gray-500 hover:border-white/20 hover:bg-white/10 focus:border-blue-500/50 focus:bg-white/10 focus:ring-4 focus:ring-blue-500/10"
+         />
+         {value && (
+           <button
+diff --git a/client/src/components/Footer/Footer.jsx b/client/src/components/Footer/Footer.jsx
+index c0544a2..64d683f 100644
+--- a/client/src/components/Footer/Footer.jsx
++++ b/client/src/components/Footer/Footer.jsx
+@@ -4,91 +4,95 @@ import Logo from "../../data/images/nexus.png";
+ 
+ const Footer = () => {
+   return (
+-    <div className="container-footer  relative flex flex-col flex-wrap justify-between gap-y-10  bg-gradient-to-b from-[#153666] via-[#060e1c] to-[#1a2f4d] px-4 py-10 md:px-32 ">
+-      <div className="z-10">
++    <div className="container-footer relative mt-20 flex flex-col flex-wrap justify-between gap-y-10 border-t border-white/5 bg-gradient-to-b from-transparent to-black px-4 py-16 md:px-32">
++      <div className="z-10 opacity-30">
+         <div
+-          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full "
++          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full mix-blend-screen"
+           id="wave1"
+         />
+         <div
+-          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full "
++          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full mix-blend-screen"
+           id="wave2"
+         />
+         <div
+-          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full "
++          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full mix-blend-screen"
+           id="wave3"
+         />
+         <div
+-          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full "
++          className="wave absolute -top-16 left-0 z-50 h-[4rem] w-full mix-blend-screen"
+           id="wave4"
+         />
+       </div>
+       <div className="mx-auto flex w-full  flex-col gap-4 xl:flex-row xl:gap-0 ">
+         <div className="w-[100%] xl:w-[40rem]">
+-          <h2 className="flex items-center text-xs md:text-sm">
++          <h2 className="flex items-center text-sm font-semibold tracking-wide md:text-base text-gray-200">
+             <img
+               src={Logo}
+               alt="Nexus"
+-              className="mx-4 my-4 h-10 w-10 md:h-16 md:w-16 "
++              className="mx-4 my-4 h-12 w-12 drop-shadow-[0_0_10px_rgba(59,130,246,0.4)] md:h-16 md:w-16"
+             />
+-            NEXUS <br />
+-            Departmental Cell of DoCSE and DoAI{" "}<br />
+-            National Institute of Technology, Surat{" "}
++            <span className="leading-relaxed">
++              <span className="text-xl font-bold tracking-wider text-white drop-shadow-sm">NEXUS</span> <br />
++              <span className="text-gray-400">Departmental Cell of DoCSE and DoAI</span> <br />
++              <span className="text-gray-400">National Institute of Technology, Surat</span>
++            </span>
+           </h2>
+ 
+-          <p className="mt-8 font-mono text-xs md:mt-0 md:pl-6">
++          <p className="mt-8 text-sm leading-relaxed text-gray-500 font-light md:mt-2 md:pl-24">
+             Empowering CSE & AI students at SVNIT, Nexus is a community that
+             cultivates coding excellence, fosters diverse extracurricular
+             interests, and champions holistic growth, shaping educational
+             journeys with passion and purpose.
+           </p>
+         </div>
+-        <div className="flex w-full flex-col items-center justify-between gap-10 sm:flex-row sm:items-start sm:gap-0 md:justify-center md:gap-[25%]">
+-          <div className="mt-4 flex flex-col gap-4 px-1 text-center md:px-8 md:text-left">
+-            <h4 className="whitespace-nowrap text-center text-xl">
++        <div className="flex w-full flex-col items-center justify-between gap-10 sm:flex-row sm:items-start sm:gap-0 md:justify-center md:gap-[20%]">
++          <div className="mt-4 flex flex-col gap-6 px-1 text-center md:px-8 md:text-left">
++            <h4 className="whitespace-nowrap text-center text-lg font-semibold tracking-wide text-white drop-shadow-sm">
+               Quick Links
+             </h4>
+-            <div className="flex gap-10 md:gap-8">
+-              <ul className="flex flex-col gap-2 text-left text-blue-400">
+-                <Link to={"/"}>Home</Link>
+-                <Link to={"/team"}>Team</Link>
+-                <Link to={"/achievements"}>Achievements</Link>
+-                <Link to={"/events"}>Events</Link>
+-                <Link to={"/forms"}>Forms</Link>
++            <div className="flex gap-12 md:gap-16">
++              <ul className="flex flex-col gap-3 text-left text-sm text-gray-400">
++                <Link to={"/"} className="transition-colors hover:text-white">Home</Link>
++                <Link to={"/team"} className="transition-colors hover:text-white">Team</Link>
++                <Link to={"/achievements"} className="transition-colors hover:text-white">Achievements</Link>
++                <Link to={"/events"} className="transition-colors hover:text-white">Events</Link>
++                <Link to={"/forms"} className="transition-colors hover:text-white">Forms</Link>
+               </ul>
+-              <ul className="flex flex-col gap-2 text-left text-blue-400">
+-                <Link to={"/alumni-network"}>Alumni Network</Link>
+-                <Link to={"/projects"}>Projects</Link>
+-                <Link to={"/coding"}>Coding Profile LeaderBoard</Link>
+-                <Link to={"/interview-experiences"}>Interview Experience Posts</Link>
+-                <Link to={"/about"}>About</Link>
++              <ul className="flex flex-col gap-3 text-left text-sm text-gray-400">
++                <Link to={"/alumni-network"} className="transition-colors hover:text-white">Alumni Network</Link>
++                <Link to={"/projects"} className="transition-colors hover:text-white">Projects</Link>
++                <Link to={"/coding"} className="transition-colors hover:text-white">LeaderBoard</Link>
++                <Link to={"/interview-experiences"} className="transition-colors hover:text-white">Interview Experiences</Link>
++                <Link to={"/about"} className="transition-colors hover:text-white">About</Link>
+               </ul>
+             </div>
+           </div>
+-          <div className="mt-4 flex flex-col gap-4 px-8 text-center md:px-0">
+-            <h4 className="text-xl">Social Media</h4>
+-            <ul className="flex flex-col gap-2 text-blue-400">
++          <div className="mt-4 flex flex-col gap-6 px-8 text-center md:px-0">
++            <h4 className="text-lg font-semibold tracking-wide text-white drop-shadow-sm">Social Media</h4>
++            <ul className="flex flex-col gap-3 text-sm text-gray-400">
+               <Link
+                 to={"https://www.instagram.com/nexus_svnit"}
+                 target="_blank"
++                className="transition-colors hover:text-white"
+               >
+                 Instagram
+               </Link>
+               <Link
+                 to={"https://www.linkedin.com/company/nexus-svnit/"}
+                 target="_blank"
++                className="transition-colors hover:text-white"
+               >
+                 LinkedIn
+               </Link>
+-              <Link to={"mailto:nexus@coed.svnit.ac.in"}>
++              <Link to={"mailto:nexus@coed.svnit.ac.in"} className="transition-colors hover:text-white">
+                 nexus@coed.svnit.ac.in
+               </Link>
+             </ul>
+           </div>
+         </div>
+       </div>
+-      <div className="border-t-2 border-blue-800 pt-2 text-center font-mono text-xs md:text-base">
+-        Made with <span className="animate-pulse">❤️</span> by All Time Developers, NEXUS - NIT Surat •
++      <div className="mt-8 border-t border-white/10 pt-6 text-center text-xs tracking-wider text-gray-500 md:text-sm">
++        Made with <span className="animate-pulse text-red-500">❤️</span> by All Time Developers, NEXUS - NIT Surat •
+         © {new Date().getFullYear()}
+       </div>
+     </div>
+diff --git a/client/src/components/Navbar/Navbar.jsx b/client/src/components/Navbar/Navbar.jsx
+index 44b8a03..7812c60 100644
+--- a/client/src/components/Navbar/Navbar.jsx
++++ b/client/src/components/Navbar/Navbar.jsx
+@@ -16,25 +16,25 @@ const Navbar = () => {
+   };
+ 
+   return (
+-    <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full">
+-      <div className="ml-4 flex items-center">
+-        <Link to={"/"} className="flex justify-center">
+-          <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
+-        <span className="mx-2 text-2xl uppercase text-white/80">Nexus</span>
++    <nav className="z-[999] mx-auto flex h-[5rem] w-[100vw] max-w-7xl justify-between text-base md:w-full border-b border-white/5 bg-black/40 backdrop-blur-xl transition-all duration-300">
++      <div className="ml-6 flex items-center transition-transform hover:scale-105 duration-300">
++        <Link to={"/"} className="flex items-center gap-3">
++          <img src={Logo} alt="Nexus_Official" className="h-10 w-10 drop-shadow-[0_0_15px_rgba(59,130,246,0.6)]" />
++        <span className="text-2xl font-bold tracking-wider text-white drop-shadow-sm uppercase">Nexus</span>
+         </Link>
+       </div>
+       <div className="relative flex items-center">
+-        <ul className="mr-5 hidden items-center gap-[3vw] text-sm md:flex lg:gap-12 lg:text-base">
++        <ul className="mr-8 hidden items-center gap-8 text-sm md:flex lg:text-base font-medium">
+           {
+             token ?
+-              <Button onClick={handleLogout}>Logout</Button>
+-              : <Button ><a href="/login">Login</a></Button>
++              <Button onClick={handleLogout} className="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 hover:text-white transition-all backdrop-blur-sm border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]">Logout</Button>
++              : <Button className="bg-blue-600/20 text-blue-400 hover:bg-blue-600/30 hover:text-white transition-all backdrop-blur-sm border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.1)]"><a href="/login" className="w-full h-full">Login</a></Button>
+           }
+         </ul>
+ 
+         {mobileMenu && (
+           <ul
+-            className={`fixed top-0 float-right flex h-[200vh] flex-col items-center gap-6 bg-black bg-opacity-80 py-14 pt-20 text-xl`}
++            className={`fixed top-0 float-right flex h-[200vh] w-full flex-col items-center gap-8 bg-black/95 backdrop-blur-2xl py-14 pt-24 text-xl transition-all duration-300 z-50`}
+             onClick={(e) => setMobileMenu(false)}
+           >
+             {NavList.map((item) => {
+diff --git a/client/src/index.css b/client/src/index.css
+index 80f6a1a..6e4cdfb 100644
+--- a/client/src/index.css
++++ b/client/src/index.css
+@@ -36,6 +36,11 @@
+   /* font-family: Verdana, Geneva, Tahoma, sans-serif; */
+ }
+ 
++html, body {
++  background-color: #000000;
++  color: white;
++}
++
+ ::-webkit-scrollbar {
+   display: none;
+ }
+diff --git a/client/src/pages/Alumni/Alumni.jsx b/client/src/pages/Alumni/Alumni.jsx
+index e788709..b8dbae1 100644
+--- a/client/src/pages/Alumni/Alumni.jsx
++++ b/client/src/pages/Alumni/Alumni.jsx
+@@ -227,10 +227,10 @@ const Alumni = () => {
+             />
+             <button
+               onClick={() => setShowFilters(!showFilters)}
+-              className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
++              className={`flex items-center gap-2 rounded-xl border border-white/10 px-5 py-2.5 font-medium transition-all duration-300 hover:scale-105 ${
+                 showFilters
+-                  ? "bg-blue-600 hover:bg-blue-500"
+-                  : "bg-white/10 hover:bg-white/20"
++                  ? "bg-blue-600 text-white shadow-[0_0_15px_rgba(37,99,235,0.4)]"
++                  : "bg-white/5 text-gray-300 hover:bg-white/10 hover:text-white"
+               }`}
+             >
+               <FaFilter
+@@ -284,21 +284,21 @@ const Alumni = () => {
+       </div>
+ 
+       {/* Pagination Controls */}
+-      <div className="mb-24 mt-10 flex justify-center gap-2">
++      <div className="mb-24 mt-12 flex justify-center items-center gap-4">
+         <button
+           onClick={() => handlePageChange(currentPage - 1)}
+           disabled={currentPage <= 1}
+-          className="disabled:bg-gray-600 rounded bg-blue-600 px-3 py-1 text-white"
++          className="disabled:opacity-50 disabled:cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/10 hover:border-white/20"
+         >
+           Previous
+         </button>
+-        <span className="text-white">
+-          Page {currentPage} of {totalPages}
++        <span className="text-sm font-medium text-gray-400">
++          Page <span className="text-white">{currentPage}</span> of <span className="text-white">{totalPages}</span>
+         </span>
+         <button
+           onClick={() => handlePageChange(currentPage + 1)}
+           disabled={currentPage >= totalPages}
+-          className="disabled:bg-gray-600 rounded bg-blue-600 px-3 py-1 text-white"
++          className="disabled:opacity-50 disabled:cursor-not-allowed rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-white transition-all hover:bg-white/10 hover:border-white/20"
+         >
+           Next
+         </button>
+diff --git a/client/src/pages/StudyMaterialPage.jsx b/client/src/pages/StudyMaterialPage.jsx
+index 6e33037..69fc12c 100644
+--- a/client/src/pages/StudyMaterialPage.jsx
++++ b/client/src/pages/StudyMaterialPage.jsx
+@@ -18,18 +18,21 @@ const DEPARTMENTS = ["CSE", "AI"];
+ 
+ const StudyMaterialHero = () => (
+     <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
++        <div className="absolute inset-0 -z-10 flex items-center justify-center">
++            <div className="h-64 w-64 rounded-full bg-blue-500/20 blur-[100px]"></div>
++        </div>
+         <div className="space-y-6 text-center">
+-            <div className="inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-medium text-blue-400">
++            <div className="animate-fade-in inline-flex items-center gap-2 rounded-full border border-blue-500/30 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                 <LuBookMarked className="h-4 w-4" />
+                 Study Resources
+             </div>
+-            <h1 className="text-foreground text-4xl font-bold md:text-6xl">
++            <h1 className="text-foreground text-4xl font-bold md:text-6xl tracking-tight">
+                 Ace Your Academic &
+-                <span className="block bg-gradient-to-r from-blue-400 to-blue-400/80 bg-clip-text text-transparent">
++                <span className="mt-2 block bg-gradient-to-r from-blue-400 via-blue-500 to-cyan-400 bg-clip-text text-transparent drop-shadow-sm">
+                     Placement Prep
+                 </span>
+             </h1>
+-            <p className="mx-auto max-w-3xl text-xl leading-relaxed text-gray-300">
++            <p className="mx-auto max-w-3xl text-xl font-light leading-relaxed text-gray-400">
+                 Find all the resources you need, from semester exams to placement preparation.
+             </p>
+         </div>
+@@ -39,16 +42,17 @@ const StudyMaterialHero = () => (
+ const SelectionCard = ({ title, icon, onClick }) => (
+     <button
+         onClick={onClick}
+-        className="group w-full max-w-lg rounded-2xl border border-white/10 bg-[#0f0f0f] p-8 text-left transition-all duration-300 hover:-translate-y-1 hover:border-blue-400/50 hover:shadow-elegant focus:outline-none focus:ring-2 focus:ring-blue-400/50"
++        className="group relative w-full max-w-lg overflow-hidden rounded-2xl border border-white/5 bg-white/5 p-8 text-left backdrop-blur-md transition-all duration-500 hover:-translate-y-2 hover:border-blue-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(0,0,0,0.12),0_0_20px_rgba(59,130,246,0.3)] focus:outline-none focus:ring-2 focus:ring-blue-400/50"
+     >
+-        <div className="flex items-center justify-between">
+-            <div className="flex items-center gap-4">
+-                <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-white/10 text-blue-400 transition-all duration-300 group-hover:bg-blue-400 group-hover:text-white">
++        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100"></div>
++        <div className="relative z-10 flex items-center justify-between">
++            <div className="flex items-center gap-5">
++                <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-blue-400 transition-all duration-500 group-hover:scale-110 group-hover:border-transparent group-hover:bg-blue-500 group-hover:text-white group-hover:shadow-[0_0_20px_rgba(59,130,246,0.6)]">
+                     {icon}
+                 </div>
+-                <h3 className="text-xl font-semibold text-white">{title}</h3>
++                <h3 className="text-xl font-semibold tracking-wide text-white transition-colors duration-300 group-hover:text-blue-100">{title}</h3>
+             </div>
+-            <LuArrowRight className="h-5 w-5 text-gray-400 transition-transform duration-300 group-hover:translate-x-1 group-hover:text-blue-400" />
++            <LuArrowRight className="h-6 w-6 text-gray-500 transition-all duration-500 group-hover:translate-x-2 group-hover:text-blue-400" />
+         </div>
+     </button>
+ );
+@@ -209,7 +213,7 @@ const StudyMaterialPage = () => {
+                 {step > 1 && (
+                     <button
+                         onClick={handleBack}
+-                        className="mb-6 flex items-center gap-2 rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
++                        className="mb-8 flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-sm font-medium text-gray-300 backdrop-blur-md transition-all duration-300 hover:-translate-x-1 hover:bg-white/10 hover:text-white hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
+                     >
+                         <LuArrowLeft className="h-4 w-4" />
+                         Back
