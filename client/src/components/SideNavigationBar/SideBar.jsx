@@ -140,7 +140,7 @@ const CustomSidebar = () => {
           )}
         </div>
 
-        <div className="flex-1 overflow-y-auto">
+        <div className="flex-1 overflow-y-auto custom-scrollbar pb-10" data-lenis-prevent="true">
           <Menu iconShape="circle" className="overflow-visible">
             {/* Menu Items */}
             {menuList.map((item, index) => {
