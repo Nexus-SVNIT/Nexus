@@ -30,7 +30,7 @@ const token = localStorage.getItem("token");
 function App() {
  
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5, smoothTouch: true }}>
+    <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
       <QueryClientProvider client={queryClient}>
         <Router>
           <Routes>
