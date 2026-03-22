@@ -12,7 +12,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
     if (!path) return "/fallback.png";
     if (path.startsWith("http") || path.startsWith("data:")) return path;
     if (path.includes("/") || path.includes(".")) return `${process.env.REACT_APP_BACKEND_BASE_URL}/${path}`;
-    return `https://lh3.googleusercontent.com/d/${path}`;
+    return `https://drive.google.com/thumbnail?id=${path}&sz=w1000`;
   };
 
   const imageUrl = isFaculty

@@ -364,7 +364,7 @@ const RegisterForm = () => {
               <p className="text-md px-4 text-slate-500 md:py-2 ">
                 <div className="flex flex-col items-center justify-center gap-5 p-5">
                   <img
-                    src={`https://lh3.googleusercontent.com/d/${formData.posterImageDriveId}`}
+                    src={`https://drive.google.com/thumbnail?id=${formData.posterImageDriveId}&sz=w1000`}
                     alt="Event Poster"
                     className="rounded-md object-cover object-center md:w-1/2 "
                   />

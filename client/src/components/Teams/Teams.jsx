@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { faculty_advisors } from "../../data";
 import Error from "../Error/Error";
 import HeadTags from "../HeadTags/HeadTags";
@@ -9,6 +9,7 @@ import TeamCard from "./TeamCard";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import { useSearchParams, useLocation } from "react-router-dom";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
 const Teams = () => {
   const [selectedYear, setSelectedYear] = useState(""); // Default year set after fetching unique years
@@ -80,6 +81,20 @@ const Teams = () => {
     fetchData();
   }, [selectedYear]); // Refetch data when selectedYear changes
 
+  // Memoize priority grouping to prevent recalculation on every render
+  const { priorityGroups, sortedPriorities } = useMemo(() => {
+    const groups = {};
+    data.forEach(member => {
+      const p = typeof member.priority === 'number' ? member.priority : Infinity;
+      if (!groups[p]) groups[p] = [];
+      groups[p].push(member);
+    });
+    const sorted = Object.keys(groups)
+      .map(Number)
+      .sort((a, b) => a - b);
+    return { priorityGroups: groups, sortedPriorities: sorted };
+  }, [data]);
+
   if (error) return <MaintenancePage />;
   if (loading)
     return (
@@ -88,25 +103,12 @@ const Teams = () => {
       </div>
     );
 
-  // Sort team members by priority (ascending: 0, 1, 2, ...)
-  // Group team members by priority level
-  const priorityGroups = {};
-  data.forEach(member => {
-    const p = typeof member.priority === 'number' ? member.priority : Infinity;
-    if (!priorityGroups[p]) priorityGroups[p] = [];
-    priorityGroups[p].push(member);
-  });
-  // Get sorted priority levels (0, 1, 2, ...)
-  const sortedPriorities = Object.keys(priorityGroups)
-    .map(Number)
-    .sort((a, b) => a - b);
-
   return (
     <div className="bg-[#000000] min-h-screen w-full font-sans antialiased">
       <div className="mx-auto flex flex-col items-center justify-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 space-y-16">
         <HeadTags
           title={`Core Team ${selectedYear} | Nexus - NIT Surat`}
-          description="Meet the core team of Nexus, the technical society of NIT Surat."
+          description="Meet the core team of Nexus"
           keywords="Nexus, NIT Surat, Core Team, Developer, Event Manager, Media Head, Design Head, AI/ML Head, Documentation Head, Coordinator, Faculty Advisors, Think Tank Head, Alma Relation Head, Treasurer, Chair Person, Vice Chair Person, Professor, Mentor"
         />
         
@@ -116,7 +118,7 @@ const Teams = () => {
             Meet the Team
           </h1>
           <p className="max-w-2xl text-base text-zinc-400 mt-4 leading-relaxed">
-            The visionary faculty and brilliant student minds orchestrating the architecture of the Nexus ecosystem at NIT Surat.
+            The visionary faculty and student minds orchestrating the architecture of the Nexus ecosystem at NIT Surat.
           </p>
         </div>
 
@@ -127,13 +129,13 @@ const Teams = () => {
           </section>
           
           <section className="w-full flex justify-center items-center flex-col gap-10">
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-              <h2 className="text-2xl font-bold tracking-tight text-white uppercase">Core Committee</h2>
-              <div className="relative">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 flex-wrap">
+              <h2 className="text-2xl font-bold tracking-tight text-white uppercase whitespace-nowrap">Core Committee</h2>
+              <div className="relative inline-flex items-center">
                 <select
                   value={selectedYear}
                   onChange={handleYearChange}
-                  className="appearance-none rounded-lg border border-zinc-800 bg-zinc-900/80 px-4 py-2 pr-8 text-sm font-semibold text-zinc-300 shadow-sm transition-colors hover:border-zinc-700 hover:bg-zinc-800 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 outline-none cursor-pointer"
+                  className="appearance-none w-36 rounded-lg border border-zinc-800 bg-zinc-900/80 px-4 py-2 text-sm font-semibold text-zinc-300 shadow-sm transition-colors hover:border-zinc-700 hover:bg-zinc-800 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 cursor-pointer"
                 >
                   {years.map((year) => (
                     <option key={year} value={year} className="bg-zinc-900 text-zinc-300">
@@ -141,7 +143,7 @@ const Teams = () => {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-zinc-400">
+                <div className="pointer-events-none absolute right-4 flex items-center text-zinc-400">
                   <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                 </div>
               </div>

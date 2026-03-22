@@ -1,9 +1,11 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import { Footer, Navbar } from "../components";
 import ScrollToTop from "../components/ScrollToTop/ScrollToTop";
 import CustomSideBar from "../components/SideNavigationBar/SideBar";
 
 const DefaultLayout = () => {
+  const { pathname } = useLocation();
+
   return (
     <div className="bg-black min-h-screen">
       <div className="hidden md:block">
@@ -15,7 +17,9 @@ const DefaultLayout = () => {
         </header>
         <main className="relative isolate z-10 flex-1 w-full bg-[#000000]">
           <ScrollToTop />
-          <Outlet />
+          <div key={pathname} className="animate-fadeIn">
+            <Outlet />
+          </div>
         </main>
         <footer>
           <Footer />
@@ -26,3 +30,4 @@ const DefaultLayout = () => {
 };
 
 export default DefaultLayout;
+

@@ -166,7 +166,7 @@ const Events = () => {
                         <img
                           src={
                             item?.eventPoster
-                              ? `https://lh3.googleusercontent.com/d/${item.eventPoster}`
+                              ? `https://drive.google.com/thumbnail?id=${item.eventPoster}&sz=w1000`
                               : "https://images.pexels.com/photos/1097930/pexels-photo-1097930.jpeg?auto=compress&cs=tinysrgb&w=800"
                           }
                           alt="Banner"

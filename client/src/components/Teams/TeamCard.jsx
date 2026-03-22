@@ -1,9 +1,19 @@
-import React, { useEffect } from "react";
+import React from "react";
 import ModernProfile from "../ProfileCard/ModernProfile";
+import useIntersectionObserver from "../../hooks/useIntersectionObserver";
 
-const TeamCard = ({ data, isFaculty = false }) => {
+const TeamCard = React.memo(({ data, isFaculty = false }) => {
+  const [sectionRef, isVisible] = useIntersectionObserver({ threshold: 0.05 });
+
   return (
-    <div className="my-10 w-full">
+    <div
+      ref={sectionRef}
+      className="my-10 w-full transition-all duration-700 ease-out"
+      style={{
+        opacity: isVisible ? 1 : 0,
+        transform: isVisible ? "translateY(0)" : "translateY(24px)",
+      }}
+    >
       <div className="flex w-full flex-wrap justify-center gap-8 md:gap-10 lg:gap-12">
         {data.map((member, idx) => {
           const socialLinks = {
@@ -36,6 +46,8 @@ const TeamCard = ({ data, isFaculty = false }) => {
       </div>
     </div>
   );
-};
+});
+
+TeamCard.displayName = "TeamCard";
 
 export default TeamCard;

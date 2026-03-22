@@ -103,7 +103,7 @@ const uploadImageToDrive = async (req, folderId = process.env.GOOGLE_DRIVE_ACHIE
     return { 
       success: true, 
       fileId: response.data.id,
-      fileUrl: `https://drive.google.com/uc?id=${response.data.id}`
+      fileUrl: `https://drive.google.com/thumbnail?id=${response.data.id}&sz=w1000`
     };
   } catch (error) {
     console.error('Google Drive upload error:', error);
