@@ -237,16 +237,18 @@ const Cp = () => {
             </div> 
             */}
 
-            {/* Platform Toggle and Search Filters wrapper matches Screenshot 3 where they are adjacent/styled */}
-            <div className="flex flex-col xl:flex-row w-full gap-4 xl:items-center xl:justify-between mb-2">
+            {/* Centered Tab-styled Platform Toggle */}
+            <PlateformButtons
+              handlePlatformChange={handlePlatformChange}
+              activePlatform={activePlatform}
+            />
+
+            {/* Centered Filter Section */}
+            <div className="flex w-full justify-center">
               <FilterSection
                 activePlatform={activePlatform}
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
-              />
-              <PlateformButtons
-                handlePlatformChange={handlePlatformChange}
-                activePlatform={activePlatform}
               />
             </div>
 

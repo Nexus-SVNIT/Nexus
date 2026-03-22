@@ -40,7 +40,7 @@ const RatingLegend = ({ platform }) => {
   };
 
   return (
-    <div className="mb-4 rounded-lg border border-white/10 bg-white/5 p-4 backdrop-blur-sm">
+    <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur-xl">
       <h3 className="mb-4 text-lg font-semibold text-blue-400">
         Rating Legend
       </h3>

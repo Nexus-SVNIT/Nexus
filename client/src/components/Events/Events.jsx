@@ -65,8 +65,7 @@ const Events = () => {
           return;
         }
 
-        const result = await response.json();
-        setData(result.data || []);
+        setData(response.data?.data || []);
         
       } catch (err) {
         console.error("Fetch error:", err);
