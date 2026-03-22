@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="ml-4 flex items-center">
         <Link to={"/"} className="flex justify-center">
           <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
-        <span className="mx-2 text-2xl uppercase text-white/80">Nexus</span>
+        <span className="mx-2 text-2xl font-bold tracking-wide uppercase bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">NEXUS</span>
         </Link>
       </div>
       <div className="relative flex items-center">

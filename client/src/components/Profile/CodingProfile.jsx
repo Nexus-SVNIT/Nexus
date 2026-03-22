@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
-  LineChart,
-  Line,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -124,34 +124,56 @@ const CodingProfile = ({
       {/* LeetCode Profile */}
       {leetcodeUser && (
         <div className="mb-6">
-          <h3 className="mb-2 text-xl">LeetCode</h3>
-          <img
-            src={leetcodeUser?.profile?.userAvatar}
-            alt="User Avatar"
-            className="mb-2 h-24 w-24 rounded-full"
-          />
-          <p>Username: {leetcodeUser?.username}</p>
-          <p>Streak: {leetcodeUser?.userCalendar?.streak} days</p>
-          <p>
-            Contests Attended: {leetcodeContestRanking?.attendedContestsCount}
-          </p>
-          <p>
-            Global Ranking: {leetcodeContestRanking?.globalRanking}
-          </p>
-          <p>
-            Rating: {leetcodeContestRanking?.rating?.toFixed(2)}
-          </p>
-          <p>
-            Top Percentage: {leetcodeContestRanking?.topPercentage}
-          </p>
+          <div className="flex items-center gap-4 mb-6">
+            <img
+              src={leetcodeUser?.profile?.userAvatar}
+              alt="User Avatar"
+              className="h-16 w-16 rounded-full border border-zinc-700/50"
+            />
+            <div>
+              <h3 className="text-2xl font-bold">LeetCode</h3>
+              <p className="text-blue-400 font-medium">@{leetcodeUser?.username}</p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Streak</p>
+              <p className="text-xl font-bold text-white">{leetcodeUser?.userCalendar?.streak} days</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Contests</p>
+              <p className="text-xl font-bold text-white">{leetcodeContestRanking?.attendedContestsCount || 0}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Rating</p>
+              <p className="text-xl font-bold text-white">{leetcodeContestRanking?.rating?.toFixed(2) || 'N/A'}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Global Rank</p>
+              <p className="text-xl font-bold text-white">{leetcodeContestRanking?.globalRanking || 'N/A'}</p>
+            </div>
+          </div>
 
           {/* Submission stats */}
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
+          <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-5 mb-8">
+            <h4 className="mb-6 text-lg font-semibold">Submission Stats</h4>
+            <ResponsiveContainer width="100%" height={300}>
+            <AreaChart
               data={leetcodeStats || []}
-              margin={{ top: 20, right: 30, left: 0, bottom: 40 }}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" />
+              <defs>
+                <linearGradient id="colorCount" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="colorSubmissions" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" vertical={false} />
               <XAxis
                 dataKey="difficulty"
                 interval={0}
@@ -180,20 +202,31 @@ const CodingProfile = ({
                   paddingLeft: "10px",
                 }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="count"
-                stroke="#8884d8"
+                stroke="#3b82f6"
+                fillOpacity={1}
+                fill="url(#colorCount)"
                 name="Solved"
+                strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6, strokeWidth: 0, fill: "#3b82f6" }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="submissions"
-                stroke="#82ca9d"
+                stroke="#10b981"
+                fillOpacity={1}
+                fill="url(#colorSubmissions)"
                 name="Submissions"
+                strokeWidth={2}
+                dot={false}
+                activeDot={{ r: 6, strokeWidth: 0, fill: "#10b981" }}
               />
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
+          </div>
 
           {/* Language Stats */}
           <h4 className="mt-4">Problems Solved by Language:</h4>
@@ -209,28 +242,50 @@ const CodingProfile = ({
       {/* Codeforces Profile */}
       {codeforcesProfileData && (
         <div>
-          <h3 className="mb-2 text-xl">Codeforces</h3>
-          <img
-            src={codeforcesProfileData?.avatar}
-            alt="User Avatar"
-            className="mb-2 h-24 w-24 rounded-full"
-          />
-          <p>Username: {codeforcesProfileData?.handle}</p>
-          <p>Rank: {codeforcesProfileData?.rank}</p>
-          <p>
-            Max Rating: {codeforcesProfileData?.maxRating} (
-            {codeforcesProfileData?.maxRank})
-          </p>
-          <p>Current Rating: {codeforcesProfileData?.rating}</p>
-          <p>Friend of Count: {codeforcesProfileData?.friendOfCount}</p>
+          <div className="flex items-center gap-4 mb-6 mt-12">
+            <img
+              src={codeforcesProfileData?.avatar}
+              alt="User Avatar"
+              className="h-16 w-16 rounded-full border border-zinc-700/50"
+            />
+            <div>
+              <h3 className="text-2xl font-bold">Codeforces</h3>
+              <p className="text-blue-400 font-medium">@{codeforcesProfileData?.handle}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Current Rating</p>
+              <p className="text-xl font-bold text-white">{codeforcesProfileData?.rating}</p>
+              <p className="text-xs text-zinc-500 capitalize">{codeforcesProfileData?.rank}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Max Rating</p>
+              <p className="text-xl font-bold text-white">{codeforcesProfileData?.maxRating}</p>
+              <p className="text-xs text-zinc-500 capitalize">{codeforcesProfileData?.maxRank}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Friends</p>
+              <p className="text-xl font-bold text-white">{codeforcesProfileData?.friendOfCount}</p>
+            </div>
+          </div>
 
           {/* Rating Progress */}
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart
+          <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-5 mb-8">
+            <h4 className="mb-6 text-lg font-semibold">Rating Progress</h4>
+            <ResponsiveContainer width="100%" height={300}>
+            <AreaChart
               data={codeforcesRatings || []}
-              margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+              margin={{ top: 10, right: 10, left: -20, bottom: 0 }}
             >
-              <CartesianGrid strokeDasharray="3 3" />
+              <defs>
+                <linearGradient id="colorRating" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.3}/>
+                  <stop offset="95%" stopColor="#8b5cf6" stopOpacity={0}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#3f3f46" vertical={false} />
               <XAxis
                 dataKey="date"
                 interval={0}
@@ -273,33 +328,53 @@ const CodingProfile = ({
                   paddingLeft: "10px",
                 }}
               />
-              <Line
+              <Area
                 type="monotone"
                 dataKey="newRating"
-                stroke="#8884d8"
-                name="New Rating"
+                stroke="#8b5cf6"
+                fillOpacity={1}
+                fill="url(#colorRating)"
+                name="Rating"
+                strokeWidth={2}
+                dot={{ r: 3, fill: "#8b5cf6", strokeWidth: 0 }}
+                activeDot={{ r: 6, strokeWidth: 0, fill: "#c4b5fd" }}
               />
-              <Line
-                type="monotone"
-                dataKey="oldRating"
-                stroke="#82ca9d"
-                name="Old Rating"
-              /> {/* Comment to hide old rating */}
-            </LineChart>
+            </AreaChart>
           </ResponsiveContainer>
+          </div>
         </div>
       )}
       {/* CodeChef Profile */}
       {codechefUser && (
         <div>
-          <h3 className="mb-2 text-xl">CodeChef</h3>
-          <p>Username: {codechefUser?.username}</p>
-          <p>Current Rating: {codechefUser?.rating}</p>
-          <p>Rating Number: {codechefUser?.rating_number}</p>
-          <p>Global Rank: {codechefUser?.global_rank}</p>
-          <p>Country Rank: {codechefUser?.country_rank}</p>
-          <p>Max Rank: {codechefUser?.max_rank}</p>
-          <p>Country: {codechefUser?.country}</p>
+          <div className="flex items-center gap-4 mb-6 mt-12">
+            <div className="flex h-16 w-16 items-center justify-center rounded-full border border-zinc-700/50 bg-zinc-800 text-2xl font-bold text-white">
+              C
+            </div>
+            <div>
+              <h3 className="text-2xl font-bold">CodeChef</h3>
+              <p className="text-blue-400 font-medium">@{codechefUser?.username}</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Current Rating</p>
+              <p className="text-xl font-bold text-white">{codechefUser?.rating} <span className="text-sm font-normal text-amber-500">{codechefUser?.rating_number}</span></p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Global Rank</p>
+              <p className="text-xl font-bold text-white">{codechefUser?.global_rank}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Country Rank</p>
+              <p className="text-xl font-bold text-white">{codechefUser?.country_rank} <span className="text-xs text-zinc-500">({codechefUser?.country})</span></p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Max Rank</p>
+              <p className="text-xl font-bold text-white">{codechefUser?.max_rank}</p>
+            </div>
+          </div>
         </div>
       )}
     </div>

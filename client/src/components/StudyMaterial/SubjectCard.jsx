@@ -1,7 +1,8 @@
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { LuBookMarked, LuArrowRight, LuFileText } from 'react-icons/lu';
 
 export const SubjectCard = ({ subject }) => {
+  const location = useLocation();
   const resourceCount = subject.resources 
     ? Object.values(subject.resources).flat().length 
     : 0;
@@ -9,6 +10,7 @@ export const SubjectCard = ({ subject }) => {
   return (
     <Link 
       to={`/study-material/subject/${subject._id}`} 
+      state={{ search: location.search }}
       className="group block rounded-xl border border-zinc-700/50 bg-zinc-900/60 p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-blue-500/30 hover:bg-zinc-800/60 hover:shadow-lg hover:shadow-blue-500/5 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
     >
       <div className="flex items-center justify-between gap-4">

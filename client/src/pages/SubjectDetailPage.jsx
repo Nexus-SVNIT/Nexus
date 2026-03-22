@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getSubjectDetails } from '../services/studyMaterialService';
 import Loader from '../components/Loader/Loader';
@@ -97,6 +97,9 @@ const CategoryHeader = ({ name, count }) => (
 const SubjectDetailPage = () => {
     const { id } = useParams();
     const navigate = useNavigate(); 
+    const location = useLocation();
+    
+    const backSearch = location.state?.search || "";
 
     const [searchTerm, setSearchTerm] = useState("");
     const [subCategoryFilter, setSubCategoryFilter] = useState("All");
@@ -217,7 +220,7 @@ const SubjectDetailPage = () => {
 
             {/* Back & Title */}
             <Link
-                to="/study-material"
+                to={`/study-material${backSearch}`}
                 className="mb-6 inline-flex items-center gap-2 rounded-lg border border-zinc-700/50 bg-zinc-800/50 px-4 py-2 text-sm font-medium text-gray-300 transition-all duration-200 hover:border-zinc-600 hover:bg-zinc-800 hover:text-white"
             >
                 <LuArrowLeft className="h-4 w-4" />

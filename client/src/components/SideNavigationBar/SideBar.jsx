@@ -122,8 +122,8 @@ const CustomSidebar = () => {
                 <Link to={"/"}>
                   <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
                 </Link>
-                <span className="mx-2 text-xl uppercase text-white/80">
-                  Nexus
+                <span className="mx-2 text-xl font-bold tracking-wide uppercase bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                  NEXUS
                 </span>
               </div>
               <button
