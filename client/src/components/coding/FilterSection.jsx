@@ -146,26 +146,26 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
   };
 
   return (
-    <div className="relative mb-6 mt-10">
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col items-center justify-center gap-4 md:flex-row">
-          <div className="w-full flex-1 md:max-w-fit">
+    <div className="relative mb-8 w-full max-w-4xl">
+      <div className="flex flex-col justify-center gap-4">
+        <div className="flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="w-full max-w-md">
             <SearchBar
-              placeholder="Search..."
+              placeholder="Search Profiles..."
               onChange={handleSearchChange}
               initialValue={searchTerm}
             />
           </div>
           <button
             onClick={() => setShowFilters(!showFilters)}
-            className={`flex items-center gap-2 rounded-lg px-4 py-2 transition-colors ${
+            className={`flex items-center gap-2 rounded-xl border px-5 py-2.5 font-medium transition-all duration-300 ${
               showFilters
-                ? "bg-blue-600 hover:bg-blue-500"
-                : "bg-white/10 hover:bg-white/20"
+                ? "border-blue-500 bg-blue-600/90 text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] backdrop-blur-md hover:bg-blue-500"
+                : "border-white/10 bg-white/5 text-gray-300 backdrop-blur-md hover:bg-white/10 hover:text-white"
             }`}
           >
             <FaFilter
-              className={showFilters ? "text-white" : "text-gray-300"}
+              className={`transition-colors duration-300 ${showFilters ? "text-white" : "text-gray-400 group-hover:text-white"}`}
             />
             <span>Filters</span>
           </button>

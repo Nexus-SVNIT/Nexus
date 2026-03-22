@@ -33,13 +33,13 @@ const SearchBar = ({ placeholder, onChange, initialValue = "" }) => {
   return (
     <div className="relative w-full max-w-md">
       <div className="relative flex items-center">
-        <FaSearch className="absolute left-3 text-gray-400 z-10" />
+        <FaSearch className="absolute left-4 text-gray-400 z-10" />
         <input
           type="text"
           value={inputValue}
           onChange={(e) => handleChange(e.target.value)}
           placeholder={placeholder}
-          className="w-full rounded-lg bg-white/10 backdrop-blur-sm border border-white/20 py-2 pl-10 pr-10 text-white outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full rounded-xl bg-white/5 backdrop-blur-md border border-white/10 py-2.5 pl-11 pr-10 text-white outline-none focus:border-blue-500 focus:bg-white/10 focus:shadow-[0_0_15px_rgba(37,99,235,0.2)] transition-all duration-300"
         />
         {inputValue && (
           <button
