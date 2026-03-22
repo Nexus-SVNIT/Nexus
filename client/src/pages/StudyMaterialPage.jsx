@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { getSubjects } from "../services/studyMaterialService";
 import Loader from "../components/Loader/Loader";
@@ -111,10 +111,22 @@ const StepHeader = ({ title, subtitle }) => (
 
 /* ─── Main Page ─── */
 const StudyMaterialPage = () => {
-    const [step, setStep] = useState(1);
-    const [category, setCategory] = useState(null);
-    const [department, setDepartment] = useState(null);
     const navigate = useNavigate();
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const category = searchParams.get("category");
+    const department = searchParams.get("department");
+
+    let step = 1;
+    if (category) {
+        if (category === CATEGORIES.PLACEMENTS) {
+            step = 3;
+        } else if (department) {
+            step = 3;
+        } else {
+            step = 2;
+        }
+    }
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -151,45 +163,44 @@ const StudyMaterialPage = () => {
 
 
     const handleCategorySelect = (selectedCategory) => {
-        setCategory(selectedCategory);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("category", selectedCategory);
         if (selectedCategory === CATEGORIES.PLACEMENTS) {
-            setDepartment("Common");
-            setStep(3);
-        } else {
-            setStep(2);
+            newParams.set("department", "Common");
         }
+        setSearchParams(newParams);
     };
 
     const handleDepartmentSelect = (selectedDepartment) => {
-        setDepartment(selectedDepartment);
-        setStep(3);
+        const newParams = new URLSearchParams(searchParams);
+        newParams.set("department", selectedDepartment);
+        setSearchParams(newParams);
     };
 
     const handleBack = () => {
+        const newParams = new URLSearchParams(searchParams);
         if (step === 3) {
             if (category === CATEGORIES.SEMESTER) {
-                setStep(2);
-                setDepartment(null);
+                newParams.delete("department");
             } else {
-                setStep(1);
-                setCategory(null);
-                setDepartment(null);
+                newParams.delete("category");
+                newParams.delete("department");
             }
         } else if (step === 2) {
-            setStep(1);
-            setCategory(null);
+            newParams.delete("category");
         }
+        setSearchParams(newParams);
     };
 
     const handleBreadcrumbNavigate = (targetStep) => {
+        const newParams = new URLSearchParams(searchParams);
         if (targetStep === 0 || targetStep === 1) {
-            setStep(1);
-            setCategory(null);
-            setDepartment(null);
+            newParams.delete("category");
+            newParams.delete("department");
         } else if (targetStep === 2) {
-            setStep(2);
-            setDepartment(null);
+            newParams.delete("department");
         }
+        setSearchParams(newParams);
     };
 
 

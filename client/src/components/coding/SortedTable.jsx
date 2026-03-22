@@ -2,7 +2,8 @@ import React from "react";
 import { useTable, useSortBy, usePagination } from "react-table";
 import { useSearchParams } from "react-router-dom";
 
-const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
+const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProfiles }) => {
+  const actualTotal = totalProfiles || data.length;
   const currentPage = parseInt(searchParams.get("page") || "1");
   const currentPageSize = parseInt(searchParams.get("limit") || "10");
 
@@ -31,7 +32,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
       },
       manualPagination: true,
       manualSortBy: true,
-      pageCount: Math.ceil(data.length / currentPageSize),
+      pageCount: Math.ceil(actualTotal / currentPageSize),
     },
     useSortBy,
     usePagination,
@@ -270,7 +271,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
           </button>
           
           <div className="flex items-center justify-center px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-zinc-800 rounded-md">
-            Page <strong className="text-white mx-1">{currentPage}</strong> of <strong className="text-white mx-1">{Math.ceil(data.length / currentPageSize) || 1}</strong>
+            Page <strong className="text-white mx-1">{currentPage}</strong> of <strong className="text-white mx-1">{Math.ceil(actualTotal / currentPageSize) || 1}</strong>
           </div>
 
           <button
@@ -279,7 +280,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams }) => {
               params.set("page", (currentPage + 1).toString());
               setSearchParams(params);
             }}
-            disabled={data.length < currentPageSize}
+            disabled={currentPage >= Math.ceil(actualTotal / currentPageSize)}
             className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             Next

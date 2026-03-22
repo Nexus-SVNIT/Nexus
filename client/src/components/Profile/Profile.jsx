@@ -243,10 +243,11 @@ const ProfilePage = ({ profile, setProfile }) => {
           <h3 className="text-xl font-semibold text-gray-200">Personal Information</h3>
           {profile?.isAlumni && <AlumnusBadge/>}
         </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Toaster />
-          <div>
-            <label className="text-zinc-400 block">Full Name</label>
+        <Toaster />
+        <form onSubmit={handleSubmit} className="mt-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+            <div>
+              <label className="text-zinc-400 block text-sm font-medium mb-1">Full Name</label>
             <input
               type="text"
               name="fullName"
@@ -274,7 +275,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.mobileNumber || ""}
               onChange={handleChange}
               disabled={!isEditing}
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           <div>
@@ -285,7 +286,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.personalEmail || ""}
               onChange={handleChange}
               disabled={!isEditing}              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           {!profile?.isAlumni && (
@@ -296,7 +297,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                 name="instituteEmail"
                 value={profile?.instituteEmail || ""}
                 disabled
-                className="mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800/50 border border-zinc-700 p-2 text-zinc-400"
+                className="mt-1 block w-full cursor-not-allowed rounded-lg border border-zinc-800 bg-zinc-900/30 p-2.5 text-zinc-500"
               />
             </div>
           )}
@@ -306,7 +307,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.branch || ""}
               onChange={handleChange}
               disabled           
-              className="mt-1 block w-full cursor-not-allowed rounded-md bg-zinc-800/50 border border-zinc-700 p-2 text-zinc-400">
+              className="mt-1 block w-full cursor-not-allowed rounded-lg border border-zinc-800 bg-zinc-900/30 p-2.5 text-zinc-500">
                 <option value="CSE">CSE/COE</option>
                 <option value="AI">AI</option>
               </select>
@@ -319,7 +320,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.linkedInProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           {profile?.isAlumni && (
@@ -332,7 +333,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                   value={profile?.currentCompany || ""}
                   onChange={handleChange}
                   disabled={!isEditing}                
-                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                  className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                 />
               </div>
               <div>
@@ -343,7 +344,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                   value={profile?.currentDesignation || ""}
                   onChange={handleChange}
                   disabled={!isEditing}                
-                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                  className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                 />
               </div>
               <div>
@@ -354,7 +355,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                   value={expertiseInput}
                   onChange={handleChange}
                   disabled={!isEditing}                
-                  className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+                  className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
                 />
               </div>
             </>
@@ -367,7 +368,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.githubProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           <div>
@@ -377,7 +378,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.leetcodeProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           <div>
@@ -387,7 +388,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.codeforcesProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           <div>
@@ -397,68 +398,71 @@ const ProfilePage = ({ profile, setProfile }) => {
               value={profile?.codechefProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}
-              className="border-gray-300 mt-1 block w-full rounded-md border bg-zinc-800 p-2 text-white"
+              className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
           <div>
-            <label className="flex items-center">
+            <label className="flex items-center text-sm font-medium text-zinc-300 transition-colors hover:text-white cursor-pointer select-none">
               <input
                 type="checkbox"
                 name="subscribed" 
                 checked={!!profile?.subscribed}
                 onChange={handleChange}
                 disabled={!isEditing}
-                className="mr-2"
+                className="mr-3 h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-zinc-900 transition-colors"
               />
               Subscribe to newsletters
             </label>
           </div>
           <div>
-            <label className="flex items-center">
+            <label className="flex items-center text-sm font-medium text-zinc-300 transition-colors hover:text-white cursor-pointer select-none">
               <input
                 type="checkbox"
                 name="shareCodingProfile" 
                 checked={!!profile?.shareCodingProfile}
                 onChange={handleChange}
                 disabled={!isEditing}
-                className="mr-2"
+                className="mr-3 h-4 w-4 rounded border-zinc-700 bg-zinc-900 text-blue-500 focus:ring-blue-500 focus:ring-offset-zinc-900 transition-colors"
               />
               Share Coding Profile
             </label>
           </div>
-          <div className="flex items-center justify-between">
-            {isEditing ? (
-              <>
-                <button
-                  type="submit"
-                  className="rounded-md bg-blue-500 px-4 py-2 text-white"
-                  disabled={buttonLoading} 
-                >
-                  {buttonLoading ? "Verifying & Saving..." : "Save"} 
-                </button>
+          </div>
+          <div className="mt-8 flex items-center justify-between border-t border-zinc-700/50 pt-6">
+            <div className="flex items-center gap-3">
+              {isEditing ? (
+                <>
+                  <button
+                    type="submit"
+                    className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-70 disabled:cursor-not-allowed"
+                    disabled={buttonLoading} 
+                  >
+                    {buttonLoading ? "Verifying & Saving..." : "Save Changes"} 
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setIsEditing(false)}
+                    className="rounded-lg border border-zinc-600 bg-zinc-700/50 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
+                  >
+                    Cancel
+                  </button>
+                </>
+              ) : (
                 <button
                   type="button"
-                  onClick={() => setIsEditing(false)}
-                  className="rounded-lg bg-zinc-600 px-4 py-2 text-white transition-colors hover:bg-zinc-500"
+                  onClick={() => setIsEditing(true)}
+                  className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
-                  Cancel
+                  Edit Profile
                 </button>
-              </>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setIsEditing(true)}
-                className="rounded-md bg-blue-500 px-4 py-2 text-white"
-              >
-                Edit Profile
-              </button>
-            )}
+              )}
+            </div>
             <button
               type="button"
               onClick={handleForgotPassword}
-              className="rounded-md bg-red-500 px-4 py-2 text-white"
+              className="rounded-lg border border-red-500/20 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-400 transition-colors hover:bg-red-500/20 hover:text-red-300"
             >
-              Forgot Password
+              Reset Password
             </button>
           </div>
         </form>

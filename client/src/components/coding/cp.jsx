@@ -24,6 +24,7 @@ const Cp = () => {
   const [codeforcesLeaderboard, setCodeforcesLeaderboard] = useState([]);
   const [leetcodeLeaderboard, setLeetcodeLeaderboard] = useState([]);
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
+  const [totalProfiles, setTotalProfiles] = useState(0);
   const [loading, setLoading] = useState(false); // Loader state
   const [isError, setIsError] = useState(false);
   const [activePlatform, setActivePlatform] = useState(
@@ -71,6 +72,7 @@ const Cp = () => {
         }
 
         const { data, totalProfiles } = response.data;
+        setTotalProfiles(totalProfiles || data.length);
 
         // Update the appropriate leaderboard based on platform
         const currentPlatform = params.get("platform") || activePlatform;
@@ -260,6 +262,7 @@ const Cp = () => {
                   data={codeforcesLeaderboard}
                   searchParams={searchParams}
                   setSearchParams={setSearchParams}
+                  totalProfiles={totalProfiles}
                 />
               </>
             )}
@@ -272,6 +275,7 @@ const Cp = () => {
                   data={leetcodeLeaderboard}
                   searchParams={searchParams}
                   setSearchParams={setSearchParams}
+                  totalProfiles={totalProfiles}
                 />
               </>
             )}
@@ -284,6 +288,7 @@ const Cp = () => {
                   data={codechefLeaderboard}
                   searchParams={searchParams}
                   setSearchParams={setSearchParams}
+                  totalProfiles={totalProfiles}
                 />
               </>
             )}
