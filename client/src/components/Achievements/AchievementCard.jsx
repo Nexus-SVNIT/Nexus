@@ -26,7 +26,7 @@ const AchievementCard = ({ el }) => {
           >
             <div>
               <img
-                src={`https://lh3.googleusercontent.com/d/${el.image}`} // Update image source based on new data
+                src={`https://drive.google.com/thumbnail?id=${el.image}&sz=w1000`} // Update image source based on new data
                 alt="Banner"
                 className="h-60 w-full rounded-t-lg object-cover object-center md:h-80"
               />
@@ -68,7 +68,7 @@ const AchievementCard = ({ el }) => {
       >
         <div>
           <img
-            src={`https://lh3.googleusercontent.com/d/${el?.image}`} // Update image source based on new data
+            src={`https://drive.google.com/thumbnail?id=${el?.image}&sz=w1000`} // Update image source based on new data
             alt="Banner"
             className="h-60 w-full rounded-t-lg object-cover object-center"
           />

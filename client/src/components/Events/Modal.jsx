@@ -45,7 +45,7 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
 
         {/* Image */}
         <img
-          src={`https://lh3.googleusercontent.com/d/${images[currentIndex]}`}
+          src={`https://drive.google.com/thumbnail?id=${images[currentIndex]}&sz=w1000`}
           alt={`Slide ${currentIndex + 1}`}
           className="mx-auto max-h-[80vh] w-auto rounded-md object-contain"
         />

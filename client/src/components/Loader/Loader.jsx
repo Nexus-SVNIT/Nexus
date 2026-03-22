@@ -1,8 +1,11 @@
 import "./Loader.css";
+
 const Loader = () => {
   return (
-    <div className="min-h-screen min-w-full flex justify-center items-center fixed top-10">
-  <span className="loader"></span>
+    <div className="loader-container" role="status" aria-label="Loading">
+      <span className="loader-dot" />
+      <span className="loader-dot" />
+      <span className="loader-dot" />
     </div>
   );
 };
