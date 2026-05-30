@@ -433,6 +433,7 @@ const ProfilePage = ({ profile, setProfile }) => {
               {isEditing ? (
                 <>
                   <button
+                    key="save-button"
                     type="submit"
                     className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50 disabled:opacity-70 disabled:cursor-not-allowed"
                     disabled={buttonLoading} 
@@ -440,6 +441,7 @@ const ProfilePage = ({ profile, setProfile }) => {
                     {buttonLoading ? "Verifying & Saving..." : "Save Changes"} 
                   </button>
                   <button
+                    key="cancel-button"
                     type="button"
                     onClick={() => setIsEditing(false)}
                     className="rounded-lg border border-zinc-600 bg-zinc-700/50 px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-zinc-600"
@@ -449,8 +451,12 @@ const ProfilePage = ({ profile, setProfile }) => {
                 </>
               ) : (
                 <button
+                  key="edit-button"
                   type="button"
-                  onClick={() => setIsEditing(true)}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsEditing(true);
+                  }}
                   className="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                 >
                   Edit Profile
