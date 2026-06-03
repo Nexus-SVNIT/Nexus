@@ -73,6 +73,7 @@ const InterviewExperiencePage = () => {
   useEffect(() => {
     const savedFormState = JSON.parse(localStorage.getItem("formState")) || {};
     setFormState(savedFormState);
+    loadFiltersFromURL();
   }, []);
 
   // Save form state to localStorage whenever it changes
