@@ -14,8 +14,8 @@ const getAllAlumniDetails = async (req, res) => {
         // Batch (passingYear) range filter
         if (batchFrom || batchTo) {
             query.passingYear = {};
-            if (batchFrom) query.passingYear.$gte = Number(batchFrom);
-            if (batchTo) query.passingYear.$lte = Number(batchTo);
+            if (batchFrom) query.passingYear.$gte = batchFrom;
+            if (batchTo) query.passingYear.$lte = batchTo;
         }
 
         if (company) {
@@ -41,7 +41,13 @@ const getAllAlumniDetails = async (req, res) => {
             { $match: query },
             {
                 $addFields: {
-                    hasCompany: { $cond: [{$eq: ["$currentCompany", ""]}, 0, 1] }
+                    hasCompany: {
+                        $cond: [
+                            { $in: [{ $ifNull: ["$currentCompany", ""] }, ["", null]] },
+                            0,
+                            1
+                        ]
+                    }
                 }
             },
             { $sort: { hasCompany: -1, currentCompany: 1, _id: 1 } },
