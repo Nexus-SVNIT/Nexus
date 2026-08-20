@@ -18,7 +18,7 @@ function AlumniSignUpForm() {
     linkedInProfile: "",
     currentCompany: "",
     currentDesignation: "",
-    expertise: [],
+    expertise: "",
     // Optional fields
     githubProfile: "",
     leetcodeProfile: "",

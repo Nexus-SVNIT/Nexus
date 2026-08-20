@@ -17,14 +17,16 @@ const Contributors = () => {
                     return;
                 }
                 setContributorsByYear(response.data || {});
-                setLoading(false);
             } catch (error) {
                 console.error('Error fetching contributors:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
         fetchContributors().catch((error) => {
             console.error('Error fetching contributors:', error);
+            setLoading(false);
         });
     }, []);
 

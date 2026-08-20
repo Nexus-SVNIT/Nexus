@@ -155,7 +155,7 @@ const Alumni = () => {
   }
 
   function setFilters(newFilters) {
-    if(newFilters.batchForm) setBatchFrom(newFilters.batchFrom);
+    if(newFilters.batchFrom) setBatchFrom(newFilters.batchFrom);
     if(newFilters.batchTo) setBatchTo(newFilters.batchTo);
     if(newFilters.expertise) setExpertise(newFilters.expertise);
     if(newFilters.company) setCompany(newFilters.company);

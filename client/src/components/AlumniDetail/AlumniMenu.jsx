@@ -58,7 +58,7 @@ const AlumniMenu = () => {
       if (!response.success) {
         throw new Error(`Failed to submit alumni details: ${response.message}`);
       }
-      return response.json();
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Your details have been submitted successfully!");

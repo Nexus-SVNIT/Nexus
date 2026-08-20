@@ -12,13 +12,8 @@ export const addAlumniDetails = async (alumniData) => {
     return API.post('/alumni/add', alumniData);
 };
 
-export const postAlumni = async (alumniId, alumniData) => {
-    return API.post(`/auth/alumni/signup/`, alumniData, {
-            headers: {
-                "Content-Type": "application/json",
-            }
-        }
-    );
+export const postAlumni = async (alumniData) => {
+    return API.post(`/auth/alumni/signup`, alumniData);
 };
 
 export const getAllAlumni = async() => {

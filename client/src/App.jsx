@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { lazy } from "react";
+import { lazy, useState, useEffect } from "react";
 import { Toaster } from "react-hot-toast";
 import { ReactLenis, useLenis } from '@studio-freight/react-lenis';
 import {
@@ -25,9 +25,22 @@ import VerifyAlumniEmail from "./components/VerifyEmail/VerifyAlumniEmail";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
-const token = localStorage.getItem("token");
 
 function App() {
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    // Listen for custom events if login/logout doesn't trigger 'storage' event on same tab
+    window.addEventListener("auth-change", handleStorageChange);
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("auth-change", handleStorageChange);
+    };
+  }, []);
  
   return (
     <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>

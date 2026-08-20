@@ -61,7 +61,7 @@ const Filters = ({
             onChange={(e) => setLocalBatchFrom(e.target.value)}
             placeholder="e.g., 2020"
             min="1990"
-            max="2025"
+            max={new Date().getFullYear().toString()}
             className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
           />
         </div>
@@ -77,7 +77,7 @@ const Filters = ({
             onChange={(e) => setLocalBatchTo(e.target.value)}
             placeholder="e.g., 2024"
             min="1990"
-            max="2025"
+            max={new Date().getFullYear().toString()}
             className="placeholder-gray-400 w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-white focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-400/50"
           />
         </div>

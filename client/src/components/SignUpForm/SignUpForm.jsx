@@ -123,7 +123,7 @@ function SignUpForm() {
       leetcodeProfile.includes("http") ||
       leetcodeProfile.includes("/")
     ) {
-      toast.error("Invlaid LeetCode ID. Enter Only ID NOT URL!");
+      toast.error("Invalid LeetCode ID. Enter Only ID NOT URL!");
       return false;
     }
     if (
@@ -131,7 +131,7 @@ function SignUpForm() {
       codeforcesProfile.includes("http") ||
       codeforcesProfile.includes("/")
     ) {
-      toast.error("Invlaid Codeforces ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codeforces ID. Enter Only ID NOT URL!");
       return false;
     }
     if (
@@ -139,7 +139,7 @@ function SignUpForm() {
       codechefProfile.includes("http") ||
       codechefProfile.includes("/")
     ) {
-      toast.error("Invlaid Codechef ID. Enter Only ID NOT URL!");
+      toast.error("Invalid Codechef ID. Enter Only ID NOT URL!");
       return false;
     }
     if (password.length < 8) {
