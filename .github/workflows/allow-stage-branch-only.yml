@@ -1,0 +1,20 @@
+name: Only allow stage into main
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-source-branch:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check source branch
+        run: |
+          if [ "${{ github.head_ref }}" != "stage" ]; then
+            echo "Pull requests to main must come from the stage branch."
+            exit 1
+          fi
+
+          echo "Pull request is allowed from stage."
