@@ -103,14 +103,13 @@ const InterviewExperiencePage = () => {
           },
         }
       );
-      
+
+      const companies = await axios.get(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/companies`
+      );
+
       setPosts(response.data.posts);
       setTotalPages(response.data.totalPages);
-      const uniqueCompanies = [
-        ...new Set(response.data.posts.map((p) => p.company)),
-      ]
-        .filter(Boolean)
-        .sort((a, b) => a.localeCompare(b));
 
       const uniqueTags = [
         ...new Set(response.data.posts.flatMap((p) => p.tags)),
@@ -123,8 +122,8 @@ const InterviewExperiencePage = () => {
       ]
         .filter(Boolean)
         .sort((a, b) => a.localeCompare(b));
-
-      setCompanies(uniqueCompanies);
+      
+      setCompanies(companies.data.map((c) => c.name).sort((a, b) => a.localeCompare(b)));
       setTags(uniqueTags);
       setLocations(uniqueLocations);
       toast.dismiss();
