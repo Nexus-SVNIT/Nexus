@@ -76,15 +76,19 @@ app.use('/comments', commentRoutes);
 app.use('/contributors', contributorsRoute);
 app.use('/study-material', studyMaterialRoutes);
 
+const { initCronJobs } = require('./utils/cronJobs.js');
+
 mongoose.connect(MONGO_URL, { maxPoolSize: 10, serverSelectionTimeoutMS: 10000 })
     .then(() => {
         app.listen(PORT, (req, res) => {
             console.log(`Server is running on port ${PORT}`);
+            initCronJobs();
         })
     })
     .catch((err) => {
         console.error("Database connection error:", err);
     })
+
 
 app.all('*', (req, res, next) => {
     next(new ExpressError(404, 'page not found'))

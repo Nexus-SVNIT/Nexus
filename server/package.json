@@ -31,6 +31,7 @@
     "mongoose": "^8.3.2",
     "multer": "^2.0.2",
     "nexus_official_backend": "file:",
+    "node-cron": "^4.6.0",
     "nodemailer": "^6.9.14",
     "path": "^0.12.7",
     "validator": "^13.11.0",
