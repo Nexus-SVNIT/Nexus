@@ -97,13 +97,39 @@ const verifyCodechef = async (username) => {
 };
 
 /**
+ * Verify a GitHub handle exists via their public API.
+ * Returns true if the user exists, false otherwise.
+ */
+const verifyGithub = async (handle) => {
+    try {
+        const cleanHandle = handle.replace(/^https?:\/\/(www\.)?github\.com\//i, '').replace(/^@/, '').replace(/\/+$/, '').trim();
+        if (!cleanHandle) return false;
+        const response = await axios.get(
+            `https://api.github.com/users/${encodeURIComponent(cleanHandle)}`,
+            {
+                headers: { 'User-Agent': 'Nexus-App' },
+                timeout: 8000
+            }
+        );
+
+        return response.status === 200;
+    } catch (error) {
+        if (error.response && error.response.status === 404) {
+            return false;
+        }
+        console.error(`GitHub verification failed for '${handle}':`, error.message);
+        return true; // fail-open
+    }
+};
+
+/**
  * Main validation function. Now async.
  * 1. Rejects URLs (synchronous check).
  * 2. Verifies each non-empty ID actually exists on the platform (parallel API calls).
  * 
  * Returns: { valid: boolean, errors: string[] }
  */
-const validateCodingProfiles = async (leetcode, codeforces, codechef) => {
+const validateCodingProfiles = async (leetcode, codeforces, codechef, github) => {
     // Step 1: Synchronous URL check (throws on failure)
     rejectUrls(leetcode, codeforces, codechef);
 
@@ -140,6 +166,16 @@ const validateCodingProfiles = async (leetcode, codeforces, codechef) => {
         );
     }
 
+    if (github) {
+        checks.push(
+            verifyGithub(github).then(valid => ({
+                platform: 'GitHub',
+                id: github,
+                valid,
+            }))
+        );
+    }
+
     if (checks.length === 0) {
         return { valid: true, errors: [] };
     }
@@ -161,4 +197,4 @@ const validateCodingProfiles = async (leetcode, codeforces, codechef) => {
     };
 };
 
-module.exports = { validateCodingProfiles };
+module.exports = { validateCodingProfiles, verifyGithub };

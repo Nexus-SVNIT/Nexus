@@ -1,6 +1,7 @@
 const axios = require("axios");
 const codingProfileModel = require("../models/codingProfileModel");
 const contestModel = require("../models/contestModel");
+const { syncAllGitHubProfiles } = require("../utils/githubProfileUtils");
 
 const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 
@@ -56,22 +57,31 @@ const getCodingProfiles = async (req, res) => {
             ];
         }
         const skip = (page - 1) * limit;
+
+        // If sortBy belongs to subfield inside data, support nested sorting
+        const sortField = ['commits', 'prs', 'issues', 'publicRepos', 'stars', 'totalContributions', 'rating', 'totalSolved', 'globalRanking'].includes(sortBy)
+            ? `data.${sortBy}`
+            : sortBy;
+
         // get lean doc
         const codingProfiles = await codingProfileModel.find(filter)
-            .sort({ [sortBy]: sortOrder === "desc" ? -1 : 1 })
+            .sort({ [sortField]: sortOrder === "desc" ? -1 : 1 })
             .select('-_id -__v')
             .skip(skip || 0)
             .limit(Number(limit) || 10)
+            .lean()
             .exec();
         const totalProfiles = await codingProfileModel.countDocuments(filter);
         
-        for(let i = 0; i < codingProfiles.length; i++) {
-            codingProfiles[i] = codingProfiles[i].toObject();
-            codingProfiles[i]['tableRank'] = skip + i + 1;
-        }
+        const formattedProfiles = codingProfiles.map((profile, i) => ({
+            ...profile,
+            ...(profile.data || {}),
+            tableRank: skip + i + 1
+        }));
+
         res.json({
             success: true,
-            data: codingProfiles,
+            data: formattedProfiles,
             totalProfiles,
             totalPages: Math.ceil(totalProfiles / limit),
             currentPage: Number(page),
@@ -102,8 +112,23 @@ const getCodingProfile = async (req, res) => {
     }
 }
 
+const syncGitHubLeaderboard = async (req, res) => {
+    try {
+        const result = await syncAllGitHubProfiles();
+        res.json({
+            success: true,
+            message: `Successfully synced ${result.synced}/${result.total} GitHub profiles.`,
+            data: result
+        });
+    } catch (error) {
+        console.error("Error syncing GitHub leaderboard:", error.message);
+        res.status(500).json({ success: false, error: "Failed to sync GitHub leaderboard" });
+    }
+};
+
 module.exports = {
     getContest,
     getCodingProfiles,
-    getCodingProfile
-};
+    getCodingProfile,
+    syncGitHubLeaderboard
+};
