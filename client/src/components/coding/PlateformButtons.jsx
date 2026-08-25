@@ -5,7 +5,9 @@ function PlateformButtons({ handlePlatformChange, activePlatform }) {
     { id: "codeforces", label: "Codeforces" },
     { id: "leetcode", label: "LeetCode" },
     { id: "codechef", label: "CodeChef" },
+    { id: "github", label: "GitHub" },
   ];
+
 
   return (
     <div className="mb-4 mt-2 flex w-full justify-center">
