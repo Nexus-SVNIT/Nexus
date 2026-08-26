@@ -34,6 +34,15 @@ const RatingLegend = ({ platform }) => {
           { color: "emerald", label: "2★ (≥1400)" },
           { color: "zinc", label: "1★ (<1400)" },
         ];
+      case "github":
+        return [
+          { color: "emerald", label: "Legendary (≥1000)" },
+          { color: "green", label: "Master (≥500)" },
+          { color: "teal", label: "Pro (≥250)" },
+          { color: "cyan", label: "Explorer (≥100)" },
+          { color: "zinc", label: "Newbie (<100)" },
+        ];
+
       default:
         return [];
     }
@@ -42,8 +51,9 @@ const RatingLegend = ({ platform }) => {
   return (
     <div className="mb-4 rounded-2xl border border-white/10 bg-white/5 p-5 shadow-lg backdrop-blur-xl">
       <h3 className="mb-4 text-lg font-semibold text-blue-400">
-        Rating Legend
+        {platform === "github" ? "Contributions Tier Legend" : "Rating Legend"}
       </h3>
+
       <div className="xs:grid-cols-2 grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-4">
         {getLegendItems().map(({ color, label }) => (
           <div key={label} className="flex items-center gap-2 p-1.5">

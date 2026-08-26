@@ -87,6 +87,19 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
           style = "border-emerald-400 text-emerald-300 bg-emerald-500/20";
         else style = "border-zinc-400 text-zinc-300 bg-zinc-500/20";
         break;
+      case "github":
+        if (data >= 1000)
+          style = "border-emerald-400 text-emerald-300 bg-emerald-500/20 font-bold shadow-[0_0_12px_rgba(52,211,153,0.3)]";
+        else if (data >= 500)
+          style = "border-green-400 text-green-300 bg-green-500/20 font-semibold";
+        else if (data >= 250)
+          style = "border-teal-400 text-teal-300 bg-teal-500/20";
+        else if (data >= 100)
+          style = "border-cyan-400 text-cyan-300 bg-cyan-500/20";
+        else if (data > 0)
+          style = "border-zinc-400 text-zinc-300 bg-zinc-500/20";
+        else style = "border-zinc-600 text-zinc-400 bg-zinc-700/20";
+        break;
       default:
         style = "border-gray-400 text-gray-300 bg-gray-500/20";
         break;
@@ -130,6 +143,13 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
         else if (data >= 1800) color = "bg-violet-500";
         else if (data >= 1600) color = "bg-cyan-500";
         else if (data >= 1400) color = "bg-emerald-500";
+        else color = "bg-zinc-500";
+        break;
+      case "github":
+        if (data >= 1000) color = "bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)]";
+        else if (data >= 500) color = "bg-green-500";
+        else if (data >= 250) color = "bg-teal-500";
+        else if (data >= 100) color = "bg-cyan-500";
         else color = "bg-zinc-500";
         break;
       default:
@@ -229,7 +249,9 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
                         row.original.platform === "codeforces") ||
                       (cell.column.id === "rating" &&
                         (row.original.platform === "leetcode" ||
-                          row.original.platform === "codechef")) ? (
+                          row.original.platform === "codechef")) ||
+                      (cell.column.id === "totalContributions" &&
+                        row.original.platform === "github") ? (
                       getRatingButtonStyle(row, cell.value)
                     ) : cell.column.id === "tableRank" ||
                       cell.column.id === "nexusRank" ? (
@@ -244,6 +266,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
           })}
         </tbody>
       </table>
+
       {/* Refined Minimalist Pagination */}
       <div className="bg-[#09090b] border-t border-zinc-800/60 px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex items-center gap-1">
