@@ -66,11 +66,13 @@ const UserProfile = () => {
         </h2>
         <ErrorBoundary title="Failed to load coding profiles">
           <CodingProfile
+            githubProfile={profile.githubProfile || ""}
             leetcodeProfile={profile.leetcodeProfile || ""}
             codeforcesProfile={profile.codeforcesProfile || ""}
             codechefProfile={profile.codechefProfile || ""}
           />
         </ErrorBoundary>
+
       </div>
     </div>
   );

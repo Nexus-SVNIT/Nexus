@@ -1,6 +1,8 @@
 const user = require('../models/userModel.js');
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
+const { syncUserGitHubProfile } = require('../utils/githubProfileUtils.js');
 const Post = require('../models/postModel.js');
+
 
 const getUserProfile = async (req, res) => {
     try {
@@ -53,14 +55,16 @@ const updateUserProfile = async (req, res) => {
         const leetcodeToVerify = (leetcodeProfile && leetcodeProfile !== foundUser.leetcodeProfile) ? leetcodeProfile : null;
         const codeforcesToVerify = (codeforcesProfile && codeforcesProfile !== foundUser.codeforcesProfile) ? codeforcesProfile : null;
         const codechefToVerify = (codechefProfile && codechefProfile !== foundUser.codechefProfile) ? codechefProfile : null;
+        const githubToVerify = (githubProfile && githubProfile !== foundUser.githubProfile) ? githubProfile : null;
 
         // Validate changed coding profile IDs (URL check + existence verification)
-        if (leetcodeToVerify || codeforcesToVerify || codechefToVerify) {
+        if (leetcodeToVerify || codeforcesToVerify || codechefToVerify || githubToVerify) {
             try {
                 const result = await validateCodingProfiles(
                     leetcodeToVerify,
                     codeforcesToVerify,
-                    codechefToVerify
+                    codechefToVerify,
+                    githubToVerify
                 );
                 if (!result.valid) {
                     return res.status(400).json({ message: result.errors.join(', ') });
@@ -90,7 +94,15 @@ const updateUserProfile = async (req, res) => {
         // Step 4: Save the updated user profile
         await foundUser.save();
 
+        // Asynchronously sync GitHub profile in background if provided
+        if (foundUser.githubProfile) {
+            syncUserGitHubProfile(foundUser).catch(err => {
+                console.error('Background GitHub sync failed on profile update:', err.message);
+            });
+        }
+
         res.status(200).json({ message: 'Profile updated successfully', user: foundUser });
+
     } catch (error) {
         console.error('Error updating profile:', error);
         res.status(500).json({ message: 'Server error', error });

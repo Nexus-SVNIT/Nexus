@@ -102,13 +102,14 @@ const ProfilePage = ({ profile, setProfile }) => {
       toast.error("Enter your expertise");
       return false;
     }
-    if (githubProfile && !githubProfile.match(/^(https?:\/\/)?(www\.)?github\.com\/[A-Za-z0-9-]+\/?$/)) {
-      toast.error("Invalid GitHub Profile URL");
+    if (githubProfile && !/^(https?:\/\/(www\.)?github\.com\/)?[A-Za-z0-9_-]+\/?$/.test(githubProfile.trim()) && !/^@[A-Za-z0-9_-]+$/.test(githubProfile.trim())) {
+      toast.error("Invalid GitHub Profile (Enter username or profile URL)");
       return false;
     }
     if (!isAlumni && !githubProfile){
       toast.error("Github profile is compulsory");
     }
+
     if (leetcodeProfile && leetcodeProfile.includes("leetcode.com/")) {
       toast.error("Invalid LeetCode ID. Enter Only ID NOT URL!");
       return false;
@@ -361,16 +362,18 @@ const ProfilePage = ({ profile, setProfile }) => {
             </>
           )}
           <div>
-            <label className="text-zinc-400 block">GitHub Profile (Link)</label>
+            <label className="text-zinc-400 block">GitHub Profile (Username or Link)</label>
             <input
-              type="url"
+              type="text"
               name="githubProfile"
+              placeholder="e.g. octocat or https://github.com/octocat"
               value={profile?.githubProfile || ""}
               onChange={handleChange}
               disabled={!isEditing}              
               className="mt-1 block w-full rounded-lg border border-zinc-700 bg-zinc-900/50 p-2.5 text-white transition-all focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
             />
           </div>
+
           <div>
             <label className="text-zinc-400 block">LeetCode Profile (Only ID not Link)</label>
             <input

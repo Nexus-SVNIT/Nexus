@@ -12,27 +12,33 @@ const getContributors = async (req, res) => {
         const isFirstRun = (await contributorsSchema.countDocuments()) === 0;
 
         if (isFirstRun || shouldUpdate) {
-            const commits = isFirstRun ? await fetchAllCommits() : await fetchCommitsForYear(currentYear);
+            try {
+                const commits = isFirstRun ? await fetchAllCommits() : await fetchCommitsForYear(currentYear);
 
-            const commitsByYear = processCommits(commits);
+                if (Array.isArray(commits) && commits.length > 0) {
+                    const commitsByYear = processCommits(commits);
 
-            if(isFirstRun) {
-                for(const year in commitsByYear) {
-                    const yearData = commitsByYear[year];
-                    const newContributions = new contributorsSchema({
-                        year: parseInt(year),
-                        total: yearData.total,
-                        contributors: yearData.contributors
-                    });
-                    await newContributions.save();
+                    if (isFirstRun) {
+                        for (const year in commitsByYear) {
+                            const yearData = commitsByYear[year];
+                            await contributorsSchema.findOneAndUpdate(
+                                { year: parseInt(year) },
+                                { year: parseInt(year), total: yearData.total, contributors: yearData.contributors },
+                                { upsert: true, new: true }
+                            );
+                        }
+                    } else if (commitsByYear[currentYear]) {
+                        const yearData = commitsByYear[currentYear];
+                        await contributorsSchema.findOneAndUpdate(
+                            { year: currentYear },
+                            { total: yearData.total, contributors: yearData.contributors },
+                            { upsert: true, new: true }
+                        );
+                    }
                 }
-            } else if(commitsByYear[currentYear]) {
-                const yearData = commitsByYear[currentYear];
-                await contributorsSchema.findOneAndUpdate(
-                    { year: currentYear },
-                    { total: yearData.total, contributors: yearData.contributors },
-                    { upsert: true }
-                );
+            } catch (syncError) {
+                console.error("Warning: Failed to sync latest contributors from GitHub:", syncError.message);
+                // Proceed to return existing database records if GitHub fetch fails
             }
         }
 

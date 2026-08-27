@@ -11,10 +11,12 @@ import {
 } from "recharts";
 
 const CodingProfile = ({
+  githubProfile,
   leetcodeProfile,
   codeforcesProfile,
   codechefProfile,
 }) => {
+  const [githubData, setGithubData] = useState(null);
   const [leetcodeData, setLeetcodeData] = useState(null);
   const [codeforcesData, setCodeforcesData] = useState(null);
   const [codechefData, setCodechefData] = useState(null);
@@ -37,6 +39,7 @@ const CodingProfile = ({
         throw new Error(`Server responded with ${response.status}`);
       }
       const data = await response.json();
+      setGithubData(data?.data?.github);
       setLeetcodeData(data?.data?.leetcode);
       setCodeforcesData(data?.data?.codeforces);
       setCodechefData(data?.data?.codechef);
@@ -50,7 +53,8 @@ const CodingProfile = ({
 
   useEffect(() => {
     fetchData();
-  }, [leetcodeProfile, codeforcesProfile, codechefProfile]);
+  }, [githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile]);
+
 
   if (loading) {
     return (
@@ -101,9 +105,18 @@ const CodingProfile = ({
   })) || [] : [];
   
   const codechefUser = Array.isArray(codechefData) ? codechefData[0] : null;
+  const githubUser = githubData?.data || githubData;
+
+  const getGitHubTier = (contributions = 0) => {
+    if (contributions >= 1000) return { name: "Legendary", style: "border-emerald-400 text-emerald-300 bg-emerald-500/20 shadow-[0_0_12px_rgba(52,211,153,0.3)]" };
+    if (contributions >= 500) return { name: "Master", style: "border-green-400 text-green-300 bg-green-500/20" };
+    if (contributions >= 250) return { name: "Pro", style: "border-teal-400 text-teal-300 bg-teal-500/20" };
+    if (contributions >= 100) return { name: "Explorer", style: "border-cyan-400 text-cyan-300 bg-cyan-500/20" };
+    return { name: "Newbie", style: "border-zinc-500 text-zinc-300 bg-zinc-600/20" };
+  };
 
   // Empty state: no coding profiles set
-  const hasAnyProfile = leetcodeUser || codeforcesProfileData || codechefUser;
+  const hasAnyProfile = githubUser || leetcodeUser || codeforcesProfileData || codechefUser;
 
   if (!hasAnyProfile) {
     return (
@@ -113,7 +126,7 @@ const CodingProfile = ({
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.25 6.75L22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3l-4.5 16.5" />
           </svg>
           <p className="text-zinc-300 text-lg font-medium mb-1">No coding profiles found</p>
-          <p className="text-zinc-500 text-sm">Add your LeetCode, Codeforces, or CodeChef usernames above and save to see your stats here.</p>
+          <p className="text-zinc-500 text-sm">Add your GitHub, LeetCode, Codeforces, or CodeChef usernames above and save to see your stats here.</p>
         </div>
       </div>
     );
@@ -121,6 +134,59 @@ const CodingProfile = ({
 
   return (
     <div className="space-y-8 text-white">
+      {/* GitHub Profile */}
+      {githubUser && (
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-4">
+              <img
+                src={githubUser?.avatarUrl || `https://github.com/${githubUser?.profileId || githubUser?.login}.png`}
+                alt="GitHub Avatar"
+                className="h-16 w-16 rounded-full border border-zinc-700/50"
+              />
+              <div>
+                <h3 className="text-2xl font-bold">GitHub</h3>
+                <a
+                  href={`https://github.com/${githubUser?.profileId || githubUser?.login}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-400 hover:text-blue-300 font-medium"
+                >
+                  @{githubUser?.profileId || githubUser?.login}
+                </a>
+              </div>
+            </div>
+            {(() => {
+              const tier = getGitHubTier(githubUser?.totalContributions || githubUser?.sortingKey || 0);
+              return (
+                <span className={`rounded-full border px-3 py-1 text-xs font-semibold ${tier.style}`}>
+                  {tier.name} Tier
+                </span>
+              );
+            })()}
+          </div>
+
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Total Contributions</p>
+              <p className="text-xl font-bold text-emerald-400">{githubUser?.totalContributions || githubUser?.sortingKey || 0}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Lifetime Commits</p>
+              <p className="text-xl font-bold text-white">{githubUser?.commits || 0}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Pull Requests & Reviews</p>
+              <p className="text-xl font-bold text-white">{githubUser?.prs || 0}</p>
+            </div>
+            <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
+              <p className="text-sm text-zinc-400">Public Repos & Stars</p>
+              <p className="text-xl font-bold text-white">{githubUser?.publicRepos || 0} <span className="text-sm text-yellow-400">({githubUser?.stars || 0} ⭐)</span></p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* LeetCode Profile */}
       {leetcodeUser && (
         <div className="mb-6">
@@ -135,6 +201,7 @@ const CodingProfile = ({
               <p className="text-blue-400 font-medium">@{leetcodeUser?.username}</p>
             </div>
           </div>
+
           
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">

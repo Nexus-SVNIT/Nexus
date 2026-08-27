@@ -24,6 +24,7 @@ const Cp = () => {
   const [codeforcesLeaderboard, setCodeforcesLeaderboard] = useState([]);
   const [leetcodeLeaderboard, setLeetcodeLeaderboard] = useState([]);
   const [codechefLeaderboard, setCodechefLeaderboard] = useState([]);
+  const [githubLeaderboard, setGithubLeaderboard] = useState([]);
   const [totalProfiles, setTotalProfiles] = useState(0);
   const [loading, setLoading] = useState(false); // Loader state
   const [isError, setIsError] = useState(false);
@@ -81,16 +82,25 @@ const Cp = () => {
             setCodeforcesLeaderboard(data);
             setLeetcodeLeaderboard([]);
             setCodechefLeaderboard([]);
+            setGithubLeaderboard([]);
             break;
           case "leetcode":
             setLeetcodeLeaderboard(data);
             setCodeforcesLeaderboard([]);
             setCodechefLeaderboard([]);
+            setGithubLeaderboard([]);
             break;
           case "codechef":
             setCodechefLeaderboard(data);
             setCodeforcesLeaderboard([]);
             setLeetcodeLeaderboard([]);
+            setGithubLeaderboard([]);
+            break;
+          case "github":
+            setGithubLeaderboard(data);
+            setCodeforcesLeaderboard([]);
+            setLeetcodeLeaderboard([]);
+            setCodechefLeaderboard([]);
             break;
           default:
             break;
@@ -196,6 +206,36 @@ const Cp = () => {
       { Header: "Rating", accessor: "rating" },
       { Header: "Global Rank", accessor: "globalRank" },
     ],
+    github: [
+      {
+        Header: "Rank",
+        accessor: rankingScheme === "nexus" ? "nexusRank" : "tableRank",
+        disableSortBy: rankingScheme !== "nexus",
+      },
+      { Header: "Name", accessor: "fullName" },
+      { Header: "Admission Number", accessor: "admissionNo" },
+      {
+        Header: "Profile",
+        accessor: "profileId",
+        disableSortBy: true,
+        Cell: ({ value }) => (
+          <a
+            href={`https://github.com/${value}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline hover:text-blue-300"
+          >
+            @{value}
+          </a>
+        ),
+      },
+      { Header: "Contributions", accessor: "totalContributions" },
+      { Header: "Commits", accessor: "commits" },
+      { Header: "PRs", accessor: "prs" },
+      { Header: "Issues", accessor: "issues" },
+      { Header: "Repos", accessor: "publicRepos" },
+      { Header: "Stars ⭐", accessor: "stars" },
+    ],
   };
 
   return (
@@ -206,7 +246,7 @@ const Cp = () => {
           "Check out the LeaderBoard of Coding Profiles of different plateforms of students of CSE and AI at NIT Surat."
         }
         keywords={
-          "Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"
+          "Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, GitHub, Open Source, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"
         }
       />
       {loading ? (
@@ -292,11 +332,25 @@ const Cp = () => {
                 />
               </>
             )}
+
+            {activePlatform === "github" && (
+              <>
+                <RatingLegend platform="github" />
+                <SortableTable
+                  columns={columns.github}
+                  data={githubLeaderboard}
+                  searchParams={searchParams}
+                  setSearchParams={setSearchParams}
+                  totalProfiles={totalProfiles}
+                />
+              </>
+            )}
           </div>
         </div>
       )}
     </div>
   );
+
 };
 
 export default Cp;
