@@ -4,6 +4,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import parse from "html-react-parser";
 import PostDetailWrapper from "./PostDetailWrapper";
+import InterviewPostSkeleton from "./InterviewPostSkeleton";
 import Loader from "../Loader/Loader";
 import increamentCounter from "../../libs/increamentCounter";
 
@@ -82,9 +83,10 @@ const InterviewPost = () => {
   };
 
   useEffect(() => {
+    let toastId;
     const fetchPost = async () => {
       try {
-        toast.loading("Loading post...");
+        toastId = toast.loading("Loading post...");
         const [postResponse, questionsResponse, commentResponse] =
           await Promise.all([
             axios.get(
@@ -105,12 +107,12 @@ const InterviewPost = () => {
         await incrementView();
         
         setLoading(false);
-        toast.dismiss();
+        toast.dismiss(toastId);
         toast.success("Post loaded successfully!");
       } catch (err) {
         setError(err.response?.data?.error || "Failed to fetch post");
         setLoading(false);
-        toast.dismiss();
+        if (toastId) toast.dismiss(toastId);
         toast.error("Error fetching post.");
       } finally {
         setIsLoading(false);
@@ -120,7 +122,7 @@ const InterviewPost = () => {
     fetchPost();
   }, [id]);
 
-  if (loading) return <div className="text-white min-h-screen minw-full"><Loader/></div>;
+  if (loading) return <InterviewPostSkeleton />;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!post) return <div className="text-white">Post not found</div>;
 
@@ -280,7 +282,7 @@ const InterviewPost = () => {
     }
   };
 
-  if (isLoading) return <Loader />;
+  // isLoading check removed as loading state handles it above
 
   const isPostAuthor = token && 
     post.author?._id === JSON.parse(atob(token.split(".")[1])).id;
