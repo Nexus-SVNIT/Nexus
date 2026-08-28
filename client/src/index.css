@@ -366,3 +366,9 @@ span.flatpickr-weekday,
 .animate-fadeIn {
   animation: fadeIn 0.3s ease-out;
 }
+
+/* Leaderboard search loading bar */
+@keyframes loading-bar {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}

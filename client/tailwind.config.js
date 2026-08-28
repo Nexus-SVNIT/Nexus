@@ -245,7 +245,11 @@ module.exports = {
               transform: 'translateY(0)'
             }
 				  }
-        }
+        },
+        'loading-bar': {
+          '0%':   { transform: 'translateX(-100%)' },
+          '100%': { transform: 'translateX(400%)' },
+        },
       },
       animation: {
         'ping-once': 'ping 5s cubic-bezier(0, 0, 0.2, 1)',
@@ -254,6 +258,7 @@ module.exports = {
         'spin-2': 'spin 2s linear infinite',
         'spin-3': 'spin 3s linear infinite',
         'fade-in': 'fade-in 0.3s ease-out',
+        'loading-bar': 'loading-bar 1s ease-in-out infinite',
       }
     }
   },
