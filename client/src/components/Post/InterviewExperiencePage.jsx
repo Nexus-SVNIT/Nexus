@@ -3,6 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import InterviewPostCard from "./InterviewPostCard";
+import InterviewPostCardSkeleton from "./InterviewPostCardSkeleton";
 import { FaPenToSquare } from "react-icons/fa6";
 import { FaFilter, FaChevronUp, FaChevronDown } from "react-icons/fa";
 import increamentCounter from "../../libs/increamentCounter";
@@ -12,6 +13,7 @@ import HeadTags from "../HeadTags/HeadTags";
 
 const InterviewExperiencePage = () => {
   const [posts, setPosts] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [companies, setCompanies] = useState([]);
   const [tags, setTags] = useState([]);
   const [locations, setLocations] = useState([]);
@@ -82,8 +84,10 @@ const InterviewExperiencePage = () => {
   }, [formState]);
 
   const fetchPosts = async (filters = {}) => {
+    let toastId;
     try {
-      toast.loading("Loading posts...");
+      setLoading(true);
+      toastId = toast.loading("Loading posts...");
       const response = await axios.get(
         `${process.env.REACT_APP_BACKEND_BASE_URL}/posts`,
         {
@@ -126,11 +130,13 @@ const InterviewExperiencePage = () => {
       setCompanies(companies.data.map((c) => c.name).sort((a, b) => a.localeCompare(b)));
       setTags(uniqueTags);
       setLocations(uniqueLocations);
-      toast.dismiss();
+      setLoading(false);
+      toast.dismiss(toastId);
       toast.success("Posts loaded successfully!");
     } catch (error) {
       setError(error);
-      toast.dismiss();
+      setLoading(false);
+      if (toastId) toast.dismiss(toastId);
       toast.error("Error fetching posts.");
       console.error("Error fetching posts:", error.response?.data || error);
     }
@@ -468,7 +474,11 @@ const InterviewExperiencePage = () => {
 
       {/* Posts Grid */}
       <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
-        {posts.length === 0 ? (
+        {loading ? (
+          Array(6)
+            .fill(0)
+            .map((_, index) => <InterviewPostCardSkeleton key={index} />)
+        ) : posts.length === 0 ? (
           <p className="text-gray-400">
             No posts available. Be the first to share your experience!
           </p>
