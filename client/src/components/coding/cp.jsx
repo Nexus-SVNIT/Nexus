@@ -249,35 +249,11 @@ const Cp = () => {
           "Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, GitHub, Open Source, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"
         }
       />
-      {loading ? (
-        <div className="flex h-screen w-full items-center justify-center">
-          <Loader />
-        </div>
-      ) : (
         <div className="w-full flex flex-col gap-8 max-w-[90rem] mx-auto px-4 md:px-0">
           <NoticeBar />
           <div className="w-full flex flex-col gap-6">
             {/* Upcoming Contests Component */}
             <UpcomingContests />
-            {/*             
-            <h2 className="mb-4 border-b border-blue-600 pb-2 text-3xl font-semibold text-blue-400">
-              User Report by Platform and Batch
-            </h2>
-            <CustomBarChart batchData={batchData} />
-
-            <div className="mb-8 mt-8 grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {Object.keys(batchData).map((batch) => (
-                <BatchCard
-                  key={batch}
-                  batch={batch}
-                  avgCodeforcesRating={batchData[batch].Codeforces.avgRating}
-                  avgLeetcodeRating={batchData[batch].LeetCode.avgRating}
-                  avgLeetcodeSolved={batchData[batch].LeetCode.avgSolved}
-                  avgCodechefRating={batchData[batch].CodeChef.avgRating}
-                />
-              ))}
-            </div> 
-            */}
 
             {/* Centered Tab-styled Platform Toggle */}
             <PlateformButtons
@@ -286,68 +262,77 @@ const Cp = () => {
             />
 
             {/* Centered Filter Section */}
-            <div className="flex w-full justify-center">
+            <div className="flex w-full justify-center flex-col items-center gap-0">
               <FilterSection
                 activePlatform={activePlatform}
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
               />
+              {/* Thin loading bar — non-disruptive, replaces full overlay */}
+              <div className="w-full max-w-4xl h-0.5 rounded-full overflow-hidden bg-transparent">
+                {loading && (
+                  <div className="h-full w-1/3 rounded-full bg-blue-500 animate-loading-bar" />
+                )}
+              </div>
             </div>
 
-            {activePlatform === "codeforces" && (
-              <>
-                <RatingLegend platform="codeforces" />
-                <SortableTable
-                  columns={columns.codeforces}
-                  data={codeforcesLeaderboard}
-                  searchParams={searchParams}
-                  setSearchParams={setSearchParams}
-                  totalProfiles={totalProfiles}
-                />
-              </>
-            )}
+            {/* Table area — always visible, updates silently */}
+            <div>
 
-            {activePlatform === "leetcode" && (
-              <>
-                <RatingLegend platform="leetcode" />
-                <SortableTable
-                  columns={columns.leetcode}
-                  data={leetcodeLeaderboard}
-                  searchParams={searchParams}
-                  setSearchParams={setSearchParams}
-                  totalProfiles={totalProfiles}
-                />
-              </>
-            )}
+              {activePlatform === "codeforces" && (
+                <>
+                  <RatingLegend platform="codeforces" />
+                  <SortableTable
+                    columns={columns.codeforces}
+                    data={codeforcesLeaderboard}
+                    searchParams={searchParams}
+                    setSearchParams={setSearchParams}
+                    totalProfiles={totalProfiles}
+                  />
+                </>
+              )}
 
-            {activePlatform === "codechef" && (
-              <>
-                <RatingLegend platform="codechef" />
-                <SortableTable
-                  columns={columns.codechef}
-                  data={codechefLeaderboard}
-                  searchParams={searchParams}
-                  setSearchParams={setSearchParams}
-                  totalProfiles={totalProfiles}
-                />
-              </>
-            )}
+              {activePlatform === "leetcode" && (
+                <>
+                  <RatingLegend platform="leetcode" />
+                  <SortableTable
+                    columns={columns.leetcode}
+                    data={leetcodeLeaderboard}
+                    searchParams={searchParams}
+                    setSearchParams={setSearchParams}
+                    totalProfiles={totalProfiles}
+                  />
+                </>
+              )}
 
-            {activePlatform === "github" && (
-              <>
-                <RatingLegend platform="github" />
-                <SortableTable
-                  columns={columns.github}
-                  data={githubLeaderboard}
-                  searchParams={searchParams}
-                  setSearchParams={setSearchParams}
-                  totalProfiles={totalProfiles}
-                />
-              </>
-            )}
+              {activePlatform === "codechef" && (
+                <>
+                  <RatingLegend platform="codechef" />
+                  <SortableTable
+                    columns={columns.codechef}
+                    data={codechefLeaderboard}
+                    searchParams={searchParams}
+                    setSearchParams={setSearchParams}
+                    totalProfiles={totalProfiles}
+                  />
+                </>
+              )}
+
+              {activePlatform === "github" && (
+                <>
+                  <RatingLegend platform="github" />
+                  <SortableTable
+                    columns={columns.github}
+                    data={githubLeaderboard}
+                    searchParams={searchParams}
+                    setSearchParams={setSearchParams}
+                    totalProfiles={totalProfiles}
+                  />
+                </>
+              )}
+            </div>
           </div>
         </div>
-      )}
     </div>
   );
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { FaFilter } from "react-icons/fa";
 import SearchBar from "./SearchBar";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 
 function FilterSection({activePlatform, searchParams, setSearchParams}) {
   const [rankingScheme, setRankingScheme] = useState(
@@ -37,71 +37,17 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
   );
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    const params = new URLSearchParams(searchParams);
-    const hasParams = Array.from(params.entries()).length > 0;
-
-    if (!hasParams) {
-      // If no params, don't do anything
-      return;
-    }
-
-    // Only update if these values are different from the current URL params
-    const currentSearch = params.get("search") || "";
-    const currentBranch = params.get("branch") || "all";
-    const currentGrad = params.get("grad") || "all";
-    const currentYear = params.get("year") || "all";
-    const currentStatus = params.get("status") || "all";
-
-    let hasChanges = false;
-
-    if (searchTerm !== currentSearch) {
-      if (searchTerm) params.set("search", searchTerm);
-      else params.delete("search");
-      hasChanges = true;
-    }
-    
-    if (branchFilter !== currentBranch) {
-      if (branchFilter !== "all") params.set("branch", branchFilter);
-      else params.delete("branch");
-      hasChanges = true;
-    }
-    
-    if (gradFilter !== currentGrad) {
-      if (gradFilter !== "all") params.set("grad", gradFilter);
-      else params.delete("grad");
-      hasChanges = true;
-    }
-    
-    if (yearFilter !== currentYear) {
-      if (yearFilter !== "all") params.set("year", yearFilter);
-      else params.delete("year");
-      hasChanges = true;
-    }
-    
-    if (activeStatusFilter !== currentStatus) {
-      if (activeStatusFilter !== "all") params.set("status", activeStatusFilter);
-      else params.delete("status");
-      hasChanges = true;
-    }
-
-    // Only update URL if there are actual changes
-    if (hasChanges) {
-      params.set('page', '1'); // Reset to first page when filters change
-      setSearchParams(params, { replace: true });
-    }
-  }, [searchTerm, branchFilter, gradFilter, yearFilter, activeStatusFilter, searchParams, setSearchParams]);
-
   const handleSearchChange = useCallback((value) => {
     setSearchTerm(value);
     const params = new URLSearchParams(searchParams);
     if (value.trim()) {
       params.set('search', value.trim());
-      params.set('page', '1'); // Reset to first page when searching
+      params.set('page', '1');
     } else {
       params.delete('search');
+      params.set('page', '1');
     }
-    setSearchParams(params, { replace: true }); // Using replace to prevent adding to history
+    setSearchParams(params, { replace: true });
   }, [searchParams, setSearchParams]);
 
   const handleApplyFilters = () => {

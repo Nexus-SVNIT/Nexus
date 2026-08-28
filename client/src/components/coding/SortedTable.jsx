@@ -41,8 +41,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   const getRatingButtonStyle = (row, value) => {
     let style = "";
    
-    // For Codeforces - only maxRating
-    const data = row.original.sortingKey;
+    const data = typeof value === "number" ? value : Number(value) || 0;
 
     switch (row.original.platform) {
       case "codeforces":
@@ -56,7 +55,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
           style = "border-cyan-400 text-cyan-300 bg-cyan-500/20";
         else if (data >= 1200)
           style = "border-emerald-400 text-emerald-300 bg-emerald-500/20";
-        else if (data > 0)
+        else
           style = "border-zinc-400 text-zinc-300 bg-zinc-500/20";
         break;
       case "leetcode":
