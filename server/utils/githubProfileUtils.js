@@ -271,9 +271,43 @@ const syncAllGitHubProfiles = async () => {
     }
 };
 
+/**
+ * Verifies if the GITHUB_TOKEN is configured and valid by calling the GitHub REST API user endpoint.
+ */
+const verifyGitHubToken = async () => {
+    const token = getGitHubToken();
+    if (!token) {
+        console.warn('\n[GitHub Sync] WARNING: GITHUB_TOKEN environment variable is missing or empty.');
+        console.warn('[GitHub Sync] GraphQL API queries will fail, and the public REST API fallback will run.');
+        console.warn('[GitHub Sync] WARNING: Public API calls are limited to 60 requests/hour per IP, which is insufficient to sync all user profiles.\n');
+        return false;
+    }
+
+    try {
+        const response = await axios.get('https://api.github.com/user', {
+            headers: {
+                'Authorization': token.startsWith('Bearer ') || token.startsWith('token ') ? token : `Bearer ${token}`,
+                'User-Agent': 'Nexus-App',
+                'Accept': 'application/vnd.github.v3+json'
+            },
+            timeout: 5000
+        });
+        console.log(`\n[GitHub Sync] SUCCESS: GITHUB_TOKEN is valid. Authenticated as: @${response.data.login}\n`);
+        return true;
+    } catch (err) {
+        const errMsg = err.response?.data?.message || err.message;
+        console.warn(`\n[GitHub Sync] ERROR: GITHUB_TOKEN is invalid ("${errMsg}").`);
+        console.warn('[GitHub Sync] GraphQL API queries will fail, and the public REST API fallback will run.');
+        console.warn('[GitHub Sync] WARNING: Public API calls are limited to 60 requests/hour per IP, which is insufficient to sync all user profiles.\n');
+        return false;
+    }
+};
+
 module.exports = {
     normalizeGitHubUsername,
     fetchGitHubUserStats,
     syncUserGitHubProfile,
-    syncAllGitHubProfiles
+    syncAllGitHubProfiles,
+    verifyGitHubToken
 };
+
