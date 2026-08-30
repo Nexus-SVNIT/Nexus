@@ -26,7 +26,7 @@ import Logo from "../../data/images/nexus.png";
 const CustomSidebar = () => {
   const [collapsed, setCollapsed] = useState(true); // State to toggle sidebar
   const [ignoreHover, setIgnoreHover] = useState(false); // Prevents hover expand after X
-
+  const [mobileOpen, setMobileOpen] = useState(false);
   const menuList = [
     {
       title: "Home",
@@ -92,17 +92,38 @@ const CustomSidebar = () => {
 
   // Handlers for hover logic
   const handleMouseEnter = () => {
-    if (!ignoreHover) setCollapsed(false);
+    if (window.innerWidth >= 768 && !ignoreHover) {
+      setCollapsed(false);
+    }
   };
+
   const handleMouseLeave = () => {
-    setCollapsed(true);
-    setIgnoreHover(false); // Reset ignoreHover on mouse leave
+    if (window.innerWidth >= 768) {
+      setCollapsed(true);
+      setIgnoreHover(false);
+    }
   };
 
   return (
+    <>
+    {!mobileOpen && (
+      <button
+        onClick={() => {
+          // setCollapsed(true);
+          setMobileOpen(true);
+          setCollapsed(false);
+        }}
+        className="fixed left-6 top-6 z-[10000] flex h-12 w-12 items-center justify-center rounded-full bg-[#232323] text-white shadow-lg md:hidden"
+        aria-label="Open sidebar"
+      >
+        <FaBars size={20} />
+      </button>
+    )}
     <ProSidebar
       collapsed={collapsed}
-      className="fixed left-0 top-0 z-9999 h-screen bg-black-2 bg-opacity-95"
+      className={`fixed left-0 top-0 z-[9999] h-screen bg-black-2 bg-opacity-95
+        ${mobileOpen ? "block" : "hidden md:block"}
+      `}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
@@ -129,6 +150,7 @@ const CustomSidebar = () => {
               <button
                 onClick={() => {
                   setCollapsed(true);
+                  setMobileOpen(false);
                   setIgnoreHover(true); // Prevent hover expand until mouse leaves
                 }}
                 className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-full bg-[#232323] ml-auto hover:bg-gray-100 my-2 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
@@ -153,7 +175,10 @@ const CustomSidebar = () => {
                   })}
                   className="hover:bg-gray-100 my-2 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
                   title={item.title}
-                  onClick={() => setCollapsed(true)}
+                  onClick={() => {
+                  setCollapsed(true);
+                  setMobileOpen(false);
+                }}
                 >
                   {/* Bubble Animation Effect with Blue Color */}
                   <div className="absolute left-0 top-0 h-full w-full scale-0 rounded-full bg-blue-500/30 opacity-0 transition-all duration-300 group-hover:scale-100 group-hover:opacity-100"></div>
@@ -216,6 +241,7 @@ const CustomSidebar = () => {
         }
       `}</style>
     </ProSidebar>
+    </>
   );
 };
 
