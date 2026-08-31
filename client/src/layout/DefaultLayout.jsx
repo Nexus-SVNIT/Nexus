@@ -8,7 +8,7 @@ const DefaultLayout = () => {
 
   return (
     <div className="bg-black min-h-screen">
-      <div className="block">
+      <div>
         <CustomSideBar />
       </div>
       <div className="flex min-h-screen w-full flex-col bg-[#000000] text-white md:pl-[80px]">
