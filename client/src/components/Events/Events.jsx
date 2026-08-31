@@ -31,8 +31,9 @@ const Events = () => {
           console.error('Error fetching years:', response.message);
           return;
         }
-        setYears(response.data.years); // Assuming 'years' is returned in the API response
-        setSelectedYear(response.data.years[0]); // Default to the first available year
+        const sortedYears = [...response.data.years].sort((a, b) => b - a); // Sort descending (most recent first)
+        setYears(sortedYears);
+        setSelectedYear(sortedYears[0]); // Default to the most recent year
         // if (searchParams.has("year")) {
         //   setSelectedYear(searchParams.get("year"));
         // } else {
