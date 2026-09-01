@@ -43,7 +43,7 @@ function App() {
   }, []);
  
   return (
-    <ReactLenis root options={{ lerp: 0.1, duration: 1.5 }}>
+    <ReactLenis root options={{ lerp: 0.2, duration: 0.6 }}>
       <QueryClientProvider client={queryClient}>
         <Router>
           <Routes>
