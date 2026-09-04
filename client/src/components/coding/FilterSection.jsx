@@ -210,6 +210,12 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
                 <option value="24" className="bg-slate-900">
                   2024
                 </option>
+                <option value="25" className="bg-slate-900">
+                  2025
+                </option>
+                <option value="26" className="bg-slate-900">
+                  2026
+                </option>
               </select>
 
               <select
