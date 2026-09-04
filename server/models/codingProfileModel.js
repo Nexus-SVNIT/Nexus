@@ -35,10 +35,33 @@ const codingProfileSchema = new Schema({
         required: true,
         timestamps: true
     },
+    branch: {
+        type: String,
+        index: true
+    },
+    year: {
+        type: String,
+        index: true
+    },
+    program: {
+        type: String,
+        index: true
+    },
+    status: {
+        type: String,
+        index: true
+    },
+    nexusRank: {
+        type: Number,
+        index: true
+    }
 }, {
     timestamps: true
 });
 
 codingProfileSchema.index({ platform: 1, sortingKey: -1 });
+codingProfileSchema.index({ platform: 1, branch: 1 });
+codingProfileSchema.index({ platform: 1, year: 1 });
+codingProfileSchema.index({ platform: 1, status: 1 });
 
 module.exports = mongoose.model('CodingProfile', codingProfileSchema);

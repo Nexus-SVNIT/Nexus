@@ -214,6 +214,67 @@ const fetchGitHubUserStats = async (username) => {
 
 
 /**
+ * Helper to determine student status based on admission number.
+ */
+const getStatus = (admissionNumber) => {
+    if (!admissionNumber || typeof admissionNumber !== 'string') return 'current';
+    const cleanAdm = admissionNumber.trim();
+    if (cleanAdm.length < 3) return 'current';
+    const year = parseInt(cleanAdm.slice(1, 3), 10);
+    const program = cleanAdm.slice(0, 1).toUpperCase();
+
+    switch (program) {
+        case 'U':
+            return year <= (new Date().getFullYear() - 4) % 100 ? 'alumni' : 'current';
+        case 'P':
+            return year <= (new Date().getFullYear() - 2) % 100 ? 'alumni' : 'current';
+        case 'D':
+        case 'I':
+            return year <= (new Date().getFullYear() - 5) % 100 ? 'alumni' : 'current';
+        default:
+            return 'current';
+    }
+};
+
+/**
+ * Extracts student metadata (branch, year, program, status) from user record.
+ */
+const extractUserMetadata = (user) => {
+    const admissionNo = (user.admissionNumber || '').trim();
+    const program = admissionNo.length > 0 ? admissionNo.slice(0, 1).toUpperCase() : '';
+    const year = admissionNo.length >= 3 ? admissionNo.slice(1, 3) : '';
+    let branch = (admissionNo.length >= 5 ? admissionNo.slice(3, 5).toUpperCase() : '') || user.branch || '';
+    if (branch === 'CO' || branch === 'CSE') branch = 'CS';
+    const status = user.isAlumni ? 'alumni' : getStatus(admissionNo);
+    return { admissionNo, program, year, branch, status };
+};
+
+/**
+ * Recalculates and updates nexusRank for all GitHub profiles based on sortingKey descending.
+ */
+const recalculateGitHubNexusRanks = async () => {
+    try {
+        const profiles = await CodingProfile.find({ platform: 'github' })
+            .sort({ sortingKey: -1 })
+            .select('_id sortingKey');
+
+        if (!profiles || profiles.length === 0) return;
+
+        const bulkOps = profiles.map((p, idx) => ({
+            updateOne: {
+                filter: { _id: p._id },
+                update: { $set: { nexusRank: idx + 1 } }
+            }
+        }));
+
+        await CodingProfile.bulkWrite(bulkOps);
+        console.log(`[GitHub Sync] Recalculated nexusRank for ${profiles.length} profiles.`);
+    } catch (err) {
+        console.error('[GitHub Sync] Error recalculating nexusRank:', err.message);
+    }
+};
+
+/**
  * Syncs an individual user's GitHub stats to the CodingProfile collection.
  */
 const syncUserGitHubProfile = async (user) => {
@@ -225,15 +286,21 @@ const syncUserGitHubProfile = async (user) => {
     const stats = await fetchGitHubUserStats(username);
     if (!stats) return null;
 
+    const meta = extractUserMetadata(user);
+
     const profileDoc = await CodingProfile.findOneAndUpdate(
         { userId: user._id, platform: 'github' },
         {
             userId: user._id,
-            admissionNo: user.admissionNumber || '',
+            admissionNo: meta.admissionNo,
             fullName: user.fullName || user.admissionNumber,
             platform: 'github',
             profileId: stats.login || username,
             sortingKey: stats.totalContributions,
+            branch: meta.branch,
+            year: meta.year,
+            program: meta.program,
+            status: meta.status,
             data: stats
         },
         { upsert: true, new: true, setDefaultsOnInsert: true }
@@ -243,25 +310,41 @@ const syncUserGitHubProfile = async (user) => {
 };
 
 /**
- * Iterates through all registered users who have specified a GitHub profile and syncs them.
+ * Iterates through all registered users who have specified a GitHub profile and syncs them in parallel batches.
  */
-const syncAllGitHubProfiles = async () => {
+const syncAllGitHubProfiles = async (concurrency = 5) => {
     try {
         const users = await User.find({
             githubProfile: { $exists: true, $ne: '' }
-        }).select('_id fullName admissionNumber branch passingYear githubProfile shareCodingProfile');
+        }).select('_id fullName admissionNumber branch passingYear isAlumni githubProfile shareCodingProfile');
 
-        console.log(`Starting GitHub profiles sync for ${users.length} users...`);
+        console.log(`Starting GitHub profiles sync for ${users.length} users with concurrency=${concurrency}...`);
         let syncedCount = 0;
+        let processedCount = 0;
 
-        for (const user of users) {
-            try {
-                const res = await syncUserGitHubProfile(user);
-                if (res) syncedCount++;
-            } catch (err) {
-                console.error(`Error syncing GitHub profile for ${user.fullName}:`, err.message);
+        // Process users with controlled concurrency
+        for (let i = 0; i < users.length; i += concurrency) {
+            const batch = users.slice(i, i + concurrency);
+            await Promise.all(
+                batch.map(async (user) => {
+                    try {
+                        const res = await syncUserGitHubProfile(user);
+                        if (res) syncedCount++;
+                    } catch (err) {
+                        console.error(`Error syncing GitHub profile for ${user.fullName}:`, err.message);
+                    } finally {
+                        processedCount++;
+                    }
+                })
+            );
+
+            if (processedCount % 50 === 0 || processedCount === users.length) {
+                console.log(`[GitHub Sync Progress] ${processedCount}/${users.length} processed (${syncedCount} synced)...`);
             }
         }
+
+        // Recalculate nexusRank across all GitHub profiles
+        await recalculateGitHubNexusRanks();
 
         console.log(`Successfully synced ${syncedCount}/${users.length} GitHub profiles.`);
         return { total: users.length, synced: syncedCount };
@@ -308,6 +391,7 @@ module.exports = {
     fetchGitHubUserStats,
     syncUserGitHubProfile,
     syncAllGitHubProfiles,
+    recalculateGitHubNexusRanks,
     verifyGitHubToken
 };
 
