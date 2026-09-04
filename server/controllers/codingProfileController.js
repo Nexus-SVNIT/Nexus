@@ -44,7 +44,13 @@ const getCodingProfiles = async (req, res) => {
 
         const filter = { platform };
 
-        if (branch) filter.branch = branch;
+        if (branch) {
+            if (branch === 'CS' || branch === 'CO') {
+                filter.branch = { $in: ['CS', 'CO', 'CSE'] };
+            } else {
+                filter.branch = branch;
+            }
+        }
         if (year) filter.year = year;
         if (program) filter.program = program;
         if (status) filter.status = status;
