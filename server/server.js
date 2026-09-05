@@ -25,6 +25,7 @@ const answerRoutes=require("./routes/answerRoutes.js");
 const contributorsRoute=require("./routes/contributorsRoute.js");
 const rateLimit = require('express-rate-limit');
 const studyMaterialRoutes = require('./routes/studyMaterialRoutes.js')
+const qrRoutes = require('./routes/qrRoutes.js')
 
 const app = express()
 const PORT = process.env.PORT
@@ -56,6 +57,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.get('/health-check', (req, res) => {
     return res.send('EveryThing is Fine.')
 })
+
+app.use('/qr', qrRoutes)
 
 app.use('/auth', authRoutes)
 app.use('/event', eventRoutes)

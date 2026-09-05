@@ -22,6 +22,7 @@ import PasswordResetEmail from "./components/PasswordResetEmail/PasswordResetEma
 import AlumniSignUpForm from "./components/AlumniSignUpForm/AlumniSignUpForm";
 import FloatingReportButton from './components/UI/FloatingReportButton';
 import VerifyAlumniEmail from "./components/VerifyEmail/VerifyAlumniEmail";
+import QrRedirect from "./components/QrRedirect/QrRedirect";
 const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 
 const queryClient = new QueryClient();
@@ -82,7 +83,7 @@ function App() {
               </>
             )}
 
-           
+            <Route path="/qr" element={<QrRedirect />} />
 
             <Route path="/" element={<DefaultLayout />}>
               {DefaultRoutes.map(({ title, path, component: Component }) => (
