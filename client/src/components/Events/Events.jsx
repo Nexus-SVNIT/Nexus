@@ -102,7 +102,7 @@ const Events = () => {
           horizonColor="#183B8F"
           waveColor="#4F6FE8"
           crestColor="#9BDFFF"
-          speed={0.25}
+          speed={0.6}
           amplitude={1.85}
           waveScale={0.65}
           waveRatio={0.75}
