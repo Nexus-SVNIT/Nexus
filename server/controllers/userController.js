@@ -1,6 +1,7 @@
 const user = require('../models/userModel.js');
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
 const { syncUserGitHubProfile } = require('../utils/githubProfileUtils.js');
+const { syncUserCodeforcesProfile } = require('../utils/codeforcesProfileUtils.js');
 const Post = require('../models/postModel.js');
 
 
@@ -98,6 +99,13 @@ const updateUserProfile = async (req, res) => {
         if (foundUser.githubProfile) {
             syncUserGitHubProfile(foundUser).catch(err => {
                 console.error('Background GitHub sync failed on profile update:', err.message);
+            });
+        }
+
+        // Asynchronously sync Codeforces profile in background if provided
+        if (foundUser.codeforcesProfile) {
+            syncUserCodeforcesProfile(foundUser).catch(err => {
+                console.error('Background Codeforces sync failed on profile update:', err.message);
             });
         }
 
