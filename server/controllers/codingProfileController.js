@@ -2,6 +2,7 @@ const axios = require("axios");
 const codingProfileModel = require("../models/codingProfileModel");
 const contestModel = require("../models/contestModel");
 const { syncAllGitHubProfiles } = require("../utils/githubProfileUtils");
+const { syncAllCodeforcesProfiles } = require("../utils/codeforcesProfileUtils");
 
 const CODING_PROFILE_API = process.env.CODING_PROFILE_BASE_URL;
 
@@ -132,9 +133,24 @@ const syncGitHubLeaderboard = async (req, res) => {
     }
 };
 
+const syncCodeforcesLeaderboard = async (req, res) => {
+    try {
+        const result = await syncAllCodeforcesProfiles();
+        res.json({
+            success: true,
+            message: `Successfully synced ${result.synced}/${result.total} Codeforces profiles.`,
+            data: result
+        });
+    } catch (error) {
+        console.error("Error syncing Codeforces leaderboard:", error.message);
+        res.status(500).json({ success: false, error: "Failed to sync Codeforces leaderboard" });
+    }
+};
+
 module.exports = {
     getContest,
     getCodingProfiles,
     getCodingProfile,
-    syncGitHubLeaderboard
-};
+    syncGitHubLeaderboard,
+    syncCodeforcesLeaderboard
+};
