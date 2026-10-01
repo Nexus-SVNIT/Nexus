@@ -64,7 +64,7 @@ const Achievements = () => {
       </div>
       <Title>Departmental Achievements</Title>
 
-      <div className="mt-10 flex flex-wrap items-center justify-center gap-10 transition-all delay-300">
+      <div className="mt-10 flex flex-wrap items-center justify-center gap-6 px-4 transition-all delay-300 sm:gap-10 sm:px-0">
         {achievements.map((el) => (
           <AchievementCard
             key={el._id || el.email}

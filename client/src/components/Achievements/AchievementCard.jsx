@@ -64,7 +64,7 @@ const AchievementCard = ({ el }) => {
 
       <div
         key={el._id}
-        className={`flex h-[26rem] w-[20rem] cursor-text flex-col rounded-lg bg-blue-100/5 transition-all hover:scale-105 md:gap-4`}
+        className={`flex h-[26rem] w-full max-w-[20rem] cursor-text flex-col rounded-lg bg-blue-100/5 transition-all hover:scale-105 md:gap-4`}
       >
         <div>
           <img

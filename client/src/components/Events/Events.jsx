@@ -95,9 +95,9 @@ const Events = () => {
   }
 
   return (
-    <div className="mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: '#060818' }}>
+    <div className="events-page mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: '#060818' }}>
       {/* Animated gradient waves background */}
-      <div style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
+      <div className="events-background" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
         <GradientWaves
           horizonColor="#183B8F"
           waveColor="#4F6FE8"

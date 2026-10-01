@@ -3,12 +3,12 @@ import Logo from "../../data/images/nexus.png";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#09090b] border-t border-zinc-800/50 text-zinc-300">
-      <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
+    <footer className="relative z-20 bg-[#000000] border-t border-zinc-800/50 text-zinc-300 md:bg-[#2f2f2f]/20">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           
           {/* Brand & Description */}
-          <div className="space-y-8 xl:col-span-1">
+          <div className="space-y-6 xl:col-span-1">
             <div className="flex items-center gap-3">
               <img src={Logo} alt="Nexus" className="h-10 w-10 opacity-90 transition-opacity hover:opacity-100" />
               <div className="flex flex-col">
@@ -38,42 +38,38 @@ const Footer = () => {
           </div>
           
           {/* Navigation Links */}
-          <div className="mt-16 grid grid-cols-2 gap-8 xl:col-span-2 xl:mt-0">
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Explore</h3>
-                <ul className="mt-6 flex flex-col gap-4">
-                  <li><Link to="/" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Home</Link></li>
-                  <li><Link to="/events" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Events</Link></li>
-                  <li><Link to="/achievements" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Achievements</Link></li>
-                  <li><Link to="/forms" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Forms</Link></li>
-                </ul>
-              </div>
-              <div className="mt-10 md:mt-0">
-                <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Community</h3>
-                <ul className="mt-6 flex flex-col gap-4">
-                  <li><Link to="/team" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Team</Link></li>
-                  <li><Link to="/alumni-network" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Alumni Network</Link></li>
-                  <li><Link to="/about" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">About Us</Link></li>
-                </ul>
-              </div>
+          <div className="mt-10 grid grid-cols-2 gap-8 sm:grid-cols-3 xl:col-span-2 xl:mt-0">
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Explore</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                <li><Link to="/" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Home</Link></li>
+                <li><Link to="/events" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Events</Link></li>
+                <li><Link to="/achievements" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Achievements</Link></li>
+                <li><Link to="/forms" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Forms</Link></li>
+              </ul>
             </div>
-            <div className="md:grid md:grid-cols-2 md:gap-8">
-              <div>
-                <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Resources</h3>
-                <ul className="mt-6 flex flex-col gap-4">
-                  <li><Link to="/projects" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Projects</Link></li>
-                  <li><Link to="/coding" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Coding Leaderboard</Link></li>
-                  <li><Link to="/interview-experiences" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Interview Experiences</Link></li>
-                </ul>
-              </div>
+            <div>
+              <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Community</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                <li><Link to="/team" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Team</Link></li>
+                <li><Link to="/alumni-network" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Alumni Network</Link></li>
+                <li><Link to="/about" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">About Us</Link></li>
+              </ul>
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <h3 className="text-sm font-semibold text-zinc-100 uppercase tracking-wider">Resources</h3>
+              <ul className="mt-4 flex flex-col gap-3">
+                <li><Link to="/projects" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Projects</Link></li>
+                <li><Link to="/coding" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Coding Leaderboard</Link></li>
+                <li><Link to="/interview-experiences" className="text-sm leading-6 text-zinc-400 hover:text-[#54d2f0] transition-colors">Interview Experiences</Link></li>
+              </ul>
             </div>
           </div>
         </div>
         
         {/* Copyright */}
-        <div className="mt-16 border-t border-zinc-800/50 pt-8 sm:mt-20 lg:mt-24">
-          <p className="text-xs leading-5 text-zinc-500 font-mono tracking-wide">
+        <div className="mt-10 border-t border-zinc-800/50 pt-8 sm:mt-16 lg:mt-20">
+          <p className="text-xs leading-5 text-zinc-500 font-mono tracking-wide text-center sm:text-left">
             Made with <span className="animate-pulse text-red-500 mx-1">❤</span> by All Time Developers, NEXUS SVNIT • &copy; {new Date().getFullYear()} NEXUS
           </p>
         </div>

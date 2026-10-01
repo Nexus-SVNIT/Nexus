@@ -7,7 +7,7 @@ const DefaultLayout = () => {
   const { pathname } = useLocation();
 
   return (
-    <div className="bg-black min-h-screen">
+    <div className="bg-black min-h-screen overflow-x-hidden">
       <div>
         <CustomSideBar />
       </div>
@@ -15,7 +15,7 @@ const DefaultLayout = () => {
         <header className="hidden md:block sticky left-0 top-0 z-50 bg-[#000000]/80 backdrop-blur-md px-4 sm:px-6 lg:px-8">
           <Navbar />
         </header>
-        <main className="relative isolate z-10 flex-1 w-full bg-[#000000]">
+        <main className="relative isolate z-10 flex-1 w-full bg-[#000000] pt-16 md:pt-0">
           <ScrollToTop />
           <div key={pathname} className="animate-fadeIn">
             <Outlet />
