@@ -6,7 +6,7 @@ const WhatPeopleThinkAboutUS = () => {
   return (
     <div className="mx-auto my-10 mb-20 flex h-full max-w-7xl flex-col items-center justify-center  ">
       <Title>What People Think About Us</Title>
-      <div className="mt-10 flex w-full flex-wrap justify-evenly gap-10">
+      <div className="mt-10 flex w-full flex-col items-center gap-6 px-4 sm:flex-row sm:flex-wrap sm:justify-evenly sm:gap-10 sm:px-0">
         <Testimonial
           text={
             "Nexus has successfully cultivated a spirit of collaboration and excellence within our CSE & AI community. The events are not just about coding; they're about building lasting connections and preparing us for the dynamic world of technology"
