@@ -6,6 +6,35 @@
   justify-content: center;
   margin: auto;
 }
+
+@media only screen and (max-width: 767px) {
+  .events-page {
+    background: transparent !important;
+  }
+
+  .events-background {
+    position: fixed !important;
+    inset: 0 !important;
+    height: 100vh !important;
+    min-height: 100vh !important;
+  }
+
+  .events-background .gradient-waves-container,
+  .events-background canvas {
+    height: 100vh !important;
+    min-height: 100vh !important;
+  }
+
+  @supports (height: 100dvh) {
+    .events-background,
+    .events-background .gradient-waves-container,
+    .events-background canvas {
+      height: 100dvh !important;
+      min-height: 100dvh !important;
+    }
+  }
+}
+
 .timeline {
   width: 90%;
   height: auto;
