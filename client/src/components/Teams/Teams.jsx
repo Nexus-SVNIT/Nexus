@@ -104,7 +104,7 @@ const Teams = () => {
     );
 
   return (
-    <div className="bg-[#000000] min-h-screen w-full font-sans antialiased">
+    <div className="bg-transparent min-h-screen w-full font-sans antialiased">
       <div className="mx-auto flex flex-col items-center justify-center max-w-7xl px-4 py-16 sm:px-6 lg:px-8 space-y-16">
         <HeadTags
           title={`Core Team ${selectedYear} | Nexus - NIT Surat`}

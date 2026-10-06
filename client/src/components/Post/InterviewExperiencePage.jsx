@@ -219,7 +219,7 @@ const InterviewExperiencePage = () => {
   }
 
   return (
-    <div className="bg-[#000000] mb-36 min-h-screen p-4 sm:p-6 md:mx-auto md:max-w-7xl">
+    <div className="bg-transparent mb-36 min-h-screen p-4 sm:p-6 md:mx-auto md:max-w-7xl">
       <HeadTags
         title={"Interview Experiences | NIT Surat"}
         description={

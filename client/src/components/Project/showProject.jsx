@@ -32,7 +32,7 @@ const ShowProject = () => {
 
     if (isLoading) {
         return (
-            <div className="bg-[#111111] min-h-screen py-6 px-4">
+            <div className="bg-transparent min-h-screen py-6 px-4">
                 <HeadTags 
                     title="Loading Projects... | Nexus - NIT Surat"
                 />                    
