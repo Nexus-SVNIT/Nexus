@@ -1,9 +1,12 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Logo from "../../data/images/nexus.png";
 
 const Footer = () => {
+  const { pathname } = useLocation();
+  const isHomePage = pathname === "/";
+
   return (
-    <footer className="relative z-20 bg-[#000000] border-t border-zinc-800/50 text-zinc-300 md:bg-[#2f2f2f]/20">
+    <footer className={`relative z-20 border-t border-zinc-800/50 text-zinc-300 ${isHomePage ? "bg-[#000000] md:bg-[#2f2f2f]/20" : "bg-[#060818]/80 backdrop-blur-md"}`}>
       <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-16 lg:px-8">
         <div className="xl:grid xl:grid-cols-3 xl:gap-8">
           
