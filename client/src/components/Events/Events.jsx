@@ -7,7 +7,6 @@ import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import Modal from "./Modal";
-import GradientWaves from "./GradientWaves";
 import { getEventsByYear, getUniqueEventYears } from "../../services/eventService";
 
 const Events = () => {
@@ -95,32 +94,7 @@ const Events = () => {
   }
 
   return (
-    <div className="events-page mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: '#060818' }}>
-      {/* Animated gradient waves background */}
-      <div className="events-background" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <GradientWaves
-          horizonColor="#183B8F"
-          waveColor="#4F6FE8"
-          crestColor="#9BDFFF"
-          speed={0.6}
-          amplitude={1.85}
-          waveScale={0.65}
-          waveRatio={0.75}
-          swell={25}
-          turbulence={12}
-          tilt={1}
-          zoom={1}
-          height={5.5}
-          fogDepth={20}
-          detail="medium"
-          brightness={0.75}
-          opacity={0.7}
-          mouseInteraction
-          parallaxStrength={0.3}
-          grain
-          grainIntensity={0.03}
-        />
-      </div>
+    <div className="events-page mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: 'transparent' }}>
       {/* Page content above the background */}
       <div style={{ position: 'relative', zIndex: 1 }}>
       <HeadTags
