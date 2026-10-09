@@ -20,11 +20,11 @@ const ModernProfile = ({ profile, isFaculty }) => {
     : getImageUrl(profile.image);
 
   return (
-    <div className="group relative flex w-full md:w-[20rem] flex-col overflow-hidden rounded-2xl border border-zinc-800/60 bg-[#09090b] text-zinc-300 transition-all duration-300 hover:border-zinc-700/80">
+    <div className="group relative flex w-full md:w-[20rem] flex-col overflow-hidden rounded-2xl border border-zinc-800/80 bg-zinc-900/60 backdrop-blur-md text-zinc-300 transition-all duration-300 hover:border-blue-500/40 hover:shadow-2xl hover:shadow-blue-500/10">
       
       {/* Top Image Section - Fixed height with object-top to prioritize face */}
       <div className="relative h-64 w-full overflow-hidden bg-zinc-900/50">
-        <div className="absolute inset-0 bg-gradient-to-t from-[#09090b] via-transparent to-transparent z-10 opacity-60"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-zinc-900/90 via-transparent to-transparent z-10 opacity-70"></div>
         <img
           src={imageUrl}
           onError={(e) => { e.target.onerror = null; e.target.src = "/fallback.png"; }}
@@ -32,14 +32,14 @@ const ModernProfile = ({ profile, isFaculty }) => {
           className="h-full w-full object-cover object-top transition-transform duration-700 group-hover:scale-[1.03]"
           loading="lazy"
         />
-        <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-zinc-700 to-transparent z-20"></div>
+        <div className="absolute bottom-0 left-0 h-[1px] w-full bg-gradient-to-r from-transparent via-zinc-700/50 to-transparent z-20"></div>
       </div>
 
       {/* Content Section */}
       <div className="relative z-20 -mt-6 flex flex-col items-center px-6 pb-6 pt-2 text-center">
         {/* Role Badge pinned spanning banner and content */}
-        <div className="mb-4 inline-flex items-center justify-center rounded-full border border-zinc-800 bg-[#09090b] px-3 py-1 shadow-md shadow-black">
-          <span className="text-xs font-medium tracking-wide text-zinc-400 uppercase">
+        <div className="mb-4 inline-flex items-center justify-center rounded-full border border-zinc-700/60 bg-zinc-800/90 px-3.5 py-1 shadow-lg backdrop-blur-md">
+          <span className="text-xs font-semibold tracking-wider text-zinc-300 uppercase">
             {profile?.role || "Member"}
           </span>
         </div>
@@ -53,7 +53,7 @@ const ModernProfile = ({ profile, isFaculty }) => {
           {profile?.email && (
             <a 
               href={`mailto:${profile.email}`}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-800/80 bg-zinc-900 text-zinc-400 transition-all hover:border-zinc-600 hover:bg-zinc-800 hover:text-white"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-zinc-700/60 bg-zinc-800/70 text-zinc-300 transition-all hover:border-blue-500/50 hover:bg-zinc-700 hover:text-white"
               title="Mail"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>

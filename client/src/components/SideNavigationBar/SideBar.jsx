@@ -106,61 +106,72 @@ const CustomSidebar = () => {
 
   return (
     <>
-    {!mobileOpen && (
-      <button
-        onClick={() => {
-          // setCollapsed(true);
-          setMobileOpen(true);
-          setCollapsed(false);
-        }}
-        className="fixed left-6 top-6 z-[10000] flex h-12 w-12 items-center justify-center rounded-full bg-[#232323] text-white shadow-lg md:hidden"
-        aria-label="Open sidebar"
+      {/* Mobile backdrop overlay */}
+      {mobileOpen && (
+        <div
+          className="fixed inset-0 z-[9998] bg-black/60 backdrop-blur-sm transition-opacity duration-300 md:hidden"
+          onClick={() => {
+            setMobileOpen(false);
+            setCollapsed(true);
+          }}
+          aria-hidden="true"
+        />
+      )}
+
+      {!mobileOpen && (
+        <button
+          onClick={() => {
+            setMobileOpen(true);
+            setCollapsed(false);
+          }}
+          className="fixed left-4 top-4 z-[10000] flex h-11 w-11 items-center justify-center rounded-xl border border-white/10 bg-[#060818]/85 text-white shadow-xl backdrop-blur-md transition-all hover:border-blue-500/40 hover:bg-[#060818] active:scale-95 md:hidden"
+          aria-label="Open sidebar"
+        >
+          <FaBars size={18} />
+        </button>
+      )}
+      <ProSidebar
+        collapsed={collapsed}
+        className={`fixed left-0 top-0 z-[9999] h-screen border-r border-white/10 bg-[#060818]/95 shadow-2xl backdrop-blur-xl transition-all duration-300
+          ${mobileOpen ? "block" : "hidden md:block"}
+        `}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
       >
-        <FaBars size={20} />
-      </button>
-    )}
-    <ProSidebar
-      collapsed={collapsed}
-      className={`fixed left-0 top-0 z-[9999] h-screen bg-black-2 bg-opacity-95
-        ${mobileOpen ? "block" : "hidden md:block"}
-      `}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-    >
-      <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between px-4 py-3">
-          {collapsed ? (
-            <button
-              onClick={() => setCollapsed(false)}
-              className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-full bg-[#232323] my-4"
-              aria-label="Open sidebar"
-            >
-              <FaBars size={16} className="text-white" />
-            </button>
-          ) : (
-            <>
-              <div className="flex items-center px-4 py-9 h-10">
-                <Link to={"/"}>
-                  <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
-                </Link>
-                <span className="mx-2 text-xl font-bold tracking-wide uppercase bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
-                  NEXUS
-                </span>
-              </div>
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between px-4 py-3">
+            {collapsed ? (
               <button
-                onClick={() => {
-                  setCollapsed(true);
-                  setMobileOpen(false);
-                  setIgnoreHover(true); // Prevent hover expand until mouse leaves
-                }}
-                className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-full bg-[#232323] ml-auto hover:bg-gray-100 my-2 transition-transform duration-200 hover:scale-110 hover:text-blue-500"
-                aria-label="Close sidebar"
+                onClick={() => setCollapsed(false)}
+                className="focus:outline-none flex items-center justify-center w-10 h-10 rounded-xl bg-zinc-800/80 hover:bg-zinc-700 text-white border border-white/10 my-4 shadow-md transition-all duration-200 active:scale-95"
+                aria-label="Open sidebar"
               >
-                <FaX size={16} className="text-white" />
+                <FaBars size={16} className="text-white" />
               </button>
-            </>
-          )}
-        </div>
+            ) : (
+              <>
+                <div className="flex items-center px-4 py-9 h-10">
+                  <Link to={"/"}>
+                    <img src={Logo} alt="Nexus_Official" className="h-8 w-8" />
+                  </Link>
+                  <span className="mx-2 text-xl font-bold tracking-wide uppercase bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent">
+                    NEXUS
+                  </span>
+                </div>
+                <button
+                  onClick={() => {
+                    setCollapsed(true);
+                    setMobileOpen(false);
+                    setIgnoreHover(true); // Prevent hover expand until mouse leaves
+                  }}
+                  className="focus:outline-none flex items-center justify-center w-9 h-9 rounded-full bg-zinc-800/80 text-zinc-300 hover:text-white border border-white/10 ml-auto hover:bg-zinc-700 transition-all duration-200 active:scale-95"
+                  aria-label="Close sidebar"
+                >
+                  <FaX size={14} className="text-white" />
+                </button>
+              </>
+            )}
+          </div>
 
         <div className="flex-1 overflow-y-auto custom-scrollbar pb-10" data-lenis-prevent="true">
           <Menu iconShape="circle" className="overflow-visible">
