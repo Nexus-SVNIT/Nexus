@@ -43,7 +43,7 @@ const UserProfile = () => {
       <Toaster position="top-right" reverseOrder={false} />
 
       {/* Personal Information Section */}
-      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900/60 backdrop-blur-md p-6 shadow-lg">
         <h2 className="mb-6 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-2xl font-semibold text-transparent">
           Profile
         </h2>
@@ -53,14 +53,14 @@ const UserProfile = () => {
       </div>
 
       {/* Interview Experiences Section */}
-      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+      <div className="mx-auto mb-18 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900/60 backdrop-blur-md p-6 shadow-lg">
         <ErrorBoundary title="Failed to load interview experiences">
           <PostProfile />
         </ErrorBoundary>
       </div>
 
       {/* Coding Profiles Section */}
-      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900 p-6 shadow-lg">
+      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-xl border border-zinc-700/50 bg-zinc-900/60 backdrop-blur-md p-6 shadow-lg">
         <h2 className="mb-6 bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-2xl font-semibold text-transparent">
           Coding Profiles
         </h2>

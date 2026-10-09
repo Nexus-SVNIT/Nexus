@@ -36,16 +36,16 @@ const ShowProject = () => {
                 <HeadTags 
                     title="Loading Projects... | Nexus - NIT Surat"
                 />                    
-                <div className="bg-gray-900 text-white md:p-6 p-2  rounded-md shadow-md max-w-4xl mx-auto">
+                <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 text-white md:p-6 p-4 rounded-xl shadow-xl max-w-4xl mx-auto">
                     <h1 className="text-3xl font-bold mb-4 text-center">Ongoing Projects</h1>
                     <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                         {[...Array(4)].map((_, index) => (
-                            <div key={index} className="bg-gray-800 border border-blue-500 p-2 md:p-8 rounded-lg shadow-lg animate-pulse">
-                                <div className="h-8 bg-gray-700 mb-6 rounded"></div>
-                                <div className="h-4 bg-gray-600 mb-3 rounded"></div>
-                                <div className="h-4 bg-gray-600 mb-3 rounded"></div>
-                                <div className="h-4 bg-gray-600 mb-3 rounded"></div>
-                                <div className="h-4 bg-gray-600 rounded"></div>
+                            <div key={index} className="bg-zinc-800/50 border border-zinc-700/60 p-2 md:p-8 rounded-xl shadow-lg animate-pulse">
+                                <div className="h-8 bg-zinc-700 mb-6 rounded"></div>
+                                <div className="h-4 bg-zinc-600 mb-3 rounded"></div>
+                                <div className="h-4 bg-zinc-600 mb-3 rounded"></div>
+                                <div className="h-4 bg-zinc-600 mb-3 rounded"></div>
+                                <div className="h-4 bg-zinc-600 rounded"></div>
                             </div>
                         ))}
                     </div>
@@ -59,17 +59,17 @@ const ShowProject = () => {
     }
 
     return (
-        <div className="min-h-screen py-6 px-4">
+        <div className="bg-transparent min-h-screen py-6 px-4">
             <HeadTags
                 title="Ongoing Projects | Nexus - NIT Surat"
                 description="Check out the ongoing projects of Nexus built and mentored by Nexus Members."
                 keywords={"Nexus NIT Surat, Ongoing Projects, Projects, Nexus Projects, NIT Surat Projects"}
             />
-            <div className="bg-gray-900 text-white p-2 md:p-8 rounded-md shadow-md max-w-5xl mx-auto">
+            <div className="bg-zinc-900/60 backdrop-blur-md border border-zinc-800/80 text-white p-4 md:p-8 rounded-xl shadow-xl max-w-5xl mx-auto">
                 <h1 className="text-4xl font-bold mb-6 text-center">Ongoing Projects</h1>
                 <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
                     {projects.map((project) => (
-                        <div key={project._id} className="bg-gray-800 border border-blue-500 p-8 rounded-lg shadow-lg transition-transform transform hover:scale-[1.01]">
+                        <div key={project._id} className="bg-zinc-800/50 backdrop-blur-sm border border-zinc-700/60 hover:border-blue-500/50 p-8 rounded-xl shadow-lg transition-all transform hover:scale-[1.01]">
                             <h2 className="text-3xl font-semibold mb-4">{project.title}</h2>
                             <p className="text-gray-300 mb-6">{project.description}</p>
                             <p className="text-blue-400 mb-4">

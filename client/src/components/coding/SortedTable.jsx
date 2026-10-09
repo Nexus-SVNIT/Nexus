@@ -166,12 +166,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   const isNexusRanking = rankingScheme === "nexus";
 
   return (
-    <div className="mb-16 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]">
+    <div className="mb-16 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-md shadow-2xl">
       <table
         {...getTableProps()}
         className="min-w-full text-left text-sm text-zinc-300 border-collapse"
       >
-        <thead className="bg-[#09090b] text-[0.7rem] uppercase tracking-widest text-zinc-500 border-b border-zinc-800/60 font-semibold">
+        <thead className="bg-[#09090b]/90 text-[0.7rem] uppercase tracking-widest text-zinc-400 border-b border-zinc-800/60 font-semibold backdrop-blur-sm">
           {headerGroups.map((headerGroup, idx) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id || idx}>
               {headerGroup.headers.map((column) => (

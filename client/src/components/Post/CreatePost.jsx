@@ -306,12 +306,12 @@ const CreatePost = () => {
 
   return (
     <PostDetailWrapper>
-      <div className="bg-gray-900 mx-auto min-h-screen p-4 sm:p-6">
+      <div className="bg-transparent mx-auto p-4 sm:p-6">
         <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">
           Create Post
         </h2>
         <form
-          className="rounded-lg bg-zinc-900 p-4 shadow-lg sm:p-6"
+          className="rounded-lg bg-zinc-900/60 backdrop-blur-sm border border-zinc-700/40 p-4 shadow-lg sm:p-6"
           onSubmit={handleSubmit}
         >
           {/* Grid layouts */}

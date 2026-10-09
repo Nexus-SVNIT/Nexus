@@ -347,7 +347,7 @@ const EditPost = () => {
   if (loading) {
     return (
       <PostDetailWrapper>
-        <div className="min-h-screen bg-gray-900 p-4 sm:p-6">
+        <div className="bg-transparent p-4 sm:p-6">
           <div className="animate-pulse space-y-4">
             <div className="h-8 w-1/4 rounded bg-zinc-800"></div>
             <div className="h-96 rounded bg-zinc-800"></div>
@@ -360,9 +360,9 @@ const EditPost = () => {
 
   return (
     <PostDetailWrapper>
-      <div className="bg-gray-900 mx-auto min-h-screen p-4 sm:p-6">
+      <div className="bg-transparent mx-auto p-4 sm:p-6">
         <h2 className="mb-6 text-2xl font-bold text-white sm:text-3xl">Edit Post</h2>
-        <form className="rounded-lg bg-zinc-900 p-4 shadow-lg sm:p-6" onSubmit={handleSubmit}>
+        <form className="rounded-lg bg-zinc-900/60 backdrop-blur-sm border border-zinc-700/40 p-4 shadow-lg sm:p-6" onSubmit={handleSubmit}>
           {/* Grid layouts */}
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {/* Title */}

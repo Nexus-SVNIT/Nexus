@@ -65,7 +65,7 @@ const UpcomingContests = () => {
       </div>
 
       {Array.isArray(contests) && contests.length === 0 ? (
-        <div className="flex h-32 items-center justify-center rounded-xl border border-zinc-800/50 bg-[#09090b]">
+        <div className="flex h-32 items-center justify-center rounded-xl border border-zinc-800/50 bg-zinc-900/60 backdrop-blur-md">
           <p className="text-zinc-500 text-sm font-medium">No upcoming contests available.</p>
         </div>
       ) : (
@@ -81,7 +81,7 @@ const UpcomingContests = () => {
               <a
                 href={contest.url} target="_blank" rel="noopener noreferrer"
                 key={index}
-                className="group flex flex-col justify-between gap-3 rounded-xl border border-zinc-800/80 bg-[#0c0c0e] hover:bg-[#111114] p-5 transition-all duration-300 relative"
+                className="group flex flex-col justify-between gap-3 rounded-xl border border-zinc-800/80 bg-zinc-900/60 hover:bg-zinc-800/60 backdrop-blur-sm p-5 transition-all duration-300 relative hover:border-zinc-700"
               >
                 <div className="flex flex-col gap-3">
                   <div className="flex items-start justify-between gap-2">
