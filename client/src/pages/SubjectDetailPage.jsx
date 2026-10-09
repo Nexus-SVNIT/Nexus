@@ -227,7 +227,7 @@ const SubjectDetailPage = () => {
                 Back to Subjects
             </Link>
 
-            <h1 className="mb-2 text-3xl font-bold md:text-4xl">{subject.subjectName}</h1>
+            <h1 className="mb-2 text-4xl font-bold text-white md:text-5xl">{subject.subjectName}</h1>
             <p className="mb-8 text-gray-500">
                 {Object.values(subject.resources).flat().length} resources across {allSubCategories.length} categories
             </p>
