@@ -103,7 +103,7 @@ const SelectionCard = ({ title, description, icon, onClick, accentColor = "blue"
 /* ─── Step Header ─── */
 const StepHeader = ({ title, subtitle }) => (
     <div className="mb-8 text-center">
-        <h2 className="text-2xl font-semibold text-white">{title}</h2>
+        <h2 className="text-3xl font-bold text-white">{title}</h2>
         {subtitle && <p className="mt-2 text-gray-500">{subtitle}</p>}
     </div>
 );
