@@ -231,11 +231,11 @@ const InterviewExperiencePage = () => {
         <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
           {"// interview-experiences"}
         </p>
-        <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
           Real stories.{" "}
           <span className="text-zinc-400">Real companies.</span>
         </h1>
-        <p className="text-zinc-500 text-sm mt-2 max-w-2xl">
+        <p className="text-zinc-300 text-sm mt-2 max-w-2xl">
           Placement and internship experiences shared by NIT Surat students — questions asked, rounds faced, tips earned.
         </p>
       </div>
