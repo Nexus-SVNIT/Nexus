@@ -82,7 +82,7 @@ const FeatureShowcase = () => {
           <HiOutlineSparkles className="text-sm" />
           <span>The Nexus Ecosystem</span>
         </div>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-white">
+        <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-white">
           Everything You Need, Built for{" "}
           <span className="bg-gradient-to-r from-blue-400 via-cyan-300 to-emerald-400 bg-clip-text text-transparent">
             SVNITians
