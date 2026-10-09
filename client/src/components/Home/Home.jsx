@@ -1,8 +1,10 @@
 import React, { useEffect, useState, Suspense, lazy } from "react";
 import Button from "../Button/Button";
-import Counter from "../Counter/Counter";
 import HeadTags from "../HeadTags/HeadTags";
 import Contributors from "../Contributors/Contributors";
+import EventMarquee from "./EventMarquee";
+import CommunityStats from "./CommunityStats";
+import FeatureShowcase from "./FeatureShowcase";
 
 // Lazy load heavy components
 const Three = lazy(() => import("../ThreeJS/Three"));
@@ -28,7 +30,7 @@ const Home = () => {
       />
 
       {/* ─── Hero Section ─── */}
-      <div className="relative flex min-h-[100svh] w-full flex-col items-center justify-center overflow-hidden pb-16 pt-24 md:pb-24 md:pt-32">
+      <div className="relative flex min-h-[95svh] w-full flex-col items-center justify-center overflow-hidden pb-12 pt-20 md:pb-16 md:pt-28">
         {/* Background Animation Canvas */}
         <Suspense fallback={<div className="absolute inset-0 z-0 bg-black/50" />}>
           <div className="absolute inset-0 z-0 h-full w-full opacity-80 mix-blend-screen">
@@ -55,26 +57,28 @@ const Home = () => {
             connected and inclusive learning community.
           </p>
           
-          <div className="mt-4 flex w-full items-center justify-center sm:w-auto">
-            <Button to={"#terminal"} isButton={false} className="w-full sm:w-auto px-10 py-3.5 text-lg font-semibold tracking-wide">
+          <div className="mt-2 flex w-full items-center justify-center sm:w-auto">
+            <Button to={"#terminal"} isButton={false} className="w-full sm:w-auto px-10 py-3.5 text-lg font-semibold tracking-wide shadow-lg shadow-blue-500/20">
               Explore More
             </Button>
           </div>
           
         </div>
         
-        {/* Visitor Counter component correctly layered */}
-        <div className="relative z-20 mt-12 flex w-full justify-center px-4 sm:mt-16 md:mt-20">
-          <Counter />
+        {/* Modern 4-Box Community Metrics Grid */}
+        <div className="relative z-20 mt-12 w-full">
+          <CommunityStats />
         </div>
       </div>
 
-      {/* ─── Subtle Section Divider ─── */}
-      <div className="mx-auto my-4 h-px w-3/4 bg-gradient-to-r from-transparent via-blue-500/30 to-transparent" />
+      {/* ─── Continuous Event Highlights Marquee ─── */}
+      <div className="relative z-20 my-6">
+        <EventMarquee />
+      </div>
 
       {/* ─── Terminal Section ─── */}
       <div
-        className="z-[1000] mx-auto mt-4 w-full sm:mt-12 md:mt-8 min-h-[50vh]"
+        className="z-[1000] mx-auto mt-6 w-full sm:mt-12 md:mt-10 min-h-[50vh]"
         id="terminal"
       >
         <Suspense fallback={
@@ -93,11 +97,14 @@ const Home = () => {
         </Suspense>
       </div>
 
+      {/* ─── Platform Feature Bento Grid ─── */}
+      <FeatureShowcase />
+
       {/* ─── Section Divider ─── */}
       <div className="mx-auto my-16 h-px w-3/4 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
 
       {/* ─── FAQ Section ─── */}
-      <div className="faq-section relative my-32 w-full min-h-[50vh]">
+      <div className="faq-section relative my-24 w-full min-h-[50vh]">
         <Suspense fallback={<div className="mx-auto h-[60vh] w-3/4 animate-pulse rounded-2xl bg-zinc-900/50" />}>
           <FAQs />
         </Suspense>
@@ -107,7 +114,7 @@ const Home = () => {
       <div className="mx-auto my-16 h-px w-3/4 bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
 
       {/* ─── Testimonials Section ─── */}
-      <div className="relative my-32 w-full min-h-[50vh]">
+      <div className="relative my-24 w-full min-h-[50vh]">
         <Suspense fallback={<div className="mx-auto h-[40vh] w-[90%] animate-pulse rounded-2xl bg-zinc-900/50" />}>
           <WhatPeopleThinkAboutUS />
         </Suspense>

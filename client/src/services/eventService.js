@@ -1,5 +1,9 @@
 import API from "./apiService";
 
+export const getAllEvents = async() => {
+    return API.get("/event/");
+}
+
 export const getUniqueEventYears = async() => {
     return API.get("/event/unique-years")
 }

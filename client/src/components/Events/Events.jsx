@@ -1,13 +1,11 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import Error from "../Error/Error";
-import Title from "../Title/Title";
 import "./events.css";
 import HeadTags from "../HeadTags/HeadTags";
 import increamentCounter from "../../libs/increamentCounter";
 import MaintenancePage from "../Error/MaintenancePage";
 import Modal from "./Modal";
-import GradientWaves from "./GradientWaves";
 import { getEventsByYear, getUniqueEventYears } from "../../services/eventService";
 
 const Events = () => {
@@ -20,8 +18,8 @@ const Events = () => {
   const [activeImages, setActiveImages] = useState([]);
   const [initialImageIndex, setInitialImageIndex] = useState(0);
 
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value);
+  const handleYearChange = (year) => {
+    setSelectedYear(year);
   };
 
   useEffect(() => {
@@ -95,32 +93,7 @@ const Events = () => {
   }
 
   return (
-    <div className="events-page mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: '#060818' }}>
-      {/* Animated gradient waves background */}
-      <div className="events-background" style={{ position: 'fixed', inset: 0, zIndex: 0, pointerEvents: 'none' }}>
-        <GradientWaves
-          horizonColor="#183B8F"
-          waveColor="#4F6FE8"
-          crestColor="#9BDFFF"
-          speed={0.6}
-          amplitude={1.85}
-          waveScale={0.65}
-          waveRatio={0.75}
-          swell={25}
-          turbulence={12}
-          tilt={1}
-          zoom={1}
-          height={5.5}
-          fogDepth={20}
-          detail="medium"
-          brightness={0.75}
-          opacity={0.7}
-          mouseInteraction
-          parallaxStrength={0.3}
-          grain
-          grainIntensity={0.03}
-        />
-      </div>
+    <div className="events-page mx-auto overflow-hidden pb-20 md:pb-48" style={{ position: 'relative', background: 'transparent' }}>
       {/* Page content above the background */}
       <div style={{ position: 'relative', zIndex: 1 }}>
       <HeadTags
@@ -128,20 +101,31 @@ const Events = () => {
         description="Nexus Events page. Stay updated with the latest events happening at Nexus, NIT Surat."
         keywords="Nexus, NIT Surat, Events, Nexus Events, NIT Surat Events, SVNIT, CSE, AI, Web Wonder, Mentorship Program, Riddle Fuse, Sports Event, Fiesta, Teacher's Day Celebration, CodeSprint, Capture The Flag"
       />
-      <Title>
-        Events &nbsp;&nbsp;
-          <select
-          value={selectedYear}
-          onChange={handleYearChange}
-          className="border-gray-300 rounded-md border bg-transparent px-2 py-1 text-sm text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-        >
-          {years.map((year) => (
-            <option key={year} value={year} className="bg-black text-white">
-              {year}
-            </option>
-          ))}
-        </select>
-      </Title>
+      <div className="flex flex-col items-center gap-4 pt-10 pb-2 px-4">
+        <h1 className="text-center uppercase text-[2.25rem] md:text-[3rem] lg:text-[3.5rem] font-bold bg-gradient-to-r from-blue-300 to-cyan-200 bg-clip-text text-transparent">
+          Events
+        </h1>
+        {years.length > 0 && (
+          <div className="flex flex-wrap items-center justify-center gap-2 rounded-2xl border border-zinc-800/90 bg-zinc-950/70 p-1.5 backdrop-blur-md">
+            {years.map((year) => {
+              const isSelected = year === parseInt(selectedYear);
+              return (
+                <button
+                  key={year}
+                  onClick={() => setSelectedYear(year)}
+                  className={`rounded-xl px-4 py-2 text-sm font-semibold transition-all duration-300 ${
+                    isSelected
+                      ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white shadow-lg shadow-blue-500/25 scale-[1.02]"
+                      : "text-zinc-400 hover:text-white hover:bg-zinc-800/50"
+                  }`}
+                >
+                  {year}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
       <div className="container">
         <div className="timeline">
           <ul className="py-10 transition-all ">
