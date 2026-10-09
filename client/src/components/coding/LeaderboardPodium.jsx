@@ -57,11 +57,11 @@ const LeaderboardPodium = ({ data, platform }) => {
   };
 
   return (
-    <div className="relative w-full rounded-2xl border border-zinc-800/80 bg-gradient-to-b from-zinc-900/70 to-zinc-950/90 p-5 backdrop-blur-xl shadow-2xl overflow-hidden mb-6">
+    <div className="relative w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl shadow-2xl overflow-hidden mb-6">
       {/* Ambient background glow */}
       <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 h-36 w-72 rounded-full bg-amber-500/10 blur-[80px]" />
 
-      <div className="flex items-center justify-between pb-4 border-b border-zinc-800/60 mb-5">
+      <div className="flex items-center justify-between pb-4 border-b border-white/[0.07] mb-5">
         <div className="flex items-center gap-2">
           <FaCrown className="text-amber-400 text-base" />
           <h3 className="text-sm font-semibold tracking-wide text-zinc-100 uppercase">
@@ -77,10 +77,10 @@ const LeaderboardPodium = ({ data, platform }) => {
       {/* Podium Cards Grid: 2nd (Silver), 1st (Gold), 3rd (Bronze) */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 items-end">
         {/* RANK 2 - SILVER */}
-        <div className="order-2 md:order-1 flex flex-col items-center justify-between rounded-xl border border-slate-400/25 bg-zinc-900/60 p-4 transition-all duration-300 hover:border-slate-300/50 hover:bg-zinc-900/80">
+        <div className="order-2 md:order-1 flex flex-col items-center justify-between rounded-xl border border-slate-400/20 bg-white/[0.03] p-4 transition-all duration-300 hover:border-slate-300/40 hover:bg-white/[0.06]">
           <div className="flex flex-col items-center text-center w-full">
             <div className="relative mb-2.5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-800/80 border border-slate-400/40 text-slate-200 font-bold text-sm shadow-md">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.08] border border-slate-400/40 text-slate-200 font-bold text-sm shadow-md">
                 🥈
               </div>
               <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-slate-500 text-[10px] font-black text-black">
@@ -107,7 +107,7 @@ const LeaderboardPodium = ({ data, platform }) => {
         </div>
 
         {/* RANK 1 - GOLD (Elevated) */}
-        <div className="order-1 md:order-2 flex flex-col items-center justify-between rounded-xl border border-amber-500/40 bg-gradient-to-b from-amber-500/10 to-zinc-900/80 p-5 shadow-[0_0_25px_rgba(245,158,11,0.12)] transition-all duration-300 hover:border-amber-400/60 md:-translate-y-2">
+        <div className="order-1 md:order-2 flex flex-col items-center justify-between rounded-xl border border-amber-500/40 bg-amber-500/[0.06] p-5 shadow-[0_0_25px_rgba(245,158,11,0.12)] transition-all duration-300 hover:border-amber-400/60 md:-translate-y-2">
           <div className="flex flex-col items-center text-center w-full">
             <div className="relative mb-2.5">
               <div className="flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 border-2 border-amber-300 text-black font-black text-lg shadow-[0_0_20px_rgba(245,158,11,0.4)]">
@@ -140,10 +140,10 @@ const LeaderboardPodium = ({ data, platform }) => {
         </div>
 
         {/* RANK 3 - BRONZE */}
-        <div className="order-3 md:order-3 flex flex-col items-center justify-between rounded-xl border border-amber-700/30 bg-zinc-900/60 p-4 transition-all duration-300 hover:border-amber-600/50 hover:bg-zinc-900/80">
+        <div className="order-3 md:order-3 flex flex-col items-center justify-between rounded-xl border border-amber-700/25 bg-white/[0.03] p-4 transition-all duration-300 hover:border-amber-600/40 hover:bg-white/[0.05]">
           <div className="flex flex-col items-center text-center w-full">
             <div className="relative mb-2.5">
-              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-800 border border-amber-700/50 text-amber-400 font-bold text-sm shadow-md">
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.06] border border-amber-700/50 text-amber-400 font-bold text-sm shadow-md">
                 🥉
               </div>
               <span className="absolute -bottom-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-amber-700 text-[10px] font-black text-white">

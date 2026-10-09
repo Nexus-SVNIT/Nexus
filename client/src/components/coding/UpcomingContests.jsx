@@ -150,9 +150,9 @@ const UpcomingContests = () => {
   };
 
   return (
-    <div className="w-full rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-5 backdrop-blur-xl shadow-2xl flex flex-col gap-4">
+    <div className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl shadow-2xl flex flex-col gap-4">
       {/* Header */}
-      <div className="flex flex-col gap-3 pb-3 border-b border-zinc-800/60">
+      <div className="flex flex-col gap-3 pb-3 border-b border-white/[0.07]">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
@@ -180,9 +180,9 @@ const UpcomingContests = () => {
               key={item.id}
               onClick={() => setSelectedPlatform(item.id)}
               className={`px-2.5 py-1 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
-                selectedPlatform === item.id
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "bg-zinc-800/60 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800"
+                   selectedPlatform === item.id
+                   ? "bg-blue-600 text-white shadow-sm"
+                   : "bg-white/[0.05] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.09]"
               }`}
             >
               {item.label}
@@ -197,12 +197,12 @@ const UpcomingContests = () => {
           {[1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-28 w-full rounded-xl bg-zinc-800/40 border border-zinc-800 animate-pulse"
+            className="h-28 w-full rounded-xl bg-white/[0.04] border border-white/[0.06] animate-pulse"
             />
           ))}
         </div>
       ) : filteredContests.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-8 text-center rounded-xl border border-dashed border-zinc-800 bg-zinc-900/30">
+        <div className="flex flex-col items-center justify-center py-8 text-center rounded-xl border border-dashed border-white/10 bg-white/[0.02]">
           <FaCalendarAlt className="text-zinc-600 text-2xl mb-2" />
           <p className="text-sm font-medium text-zinc-400">
             No upcoming contests found
@@ -223,7 +223,7 @@ const UpcomingContests = () => {
                 href={contest.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className={`group relative flex flex-col justify-between gap-2.5 rounded-xl border border-zinc-800/80 bg-zinc-900/40 hover:bg-zinc-800/60 p-3.5 transition-all duration-200 ${meta.border}`}
+                className={`group relative flex flex-col justify-between gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] p-3.5 transition-all duration-200 ${meta.border}`}
               >
                 {/* Top Row: Platform & Countdown Badge */}
                 <div className="flex items-center justify-between gap-2">
@@ -254,7 +254,7 @@ const UpcomingContests = () => {
                 </h4>
 
                 {/* Footer Info: Date & Duration */}
-                <div className="flex items-center justify-between pt-1 border-t border-zinc-800/40 text-[11px] text-zinc-400 font-mono">
+                <div className="flex items-center justify-between pt-1 border-t border-white/[0.05] text-[11px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-1.5">
                     <FaClock size={10} className="text-zinc-500" />
                     <span>{formatISTDate(contest.startTime)}</span>
@@ -277,7 +277,7 @@ const UpcomingContests = () => {
       )}
 
       {/* Opt-in / Help tip banner */}
-      <div className="mt-1 rounded-xl border border-zinc-800/80 bg-zinc-950/60 p-3.5 flex items-start gap-3">
+      <div className="mt-1 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 flex items-start gap-3">
         <div className="text-blue-400 text-base mt-0.5">💡</div>
         <div className="flex flex-col">
           <span className="text-xs font-semibold text-zinc-200">

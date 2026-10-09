@@ -257,7 +257,7 @@ const Cp = () => {
         {/* Page Header */}
         <div className="mb-6 mt-4">
           <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
-            // leaderboard
+            {"// leaderboard"}
           </p>
           <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
             Ranked. Synced daily.{" "}

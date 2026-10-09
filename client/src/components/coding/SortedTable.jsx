@@ -190,7 +190,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
     }
     if (num > 3 && num <= 10) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700/60 font-mono">
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-white/[0.06] text-zinc-300 border border-white/10 font-mono">
           #{num}
         </span>
       );
@@ -199,12 +199,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   };
 
   return (
-    <div className="mb-8 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-md shadow-2xl">
+    <div className="mb-8 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-white/[0.07] bg-indigo-950/20 backdrop-blur-xl shadow-2xl">
       <table
         {...getTableProps()}
         className="min-w-full text-left text-sm text-zinc-300 border-collapse"
       >
-        <thead className="bg-[#09090b]/90 text-[0.7rem] uppercase tracking-widest text-zinc-400 border-b border-zinc-800/60 font-semibold backdrop-blur-sm">
+        <thead className="bg-indigo-950/30 text-[0.7rem] uppercase tracking-widest text-zinc-400 border-b border-white/[0.06] font-semibold backdrop-blur-sm">
           {headerGroups.map((headerGroup, idx) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id || idx}>
               {headerGroup.headers.map((column) => (
@@ -283,7 +283,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
                 <tr
                   {...row.getRowProps()}
                   key={key}
-                  className={`hover:bg-zinc-900/60 transition-colors border-b border-zinc-800/40 last:border-0 ${rowHighlight}`}
+                  className={`hover:bg-white/[0.04] transition-colors border-b border-white/[0.05] last:border-0 ${rowHighlight}`}
                 >
                   {row.cells.map((cell) => (
                     <td
@@ -320,7 +320,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
       </table>
 
       {/* Refined Minimalist Pagination */}
-      <div className="bg-[#09090b] border-t border-zinc-800/60 px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
+      <div className="bg-indigo-950/20 border-t border-white/[0.06] px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex items-center gap-1">
           <button
             onClick={() => {
@@ -329,7 +329,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             First
           </button>
@@ -340,12 +340,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             Prev
           </button>
           
-          <div className="flex items-center justify-center px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-zinc-800 rounded-md">
+          <div className="flex items-center justify-center px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-white/10 rounded-md bg-white/[0.04]">
             Page <strong className="text-white mx-1">{currentPage}</strong> of <strong className="text-white mx-1">{Math.ceil(actualTotal / currentPageSize) || 1}</strong>
           </div>
 
@@ -356,7 +356,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage >= Math.ceil(actualTotal / currentPageSize)}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-zinc-800 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             Next
           </button>
@@ -372,10 +372,10 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               params.set("page", "1"); // Reset to first page when changing page size
               setSearchParams(params);
             }}
-            className="appearance-none rounded border border-zinc-800 bg-[#09090b] px-2 py-1 text-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors outline-none cursor-pointer text-center"
+            className="appearance-none rounded border border-white/10 bg-white/[0.06] px-2 py-1 text-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors outline-none cursor-pointer text-center"
           >
             {[10, 20, 30, 40, 50].map((size) => (
-              <option key={size} value={size} className="bg-[#09090b] text-center">
+              <option key={size} value={size} className="bg-[#0d1230] text-center">
                 {size}
               </option>
             ))}
