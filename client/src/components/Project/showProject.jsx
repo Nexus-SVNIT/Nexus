@@ -285,7 +285,7 @@ const ShowProject = () => {
           <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
             {"// projects"}
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
             What we're building.{' '}
             <span className="text-zinc-400">Right now.</span>
           </h1>
