@@ -208,7 +208,7 @@ const ProfilePage = ({ profile, setProfile }) => {
 
   if (loading) {
     return (
-      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-lg bg-zinc-900 p-4 shadow-lg">
+      <div className="mx-auto mb-36 mt-10 max-w-2xl rounded-2xl border border-zinc-800/80 bg-zinc-900/60 p-6 shadow-xl backdrop-blur-md">
         <SkeletonLoader />
       </div>
     );

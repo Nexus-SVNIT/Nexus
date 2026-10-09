@@ -48,18 +48,17 @@ const Achievements = () => {
         description="Departmental Achievements of the students of CSE and AI department of NIT Surat."
         keywords="Achievements, Departmental Achievements, NIT Surat, CSE, AI, NIT Surat Achievements, Hackathon, Winner, Runner-Up, Coding, Competitive Programming, Competition"
       />
-      <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
-        <FaInfoCircle size={42} className="h-auto text-yellow-500" />
-        <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
-          Shine a Spotlight on Your Success !!
+      <div className="mx-4 mt-10 flex w-fit items-center justify-center gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3 px-5 shadow-lg backdrop-blur-md md:mx-auto">
+        <FaInfoCircle size={32} className="h-auto text-amber-400 flex-shrink-0" />
+        <p className="w-[90%] text-xs text-zinc-200 md:w-full md:text-sm">
+          Shine a Spotlight on Your Success!{" "}
           <Link
             to="/achievements/add-new"
-            className="mx-1 font-bold text-blue-500  underline underline-offset-4"
+            className="font-semibold text-blue-400 underline underline-offset-4 hover:text-blue-300"
           >
             Share With Us
-          </Link>
-          Your Departmental Achievements and Inspire Others to Reach New
-          Heights!
+          </Link>{" "}
+          your departmental achievements and inspire others to reach new heights!
         </p>
       </div>
       <Title>Departmental Achievements</Title>
