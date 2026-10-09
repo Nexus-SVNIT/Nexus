@@ -165,8 +165,41 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   const rankingScheme = searchParams.get("rankingScheme") || "filtered";
   const isNexusRanking = rankingScheme === "nexus";
 
+  const renderRankBadge = (val) => {
+    const num = Number(val);
+    if (num === 1) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
+          🥇 1
+        </span>
+      );
+    }
+    if (num === 2) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-300/20 text-slate-200 border border-slate-300/40">
+          🥈 2
+        </span>
+      );
+    }
+    if (num === 3) {
+      return (
+        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-amber-700/20 text-amber-400 border border-amber-700/40">
+          🥉 3
+        </span>
+      );
+    }
+    if (num > 3 && num <= 10) {
+      return (
+        <span className="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold bg-zinc-800 text-zinc-300 border border-zinc-700/60 font-mono">
+          #{num}
+        </span>
+      );
+    }
+    return <span className="text-zinc-500 font-mono text-xs">#{val}</span>;
+  };
+
   return (
-    <div className="mb-16 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-md shadow-2xl">
+    <div className="mb-8 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-zinc-800/60 bg-[#09090b]/80 backdrop-blur-md shadow-2xl">
       <table
         {...getTableProps()}
         className="min-w-full text-left text-sm text-zinc-300 border-collapse"
@@ -223,46 +256,66 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
           ))}
         </thead>
         <tbody {...getTableBodyProps()}>
-          {page.map((row, i) => {
-            prepareRow(row);
-            // Use row.id if available, else fallback to index
-            const key = row.id || i;
-            return (
-              <tr
-                {...row.getRowProps()}
-                key={key}
-                className="hover:bg-zinc-900/40 transition-colors border-b border-zinc-800/40 last:border-0"
+          {page.length === 0 ? (
+            <tr>
+              <td
+                colSpan={headerGroups[0]?.headers?.length || 8}
+                className="py-12 text-center text-zinc-500 text-sm font-medium"
               >
-                {row.cells.map((cell) => (
-                  <td
-                    {...cell.getCellProps()}
-                    key={cell.column.id}
-                    className="p-2 sm:p-4"
-                  >
-                    {cell.column.id === "fullName" ? (
-                      <div className="flex items-center gap-2">
-                        {getRatingBarStyle(row)}
-                        <span>{cell.value}</span>
-                      </div>
-                    ) : (cell.column.id === "maxRating" &&
-                        row.original.platform === "codeforces") ||
-                      (cell.column.id === "rating" &&
-                        (row.original.platform === "leetcode" ||
-                          row.original.platform === "codechef")) ||
-                      (cell.column.id === "totalContributions" &&
-                        row.original.platform === "github") ? (
-                      getRatingButtonStyle(row, cell.value)
-                    ) : cell.column.id === "tableRank" ||
-                      cell.column.id === "nexusRank" ? (
-                      cell.value
-                    ) : (
-                      cell.render("Cell")
-                    )}
-                  </td>
-                ))}
-              </tr>
-            );
-          })}
+                No profiles match your current search or filters.
+              </td>
+            </tr>
+          ) : (
+            page.map((row, i) => {
+              prepareRow(row);
+              const key = row.id || i;
+              const rankVal = Number(row.values?.tableRank || row.values?.nexusRank || row.original?.tableRank || row.original?.nexusRank);
+              const rowHighlight =
+                rankVal === 1
+                  ? "bg-amber-500/[0.04] border-l-2 border-l-amber-400"
+                  : rankVal === 2
+                  ? "bg-slate-400/[0.03] border-l-2 border-l-slate-400"
+                  : rankVal === 3
+                  ? "bg-amber-700/[0.03] border-l-2 border-l-amber-600"
+                  : "";
+
+              return (
+                <tr
+                  {...row.getRowProps()}
+                  key={key}
+                  className={`hover:bg-zinc-900/60 transition-colors border-b border-zinc-800/40 last:border-0 ${rowHighlight}`}
+                >
+                  {row.cells.map((cell) => (
+                    <td
+                      {...cell.getCellProps()}
+                      key={cell.column.id}
+                      className="p-2 sm:p-4"
+                    >
+                      {cell.column.id === "fullName" ? (
+                        <div className="flex items-center gap-2">
+                          {getRatingBarStyle(row)}
+                          <span className="font-medium text-zinc-200">{cell.value}</span>
+                        </div>
+                      ) : (cell.column.id === "maxRating" &&
+                          row.original.platform === "codeforces") ||
+                        (cell.column.id === "rating" &&
+                          (row.original.platform === "leetcode" ||
+                            row.original.platform === "codechef")) ||
+                        (cell.column.id === "totalContributions" &&
+                          row.original.platform === "github") ? (
+                        getRatingButtonStyle(row, cell.value)
+                      ) : cell.column.id === "tableRank" ||
+                        cell.column.id === "nexusRank" ? (
+                        renderRankBadge(cell.value)
+                      ) : (
+                        cell.render("Cell")
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              );
+            })
+          )}
         </tbody>
       </table>
 
