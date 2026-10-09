@@ -198,7 +198,7 @@ const Teams = () => {
           <section className="w-full flex justify-center items-center flex-col gap-8">
             <div className="flex items-center gap-3">
               <span className="h-px w-8 bg-zinc-700" />
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-zinc-200 uppercase tracking-wider">
+              <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white uppercase tracking-wider">
                 Faculty Advisors
               </h2>
               <span className="h-px w-8 bg-zinc-700" />
@@ -211,7 +211,7 @@ const Teams = () => {
             <div className="flex flex-col items-center gap-6 w-full">
               <div className="flex items-center gap-3">
                 <span className="h-px w-8 bg-zinc-700" />
-                <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-white uppercase tracking-wider">
+                <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white uppercase tracking-wider">
                   Core Committee ({selectedYear})
                 </h2>
                 <span className="h-px w-8 bg-zinc-700" />
