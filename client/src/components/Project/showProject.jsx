@@ -28,9 +28,20 @@ const getAvatarColor = (name = '') => {
   return AVATAR_COLORS[sum % AVATAR_COLORS.length];
 };
 
+/* ─── Normalize LinkedIn URL ─────────────────────────────────────── */
+const normalizeLinkedIn = (raw) => {
+  if (!raw || !raw.trim()) return null;
+  const s = raw.trim();
+  if (s.startsWith('http://') || s.startsWith('https://')) return s;
+  // bare username like "johndoe" or "in/johndoe"
+  const clean = s.replace(/^\/?(in\/)?/, '');
+  return `https://linkedin.com/in/${clean}`;
+};
+
 /* ─── Member chip ────────────────────────────────────────────────── */
-const MemberChip = ({ member, role }) => {
+const MemberChip = ({ member }) => {
   const color = getAvatarColor(member.name);
+  const linkedInUrl = normalizeLinkedIn(member.linkedin);
   const chip = (
     <div className="flex items-center gap-2 rounded-lg border border-white/[0.07] bg-white/[0.04] px-2.5 py-1.5 transition-all duration-200 hover:border-white/[0.14] hover:bg-white/[0.08] group">
       {/* Avatar */}
@@ -47,7 +58,7 @@ const MemberChip = ({ member, role }) => {
           {member.admissionNumber}
         </p>
       </div>
-      {member.linkedin && (
+      {linkedInUrl && (
         <FaLinkedin
           className="ml-auto flex-shrink-0 text-[#0A66C2] opacity-0 group-hover:opacity-100 transition-opacity"
           size={12}
@@ -56,8 +67,8 @@ const MemberChip = ({ member, role }) => {
     </div>
   );
 
-  return member.linkedin ? (
-    <a href={member.linkedin} target="_blank" rel="noopener noreferrer">
+  return linkedInUrl ? (
+    <a href={linkedInUrl} target="_blank" rel="noopener noreferrer">
       {chip}
     </a>
   ) : (
