@@ -1,181 +1,167 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { FaEye, FaCommentAlt, FaQuestionCircle, FaLinkedin, FaMapMarkerAlt, FaArrowRight } from 'react-icons/fa';
+import { HiOfficeBuilding } from 'react-icons/hi';
+
+const truncateText = (text, limit) => {
+  if (!text) return '';
+  return text.length > limit ? text.substring(0, limit) + '…' : text;
+};
+
+const formatDate = (d) =>
+  new Date(d).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+
+const campusColor = {
+  'On Campus':   'bg-emerald-500/10 text-emerald-300 border-emerald-500/25',
+  'Off Campus':  'bg-violet-500/10 text-violet-300 border-violet-500/25',
+  'Pool Campus': 'bg-amber-500/10 text-amber-300 border-amber-500/25',
+};
+
+const jobTypeColor = {
+  'Full Time':                      'bg-blue-500/10 text-blue-300 border-blue-500/25',
+  '6 Month Internship':             'bg-cyan-500/10 text-cyan-300 border-cyan-500/25',
+  '2 Month Internship':             'bg-sky-500/10 text-sky-300 border-sky-500/25',
+  '6 Month Internship + Full Time': 'bg-indigo-500/10 text-indigo-300 border-indigo-500/25',
+};
 
 const InterviewPostCard = ({ post, handleCompanyClick, handleTagClick }) => {
-  // Add truncate helper function
-  const truncateText = (text, limit) => {
-    if (!text) return '';
-    return text.length > limit ? text.substring(0, limit) + '...' : text;
-  };
+  const campusCls = campusColor[post.campusType] || 'bg-zinc-800/60 text-zinc-400 border-zinc-700/50';
+  const jobCls    = jobTypeColor[post.jobType]   || 'bg-zinc-800/60 text-zinc-400 border-zinc-700/50';
 
   return (
-    <div className="cursor-pointer group flex flex-col rounded-xl border border-zinc-700/50 bg-zinc-900/60 p-5 transition-all duration-300 hover:border-blue-500/30 hover:bg-zinc-800/60 w-full h-full relative overflow-hidden">
-      {/* Title and Date */}
-      <div className="flex flex-col lg:flex-row justify-between items-start gap-3 relative z-10">
-        <Link 
-          to={`/interview-experiences/post/${post._id}`}
-          className="text-xl font-bold text-white hover:text-blue-400 transition-colors w-full truncate md:pr-5"
-          title={post.title}
-        >
-          <div className="truncate">
-            {post.title}
-          </div>
-        </Link>
-        {/* Date - hidden on mobile, shown on desktop */}
-        <span className="hidden sm:block text-sm text-gray-400 whitespace-nowrap">
-          {new Date(post.createdAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-          })}
-        </span>
-      </div>
+    <div className="group relative flex flex-col rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl shadow-xl overflow-hidden transition-all duration-300 hover:border-blue-500/30 hover:bg-white/[0.07] hover:shadow-blue-500/10">
 
-      {/* Company and Date (mobile) / Author Info */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mt-3 gap-3 truncate relative z-10">
-        {/* Company and Date - same line on mobile */}
-        <div className="flex items-center justify-between w-full sm:w-auto gap-2">
-          <button 
-            className="px-4 py-1.5 bg-blue-500/10 border border-blue-500/20 text-blue-400 rounded-lg text-sm font-medium hover:bg-blue-500/20 hover:border-blue-500/40 transition-all cursor-pointer inline-flex items-center"
-            onClick={(e) => { e.preventDefault(); handleCompanyClick(post.company); }}
+      {/* Top accent line — animates on hover */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+      <div className="flex flex-col gap-3.5 p-5 flex-1">
+
+        {/* ── Row 1: Title + Date ── */}
+        <div className="flex items-start justify-between gap-3">
+          <Link
+            to={`/interview-experiences/post/${post._id}`}
+            className="text-[17px] font-bold text-white hover:text-blue-300 transition-colors leading-snug line-clamp-2 flex-1"
           >
-            <svg className="w-3.5 h-3.5 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            {post.company}
-          </button>
-          {/* Date - shown on mobile, hidden on desktop */}
-          <span className="sm:hidden text-xs text-gray-400 whitespace-nowrap bg-zinc-800/80 px-2.5 py-1 rounded-md">
-            {new Date(post.createdAt).toLocaleDateString('en-US', {
-              year: 'numeric',
-              month: 'short',
-              day: 'numeric'
-            })}
+            {post.title}
+          </Link>
+          <span className="flex-shrink-0 text-[11px] text-zinc-500 font-mono whitespace-nowrap mt-0.5">
+            {formatDate(post.createdAt)}
           </span>
         </div>
-        
-        {/* Author Info */}
-        {post.author && (
-          <div className="flex items-center gap-3">
-            <span className="text-xs font-mono text-zinc-500 bg-zinc-800/50 px-2 py-0.5 rounded">
-              #{post.author.admissionNumber}
-            </span>
-            <a
-              href={post.author.linkedInProfile}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="group/author text-sm text-gray-300 hover:text-white transition-colors flex items-center gap-2"
-            >
-              <span className="font-medium">{post.author.fullName}</span>
-              <svg className="w-4 h-4 text-[#0A66C2] opacity-80 group-hover/author:opacity-100 transition-opacity" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-              </svg>
-            </a>
-          </div>
-        )}
-      </div>
 
-      {/* Quick Stats */}
-      <div className="mt-4 mb-3 truncate relative z-10 w-full overflow-hidden">
-        <div className="flex flex-wrap items-center gap-2 text-xs text-gray-400">
+        {/* ── Row 2: Company + Author ── */}
+        <div className="flex items-center justify-between gap-2 flex-wrap">
+          <button
+            onClick={(e) => { e.preventDefault(); handleCompanyClick(post.company); }}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blue-500/25 bg-blue-500/10 text-blue-300 text-xs font-semibold hover:bg-blue-500/20 hover:border-blue-400/40 transition-all"
+          >
+            <HiOfficeBuilding size={13} />
+            {post.company}
+          </button>
+
+          {post.author && (
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-mono text-zinc-600 bg-white/[0.04] border border-white/[0.06] px-2 py-0.5 rounded">
+                #{post.author.admissionNumber}
+              </span>
+              {post.author.linkedInProfile ? (
+                <a
+                  href={post.author.linkedInProfile}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
+                  className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white transition-colors group/auth"
+                >
+                  <span className="font-medium">{post.author.fullName}</span>
+                  <FaLinkedin size={12} className="text-[#0A66C2] opacity-70 group-hover/auth:opacity-100 transition-opacity" />
+                </a>
+              ) : (
+                <span className="text-xs text-zinc-400 font-medium">{post.author.fullName}</span>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* ── Row 3: Meta badges ── */}
+        <div className="flex flex-wrap items-center gap-1.5 text-[11px] font-medium">
           {post.role && (
-            <span 
-              title={post.role} 
-              className="border border-blue-500/30 bg-blue-500/10 text-blue-400 font-medium px-2.5 py-1 rounded-md shrink-0 max-w-[150px] truncate"
-            >
+            <span className="px-2.5 py-1 rounded-lg border border-rose-500/25 bg-rose-500/10 text-rose-300 truncate max-w-[180px]" title={post.role}>
               {post.role}
             </span>
           )}
           {post.jobType && (
-            <span className="bg-zinc-800/80 px-2.5 py-1 rounded-md text-gray-300 shrink-0">
-              {post.jobType}
-            </span>
+            <span className={`px-2.5 py-1 rounded-lg border ${jobCls}`}>{post.jobType}</span>
           )}
           {post.campusType && (
-            <span className="bg-zinc-800/80 px-2.5 py-1 rounded-md text-gray-300 shrink-0">
-              {post.campusType}
-            </span>
+            <span className={`px-2.5 py-1 rounded-lg border ${campusCls}`}>{post.campusType}</span>
           )}
           {post.workMode && (
-            <span className="bg-zinc-800/80 px-2.5 py-1 rounded-md text-gray-300 shrink-0">
+            <span className="px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.04] text-zinc-400">
               {post.workMode}
             </span>
           )}
           {post.location && (
-            <span 
-              title={Array.isArray(post.location) ? post.location.join(', ') : post.location} 
-              className="bg-zinc-800/80 px-2.5 py-1 rounded-md text-gray-300 inline-block max-w-[100px] sm:max-w-[150px] truncate shrink-0"
-            >
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-white/[0.08] bg-white/[0.04] text-zinc-400 max-w-[130px] truncate" title={Array.isArray(post.location) ? post.location.join(', ') : post.location}>
+              <FaMapMarkerAlt size={9} className="flex-shrink-0 text-zinc-500" />
               {Array.isArray(post.location) ? post.location.join(', ') : post.location}
             </span>
           )}
-        </div>
-      </div>
-
-      {/* Tags */}
-      <div className="mb-4 overflow-hidden relative z-10">
-        <div className="flex flex-wrap gap-1.5 md:gap-2 border-t border-zinc-800/50 pt-3 mt-1">
-          {post.tags.slice(0, window.innerWidth >= 768 ? 5 : 3).map((tag, index) => (
-            <button 
-              key={index} 
-              className="bg-zinc-800/40 border border-zinc-700/30 text-zinc-400 text-[11px] font-medium px-2.5 py-1 rounded-md hover:bg-zinc-700 hover:text-zinc-200 transition-colors cursor-pointer shrink-0"
-              onClick={(e) => { e.preventDefault(); handleTagClick(tag); }}
-            >
-              #{truncateText(tag, window.innerWidth >= 768 ? 18 : 12)}
-            </button>
-          ))}
-          {post.tags.length > (window.innerWidth >= 768 ? 5 : 3) && (
-            <span className="text-[11px] font-medium text-gray-500 bg-zinc-800/20 px-2 py-1 rounded-md shrink-0">
-              +{post.tags.length - (window.innerWidth >= 768 ? 5 : 3)} more
+          {post.stipend > 0 && (
+            <span className="px-2.5 py-1 rounded-lg border border-emerald-500/20 bg-emerald-500/10 text-emerald-300 font-mono">
+              ₹{post.stipend?.toLocaleString('en-IN')}/mo
             </span>
           )}
         </div>
-      </div>
 
-      {/* Interaction Stats and Show More */}
-      <div className="flex justify-between items-center gap-2 mt-auto relative z-10 pt-2 border-t border-zinc-800/50">
-        <div className="flex items-center gap-5 text-[11px] sm:text-xs text-zinc-500 font-medium tracking-wide">
-          <span className="flex items-center gap-1.5 group-hover:text-blue-400/80 transition-colors">
-            <svg className="w-4 h-4 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-            </svg>
-            {post.views || 0}
-          </span>
-          {
-            post.comments?.length > 0 && (
+        {/* ── Row 4: Tags ── */}
+        {post.tags?.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 border-t border-white/[0.05] pt-3">
+            {post.tags.slice(0, 5).map((tag, i) => (
+              <button
+                key={i}
+                onClick={(e) => { e.preventDefault(); handleTagClick(tag); }}
+                className="text-[10px] font-medium px-2 py-0.5 rounded-md border border-white/[0.07] bg-white/[0.04] text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.08] hover:border-white/[0.12] transition-all"
+              >
+                #{truncateText(tag, 18)}
+              </button>
+            ))}
+            {post.tags.length > 5 && (
+              <span className="text-[10px] text-zinc-600 bg-white/[0.03] px-2 py-0.5 rounded-md">
+                +{post.tags.length - 5}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* ── Row 5: Stats + CTA ── */}
+        <div className="flex items-center justify-between gap-2 mt-auto pt-3 border-t border-white/[0.05]">
+          <div className="flex items-center gap-4 text-[11px] text-zinc-600 font-medium">
+            <span className="flex items-center gap-1.5 group-hover:text-zinc-400 transition-colors">
+              <FaEye size={12} />
+              {post.views || 0}
+            </span>
+            {post.comments?.length > 0 && (
               <span className="flex items-center gap-1.5">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                </svg>
+                <FaCommentAlt size={11} />
                 {post.comments.length}
               </span>
-            )
-          }
-          {
-            post.questions?.length > 0 && (
-              <span className="flex items-center gap-1.5 hidden sm:flex">
-                <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            )}
+            {post.questions?.length > 0 && (
+              <span className="hidden sm:flex items-center gap-1.5">
+                <FaQuestionCircle size={11} />
                 {post.questions.length}
               </span>
-            )
-          }
-        </div>
+            )}
+          </div>
 
-        {/* Show More Button */}
-        <Link 
-          to={`/interview-experiences/post/${post._id}`}
-          className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-zinc-800 text-gray-300 rounded-lg group-hover:bg-blue-600/10 group-hover:text-blue-400 group-hover:border-blue-500/20 border border-zinc-700 transition-all duration-300 text-sm font-medium shrink-0"
-        >
-          <span className="hidden sm:inline">Read Experience</span>
-          <span className="sm:hidden">Read</span>
-          <svg className="w-3.5 h-3.5 sm:w-4 sm:h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-          </svg>
-        </Link>
+          <Link
+            to={`/interview-experiences/post/${post._id}`}
+            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-semibold border border-white/[0.08] bg-white/[0.04] text-zinc-400 hover:text-white hover:bg-blue-600/20 hover:border-blue-500/40 transition-all duration-200 group-hover:border-blue-500/25"
+          >
+            Read Experience
+            <FaArrowRight size={10} className="transition-transform group-hover:translate-x-0.5" />
+          </Link>
+        </div>
       </div>
     </div>
   );

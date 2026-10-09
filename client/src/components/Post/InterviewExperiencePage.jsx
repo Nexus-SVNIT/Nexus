@@ -219,68 +219,57 @@ const InterviewExperiencePage = () => {
   }
 
   return (
-    <div className="bg-[#000000] mb-36 min-h-screen p-4 sm:p-6 md:mx-auto md:max-w-7xl">
+    <div className="min-h-screen mb-36 py-8 px-4 sm:px-6 md:mx-auto md:max-w-7xl">
       <HeadTags
         title={"Interview Experiences | NIT Surat"}
-        description={
-          "Read and share interview experiences of students from NIT Surat. Get insights into the recruitment process, questions asked, and more."
-        }
-        keywords={
-          "interview experiences, nit surat, placements, campus placements, job interviews, recruitment process, on-campus, off-campus, pool campus, nit surat students, cdc, tnp, training and placement cell"
-        }
+        description={"Read and share interview experiences of students from NIT Surat. Get insights into the recruitment process, questions asked, and more."}
+        keywords={"interview experiences, nit surat, placements, campus placements, job interviews, recruitment process, on-campus, off-campus, pool campus, nit surat students, cdc, tnp, training and placement cell"}
       />
 
-      {/* Hero Section */}
-      <div className="relative mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="space-y-4 flex flex-col items-center text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-blue-500/20 bg-blue-500/10 px-4 py-2 text-sm font-medium text-blue-400">
-            <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-            </svg>
-            Placements & Internships
-          </div>
-          <h1 className="text-4xl font-bold text-white md:text-5xl">
-            Interview
-            <span className="inline-block bg-gradient-to-r from-blue-400 to-cyan-300 bg-clip-text text-transparent ml-2">
-              Experiences
-            </span>
-          </h1>
-          <p className="mx-auto max-w-2xl text-lg leading-relaxed text-gray-400">
-            Read real stories, questions, and insights from NIT Surat students navigating placements and internships. Learn from their experiences to ace yours.
-          </p>
-        </div>
+      {/* ── Page Header ── */}
+      <div className="mb-8">
+        <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
+          {"// interview-experiences"}
+        </p>
+        <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+          Real stories.{" "}
+          <span className="text-zinc-400">Real companies.</span>
+        </h1>
+        <p className="text-zinc-300 text-sm mt-2 max-w-2xl">
+          Placement and internship experiences shared by NIT Surat students — questions asked, rounds faced, tips earned.
+        </p>
       </div>
 
-      {/* Controls Row */}
-      <div className="mb-8 flex flex-col sm:flex-row justify-between items-center gap-4 bg-zinc-900/40 p-3 rounded-2xl border border-zinc-800/50 backdrop-blur-sm">
+      {/* ── Controls Row ── */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-center gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-3 backdrop-blur-xl">
         <button
           onClick={() => setShowFilters(!showFilters)}
-          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 font-medium transition-all duration-300 ${
-            showFilters 
-            ? 'bg-blue-500/10 text-blue-400 border border-blue-500/20 shadow-[0_0_15px_rgba(59,130,246,0.1)]' 
-            : 'bg-zinc-800/50 text-gray-300 border border-zinc-700/50 hover:bg-zinc-800 hover:text-white'
+          className={`flex items-center gap-2 rounded-xl px-5 py-2.5 text-sm font-semibold transition-all duration-200 border ${
+            showFilters
+              ? 'bg-blue-500/15 text-blue-300 border-blue-500/30'
+              : 'bg-white/[0.04] text-zinc-400 border-white/[0.08] hover:bg-white/[0.08] hover:text-white'
           }`}
         >
-          <FaFilter className={`${showFilters ? 'text-blue-400' : 'text-gray-400'}`} />
+          <FaFilter size={12} className={showFilters ? 'text-blue-400' : 'text-zinc-500'} />
           <span>Filters</span>
-          {showFilters ? <FaChevronUp className="ml-1 text-xs" /> : <FaChevronDown className="ml-1 text-xs" />}
+          {showFilters ? <FaChevronUp size={10} className="ml-1" /> : <FaChevronDown size={10} className="ml-1" />}
         </button>
         <Link
           to="/interview-experiences/create"
-          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 px-5 py-2.5 font-medium text-white shadow-lg shadow-green-500/20 transition-all duration-300 hover:scale-[1.02] hover:shadow-green-500/30"
+          className="flex items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-emerald-500 to-green-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-emerald-500/20 transition-all duration-200 hover:scale-[1.02] hover:shadow-emerald-500/30"
         >
-          <FaPenToSquare />
-          Share Experience
+          <FaPenToSquare size={13} />
+          Share Your Experience
         </Link>
       </div>
 
-      {/* Filters Section */}
-      <div 
+      {/* ── Filters Panel ── */}
+      <div
         className={`overflow-hidden transition-all duration-500 ease-in-out ${
-          showFilters ? 'max-h-[1000px] opacity-100 mb-8' : 'max-h-0 opacity-0 mb-0'
+          showFilters ? 'max-h-[1200px] opacity-100 mb-8' : 'max-h-0 opacity-0 mb-0'
         }`}
       >
-        <div className="flex flex-col flex-wrap gap-4 rounded-2xl border border-zinc-800/60 bg-zinc-900/50 p-6 backdrop-blur-md shadow-xl sm:flex-row">
+        <div className="flex flex-col flex-wrap gap-4 rounded-2xl border border-white/[0.08] bg-white/[0.04] p-6 backdrop-blur-xl shadow-2xl sm:flex-row">
           <div className="grid w-full grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {/* Filter controls */}
             <div className="flex flex-col gap-1.5">
@@ -290,7 +279,7 @@ const InterviewExperiencePage = () => {
                 onChange={(e) =>
                   handleFilterChange("companyFilter", e.target.value)
                 }
-                className="w-full rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2.5 text-sm text-gray-200 transition-colors focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-zinc-200 transition-colors focus:border-blue-500/40 focus:outline-none focus:ring-1 focus:ring-blue-500/20 backdrop-blur"
               >
                 <option value="">All Companies</option>
                 {companies.map((c) => (
@@ -304,7 +293,7 @@ const InterviewExperiencePage = () => {
               <select
                 value={formState.tagFilter}
                 onChange={(e) => handleFilterChange("tagFilter", e.target.value)}
-                className="w-full rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2.5 text-sm text-gray-200 transition-colors focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-zinc-200 transition-colors focus:border-blue-500/40 focus:outline-none focus:ring-1 focus:ring-blue-500/20 backdrop-blur"
               >
                 <option value="">All Tags</option>
                 {tags.map((t) => (
@@ -354,7 +343,7 @@ const InterviewExperiencePage = () => {
                 onChange={(e) =>
                   handleFilterChange("campusTypeFilter", e.target.value)
                 }
-                className="w-full rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2.5 text-sm text-gray-200 transition-colors focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-zinc-200 transition-colors focus:border-blue-500/40 focus:outline-none focus:ring-1 focus:ring-blue-500/20 backdrop-blur"
               >
                 <option value="">All Types</option>
                 <option value="On Campus">On Campus</option>
@@ -370,7 +359,7 @@ const InterviewExperiencePage = () => {
                 onChange={(e) =>
                   handleFilterChange("jobTypeFilter", e.target.value)
                 }
-                className="w-full rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2.5 text-sm text-gray-200 transition-colors focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-zinc-200 transition-colors focus:border-blue-500/40 focus:outline-none focus:ring-1 focus:ring-blue-500/20 backdrop-blur"
               >
                 <option value="">All Job Types</option>
                 <option value="2 Month Internship">2 Month Internship</option>
@@ -412,7 +401,7 @@ const InterviewExperiencePage = () => {
                 onChange={(e) =>
                   handleFilterChange("locationFilter", e.target.value)
                 }
-                className="w-full rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2.5 text-sm text-gray-200 transition-colors focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-zinc-200 transition-colors focus:border-blue-500/40 focus:outline-none focus:ring-1 focus:ring-blue-500/20 backdrop-blur"
               >
                 <option value="">All Locations</option>
                 {locations.map((loc) => (
@@ -421,45 +410,35 @@ const InterviewExperiencePage = () => {
               </select>
             </div>
 
-            <div className="flex flex-col gap-1.5 sm:col-span-2 lg:col-span-1 xl:col-span-4 flex-row items-end justify-between border-t border-zinc-800 pt-4 mt-2">
-              <div className="flex items-center gap-3">
+            <div className="flex flex-col gap-3 sm:flex-row items-start sm:items-center justify-between border-t border-white/[0.06] pt-4 mt-1 sm:col-span-2 lg:col-span-3 xl:col-span-4">
+              <div className="flex items-center gap-2">
                 <select
                   value={pageLimit}
-                  onChange={(e) => {
-                    setCurrentPage(1);
-                    setPageLimit(parseInt(e.target.value, 10));
-                  }}
-                  className="rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2 text-sm text-gray-200 focus:border-blue-500/50 focus:bg-zinc-800 focus:outline-none focus:ring-1 focus:ring-blue-500/50"
+                  onChange={(e) => { setCurrentPage(1); setPageLimit(parseInt(e.target.value, 10)); }}
+                  className="rounded-xl border border-white/[0.08] bg-white/[0.05] px-3 py-2 text-sm text-zinc-300 focus:border-blue-500/40 focus:outline-none backdrop-blur"
                 >
                   <option value={10}>10 per page</option>
                   <option value={20}>20 per page</option>
                   <option value={30}>30 per page</option>
                   <option value={50}>50 per page</option>
                 </select>
-                <span className="text-xs text-zinc-500">Results per page</span>
+                <span className="text-xs text-zinc-500">per page</span>
               </div>
-              
-              <div className="flex gap-3">
-                {(formState.companyFilter ||
-                  formState.tagFilter ||
-                  formState.admissionFilter ||
-                  formState.startDate ||
-                  formState.endDate ||
-                  formState.campusTypeFilter ||
-                  formState.jobTypeFilter ||
-                  formState.minStipendFilter ||
-                  formState.maxStipendFilter ||
-                  formState.locationFilter) && (
+              <div className="flex gap-2">
+                {(formState.companyFilter || formState.tagFilter || formState.admissionFilter ||
+                  formState.startDate || formState.endDate || formState.campusTypeFilter ||
+                  formState.jobTypeFilter || formState.minStipendFilter ||
+                  formState.maxStipendFilter || formState.locationFilter) && (
                   <button
                     onClick={handleClearFilters}
-                    className="rounded-xl bg-red-500/10 border border-red-500/20 px-6 py-2.5 text-sm font-medium text-red-500 transition-all hover:bg-red-500/20 hover:border-red-500/30"
+                    className="rounded-xl border border-red-500/20 bg-red-500/10 px-5 py-2 text-sm font-medium text-red-400 hover:bg-red-500/20 transition-all"
                   >
-                    Clear Filters
+                    Clear
                   </button>
                 )}
                 <button
                   onClick={handleFilter}
-                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-8 py-2.5 text-sm font-medium text-white shadow-lg shadow-blue-500/20 transition-all hover:shadow-blue-500/30"
+                  className="rounded-xl bg-blue-600 hover:bg-blue-500 px-7 py-2 text-sm font-semibold text-white shadow-lg shadow-blue-500/20 transition-all"
                 >
                   Apply Filters
                 </button>
@@ -479,9 +458,12 @@ const InterviewExperiencePage = () => {
             .fill(0)
             .map((_, index) => <InterviewPostCardSkeleton key={index} />)
         ) : posts.length === 0 ? (
-          <p className="text-gray-400">
-            No posts available. Be the first to share your experience!
-          </p>
+          <div className="col-span-2 flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-white/10 bg-white/[0.02]">
+            <svg className="w-10 h-10 text-zinc-700 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+            <p className="text-zinc-400 font-semibold text-sm">No experiences found</p>
+            <p className="text-zinc-600 text-xs mt-1">Try adjusting your filters, or be the first to share!</p>
+            <Link to="/interview-experiences/create" className="mt-4 text-xs font-semibold text-emerald-400 hover:text-emerald-300 transition-colors">+ Share your experience</Link>
+          </div>
         ) : (
           posts.map((post) => (
             <InterviewPostCard
@@ -494,24 +476,24 @@ const InterviewExperiencePage = () => {
         )}
       </div>
 
-      {/* Pagination Controls */}
-      <div className="mt-16 flex items-center justify-center gap-3">
+      {/* ── Pagination ── */}
+      <div className="mt-12 flex items-center justify-center gap-2">
         <button
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage <= 1}
-          className="flex items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/50 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-medium text-zinc-400 transition-all hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30 backdrop-blur"
         >
-          Previous
+          ← Prev
         </button>
-        <div className="flex items-center justify-center rounded-xl bg-zinc-900/60 border border-zinc-800 px-5 py-2.5 text-sm font-medium text-gray-400">
-          Page <span className="text-white mx-1">{currentPage}</span> of <span className="text-white mx-1">{totalPages}</span>
+        <div className="flex items-center justify-center rounded-xl border border-white/[0.08] bg-white/[0.04] px-5 py-2 text-sm font-mono text-zinc-400 backdrop-blur">
+          <span className="text-white font-bold mx-1">{currentPage}</span> / <span className="text-white font-bold mx-1">{totalPages}</span>
         </div>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage >= totalPages}
-          className="flex items-center justify-center rounded-xl bg-zinc-800/80 border border-zinc-700/50 px-4 py-2.5 text-sm font-medium text-gray-300 transition-all hover:bg-zinc-700 hover:text-white disabled:pointer-events-none disabled:opacity-50"
+          className="flex items-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.04] px-4 py-2 text-sm font-medium text-zinc-400 transition-all hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30 backdrop-blur"
         >
-          Next
+          Next →
         </button>
       </div>
     </div>

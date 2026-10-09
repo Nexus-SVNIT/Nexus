@@ -90,7 +90,7 @@ const Forms = () => {
       <Title>Forms</Title>
 
       {/* Display active forms */}
-      <h2 className="text-center text-xl font-bold uppercase tracking-widest text-emerald-400 drop-shadow-sm md:text-2xl mt-12 mb-8">
+      <h2 className="text-center text-2xl font-bold uppercase tracking-widest text-emerald-400 drop-shadow-sm md:text-3xl mt-12 mb-8">
         Active Forms
       </h2>
       {activeForms.length === 0 ? (
@@ -106,7 +106,7 @@ const Forms = () => {
       )}
 
       {/* Display inactive forms */}
-      <h2 className="text-center text-xl font-bold uppercase tracking-widest text-zinc-500 drop-shadow-sm md:text-2xl mt-24 mb-8">
+      <h2 className="text-center text-2xl font-bold uppercase tracking-widest text-zinc-400 drop-shadow-sm md:text-3xl mt-24 mb-8">
         Archived Forms
       </h2>
       {inactiveForms.length === 0 ? (

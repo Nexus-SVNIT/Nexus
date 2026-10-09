@@ -182,6 +182,7 @@ const getAllPosts = async (req, res) => {
 
     res.status(200).json({
       posts,
+      totalCount,
       totalPages,
       currentPage: pageNumber,
       currentUser: currentUser ? currentUser.id : null

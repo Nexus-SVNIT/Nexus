@@ -1,19 +1,30 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { getContests } from "../../services/codingService";
+import { SiCodeforces, SiLeetcode, SiCodechef } from "react-icons/si";
+import { FaCalendarAlt, FaClock, FaExternalLinkAlt, FaFire } from "react-icons/fa";
 
 const UpcomingContests = () => {
   const [contests, setContests] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [selectedPlatform, setSelectedPlatform] = useState("all");
+  const [now, setNow] = useState(new Date());
+
+  // Update current time periodically for live countdowns
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setNow(new Date());
+    }, 10000); // Check every 10 seconds
+    return () => clearInterval(timer);
+  }, []);
 
   useEffect(() => {
     const fetchContests = async () => {
       try {
-        const localData = JSON.parse(localStorage.getItem('upcoming-contests'));
+        const localData = JSON.parse(localStorage.getItem("upcoming-contests"));
         if (
           localData &&
           localData.lastUpdated &&
-          (new Date() - new Date(localData.lastUpdated)) < 86400000 &&
+          new Date() - new Date(localData.lastUpdated) < 3600000 && // 1 hour cache
           Array.isArray(localData.data) &&
           localData.data.length > 0
         ) {
@@ -32,9 +43,11 @@ const UpcomingContests = () => {
             contestsArray = data.data;
           }
           setContests(contestsArray);
-          localStorage.setItem('upcoming-contests', JSON.stringify({ data: contestsArray, lastUpdated: new Date() }));
+          localStorage.setItem(
+            "upcoming-contests",
+            JSON.stringify({ data: contestsArray, lastUpdated: new Date() })
+          );
         }
-        setLoading(false);
       } catch (error) {
         console.error("Error fetching contests:", error);
       } finally {
@@ -45,78 +58,236 @@ const UpcomingContests = () => {
     fetchContests();
   }, []);
 
-  if (loading) {
-    return (
-      <div className="w-full h-screen flex justify-center items-center">
-        <p className="text-xl text-gray-500">Loading upcoming contests...</p>
-      </div>
-    );
-  }
+  // Format relative countdown
+  const getCountdown = (startTime) => {
+    const start = new Date(startTime);
+    const diff = start - now;
+
+    if (diff <= 0) {
+      return { text: "Live Now!", isUrgent: true, isLive: true };
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+    const minutes = Math.floor((diff / (1000 * 60)) % 60);
+
+    if (days > 1) {
+      return { text: `in ${days} days`, isUrgent: false };
+    } else if (days === 1) {
+      return { text: `in 1d ${hours}h`, isUrgent: false };
+    } else if (hours >= 2) {
+      return { text: `in ${hours}h ${minutes}m`, isUrgent: false };
+    } else {
+      return { text: `in ${hours}h ${minutes}m`, isUrgent: true };
+    }
+  };
+
+  const formatISTDate = (startTime) => {
+    try {
+      const date = new Date(startTime);
+      return date.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "Asia/Kolkata",
+      }) + " IST";
+    } catch {
+      return new Date(startTime).toString().split("GMT")[0].trim();
+    }
+  };
+
+  const formatDuration = (contest) => {
+    if (!contest.duration) return "";
+    const isLC = contest.site === "leetcode";
+    const totalMinutes = isLC
+      ? Math.floor(contest.duration / 60000)
+      : Math.floor(contest.duration / 60000);
+    const hours = Math.floor(totalMinutes / 60);
+    const mins = totalMinutes % 60;
+    if (hours > 0 && mins > 0) return `${hours}h ${mins}m`;
+    if (hours > 0) return `${hours}h`;
+    return `${mins}m`;
+  };
+
+  const filteredContests = contests.filter((c) => {
+    if (selectedPlatform === "all") return true;
+    return c.site === selectedPlatform;
+  });
+
+  const getPlatformMeta = (site) => {
+    switch (site) {
+      case "leetcode":
+        return {
+          icon: <SiLeetcode className="text-amber-400" size={14} />,
+          badge: "bg-amber-500/10 text-amber-400 border-amber-500/20",
+          name: "LeetCode",
+          border: "hover:border-amber-500/40",
+        };
+      case "codeforces":
+        return {
+          icon: <SiCodeforces className="text-blue-400" size={14} />,
+          badge: "bg-blue-500/10 text-blue-400 border-blue-500/20",
+          name: "Codeforces",
+          border: "hover:border-blue-500/40",
+        };
+      case "codechef":
+        return {
+          icon: <SiCodechef className="text-emerald-400" size={14} />,
+          badge: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+          name: "CodeChef",
+          border: "hover:border-emerald-500/40",
+        };
+      default:
+        return {
+          icon: <FaCalendarAlt className="text-zinc-400" size={14} />,
+          badge: "bg-zinc-800 text-zinc-300 border-zinc-700",
+          name: site,
+          border: "hover:border-zinc-700",
+        };
+    }
+  };
 
   return (
-    <div className="mb-8 w-full">
-      <div className="flex items-center gap-2 mb-6 text-white">
-        <svg className="w-5 h-5 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <h2 className="text-xl font-bold tracking-tight">
-          Upcoming Contests
-        </h2>
+    <div className="w-full rounded-2xl border border-white/[0.08] bg-white/[0.04] p-5 backdrop-blur-xl shadow-2xl flex flex-col gap-4">
+      {/* Header */}
+      <div className="flex flex-col gap-3 pb-3 border-b border-white/[0.07]">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-500/10 border border-blue-500/20 text-blue-400">
+              <FaCalendarAlt size={13} />
+            </div>
+            <h3 className="text-base font-bold text-white tracking-tight">
+              Upcoming Contests
+            </h3>
+          </div>
+          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            {contests.length} Scheduled
+          </span>
+        </div>
+
+        {/* Filter Chips inside Sidebar */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar text-xs">
+          {[
+            { id: "all", label: "All" },
+            { id: "leetcode", label: "LeetCode" },
+            { id: "codeforces", label: "Codeforces" },
+            { id: "codechef", label: "CodeChef" },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setSelectedPlatform(item.id)}
+              className={`px-2.5 py-1 rounded-lg font-medium transition-all duration-200 whitespace-nowrap ${
+                   selectedPlatform === item.id
+                   ? "bg-blue-600 text-white shadow-sm"
+                   : "bg-white/[0.05] text-zinc-400 hover:text-zinc-200 hover:bg-white/[0.09]"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
       </div>
 
-      {Array.isArray(contests) && contests.length === 0 ? (
-        <div className="flex h-32 items-center justify-center rounded-xl border border-zinc-800/50 bg-[#09090b]">
-          <p className="text-zinc-500 text-sm font-medium">No upcoming contests available.</p>
+      {/* Contests List */}
+      {loading ? (
+        <div className="flex flex-col gap-3 py-2">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+            className="h-28 w-full rounded-xl bg-white/[0.04] border border-white/[0.06] animate-pulse"
+            />
+          ))}
+        </div>
+      ) : filteredContests.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-8 text-center rounded-xl border border-dashed border-white/10 bg-white/[0.02]">
+          <FaCalendarAlt className="text-zinc-600 text-2xl mb-2" />
+          <p className="text-sm font-medium text-zinc-400">
+            No upcoming contests found
+          </p>
+          <span className="text-xs text-zinc-500 mt-0.5">
+            Check back later for new rounds
+          </span>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.isArray(contests) && contests.map((contest, index) => {
-            const lcColors = "bg-orange-500/10 text-orange-400 border border-orange-500/20";
-            const cfColors = "bg-blue-500/10 text-blue-400 border border-blue-500/20";
-            const ccColors = "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-            
-            const pColors = contest.site === "leetcode" ? lcColors : contest.site === "codeforces" ? cfColors : ccColors;
+        <div className="flex flex-col gap-3 max-h-[580px] overflow-y-auto pr-1 no-scrollbar">
+          {filteredContests.map((contest, idx) => {
+            const meta = getPlatformMeta(contest.site);
+            const countdown = getCountdown(contest.startTime);
 
             return (
               <a
-                href={contest.url} target="_blank" rel="noopener noreferrer"
-                key={index}
-                className="group flex flex-col justify-between gap-3 rounded-xl border border-zinc-800/80 bg-[#0c0c0e] hover:bg-[#111114] p-5 transition-all duration-300 relative"
+                key={idx}
+                href={contest.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`group relative flex flex-col justify-between gap-2.5 rounded-xl border border-white/[0.07] bg-white/[0.03] hover:bg-white/[0.07] p-3.5 transition-all duration-200 ${meta.border}`}
               >
-                <div className="flex flex-col gap-3">
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-[0.95rem] font-semibold text-zinc-100 leading-snug group-hover:text-white">
-                      {contest.title}
-                    </h3>
-                    <svg className="w-4 h-4 flex-shrink-0 text-zinc-500 group-hover:text-blue-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                    </svg>
+                {/* Top Row: Platform & Countdown Badge */}
+                <div className="flex items-center justify-between gap-2">
+                  <div
+                    className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-semibold border ${meta.badge}`}
+                  >
+                    {meta.icon}
+                    <span>{meta.name}</span>
                   </div>
-                  <span className={`w-fit rounded-full px-2.5 py-0.5 text-[0.65rem] font-bold tracking-wider capitalize ${pColors}`}>
-                    {contest.site}
+
+                  <span
+                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-mono font-bold tracking-tight ${
+                      countdown.isLive
+                        ? "bg-rose-500/20 text-rose-300 border border-rose-500/30 animate-pulse"
+                        : countdown.isUrgent
+                        ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
+                        : "bg-zinc-800 text-zinc-400"
+                    }`}
+                  >
+                    {countdown.isUrgent && <FaFire size={10} className="text-amber-400" />}
+                    {countdown.text}
                   </span>
                 </div>
-                
-                <div className="mt-2 flex flex-col gap-1.5 text-[0.75rem] font-medium text-zinc-400">
+
+                {/* Contest Title */}
+                <h4 className="text-[13px] font-semibold text-zinc-200 line-clamp-2 leading-snug group-hover:text-white transition-colors">
+                  {contest.title}
+                </h4>
+
+                {/* Footer Info: Date & Duration */}
+                <div className="flex items-center justify-between pt-1 border-t border-white/[0.05] text-[11px] text-zinc-400 font-mono">
                   <div className="flex items-center gap-1.5">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    {new Date(contest.startTime).toString().replace('India Standard Time','IST').split('GMT')[0].trim()}
+                    <FaClock size={10} className="text-zinc-500" />
+                    <span>{formatISTDate(contest.startTime)}</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <svg className="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    {(contest.site==="leetcode")?Math.floor(contest.duration / 3600000):Math.floor(contest.duration / 60000)}{(contest.site==="leetcode") ? 'h' : 'm'}
-                    {(contest.site==="leetcode" && contest.duration % 3600000 > 0) ? ` ${Math.floor((contest.duration % 3600000) / 60000)}m` : ""}
-                  </div>
+                  {contest.duration && (
+                    <span className="text-zinc-500">
+                      ⏱ {formatDuration(contest)}
+                    </span>
+                  )}
+                </div>
+
+                {/* External link hint on hover */}
+                <div className="absolute right-3 bottom-3 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <FaExternalLinkAlt size={10} className="text-blue-400" />
                 </div>
               </a>
             );
           })}
         </div>
       )}
+
+      {/* Opt-in / Help tip banner */}
+      <div className="mt-1 rounded-xl border border-white/[0.06] bg-white/[0.03] p-3.5 flex items-start gap-3">
+        <div className="text-blue-400 text-base mt-0.5">💡</div>
+        <div className="flex flex-col">
+          <span className="text-xs font-semibold text-zinc-200">
+            Want your handles tracked?
+          </span>
+          <p className="text-[11px] text-zinc-400 mt-0.5 leading-relaxed">
+            Link your handles in your Nexus Profile to participate in the departmental leaderboards.
+          </p>
+        </div>
+      </div>
     </div>
   );
 };

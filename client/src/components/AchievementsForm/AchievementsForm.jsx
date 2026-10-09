@@ -131,7 +131,7 @@ const AchievementsForm = () => {
         </div>
       </Modal>
       <div className="px-0sc mb-10 flex w-full max-w-5xl flex-col items-center justify-center py-6 md:px-10">
-        <h4 className="text-lg font-bold md:text-2xl text-white">Achievement Information</h4>
+        <h4 className="text-2xl font-bold md:text-3xl text-white">Achievement Information</h4>
         <div className="mt-8 flex flex-col items-center justify-center gap-10 md:flex-row md:p-2 w-full">
           <div className="flex flex-col items-center justify-center md:w-1/3">
             <label htmlFor="image" className="cursor-pointer" title="Select a display image">
