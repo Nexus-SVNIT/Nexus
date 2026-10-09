@@ -210,7 +210,7 @@ const Alumni = () => {
       >
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-2">
-            <h2 className="text-white text-2xl font-bold">
+            <h2 className="text-white text-3xl font-bold">
               Alumni Directory
             </h2>
             <Badge variant="secondary" className="bg-blue-500/10 text-blue-400 border border-blue-500/20">
