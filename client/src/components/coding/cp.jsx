@@ -259,7 +259,7 @@ const Cp = () => {
           <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
             {"// leaderboard"}
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
             Ranked. Synced daily.{" "}
             <span className="text-zinc-400">No excuses.</span>
           </h1>
