@@ -14,6 +14,7 @@ import PlateformButtons from "./PlateformButtons";
 import axios from "axios";
 import SortableTable from "./SortedTable";
 import RatingLegend from "./RatingLegend";
+import LeaderboardPodium from "./LeaderboardPodium";
 import { getProfiles } from "../../services/codingService";
 
 const Cp = () => {
@@ -239,7 +240,7 @@ const Cp = () => {
   };
 
   return (
-    <div className="App text-gray-200 min-h-screen py-8 md:mx-24">
+    <div className="App text-gray-200 min-h-screen py-8">
       <HeadTags
         title={"Coding Profile LeaderBoard | Nexus - NIT Surat"}
         description={
@@ -249,38 +250,56 @@ const Cp = () => {
           "Coding, Competitive Programming, CP, DSA, Data Structure, Algorithm, LeetCode, CodeForces, CodeChef, GitHub, Open Source, Coding Culture, Coding Contest, LeaderBoard, Coding Statistics, Placement, Internship"
         }
       />
-        <div className="w-full flex flex-col gap-8 max-w-[90rem] mx-auto px-4 md:px-0">
-          <NoticeBar />
-          <div className="w-full flex flex-col gap-6">
-            {/* Upcoming Contests Component */}
-            <UpcomingContests />
 
-            {/* Centered Tab-styled Platform Toggle */}
+      <div className="w-full max-w-[92rem] mx-auto px-4 md:px-8">
+        <NoticeBar />
+
+        {/* Page Header */}
+        <div className="mb-6 mt-4">
+          <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
+            // leaderboard
+          </p>
+          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+            Ranked. Synced daily.{" "}
+            <span className="text-zinc-400">No excuses.</span>
+          </h1>
+          <p className="text-zinc-500 text-sm mt-2">
+            Live departmental leaderboards for Codeforces, LeetCode, CodeChef & GitHub.
+          </p>
+        </div>
+
+        {/* Two-Column Layout: Left = Leaderboard | Right = Contests Sidebar */}
+        <div className="flex flex-col lg:flex-row gap-6 items-start">
+
+          {/* ─── LEFT: Leaderboard Section ─────────────────────────────── */}
+          <div className="flex-1 min-w-0 flex flex-col gap-4">
+
+            {/* Platform Toggle */}
             <PlateformButtons
               handlePlatformChange={handlePlatformChange}
               activePlatform={activePlatform}
             />
 
-            {/* Centered Filter Section */}
-            <div className="flex w-full justify-center flex-col items-center gap-0">
+            {/* Filter Section */}
+            <div className="flex w-full flex-col gap-0">
               <FilterSection
                 activePlatform={activePlatform}
                 searchParams={searchParams}
                 setSearchParams={setSearchParams}
               />
-              {/* Thin loading bar — non-disruptive, replaces full overlay */}
-              <div className="w-full max-w-4xl h-0.5 rounded-full overflow-hidden bg-transparent">
+              {/* Thin loading bar */}
+              <div className="w-full h-0.5 rounded-full overflow-hidden bg-transparent">
                 {loading && (
                   <div className="h-full w-1/3 rounded-full bg-blue-500 animate-loading-bar" />
                 )}
               </div>
             </div>
 
-            {/* Table area — always visible, updates silently */}
+            {/* Table area */}
             <div>
-
               {activePlatform === "codeforces" && (
                 <>
+                  <LeaderboardPodium data={codeforcesLeaderboard} platform="codeforces" />
                   <RatingLegend platform="codeforces" />
                   <SortableTable
                     columns={columns.codeforces}
@@ -294,6 +313,7 @@ const Cp = () => {
 
               {activePlatform === "leetcode" && (
                 <>
+                  <LeaderboardPodium data={leetcodeLeaderboard} platform="leetcode" />
                   <RatingLegend platform="leetcode" />
                   <SortableTable
                     columns={columns.leetcode}
@@ -307,6 +327,7 @@ const Cp = () => {
 
               {activePlatform === "codechef" && (
                 <>
+                  <LeaderboardPodium data={codechefLeaderboard} platform="codechef" />
                   <RatingLegend platform="codechef" />
                   <SortableTable
                     columns={columns.codechef}
@@ -320,6 +341,7 @@ const Cp = () => {
 
               {activePlatform === "github" && (
                 <>
+                  <LeaderboardPodium data={githubLeaderboard} platform="github" />
                   <RatingLegend platform="github" />
                   <SortableTable
                     columns={columns.github}
@@ -332,7 +354,14 @@ const Cp = () => {
               )}
             </div>
           </div>
+
+          {/* ─── RIGHT: Sticky Contests Sidebar ───────────────────────── */}
+          <div className="w-full lg:w-[22rem] xl:w-[24rem] flex-shrink-0 lg:sticky lg:top-6 lg:self-start">
+            <UpcomingContests />
+          </div>
+
         </div>
+      </div>
     </div>
   );
 
