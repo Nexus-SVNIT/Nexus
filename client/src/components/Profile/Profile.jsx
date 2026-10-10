@@ -161,7 +161,7 @@ const ProfilePage = ({ profile, setProfile }) => {
   return (
     <form onSubmit={handleSubmit}>
       {/* Header bar */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.07]">
+      <div className="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-white/[0.07]">
         <div className="flex items-center gap-3">
           {/* Avatar */}
           <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-bold text-sm shadow-lg">
@@ -379,7 +379,7 @@ const ProfilePage = ({ profile, setProfile }) => {
         </div>
 
         {/* ── Footer: Reset Password ── */}
-        <div className="flex items-center justify-between pt-4 border-t border-white/[0.06]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-white/[0.06]">
           <p className="text-xs text-zinc-600">
             Changes to coding handles may take up to 24h to reflect on leaderboards.
           </p>

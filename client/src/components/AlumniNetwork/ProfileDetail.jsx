@@ -6,12 +6,12 @@ import { Link } from 'react-router-dom'
 const ProfileDetail = ({ profile }) => {
 
   return (
-    <div aria-describedby='modal-desc' id='modal-desc' className='flex w-[24rem] flex-col items-center justify-center gap-2 rounded-md bg-white  p-10 text-blue-800 md:h-[26rem] md:w-[26rem] '>
+    <div aria-describedby='modal-desc' id='modal-desc' className='flex w-[calc(100vw-2rem)] max-w-[26rem] flex-col items-center justify-center gap-2 rounded-md bg-zinc-950/95 border border-zinc-800 p-10 text-zinc-100 md:h-[26rem]'>
       <img src={profile.ImageLink} alt='alumnus' className='h-40 w-40 rounded-full object-cover' />
-      <p className='text-lg font-bold'>
+      <p className='text-lg font-bold text-white'>
         {profile['Name']}
       </p>
-      <div className='flex flex-col  md:flex-row items-center w-[80%] justify-between px-2  md:w-[75%]'>
+      <div className='flex flex-col sm:flex-row items-center w-full gap-2 text-zinc-300 text-sm'>
         <p className='font-mono'>
           {profile['Admission No']}
         </p>
@@ -21,7 +21,7 @@ const ProfileDetail = ({ profile }) => {
           {profile['Passing Year']}
         </p>
       </div>
-      <p>
+      <p className='text-zinc-300'>
         {profile['Current Role']}
       </p>
       <div className='my-2 flex gap-4 '>
