@@ -126,17 +126,17 @@ const Filters = ({
       </div>
 
       {/* Apply Filters Button */}
-      <div className="mt-6 flex justify-end gap-4">
+      <div className="mt-6 flex flex-wrap justify-end gap-4">
         <button
           onClick={handleApplyFilters}
-          className="rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-500"
+          className="w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-500 min-h-[44px]"
         >
           Apply Filters
         </button>
 
         <button
           onClick={handleClearFilters}
-          className="rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20"
+          className="w-full sm:w-auto rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20 min-h-[44px]"
         >
           Clear All
         </button>

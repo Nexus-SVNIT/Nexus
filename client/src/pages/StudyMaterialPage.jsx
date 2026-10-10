@@ -30,7 +30,7 @@ const Breadcrumb = ({ step, category, department, onNavigate }) => {
     if (step >= 3) crumbs.push({ label: category === CATEGORIES.PLACEMENTS ? "Placement Resources" : `${department} Subjects`, step: 3 });
 
     return (
-        <nav className="mb-8 flex items-center gap-2 text-sm">
+        <nav className="mb-8 flex flex-wrap items-center gap-2 text-sm">
             {crumbs.map((crumb, i) => (
                 <div key={crumb.step} className="flex items-center gap-2">
                     {i > 0 && <LuChevronRight className="h-3.5 w-3.5 text-gray-600" />}

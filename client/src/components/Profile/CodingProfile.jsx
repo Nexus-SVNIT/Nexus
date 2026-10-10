@@ -137,7 +137,7 @@ const CodingProfile = ({
       {/* GitHub Profile */}
       {githubUser && (
         <div className="mb-6">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
             <div className="flex items-center gap-4">
               <img
                 src={githubUser?.avatarUrl || `https://github.com/${githubUser?.profileId || githubUser?.login}.png`}
@@ -166,7 +166,7 @@ const CodingProfile = ({
             })()}
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
               <p className="text-sm text-zinc-400">Total Contributions</p>
               <p className="text-xl font-bold text-emerald-400">{githubUser?.totalContributions || githubUser?.sortingKey || 0}</p>
@@ -203,7 +203,7 @@ const CodingProfile = ({
           </div>
 
           
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
               <p className="text-sm text-zinc-400">Streak</p>
               <p className="text-xl font-bold text-white">{leetcodeUser?.userCalendar?.streak} days</p>
@@ -225,6 +225,7 @@ const CodingProfile = ({
           {/* Submission stats */}
           <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-5 mb-8">
             <h4 className="mb-6 text-lg font-semibold">Submission Stats</h4>
+            <div className="overflow-x-auto">
             <ResponsiveContainer width="100%" height={300}>
             <AreaChart
               data={leetcodeStats || []}
@@ -293,7 +294,8 @@ const CodingProfile = ({
               />
             </AreaChart>
           </ResponsiveContainer>
-          </div>
+          </div>{/* /overflow-x-auto */}
+          </div>{/* /submission stats card */}
 
           {/* Language Stats */}
           <h4 className="mt-4">Problems Solved by Language:</h4>
@@ -321,7 +323,7 @@ const CodingProfile = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
               <p className="text-sm text-zinc-400">Current Rating</p>
               <p className="text-xl font-bold text-white">{codeforcesProfileData?.rating}</p>
@@ -341,6 +343,7 @@ const CodingProfile = ({
           {/* Rating Progress */}
           <div className="rounded-xl border border-zinc-700/50 bg-zinc-900/40 p-5 mb-8">
             <h4 className="mb-6 text-lg font-semibold">Rating Progress</h4>
+            <div className="overflow-x-auto">
             <ResponsiveContainer width="100%" height={300}>
             <AreaChart
               data={codeforcesRatings || []}
@@ -408,7 +411,8 @@ const CodingProfile = ({
               />
             </AreaChart>
           </ResponsiveContainer>
-          </div>
+          </div>{/* /overflow-x-auto */}
+          </div>{/* /rating progress card */}
         </div>
       )}
       {/* CodeChef Profile */}
@@ -424,7 +428,7 @@ const CodingProfile = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="rounded-xl border border-zinc-700/50 bg-zinc-800/30 p-4">
               <p className="text-sm text-zinc-400">Current Rating</p>
               <p className="text-xl font-bold text-white">{codechefUser?.rating} <span className="text-sm font-normal text-amber-500">{codechefUser?.rating_number}</span></p>
