@@ -144,7 +144,7 @@ const AlumniMenu = () => {
       </Modal>
 
       <form className="mb-10 flex w-full max-w-5xl flex-col items-center justify-center px-10 py-6" onSubmit={handleSubmit}>
-        <h4 className="mb-6 text-xl font-bold">Alumni Information</h4>
+        <h4 className="mb-6 text-xl font-bold text-white">Alumni Information</h4>
         <div className="flex flex-col items-center justify-center p-2">
           <div className="flex flex-col items-center justify-center w-full">
             <label htmlFor="file" className="cursor-pointer" title="Select a file">
@@ -179,7 +179,7 @@ const AlumniMenu = () => {
                     name={field.label}
                     onChange={handleChange}
                     required={field.label !== 'codeforcesId' && field.label !== 'LeetcodeId'}
-                    className="w-full border-b border-blue-600 bg-transparent outline-none"
+                    className="w-full border-b border-blue-600 bg-transparent outline-none text-white placeholder-gray-400"
                   />
                 )}
               </div>
