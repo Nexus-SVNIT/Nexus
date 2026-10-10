@@ -103,7 +103,7 @@ const AchievementsForm = () => {
   };
 
   return (
-    <section className="mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-transparent md:mx-auto">
+    <section className="mx-4 mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden w-full rounded-md bg-transparent md:mx-auto">
       <Modal
         aria-describedby="modal-desc"
         open={open}
@@ -138,13 +138,13 @@ const AchievementsForm = () => {
               <img
                 src={image || "https://via.placeholder.com/300?text=Upload+Display+Image"}
                 alt="Upload Preview"
-                className="h-56 w-56 rounded-md border border-zinc-700/50 object-cover object-center shadow-lg transition-all hover:scale-105 md:h-72 md:w-72"
+                className="h-52 w-52 sm:h-64 sm:w-64 md:h-72 md:w-72 max-w-full rounded-md border border-zinc-700/50 object-cover object-center shadow-lg transition-all hover:scale-105"
               />
             </label>
             <input type="file" accept="image/*" id="image" name="image" hidden onChange={handleImageChange} required />
             <p className="mt-4 text-xs text-zinc-400">Click the box above to select your primary display image*</p>
           </div>
-          <div className="mx-auto flex flex-col items-center justify-between gap-6 md:w-2/3">
+          <div className="mx-auto flex flex-col items-center justify-between gap-6 px-2 w-full md:w-2/3">
             <div className="flex w-full flex-col gap-2">
               <label htmlFor="teamMembers" className="uppercase text-zinc-300 text-sm font-semibold tracking-wider">Team Members</label>
               <input
@@ -182,7 +182,7 @@ const AchievementsForm = () => {
           </div>
         </div>
         <button
-          className="mt-10 rounded-xl bg-orange-600 px-8 py-3 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-1 hover:bg-orange-500 hover:shadow-orange-500/40"
+          className="mt-10 w-full sm:w-auto min-h-[44px] rounded-xl bg-orange-600 px-8 py-3 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-1 hover:bg-orange-500 hover:shadow-orange-500/40"
           onClick={handleSubmit}
         >
           Submit Your Details

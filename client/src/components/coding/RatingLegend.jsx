@@ -55,7 +55,7 @@ const RatingLegend = ({ platform }) => {
       {/* Toggle header */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-2.5 text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 min-h-[44px] text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
       >
         <div className="flex items-center gap-2 font-mono">
           <FaInfoCircle className="text-blue-400 text-xs" />
@@ -76,7 +76,7 @@ const RatingLegend = ({ platform }) => {
             {items.map(({ color, label }) => (
               <div
                 key={label}
-                className={`flex items-center justify-center rounded-lg border px-2 py-1 text-center text-[11px] font-medium ${color}`}
+                className={`flex items-center justify-center rounded-lg border px-2 py-1 text-center text-[10px] sm:text-[11px] font-medium break-words hyphens-auto ${color}`}
               >
                 {label}
               </div>

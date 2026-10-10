@@ -28,7 +28,7 @@ const CustomBarChart = ({ batchData }) => {
   ];
 
   return (
-    <div className="mb-10 flex justify-center p-5">
+    <div className="mb-10 flex justify-center p-2 sm:p-5 w-full overflow-x-auto">
       <ResponsiveContainer width="100%" height={400}>
         <BarChart data={data}>
           <XAxis

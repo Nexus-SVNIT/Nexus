@@ -118,7 +118,7 @@ const Footer = () => {
             {/* Email pill */}
             <a
               href="mailto:nexus@coed.svnit.ac.in"
-              className="inline-flex items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-900/60 px-4 py-2 text-xs font-mono text-zinc-400 transition-all hover:border-cyan-500/50 hover:text-cyan-300 hover:bg-zinc-800/60"
+              className="inline-flex max-w-full items-center gap-2 rounded-full border border-zinc-700/60 bg-zinc-900/60 px-4 py-2 text-xs font-mono text-zinc-400 transition-all hover:border-cyan-500/50 hover:text-cyan-300 hover:bg-zinc-800/60 truncate"
             >
               <svg className="h-3.5 w-3.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />

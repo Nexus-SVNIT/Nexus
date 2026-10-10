@@ -243,16 +243,16 @@ function FilterSection({activePlatform, searchParams, setSearchParams}) {
             </div>
 
             {/* Action Buttons */}
-            <div className="mt-5 flex items-center justify-end gap-3 border-t border-zinc-800/70 pt-4">
+            <div className="mt-5 flex flex-wrap items-center justify-end gap-3 border-t border-zinc-800/70 pt-4">
               <button
                 onClick={handleClearFilters}
-                className="rounded-xl border border-zinc-700/60 bg-zinc-800/50 px-5 py-2 text-sm font-medium text-zinc-300 transition-all hover:bg-zinc-700/50 hover:text-white"
+                className="w-full sm:w-auto rounded-xl border border-zinc-700/60 bg-zinc-800/50 px-5 py-2 text-sm font-medium text-zinc-300 transition-all hover:bg-zinc-700/50 hover:text-white"
               >
                 Clear Filters
               </button>
               <button
                 onClick={handleApplyFilters}
-                className="rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:bg-blue-500"
+                className="w-full sm:w-auto rounded-xl bg-blue-600 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_15px_rgba(37,99,235,0.3)] transition-all hover:bg-blue-500"
               >
                 Apply Filters
               </button>
