@@ -321,7 +321,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
 
       {/* Refined Minimalist Pagination */}
       <div className="bg-indigo-950/20 border-t border-white/[0.06] px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-1">
           <button
             onClick={() => {
               const params = new URLSearchParams(searchParams);

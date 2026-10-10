@@ -61,7 +61,7 @@ const LeaderboardPodium = ({ data, platform }) => {
       {/* Ambient background glow */}
       <div className="pointer-events-none absolute -top-16 left-1/2 -translate-x-1/2 h-36 w-72 rounded-full bg-amber-500/10 blur-[80px]" />
 
-      <div className="flex items-center justify-between pb-4 border-b border-white/[0.07] mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-white/[0.07] mb-5">
         <div className="flex items-center gap-2">
           <FaCrown className="text-amber-400 text-base" />
           <h3 className="text-sm font-semibold tracking-wide text-zinc-100 uppercase">

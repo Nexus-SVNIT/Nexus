@@ -4,9 +4,9 @@ import { Link } from "react-router-dom";
 
 function NoticeBar() {
   return (
-    <div className="mx-4 flex w-fit items-center justify-center gap-3.5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 px-5 shadow-lg backdrop-blur-md md:mx-auto">
+    <div className="flex w-full sm:w-fit items-center justify-center gap-3.5 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-3.5 px-5 shadow-lg backdrop-blur-md mx-0 sm:mx-auto">
       <FaInfoCircle size={32} className="h-auto text-amber-400 flex-shrink-0" />
-      <p className="w-[90%] text-xs text-zinc-200 md:w-full md:text-sm">
+      <p className="flex-1 text-xs text-zinc-200 sm:text-sm">
         If you registered but did not get your coding profile data here in the leaderboard, go to the{" "}
         <Link
           to="/profile"
