@@ -99,7 +99,7 @@ const AlumniMenu = () => {
   };
 
   return (
-    <section className='mx-auto mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10'>
+    <section className='mx-auto mb-48 mt-10 flex h-auto max-w-5xl items-center overflow-hidden rounded-md bg-blue-100/10 px-4 sm:px-8 w-full'>
       <Modal
         aria-describedby="modal-desc"
         open={open}
@@ -146,7 +146,7 @@ const AlumniMenu = () => {
       <form className="mb-10 flex w-full max-w-5xl flex-col items-center justify-center px-10 py-6" onSubmit={handleSubmit}>
         <h4 className="mb-6 text-xl font-bold">Alumni Information</h4>
         <div className="flex flex-col items-center justify-center p-2">
-          <div className="flex flex-col items-center justify-center md:w-3/4">
+          <div className="flex flex-col items-center justify-center w-full">
             <label htmlFor="file" className="cursor-pointer" title="Select a file">
               <img
                 src={file ? URL.createObjectURL(file) : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTmrO6oGyxrMasnTJFJSt86C3Ecac3kTHtrbQ&usqp=CAU"}
@@ -159,7 +159,7 @@ const AlumniMenu = () => {
           </div>
           <div className="mx-auto mt-8 flex flex-wrap items-center justify-center gap-8">
             {formFields.map((field) => (
-              <div key={field.label} className="m-4 flex w-full flex-col gap-2 md:w-fit">
+              <div key={field.label} className="flex w-full flex-col gap-2 mb-4">
                 <label htmlFor={field.label} className="uppercase">
                   {field.label} {field.label !== 'codeforcesId' && field.label !== 'LeetcodeId' && <span className="text-red-800">{" *"}</span>}
                 </label>
@@ -169,7 +169,7 @@ const AlumniMenu = () => {
                     id={field.label}
                     name={field.label}
                     onChange={handleChange}
-                    className="w-full border-b border-blue-600 bg-transparent outline-none md:w-[20rem]"
+                    className="w-full border-b border-blue-600 bg-transparent outline-none"
                   />
                 ) : (
                   <input
@@ -179,14 +179,14 @@ const AlumniMenu = () => {
                     name={field.label}
                     onChange={handleChange}
                     required={field.label !== 'codeforcesId' && field.label !== 'LeetcodeId'}
-                    className="w-full border-b border-blue-600 bg-transparent outline-none md:w-[20rem]"
+                    className="w-full border-b border-blue-600 bg-transparent outline-none"
                   />
                 )}
               </div>
             ))}
           </div>
         </div>
-        <button className="mt-10 bg-blue-600 px-8 py-4 hover:bg-blue-700" type="submit">
+        <button className="mt-10 w-full sm:w-auto min-h-[44px] rounded-xl bg-blue-600 px-8 py-4 hover:bg-blue-700" type="submit">
           Submit Your Details
         </button>
       </form>

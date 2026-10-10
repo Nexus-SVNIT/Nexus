@@ -23,11 +23,11 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
       style={{ backdropFilter: "blur(4px)" }}
     >
-      <div className="relative min-w-72 w-full min-h-72 max-w-4xl px-4 py-8 rounded-lg bg-white shadow-lg flex items-center justify-center">
+      <div className="relative min-w-72 w-full sm:max-w-4xl min-h-72 px-4 py-8 rounded-lg bg-zinc-950/95 border border-zinc-800/80 shadow-lg flex items-center justify-center">
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute text-right right-2 top-1 z-10 text-3xl font-bold text-black"
+          className="absolute text-right right-2 top-1 z-10 text-3xl font-bold text-white"
           aria-label="Close"
         >
           &times;
@@ -37,7 +37,7 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
         {images.length > 1 && currentIndex > 0 && (
           <button
             onClick={prevImage}
-            className="z-10  text-4xl font-bold text-black"
+            className="z-10 text-4xl font-bold text-white"
           >
             &#8249;
           </button>
@@ -54,7 +54,7 @@ const Modal = ({ images = [], initialIndex = 0, onClose }) => {
         {images.length > 1 && currentIndex < images.length - 1 && (
           <button
             onClick={nextImage}
-            className="text-4xl font-bold text-black"
+            className="text-4xl font-bold text-white"
           >
             &#8250;
           </button>

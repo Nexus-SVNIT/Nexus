@@ -233,7 +233,7 @@ function AlumniSignUpForm() {
   }, []);
 
   return (
-    <div className="bg-black-2 p-6 pt-10 md:p-16">
+    <div className="bg-[#060818] px-4 py-10 sm:px-8">
       <HeadTags
         title={"Alumni Sign Up - Student Portal| Nexus - NIT Surat"}
         description={
@@ -244,10 +244,10 @@ function AlumniSignUpForm() {
         <img
           src="/assets/NEXUStext.png"
           alt="NEXUS"
-          className="flex w-[20rem] items-center object-cover"
+          className="w-full max-w-[14rem] sm:max-w-[20rem] object-cover"
         />
       </div>
-      <div className="mx-2 mt-10 flex w-fit items-center justify-center gap-3 rounded-md bg-yellow-400/25 p-2 px-4 md:mx-auto ">
+      <div className="flex flex-col sm:flex-row items-start gap-3 rounded-2xl border border-amber-500/25 bg-amber-500/10 p-4 mx-0 sm:mx-auto sm:w-fit mt-10">
         <FaInfoCircle size={42} className="h-auto text-yellow-500" />
         <p className="w-[90%] text-xs text-white/80 md:w-full md:text-base">
           Welcome to the Alumni Sign Up Page! Shine a Spotlight on Your Success
@@ -264,21 +264,21 @@ function AlumniSignUpForm() {
           </Link>{" "}
         </p>
       </div>
-      <div className="flex min-h-screen items-center justify-center bg-black-2">
+      <div className="flex min-h-screen items-center justify-center bg-[#060818]">
         <Toaster position="top-center" reverseOrder={false} />
         <form
           onSubmit={handleSubmit}
-          className="bg-gray-800 w-full max-w-lg rounded-lg p-2 shadow-lg md:p-8"
+          className="w-full max-w-lg rounded-2xl border border-white/[0.08] bg-white/[0.04] backdrop-blur-xl p-5 sm:p-8"
         >
           <h2 className="mb-6 text-center text-2xl font-semibold text-white">
             Alumni Sign Up
           </h2>
           <div className="mb-4">
-            <label className="mb-2 block text-sm text-white" htmlFor="fullName">
+            <label className="mb-2 block text-sm text-zinc-400" htmlFor="fullName">
               Full Name <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="fullName"
               name="fullName"
@@ -291,13 +291,13 @@ function AlumniSignUpForm() {
 
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="admissionNumber"
             >
               Admission Number <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="admissionNumber"
               name="admissionNumber"
@@ -311,13 +311,13 @@ function AlumniSignUpForm() {
 
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="mobileNumber"
             >
               Mobile Number <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="mobileNumber"
               name="mobileNumber"
@@ -331,13 +331,13 @@ function AlumniSignUpForm() {
 
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="personalEmail"
             >
               Personal Email <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="email"
               id="personalEmail"
               name="personalEmail"
@@ -369,13 +369,13 @@ function AlumniSignUpForm() {
 
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="passingYear"
             >
               Passing Year <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="passingYear"
               name="passingYear"
@@ -390,13 +390,13 @@ function AlumniSignUpForm() {
           {/* Profile input fields */}
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="linkedInProfile"
             >
               LinkedIn Profile <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="url"
               id="linkedInProfile"
               name="linkedInProfile"
@@ -410,13 +410,13 @@ function AlumniSignUpForm() {
 
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="currentCompany"
             >
               Company Name <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               list="companies"
               id="currentCompany"
@@ -436,13 +436,13 @@ function AlumniSignUpForm() {
           </div>
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="currentDesignation"
             >
               Designation <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="currentDesignation"
               name="currentDesignation"
@@ -454,13 +454,13 @@ function AlumniSignUpForm() {
           </div>
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="expertise"
             >
               Expertise <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="text"
               id="expertise"
               name="expertise"
@@ -473,7 +473,7 @@ function AlumniSignUpForm() {
           
           <div className="mb-4">
             <label
-              className="mb-2 block text-sm text-white"
+              className="mb-2 block text-sm text-zinc-400"
               htmlFor="showProfile"
             >
               <input
@@ -491,13 +491,13 @@ function AlumniSignUpForm() {
             <>
               <div className="mb-4">
                 <label
-                  className="mb-2 block text-sm text-white"
+                  className="mb-2 block text-sm text-zinc-400"
                   htmlFor="githubProfile"
                 >
                   GitHub Profile
                 </label>
                 <input
-                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
                   type="url"
                   id="githubProfile"
                   name="githubProfile"
@@ -510,13 +510,13 @@ function AlumniSignUpForm() {
 
               <div className="mb-4">
                 <label
-                  className="mb-2 block text-sm text-white"
+                  className="mb-2 block text-sm text-zinc-400"
                   htmlFor="leetcodeProfile"
                 >
                   LeetCode Profile
                 </label>
                 <input
-                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
                   id="leetcodeProfile"
                   name="leetcodeProfile"
                   value={formData.leetcodeProfile}
@@ -527,13 +527,13 @@ function AlumniSignUpForm() {
 
               <div className="mb-4">
                 <label
-                  className="mb-2 block text-sm text-white"
+                  className="mb-2 block text-sm text-zinc-400"
                   htmlFor="codeforcesProfile"
                 >
                   Codeforces Profile
                 </label>
                 <input
-                  className="w-full rounded bg-gray-2 p-2 text-black"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
                   id="codeforcesProfile"
                   name="codeforcesProfile"
                   value={formData.codeforcesProfile}
@@ -544,13 +544,13 @@ function AlumniSignUpForm() {
 
               <div className="mb-4">
                 <label
-                  className="mb-2 block text-sm text-white"
+                  className="mb-2 block text-sm text-zinc-400"
                   htmlFor="codechefProfile"
                 >
                   CodeChef Profile
                 </label>
                 <input
-                  className="bg-gray-200 w-full rounded p-2 text-black"
+                  className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
                   id="codechefProfile"
                   name="codechefProfile"
                   value={formData.codechefProfile}
@@ -562,11 +562,11 @@ function AlumniSignUpForm() {
           )}
 
           <div className="mb-4">
-            <label className="mb-2 block text-sm text-white" htmlFor="password">
+            <label className="mb-2 block text-sm text-zinc-400" htmlFor="password">
               Password <span className="text-red-500">*</span>
             </label>
             <input
-              className="bg-gray-200 w-full rounded p-2 text-black"
+              className="w-full rounded-xl border border-white/[0.08] bg-white/[0.05] px-4 py-2.5 text-sm text-white placeholder-zinc-500 outline-none focus:border-blue-500/50 focus:ring-1 focus:ring-blue-500/30"
               type="password"
               id="password"
               name="password"
@@ -580,7 +580,7 @@ function AlumniSignUpForm() {
           {showProfiles && (
             <div className="mb-4">
               <label
-                className="mb-2 block text-sm text-white"
+                className="mb-2 block text-sm text-zinc-400"
                 htmlFor="shareCodingProfile"
               >
                 <input
@@ -597,12 +597,12 @@ function AlumniSignUpForm() {
           )}
 
           <button
-            className="w-full rounded bg-blue-500 p-2 text-white hover:bg-blue-600"
+            className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 py-3 text-sm font-bold text-white min-h-[44px] hover:from-blue-500 hover:to-cyan-400 transition-all"
             type="submit"
           >
             Sign Up
           </button>
-          <div className="mt-3 text-white">
+          <div className="mt-3 text-zinc-400">
             Already registered?{" "}
             <a href="/login" className="text-blue-500 hover:underline">
               <i>Login here</i>
