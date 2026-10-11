@@ -307,6 +307,7 @@ const Cp = () => {
                     searchParams={searchParams}
                     setSearchParams={setSearchParams}
                     totalProfiles={totalProfiles}
+                    activePlatform={activePlatform}
                   />
                 </>
               )}
@@ -321,6 +322,7 @@ const Cp = () => {
                     searchParams={searchParams}
                     setSearchParams={setSearchParams}
                     totalProfiles={totalProfiles}
+                    activePlatform={activePlatform}
                   />
                 </>
               )}
@@ -335,6 +337,7 @@ const Cp = () => {
                     searchParams={searchParams}
                     setSearchParams={setSearchParams}
                     totalProfiles={totalProfiles}
+                    activePlatform={activePlatform}
                   />
                 </>
               )}
@@ -349,6 +352,7 @@ const Cp = () => {
                     searchParams={searchParams}
                     setSearchParams={setSearchParams}
                     totalProfiles={totalProfiles}
+                    activePlatform={activePlatform}
                   />
                 </>
               )}
