@@ -4,6 +4,10 @@
   padding: 0;
   box-sizing: border-box;
 }
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
 html {
   font-family: "Montserrat", sans-serif, "Segoe UI", Tahoma, "Geneva", Verdana;
 }

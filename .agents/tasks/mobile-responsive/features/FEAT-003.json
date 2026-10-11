@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-003",
+  "type": "fix",
+  "description": "Final pass: fix remaining minor mobile issues across Footer, Alumni Filters, StudyMaterialPage breadcrumb, and Profile pages. Also do a final check and tweak of any issues discovered during FEAT-001/002 implementation (seam fixes). Independent of FEAT-001 and FEAT-002 in terms of files.",
+  "status": "completed",
+  "steps": [
+    "Read client/src/components/Footer/Footer.jsx. Verify the watermark NEXUS span wrapper already has `overflow-hidden` (it does: `pointer-events-none select-none mt-8 flex justify-center overflow-hidden`). Check the email pill `inline-flex items-center gap-2 ...` — add `max-w-full truncate` to the `<a>` wrapper so it doesn't overflow on 320px. The copyright bar already has `flex-col sm:flex-row`. No other changes needed.",
+    "Read client/src/components/Alumni/AlumniFilters.jsx. In the action buttons section `<div className=\"mt-6 flex justify-end gap-4\">`, add `flex-wrap` and make both buttons `w-full sm:w-auto`: Apply button: `w-full sm:w-auto rounded-lg bg-blue-600 px-4 py-2 font-medium text-white transition-colors hover:bg-blue-500 min-h-[44px]`; Clear button: `w-full sm:w-auto rounded-lg bg-white/10 px-4 py-2 font-medium text-white transition-colors hover:bg-white/20 min-h-[44px]`.",
+    "Read client/src/pages/StudyMaterialPage.jsx. In the `<Breadcrumb>` component's `<nav>` element `className=\"mb-8 flex items-center gap-2 text-sm\"`, add `flex-wrap` so long breadcrumb trails wrap instead of overflowing: `className=\"mb-8 flex flex-wrap items-center gap-2 text-sm\"`.",
+    "Read client/src/components/Profile/Profile.jsx. Check for fixed widths or overflow issues — read the file first. Apply `w-full max-w-*`, `flex-col sm:flex-row`, `overflow-hidden` patterns as needed following the established project conventions. Ensure all form inputs are full-width and have dark styling if this is a form page.",
+    "Read client/src/components/Profile/UserProfile.jsx. Same check — look for fixed widths, non-responsive grids, tiny touch targets. Apply fixes following established patterns.",
+    "Read client/src/components/Profile/CodingProfile.jsx. Same check — this likely has table or card layouts for coding stats. Ensure tables have `overflow-x-auto` wrappers and cards use responsive grid.",
+    "Commit all changes made in FEAT-001, FEAT-002, and FEAT-003 together as a single commit titled 'fix: make entire website mobile responsive' with a body listing the key files changed. Use `git add` for each specific file changed — do not use `git add .`. Run `CI=false npm run build` before committing to confirm build passes.",
+    "After commit, record findings in this FEAT file and update status to completed."
+  ],
+  "acceptance_criteria": [
+    "Footer email pill does not overflow at 320px",
+    "Alumni Filters Apply/Clear buttons are full-width with 44px touch targets on mobile",
+    "StudyMaterialPage breadcrumb wraps correctly when 3+ crumbs are shown on mobile",
+    "Profile pages render without fixed-width overflow at 360px",
+    "`CI=false npm run build` passes with no errors",
+    "Git commit is clean (only changed files staged, build passes)"
+  ],
+  "verification": [
+    "cd c:\\Users\\Lenovo\\Nexus\\client && CI=false npm run build",
+    "npm start — inspect /study-material (deep navigation for breadcrumb), /alumni (filters panel), footer at 360×640",
+    "npm start — inspect /profile at 360×640",
+    "git log --oneline -1 (confirm commit exists with correct message)"
+  ],
+  "blocked_reason": null,
+  "findings": "Footer email pill: added max-w-full and truncate to prevent overflow at 320px. AlumniFilters: added flex-wrap to button row, made both buttons w-full sm:w-auto with min-h-[44px] for 44px touch targets. StudyMaterialPage: added flex-wrap to Breadcrumb nav so trails wrap on narrow screens. Profile.jsx: added flex-wrap gap-3 to header bar and footer bar to prevent overflow on small screens. CodingProfile.jsx: changed all stat grids from grid-cols-2 to grid-cols-1 sm:grid-cols-2, wrapped both charts in overflow-x-auto, added flex-wrap to GitHub tier badge row. UserProfile.jsx: no changes needed — already fully responsive. Build passes with CI=false npm run build (only pre-existing ESLint warnings, none from changed files)."
+}
