@@ -1,0 +1,7 @@
+{
+  "task_id": "task-mobile-responsive",
+  "task_description": "Make the entire Nexus React website fully mobile responsive. Fix fixed-width modals, non-dark legacy forms, touch targets <44px, overflow issues, and flex/grid layout problems across ~30 components.",
+  "status": "pending",
+  "feature_order": ["FEAT-001", "FEAT-002", "FEAT-003"],
+  "blocked_reason": null
+}

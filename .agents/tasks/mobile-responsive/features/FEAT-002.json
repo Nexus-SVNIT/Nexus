@@ -1,0 +1,32 @@
+{
+  "id": "FEAT-002",
+  "type": "fix",
+  "description": "Fix mobile layout issues in the Coding/Leaderboard section and the AchievementsForm. These components have layout-collapse, overflow, and touch-target issues that affect the two most data-heavy pages. Independent of FEAT-001 (different files).",
+  "status": "completed",
+  "steps": [
+    "Read client/src/components/AchievementsForm/AchievementsForm.jsx. (a) `<section>` wrapper: add `overflow-hidden w-full` to existing classes. (b) Image preview `<img>`: change `h-56 w-56 md:h-72 md:w-72` → `h-52 w-52 sm:h-64 sm:w-64 md:h-72 md:w-72 max-w-full`. (c) Form side div `md:w-2/3`: add `px-2 w-full`. (d) Submit `<button>`: change to `mt-10 w-full sm:w-auto min-h-[44px] rounded-xl bg-orange-600 px-8 py-3 font-semibold text-white shadow-lg shadow-orange-500/20 transition-all hover:-translate-y-1 hover:bg-orange-500 hover:shadow-orange-500/40`.",
+    "Read client/src/components/coding/NoticeBar.jsx. Change `mx-4 flex w-fit items-center` → `flex w-full sm:w-fit items-center mx-0 sm:mx-auto`. Change `w-[90%] text-xs text-zinc-200 md:w-full md:text-sm` → `flex-1 text-xs text-zinc-200 sm:text-sm`.",
+    "Read client/src/components/coding/SortedTable.jsx. In the pagination section, find `<div className=\"flex items-center gap-1\">` (the First/Prev/[page]/Next row) and add `flex-wrap` to it: `<div className=\"flex flex-wrap items-center gap-1\">`. This prevents button clipping on very narrow viewports.",
+    "Read client/src/components/coding/LeaderboardPodium.jsx. In the header row `<div className=\"flex items-center justify-between pb-4 border-b border-white/[0.07] mb-5\">`, add `flex-wrap gap-2` so platform badge wraps below heading on narrow viewports.",
+    "Read client/src/components/coding/RatingLegend.jsx. (a) Toggle button: add `min-h-[44px]` to the `<button>` classes (currently `w-full flex items-center justify-between px-4 py-2.5 ...`; change `py-2.5` to `py-3 min-h-[44px]`). (b) Individual tier badges in the grid: add `text-[10px] sm:text-[11px]` to the badge `<div>` instead of fixed `text-[11px]`; add `text-center break-words hyphens-auto`.",
+    "Read client/src/components/coding/FilterSection.jsx. In the action buttons container `<div className=\"mt-5 flex items-center justify-end gap-3 border-t border-zinc-800/70 pt-4\">`, add `flex-wrap` and change `justify-end` to `justify-end`. Also change both buttons to add `w-full sm:w-auto` so they fill the row on mobile: Clear button gets `w-full sm:w-auto`, Apply button gets `w-full sm:w-auto`.",
+    "Read client/src/components/coding/BarChart.jsx. Change the wrapper `<div className=\"mb-10 flex justify-center p-5\">` to `<div className=\"mb-10 flex justify-center p-2 sm:p-5 w-full overflow-x-auto\">`."
+  ],
+  "acceptance_criteria": [
+    "AchievementsForm image preview fits within 360px viewport (no overflow)",
+    "AchievementsForm submit button is full-width on mobile with min 44px height",
+    "Coding page NoticeBar is full-width on mobile, does not overflow horizontally",
+    "SortedTable pagination buttons wrap correctly on 360px (no clipped buttons)",
+    "LeaderboardPodium header row wraps properly on narrow viewports",
+    "RatingLegend tier badges are readable at 10px on mobile, toggle button has 44px touch target",
+    "FilterSection Apply/Clear buttons are full-width on mobile",
+    "`CI=false npm run build` completes without errors"
+  ],
+  "verification": [
+    "cd c:\\Users\\Lenovo\\Nexus\\client && CI=false npm run build",
+    "npm start — inspect /coding at 360×640: NoticeBar fits, pagination wraps, legend tiers readable, filter buttons full-width",
+    "npm start — inspect /achievements/add-new at 360×640: image preview contained, submit button full-width"
+  ],
+  "blocked_reason": null,
+  "findings": "All 7 components updated. AchievementsForm: added overflow-hidden w-full to section, responsive image sizes with max-w-full, px-2 w-full to form side div, full-width submit button with min-h-[44px]. NoticeBar: full-width on mobile with w-full sm:w-fit, flex-1 text for paragraph. SortedTable: flex-wrap on pagination row. LeaderboardPodium: flex-wrap gap-2 on header row. RatingLegend: py-3 min-h-[44px] on toggle button, text-[10px] sm:text-[11px] with break-words hyphens-auto on tier badges. FilterSection: flex-wrap on action buttons container, w-full sm:w-auto on both Clear and Apply buttons. BarChart: p-2 sm:p-5 w-full overflow-x-auto on wrapper. Build passed (exit 0, warnings are pre-existing). Committed as 77dd8ac."
+}
