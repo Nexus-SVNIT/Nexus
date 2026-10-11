@@ -30,10 +30,10 @@ const Home = () => {
       />
 
       {/* ─── Hero Section ─── */}
-      <div className="relative flex min-h-[95svh] w-full flex-col items-center justify-center overflow-hidden pb-12 pt-20 md:pb-16 md:pt-28">
-        {/* Background Animation Canvas */}
+      <div className="relative flex min-h-[95svh] w-full flex-col items-center justify-center overflow-hidden pb-12 pt-20 md:pb-16 md:pt-28" style={{ isolation: "isolate" }}>
+        {/* Background Animation Canvas — strictly clipped to hero bounds */}
         <Suspense fallback={<div className="absolute inset-0 z-0 bg-black/50" />}>
-          <div className="absolute inset-0 z-0 h-full w-full opacity-80 mix-blend-screen">
+          <div className="absolute inset-0 z-0 h-full w-full overflow-hidden opacity-80 mix-blend-screen" style={{ contain: "paint layout" }}>
             <Three />
           </div>
         </Suspense>
