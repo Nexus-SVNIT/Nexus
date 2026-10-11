@@ -199,11 +199,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
   };
 
   return (
-    <div className="mb-8 w-full overflow-x-auto overflow-y-hidden rounded-xl border border-white/[0.07] bg-indigo-950/20 backdrop-blur-xl shadow-2xl">
-      <table
-        {...getTableProps()}
-        className="min-w-full text-left text-sm text-zinc-300 border-collapse"
-      >
+    <div className="mb-8 w-full overflow-hidden rounded-xl border border-white/[0.07] bg-indigo-950/20 backdrop-blur-xl shadow-2xl">
+      <div className="overflow-x-auto">
+        <table
+          {...getTableProps()}
+          className="min-w-full text-left text-sm text-zinc-300 border-collapse"
+        >
         <thead className="bg-indigo-950/30 text-[0.7rem] uppercase tracking-widest text-zinc-400 border-b border-white/[0.06] font-semibold backdrop-blur-sm">
           {headerGroups.map((headerGroup, idx) => (
             <tr {...headerGroup.getHeaderGroupProps()} key={headerGroup.id || idx}>
@@ -236,7 +237,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
                         },
                   )}
                   key={column.id}
-                  className="cursor-pointer whitespace-nowrap p-2 sm:p-4"
+                  className="cursor-pointer whitespace-nowrap p-2 sm:p-3 md:p-4 text-xs sm:text-sm"
                 >
                   {column.id === "tableRank" && !isNexusRanking
                     ? `#${column.render("Header")}`
@@ -289,7 +290,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
                     <td
                       {...cell.getCellProps()}
                       key={cell.column.id}
-                      className="p-2 sm:p-4"
+                      className="p-2 sm:p-3 md:p-4 text-xs sm:text-sm"
                     >
                       {cell.column.id === "fullName" ? (
                         <div className="flex items-center gap-2">
@@ -317,11 +318,12 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
             })
           )}
         </tbody>
-      </table>
+        </table>
+      </div>
 
       {/* Refined Minimalist Pagination */}
-      <div className="bg-indigo-950/20 border-t border-white/[0.06] px-6 py-4 flex flex-col items-center justify-between gap-4 sm:flex-row">
-        <div className="flex flex-wrap items-center gap-1">
+      <div className="bg-indigo-950/20 border-t border-white/[0.06] px-3 sm:px-4 md:px-6 py-3 sm:py-4 flex flex-col items-center justify-between gap-3 sm:gap-4 md:flex-row">
+        <div className="flex flex-wrap items-center gap-1 justify-center md:justify-start">
           <button
             onClick={() => {
               const params = new URLSearchParams(searchParams);
@@ -329,7 +331,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2 sm:px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             First
           </button>
@@ -340,13 +342,17 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage === 1}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2 sm:px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             Prev
           </button>
           
-          <div className="flex items-center justify-center px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-white/10 rounded-md bg-white/[0.04]">
-            Page <strong className="text-white mx-1">{currentPage}</strong> of <strong className="text-white mx-1">{Math.ceil(actualTotal / currentPageSize) || 1}</strong>
+          <div className="flex items-center justify-center px-2 sm:px-3 md:px-4 py-1 text-xs font-medium text-zinc-400 mx-1 border border-white/10 rounded-md bg-white/[0.04]">
+            <span className="hidden sm:inline">Page </span>
+            <strong className="text-white mx-1">{currentPage}</strong>
+            <span className="hidden sm:inline"> of </span>
+            <span className="sm:hidden">/</span>
+            <strong className="text-white mx-1">{Math.ceil(actualTotal / currentPageSize) || 1}</strong>
           </div>
 
           <button
@@ -356,14 +362,14 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               setSearchParams(params);
             }}
             disabled={currentPage >= Math.ceil(actualTotal / currentPageSize)}
-            className="flex items-center justify-center rounded px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
+            className="flex items-center justify-center rounded px-2 sm:px-2.5 py-1 text-xs font-semibold uppercase tracking-wider text-zinc-500 transition-colors hover:bg-white/[0.08] hover:text-white disabled:pointer-events-none disabled:opacity-30"
           >
             Next
           </button>
         </div>
 
         <div className="flex items-center gap-2 text-xs font-medium text-zinc-500">
-          <span>Show</span>
+          <span className="hidden sm:inline">Show</span>
           <select
             value={currentPageSize}
             onChange={(e) => {
@@ -372,7 +378,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               params.set("page", "1"); // Reset to first page when changing page size
               setSearchParams(params);
             }}
-            className="appearance-none rounded border border-white/10 bg-white/[0.06] px-2 py-1 text-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors outline-none cursor-pointer text-center"
+            className="appearance-none rounded border border-white/10 bg-white/[0.06] px-2 py-1 text-zinc-300 focus:border-zinc-500 focus:outline-none focus:ring-1 focus:ring-zinc-600 transition-colors outline-none cursor-pointer text-center min-w-[3rem]"
           >
             {[10, 20, 30, 40, 50].map((size) => (
               <option key={size} value={size} className="bg-[#0d1230] text-center">
@@ -380,7 +386,7 @@ const SortableTable = ({ columns, data, searchParams, setSearchParams, totalProf
               </option>
             ))}
           </select>
-          <span>entries</span>
+          <span className="hidden sm:inline">entries</span>
         </div>
       </div>
     </div>

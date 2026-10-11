@@ -240,7 +240,7 @@ const Cp = () => {
   };
 
   return (
-    <div className="App text-gray-200 min-h-screen py-8">
+    <div className="App text-gray-200 min-h-screen py-4 sm:py-6 md:py-8 px-3 sm:px-4">
       <HeadTags
         title={"Coding Profile LeaderBoard | Nexus - NIT Surat"}
         description={
@@ -251,15 +251,15 @@ const Cp = () => {
         }
       />
 
-      <div className="w-full max-w-[92rem] mx-auto px-4 md:px-8">
+      <div className="w-full max-w-[95rem] mx-auto">
         <NoticeBar />
 
         {/* Page Header */}
-        <div className="mb-6 mt-4">
+        <div className="mb-4 sm:mb-6 mt-4">
           <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
             {"// leaderboard"}
           </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-white leading-tight">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight">
             Ranked. Synced daily.{" "}
             <span className="text-zinc-400">No excuses.</span>
           </h1>
@@ -269,10 +269,10 @@ const Cp = () => {
         </div>
 
         {/* Two-Column Layout: Left = Leaderboard | Right = Contests Sidebar */}
-        <div className="flex flex-col lg:flex-row gap-6 items-start">
+        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6 items-start">
 
           {/* ─── LEFT: Leaderboard Section ─────────────────────────────── */}
-          <div className="flex-1 min-w-0 flex flex-col gap-4">
+          <div className="flex-1 min-w-0 flex flex-col gap-3 sm:gap-4 w-full">
 
             {/* Platform Toggle */}
             <PlateformButtons
@@ -296,7 +296,7 @@ const Cp = () => {
             </div>
 
             {/* Table area */}
-            <div>
+            <div className="w-full overflow-hidden">
               {activePlatform === "codeforces" && (
                 <>
                   <LeaderboardPodium data={codeforcesLeaderboard} platform="codeforces" />
