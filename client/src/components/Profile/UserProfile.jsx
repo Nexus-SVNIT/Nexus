@@ -41,20 +41,20 @@ const UserProfile = () => {
   }
 
   return (
-    <div className="min-h-screen py-8 px-4 sm:px-6">
+    <div className="min-h-screen py-4 sm:py-8 px-3 sm:px-4 lg:px-6">
       <HeadTags
         title="My Profile | Nexus - NIT Surat"
         description="Update your profile and coding profiles on Nexus."
       />
       <Toaster position="top-right" reverseOrder={false} />
 
-      <div className="mx-auto max-w-3xl">
+      <div className="mx-auto max-w-4xl">
         {/* ── Page Header ── */}
-        <div className="mb-8">
+        <div className="mb-6 sm:mb-8">
           <p className="text-xs font-mono text-blue-400 uppercase tracking-widest mb-2">
             {"// profile"}
           </p>
-          <h1 className="text-3xl md:text-4xl font-bold text-white leading-tight">
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight">
             Your account.{" "}
             <span className="text-zinc-400">Your handles.</span>
           </h1>
@@ -64,19 +64,20 @@ const UserProfile = () => {
         </div>
 
         {/* ── Tab Bar ── */}
-        <div className="flex items-center gap-1 rounded-xl border border-white/[0.08] bg-white/[0.03] p-1 mb-6 backdrop-blur-xl overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-1 rounded-xl border border-white/[0.08] bg-white/[0.03] p-1 mb-4 sm:mb-6 backdrop-blur-xl overflow-x-auto" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {TABS.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveTab(id)}
-              className={`flex items-center gap-2 flex-1 justify-center whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-semibold transition-all duration-200 ${
+              className={`flex items-center gap-2 flex-1 justify-center whitespace-nowrap rounded-lg px-3 sm:px-4 py-2.5 text-xs sm:text-sm font-semibold transition-all duration-200 ${
                 activeTab === id
                   ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
                   : "text-zinc-500 hover:text-zinc-200 hover:bg-white/[0.05]"
               }`}
             >
-              <Icon size={13} />
-              {label}
+              <Icon size={12} className="sm:w-[13px] sm:h-[13px]" />
+              <span className="hidden sm:inline">{label}</span>
+              <span className="sm:hidden">{label.split(' ')[0]}</span>
             </button>
           ))}
         </div>
@@ -89,7 +90,7 @@ const UserProfile = () => {
             </ErrorBoundary>
           )}
           {activeTab === "coding" && (
-            <div className="p-6">
+            <div className="p-3 sm:p-4 lg:p-6">
               <ErrorBoundary title="Failed to load coding profiles">
                 <CodingProfile
                   githubProfile={profile.githubProfile || ""}
