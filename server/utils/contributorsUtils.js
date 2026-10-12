@@ -1,4 +1,5 @@
 const axios = require('axios');
+let invalidTokenWarningLogged = false;
 
 const getGitHubConfig = () => {
     const owner = process.env.GITHUB_OWNER || 'Nexus-SVNIT';
@@ -25,7 +26,10 @@ const makeGitHubRequest = async (url, params = {}) => {
         // If request failed with 401 Unauthorized (e.g. revoked/invalid token) and an Authorization header was sent,
         // retry once without Authorization header to access public GitHub repository data.
         if (error.response && error.response.status === 401 && headers['Authorization']) {
-            console.warn(`[GitHub API] 401 Unauthorized with provided token. Retrying unauthenticated request to ${url}...`);
+            if (!invalidTokenWarningLogged) {
+                console.warn('[GitHub API] GITHUB_TOKEN was rejected. Retrying public repository requests without authentication. Update the deployment secret to restore authenticated API access.');
+                invalidTokenWarningLogged = true;
+            }
             const retryHeaders = {
                 'User-Agent': 'Nexus-App',
                 'Accept': 'application/vnd.github.v3+json'

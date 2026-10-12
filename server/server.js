@@ -31,6 +31,10 @@ const app = express()
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 
+// The production host forwards requests through one trusted proxy. This lets
+// express-rate-limit use the client IP from X-Forwarded-For without trusting
+// arbitrary proxy entries supplied by the client.
+app.set('trust proxy', 1)
 
 
 app.use(cors(
