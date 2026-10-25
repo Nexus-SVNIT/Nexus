@@ -77,16 +77,21 @@ const addAchievement = async (req, res) => {
 
         await Achievement.create(achievement);
 
-        const user = await userSchema.findOne({ admissionNumber: req.user.admissionNumber });
-        if (!user || !user.instituteEmail) {
-            return res.status(400).json({ message: "User email not found" });
+        // Send email notification (non-blocking)
+        try {
+            const user = await userSchema.findOne({ admissionNumber: req.user.admissionNumber });
+            const recipient = user?.instituteEmail || user?.personalEmail;
+            if (recipient) {
+                const emailContent = achievementSubmissionTemplate(user.fullName || 'Member');
+                await sendEmail({
+                    to: recipient,
+                    ...emailContent,
+                    critical: false
+                });
+            }
+        } catch (emailErr) {
+            console.error('Non-blocking error sending achievement notification email:', emailErr);
         }
-
-        const emailContent = achievementSubmissionTemplate(user.fullName);
-        await sendEmail({
-            to: user.instituteEmail,
-            ...emailContent
-        });
 
         return res.status(200).json({ 
             success: true,

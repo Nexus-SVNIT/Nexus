@@ -1,4 +1,4 @@
-const link = 'https://www.nexus-svnit.in';
+const getLink = () => (process.env.FRONTEND_URL || 'https://www.nexus-svnit.in').replace(/\/+$/, '');
 const LINK_COLOR = '#4fc3f7';
 
 const emailWrapperTemplate = (content) => (
@@ -47,7 +47,7 @@ const emailWrapperTemplate = (content) => (
                 <div style="margin: 6px 0;">
                     Contact: 
                     <a class="link" style="color:${LINK_COLOR};" href="mailto:nexus@coed.svnit.ac.in">nexus@coed.svnit.ac.in</a> |
-                    <a class="link" style="color:${LINK_COLOR};" href="https://www.nexus-svnit.in">nexus-svnit.in</a>
+                    <a class="link" style="color:${LINK_COLOR};" href="${getLink()}">nexus-svnit.in</a>
                 </div>
                 <div>
                     Follow us: 
@@ -75,7 +75,7 @@ const postCreationTemplate = (author, postTitle, id) => ({
             You can check your submission status using the button below:
         </p>
         <p>
-            <a class="btn" href="${link}/interview-experiences/post/${id}">View Your Post</a>
+            <a class="btn" href="${getLink()}/interview-experiences/post/${id}">View Your Post</a>
         </p>
         <p style="margin-top: 28px;">Best regards,<br>Team NEXUS</p>
     `)
@@ -94,7 +94,7 @@ const newQuestionTemplate = (author, postTitle, question, askedBy, id) => ({
         </div>
         <p>Login to your account to answer this question.</p>
         <p>
-            <a class="btn" href="${link}/interview-experiences/post/${id}">View Post & Answer</a>
+            <a class="btn" href="${getLink()}/interview-experiences/post/${id}">View Post & Answer</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
@@ -112,7 +112,7 @@ const newCommentTemplate = (author, postTitle, comment, commentedBy, id) => ({
             ${comment}
         </div>
         <p>
-            <a class="btn" href="${link}/interview-experiences/post/${id}">View Post</a>
+            <a class="btn" href="${getLink()}/interview-experiences/post/${id}">View Post</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
@@ -134,7 +134,7 @@ const newAnswerTemplate = (author, postTitle, question, answer, answeredBy, id) 
             ${answer}
         </div>
         <p>
-            <a class="btn" href="${link}/interview-experiences/post/${id}">View Full Discussion</a>
+            <a class="btn" href="${getLink()}/interview-experiences/post/${id}">View Full Discussion</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
@@ -152,7 +152,7 @@ const postEditTemplate = (user, postTitle, postId) => ({
             Your post will be visible to others after verification by our team.
         </p>
         <p>
-            <a class="btn" href="${link}/interview-experiences/post/${postId}">View Post</a>
+            <a class="btn" href="${getLink()}/interview-experiences/post/${postId}">View Post</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
@@ -244,7 +244,7 @@ const achievementSubmissionTemplate = (name) => ({
             We appreciate your contributions and look forward to sharing your success with the community!
         </p>
         <p>
-            <a class="btn" href="${link}/achievements">View Achievement Bulletin</a>
+            <a class="btn" href="${getLink()}/achievements">View Achievement Bulletin</a>
         </p>
         <p style="margin-top: 28px;">Thanks,<br>Team NEXUS</p>
     `)
