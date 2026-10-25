@@ -1,26 +1,27 @@
 const nodemailer = require('nodemailer');
 
-let cachedTransporter = null;
-
 /**
- * Get or create reusable nodemailer transporter with connection pooling
+ * Create nodemailer transporter optimized for serverless environments (Vercel)
+ * - Uses direct SSL on port 465 (reliable on cloud networks)
+ * - Automatically strips spaces from App Password if copied with spaces
+ * - Explicit timeouts to prevent serverless function hangs
  */
-const getTransporter = () => {
-  if (!cachedTransporter) {
-    cachedTransporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_ID,
-        pass: process.env.EMAIL_PASSWORD
-      },
-      pool: true,
-      maxConnections: 5,
-      maxMessages: 100,
-      // Debug in development mode only
-      ...(process.env.NODE_ENV === 'development' && { debug: true })
-    });
-  }
-  return cachedTransporter;
+const createTransporter = () => {
+  const user = process.env.EMAIL_ID?.trim();
+  const pass = process.env.EMAIL_PASSWORD?.replace(/\s+/g, '');
+
+  return nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true, // Direct SSL
+    auth: {
+      user,
+      pass
+    },
+    connectionTimeout: 10000, // 10 seconds
+    greetingTimeout: 5000,
+    socketTimeout: 10000
+  });
 };
 
 /**
@@ -35,7 +36,10 @@ const getTransporter = () => {
  * @param {boolean} [options.critical=false] - When true, throws on failure. When false, logs and returns null safely.
  */
 const sendEmail = async ({ to, subject, text, html, attachments, critical = false }) => {
-  if (!process.env.EMAIL_ID || !process.env.EMAIL_PASSWORD) {
+  const emailId = process.env.EMAIL_ID?.trim();
+  const emailPassword = process.env.EMAIL_PASSWORD?.replace(/\s+/g, '');
+
+  if (!emailId || !emailPassword) {
     const warning = '[EmailService] Missing EMAIL_ID or EMAIL_PASSWORD environment variables. Email was not sent.';
     console.warn(warning);
     if (critical) {
@@ -54,10 +58,10 @@ const sendEmail = async ({ to, subject, text, html, attachments, critical = fals
   }
 
   try {
-    const transporter = getTransporter();
+    const transporter = createTransporter();
 
     const mailOptions = {
-      from: `"Team Nexus" <${process.env.EMAIL_ID}>`,
+      from: `"Team Nexus" <${emailId}>`,
       to,
       subject,
       text,
@@ -73,7 +77,7 @@ const sendEmail = async ({ to, subject, text, html, attachments, critical = fals
     if (error.code === 'EAUTH') {
       console.error('[EmailService] AUTHENTICATION ERROR: Invalid Gmail credentials or expired App Password.');
       console.error('[EmailService] Check https://support.google.com/accounts/answer/185833');
-    } else if (error.code === 'ESOCKET') {
+    } else if (error.code === 'ESOCKET' || error.code === 'ETIMEDOUT') {
       console.error('[EmailService] CONNECTION ERROR: Could not connect to Gmail SMTP server.');
     }
 
