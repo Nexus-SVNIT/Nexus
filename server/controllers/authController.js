@@ -366,8 +366,13 @@ const forgotPassword = async (req, res) => {
             resetUrl
         });
 
+        const recipient = foundUser.personalEmail || foundUser.instituteEmail;
+        if (!recipient) {
+            return res.status(400).json({ message: 'No registered email found for this user.' });
+        }
+
         await sendEmail({
-            to: foundUser.personalEmail,
+            to: recipient,
             ...emailContent,
             critical: true
         });
