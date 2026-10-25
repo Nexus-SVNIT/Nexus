@@ -17,20 +17,26 @@ const createQuestion = async (req, res) => {
     post.questions.push(savedQuestion._id);
     await post.save();
 
-    // Send email notification to post author
-    if (post.author.personalEmail) {
-      const askedByUser = await User.findById(author);
-      const emailContent = newQuestionTemplate(
-        post.author,
-        post.title,
-        question,
-        askedByUser,
-        post._id
-      );
-      await sendEmail({
-        to: post.author.personalEmail,
-        ...emailContent
-      });
+    // Send email notification to post author (non-blocking, skip if asking on own post)
+    try {
+      const recipient = post?.author?.personalEmail || post?.author?.instituteEmail;
+      if (recipient && post.author._id.toString() !== author) {
+        const askedByUser = await User.findById(author);
+        const emailContent = newQuestionTemplate(
+          post.author,
+          post.title,
+          question,
+          askedByUser,
+          post._id
+        );
+        await sendEmail({
+          to: recipient,
+          ...emailContent,
+          critical: false
+        });
+      }
+    } catch (emailErr) {
+      console.error("Non-blocking error sending question notification email:", emailErr);
     }
 
     res.status(201).json(savedQuestion);
