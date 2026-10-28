@@ -26,21 +26,27 @@ const createAnswer = async (req, res) => {
     question.answers.push(answer);
     await question.save();
 
-    // Send email notification to the person who asked the question
-    if (question.askedBy.personalEmail && question.askedBy._id.toString() !== author) {
-      const answeredBy = await User.findById(author);
-      const emailContent = newAnswerTemplate(
-        question.askedBy,
-        question.postId.title,
-        question.question,
-        content,
-        answeredBy,
-        question.postId._id
-      );
-      await sendEmail({
-        to: question.askedBy.personalEmail,
-        ...emailContent
-      });
+    // Send email notification to the person who asked the question (non-blocking)
+    try {
+      const recipient = question?.askedBy?.personalEmail || question?.askedBy?.instituteEmail;
+      if (recipient && question.askedBy._id.toString() !== author) {
+        const answeredBy = await User.findById(author);
+        const emailContent = newAnswerTemplate(
+          question.askedBy,
+          question.postId.title,
+          question.question,
+          content,
+          answeredBy,
+          question.postId._id
+        );
+        await sendEmail({
+          to: recipient,
+          ...emailContent,
+          critical: false
+        });
+      }
+    } catch (emailErr) {
+      console.error("Non-blocking error sending answer notification email:", emailErr);
     }
 
     // Populate the author details of the new answer

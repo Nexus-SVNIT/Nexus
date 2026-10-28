@@ -1,16 +1,29 @@
 const crypto = require('crypto');
 const jwt = require('jsonwebtoken');
 const user = require('../models/userModel.js');
-const bcrypt = require('bcrypt')
+const fs = require('fs');
 const { sendEmail } = require('../utils/emailUtils.js');
 const { validateCodingProfiles } = require('../utils/validateCodingProfiles.js');
 const { 
     alumniEmailVerificationTemplate, 
-    alumniEmailVerifiedTemplate,
-    signupEmailTemplate,
+    alumniEmailVerifiedTemplate, 
+    signupEmailTemplate, 
     forgotPasswordTemplate 
 } = require('../utils/emailTemplates.js');
 const { validateAlumni } = require('../utils/validateAlumni');
+
+/**
+ * Extracts frontend origin URL reliably from env or request headers
+ */
+const getFrontendBaseUrl = (req) => {
+    const raw = process.env.FRONTEND_URL || req.headers.origin || req.headers.referer || 'https://www.nexus-svnit.in';
+    try {
+        const parsed = new URL(raw);
+        return parsed.origin;
+    } catch {
+        return raw.replace(/\/+$/, '');
+    }
+};
 
 const loginUser = async (req, res) => {
     const { admissionNumber, password } = req.body;
@@ -46,7 +59,7 @@ const loginUser = async (req, res) => {
             isAlumni: foundUser.isAlumni || false,
         };
 
-        const token = jwt.sign(payload, process.env.SECRET, {
+        const token = jwt.sign(payload, process.env.SECRET || 'fallback_secret_key', {
             expiresIn: '7d'
         });
 
@@ -63,12 +76,16 @@ const loginUser = async (req, res) => {
 
     } catch (error) {
         console.error("Login error:", error);
-        res.status(500).json({ message: 'Server error', error });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 const signupUser = async (req, res) => {
-    const { fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, codechefProfile, password, shareCodingProfile } = req.body;
+    const { 
+        fullName, admissionNumber, mobileNumber, personalEmail, instituteEmail, 
+        branch, linkedInProfile, githubProfile, leetcodeProfile, codeforcesProfile, 
+        codechefProfile, password, shareCodingProfile 
+    } = req.body;
 
     try {
         // Validate coding profile IDs (URL check + existence verification)
@@ -87,13 +104,13 @@ const signupUser = async (req, res) => {
             return res.status(400).json({ message: 'User already exists' });
         }
 
+        // Step 2: Validate institute email match
+        if (!instituteEmail || admissionNumber.toLowerCase() !== instituteEmail.split('@')[0].toLowerCase()) {
+            return res.status(400).json({ message: 'Admission number does not match institute email' });
+        }
+
         // Step 3: Generate a verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
-
-        if (admissionNumber.toLowerCase() !== instituteEmail.split('@')[0]) {
-            return res.status(400).json({ message: 'Email does not match with email' });
-
-        }
 
         // Step 4: Create a new user with the token and save to DB
         const newUser = new user({
@@ -108,47 +125,47 @@ const signupUser = async (req, res) => {
             leetcodeProfile,
             codeforcesProfile,
             codechefProfile,
-            shareCodingProfile,  // New field for CodeChef profile
+            shareCodingProfile,
             password,
             verificationToken
         });
 
         await newUser.save();
 
-        // Step 5: Send verification email...
         // Step 5: Send verification email
+        const baseUrl = getFrontendBaseUrl(req);
+        const verificationUrl = `${baseUrl}/auth/verify/${verificationToken}`;
 
-
-        const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
-
-        const { subject, html } = signupEmailTemplate({
+        const emailContent = signupEmailTemplate({
             fullName,
             verificationUrl
         });
 
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: instituteEmail,
-            subject,
-            html
-        };
-
-        // CHANGE: await transporter.sendMail(mailOptions);
-        await sendEmail(mailOptions);
+        try {
+            await sendEmail({
+                to: instituteEmail,
+                ...emailContent,
+                critical: true
+            });
+        } catch (emailError) {
+            // Roll back user creation so the user isn't stuck with "User already exists" while unverified
+            await user.findByIdAndDelete(newUser._id);
+            console.error('Signup verification email error:', emailError);
+            return res.status(500).json({ 
+                message: 'Failed to send verification email. Please check your email credentials or try again later.' 
+            });
+        }
 
         res.status(201).json({ message: 'User registered. Verification email sent!' });
 
-
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        console.error('Signup error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 const signUpAlumni = async (req, res) => {
-    let tempFilePath = req.file?.path;
-
     try {
-
         const requiredFields = [
             'fullName', 'personalEmail', 'admissionNumber',
             'currentDesignation', 'currentCompany', 'password',
@@ -204,7 +221,7 @@ const signUpAlumni = async (req, res) => {
             });
         }
 
-        //  Generate email verification token
+        // Generate email verification token
         const verificationToken = crypto.randomBytes(32).toString('hex');
 
         // Create alumni user object
@@ -219,23 +236,29 @@ const signUpAlumni = async (req, res) => {
 
         const newAlumni = await user.create(alumniData);
 
-        //  Create verification link
-        const verificationUrl = `${req.headers.origin || req.headers.referer}/auth/verify/alumni/${verificationToken}`;
+        // Create verification link
+        const baseUrl = getFrontendBaseUrl(req);
+        const verificationUrl = `${baseUrl}/auth/verify/alumni/${verificationToken}`;
 
-        // 
-        const { subject, html } = alumniEmailVerificationTemplate({
+        const emailContent = alumniEmailVerificationTemplate({
             fullName: req.body['fullName'],
             verificationUrl,
         });
 
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: req.body['personalEmail'],
-            subject,
-            html
-        };
-
-        await sendEmail(mailOptions);
+        try {
+            await sendEmail({
+                to: req.body['personalEmail'],
+                ...emailContent,
+                critical: true
+            });
+        } catch (emailError) {
+            await user.findByIdAndDelete(newAlumni._id);
+            console.error('Alumni verification email error:', emailError);
+            return res.status(500).json({
+                success: false,
+                message: 'Failed to send verification email. Please try again later.'
+            });
+        }
 
         return res.status(201).json({
             success: true,
@@ -281,7 +304,7 @@ const verifyEmail = async (req, res) => {
 
         res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -298,23 +321,21 @@ const verifyAlumniEmail = async (req, res) => {
         userData.verificationToken = undefined; // Remove the token after verification
         await userData.save();
 
-        const { html, subject } = alumniEmailVerifiedTemplate({
-
+        // Non-blocking notification email
+        const emailContent = alumniEmailVerifiedTemplate({
             fullName: userData.fullName
-        }
-        );
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: userData.personalEmail,
-            subject,
-            html
-        };
+        });
 
-        await sendEmail(mailOptions);
+        await sendEmail({
+            to: userData.personalEmail,
+            ...emailContent,
+            critical: false
+        });
 
         res.status(200).json({ message: 'Email verified successfully' });
     } catch (error) {
-        res.status(500).json({ message: 'Server error', error });
+        console.error('Verify alumni email error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
@@ -337,36 +358,43 @@ const forgotPassword = async (req, res) => {
         await foundUser.save();
 
         // Step 2: Send reset email
-        const resetUrl = `${req.headers.referer}auth/reset-password/${resetToken}`;
+        const baseUrl = getFrontendBaseUrl(req);
+        const resetUrl = `${baseUrl}/auth/reset-password/${resetToken}`;
         
-        const { subject, html } = forgotPasswordTemplate({
+        const emailContent = forgotPasswordTemplate({
             fullName: foundUser.fullName,
             resetUrl
         });
-        
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: foundUser.personalEmail,
-            subject,
-            html
-        };
 
-        // CHANGE: await transporter.sendMail(mailOptions);
-        await sendEmail(mailOptions);
+        const recipient = foundUser.personalEmail || foundUser.instituteEmail;
+        if (!recipient) {
+            return res.status(400).json({ message: 'No registered email found for this user.' });
+        }
+
+        await sendEmail({
+            to: recipient,
+            ...emailContent,
+            critical: true
+        });
 
         res.status(200).json({ message: 'Password reset email sent' });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error', error });
+        console.error('Forgot password error:', error);
+        res.status(500).json({ message: 'Failed to send password reset email', error: error.message });
     }
 };
 
 const verifyPasswordResetEmail = async (req, res) => {
     const { token } = req.params;
-    const { newPassword } = req.body;
+    const { newPassword, password } = req.body;
+    const passwordToSet = newPassword || password;
 
     try {
+        if (!passwordToSet) {
+            return res.status(400).json({ message: 'New password is required' });
+        }
+
         // Step 1: Find user by token and check if token is still valid
         const foundUser = await user.findOne({
             resetPasswordToken: token,
@@ -376,9 +404,9 @@ const verifyPasswordResetEmail = async (req, res) => {
             return res.status(400).json({ message: 'Invalid or expired verification token' });
         }
 
-        // Step 2: Verify the email
+        // Step 2: Set raw password - pre('save') hook handles hashing!
         foundUser.emailVerified = true;
-        foundUser.password = newPassword;
+        foundUser.password = passwordToSet;
         foundUser.resetPasswordToken = undefined;
         foundUser.resetPasswordExpires = undefined;
 
@@ -387,74 +415,107 @@ const verifyPasswordResetEmail = async (req, res) => {
         res.status(200).json({ message: 'Password Reset Successfully' });
 
     } catch (error) {
-        console.error('Error reseting password:', error);
-        res.status(500).json({ message: 'Server error', error });
+        console.error('Error resetting password:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
 const resetPassword = async (req, res) => {
-    const { token } = req.params;
-    const { password } = req.body;
+    const token = req.params.token || req.body.token;
+    const { password, newPassword } = req.body;
+    const passwordToSet = password || newPassword;
 
     try {
+        if (!token) {
+            return res.status(400).json({ message: 'Reset token is required' });
+        }
+
+        if (!passwordToSet) {
+            return res.status(400).json({ message: 'New password is required' });
+        }
+
         // Step 1: Find user by reset token and check if it's expired
         const foundUser = await user.findOne({
             resetPasswordToken: token,
-            resetPasswordExpires: { $gt: Date.now() } // Check if token is not expired
+            resetPasswordExpires: { $gt: Date.now() }
         });
 
         if (!foundUser) {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
 
-        // Step 2: Hash the new password and save it
-        const hashedPassword = await bcrypt.hash(password, 10);
-        foundUser.password = hashedPassword;
-
-        // Step 3: Invalidate the reset token and reset expiration time
+        // Step 2: Assign raw password - userSchema pre('save') hook handles hashing!
+        foundUser.password = passwordToSet;
         foundUser.resetPasswordToken = undefined;
         foundUser.resetPasswordExpires = undefined;
-
-        // Step 4: Mark the institute email as unverified
-        foundUser.emailVerified = false;
+        foundUser.emailVerified = true;
 
         await foundUser.save();
 
-        // Step 5: Send re-verification email
-        const verificationToken = crypto.randomBytes(32).toString('hex');
-        foundUser.verificationToken = verificationToken;
-
-        const verificationUrl = `${req.headers.referer}auth/verify/${verificationToken}`;
-        const mailOptions = {
-            from: process.env.EMAIL_ID,
-            to: foundUser.instituteEmail,
-            subject: 'Re-verify your Email',
-            html: `
-                <div style="background-color: black; color:white; font-size:12px; padding:20px;">
-                    <div style="margin-bottom: 25px; display:flex; justify-conte350px center;">
-                        <img src="https://lh3.googleusercontent.com/d/1GV683lrLV1Rkq5teVd1Ytc53N6szjyiC" style="width:80%"/>
-                    </div>
-                    <div> Dear ${foundUser.fullName},</div>
-                    <p>Your password has been successfully reset. Please verify your email again using the link below:</p>
-                    <button style="background-color:skyblue; border-radius:15px; padding:10px; border: none; outline: none;">
-                        <a href="${verificationUrl}" style="color:black">Verify Your Email</a>
-                    </button>
-                    <p> Thanks,<br>Team NEXUS</p>
-                </div>
-            `
-        };
-
-        // CHANGE: await transporter.sendMail(mailOptions);
-        await sendEmail(mailOptions);
-
-        res.status(200).json({ message: 'Password reset successfully. Verification email sent.' });
+        res.status(200).json({ message: 'Password reset successfully' });
 
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error', error });
+        console.error('Reset password error:', error);
+        res.status(500).json({ message: 'Server error', error: error.message });
     }
 };
 
+const resendVerificationEmail = async (req, res) => {
+    const { admissionNumber, email } = req.body;
+
+    try {
+        if (!admissionNumber && !email) {
+            return res.status(400).json({ message: 'Please provide your admission number or email' });
+        }
+
+        const query = admissionNumber 
+            ? { admissionNumber } 
+            : { $or: [{ personalEmail: email }, { instituteEmail: email }] };
+
+        const foundUser = await user.findOne(query);
+        if (!foundUser) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        if (foundUser.emailVerified) {
+            return res.status(400).json({ message: 'Email is already verified' });
+        }
+
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+        foundUser.verificationToken = verificationToken;
+        await foundUser.save();
+
+        const baseUrl = getFrontendBaseUrl(req);
+        if (foundUser.isAlumni) {
+            const verificationUrl = `${baseUrl}/auth/verify/alumni/${verificationToken}`;
+            const emailContent = alumniEmailVerificationTemplate({
+                fullName: foundUser.fullName,
+                verificationUrl
+            });
+            await sendEmail({
+                to: foundUser.personalEmail,
+                ...emailContent,
+                critical: true
+            });
+        } else {
+            const verificationUrl = `${baseUrl}/auth/verify/${verificationToken}`;
+            const emailContent = signupEmailTemplate({
+                fullName: foundUser.fullName,
+                verificationUrl
+            });
+            await sendEmail({
+                to: foundUser.instituteEmail || foundUser.personalEmail,
+                ...emailContent,
+                critical: true
+            });
+        }
+
+        res.status(200).json({ message: 'Verification email sent successfully' });
+    } catch (error) {
+        console.error('Resend verification error:', error);
+        res.status(500).json({ message: 'Failed to resend verification email', error: error.message });
+    }
+};
 
 module.exports = {
     loginUser,
@@ -465,4 +526,5 @@ module.exports = {
     forgotPassword,
     verifyPasswordResetEmail,
     resetPassword,
+    resendVerificationEmail,
 };

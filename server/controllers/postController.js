@@ -69,14 +69,20 @@ const createPost = async (req, res) => {
     companyRecord.posts.push(savedPost._id);
     await companyRecord.save();
 
-    // Send email notification to author
-    const author = await User.findById(req.user.id);
-    if (author.personalEmail) {
-      const emailContent = postCreationTemplate(author, title, savedPost._id);
-      await sendEmail({
-        to: author.personalEmail,
-        ...emailContent
-      });
+    // Send email notification to author (non-blocking)
+    try {
+      const author = await User.findById(req.user.id);
+      const recipient = author?.personalEmail || author?.instituteEmail;
+      if (recipient) {
+        const emailContent = postCreationTemplate(author, title, savedPost._id);
+        await sendEmail({
+          to: recipient,
+          ...emailContent,
+          critical: false
+        });
+      }
+    } catch (emailErr) {
+      console.error("Non-blocking error sending post creation email:", emailErr);
     }
 
     res.status(201).json(savedPost);
@@ -231,14 +237,20 @@ const updatePost = async (req, res) => {
 
     const updatedPost = await Post.findByIdAndUpdate(postId, updatedData, { new: true });
 
-    // Send email notification about post update
-    const author = await User.findById(req.user.id);
-    if (author.personalEmail) {
-      const emailContent = postEditTemplate(author, updatedPost.title, updatedPost._id);
-      await sendEmail({
-        to: author.personalEmail,
-        ...emailContent
-      });
+    // Send email notification about post update (non-blocking)
+    try {
+      const author = await User.findById(req.user.id);
+      const recipient = author?.personalEmail || author?.instituteEmail;
+      if (recipient) {
+        const emailContent = postEditTemplate(author, updatedPost.title, updatedPost._id);
+        await sendEmail({
+          to: recipient,
+          ...emailContent,
+          critical: false
+        });
+      }
+    } catch (emailErr) {
+      console.error("Non-blocking error sending post update email:", emailErr);
     }
 
     res.status(200).json(updatedPost);

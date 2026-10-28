@@ -291,6 +291,12 @@ const EditPost = () => {
     try {
       toast.loading("Updating post...");
       const token = localStorage.getItem("token");
+      if (!token) {
+        toast.dismiss();
+        toast.error("You must be logged in to update a post.");
+        navigate("/login?redirect_to=/interview-experiences");
+        return;
+      }
       
       const tagsArray = formData.tags;
 
@@ -334,7 +340,13 @@ const EditPost = () => {
       navigate("/interview-experiences");
     } catch (error) {
       toast.dismiss();
-      toast.error("Failed to update the post.");
+      if (error.response?.status === 401) {
+        toast.error("Session expired! Please log in again.");
+        localStorage.removeItem("token");
+        navigate("/login?redirect_to=/interview-experiences");
+      } else {
+        toast.error(error.response?.data?.error || error.response?.data?.message || "Failed to update the post.");
+      }
       console.error("Error updating post:", error);
     }
   };

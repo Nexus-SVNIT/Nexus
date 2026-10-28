@@ -16,19 +16,26 @@ const createComment = async (req, res) => {
     post.comments.push(savedComment._id);
     await post.save();
 
-      if (post.author.personalEmail) {
-        const commentAuthor = await User.findById(author);
-        const emailContent = newCommentTemplate(
-          post.author,
-          post.title,
-          content,
-          commentAuthor,
-          post._id
-        );
-        await sendEmail({
-          to: post.author.personalEmail,
-          ...emailContent
-        });
+      // Send email notification to post author (non-blocking, skip if commenting on own post)
+      try {
+        const recipient = post?.author?.personalEmail || post?.author?.instituteEmail;
+        if (recipient && post.author._id.toString() !== author) {
+          const commentAuthor = await User.findById(author);
+          const emailContent = newCommentTemplate(
+            post.author,
+            post.title,
+            content,
+            commentAuthor,
+            post._id
+          );
+          await sendEmail({
+            to: recipient,
+            ...emailContent,
+            critical: false
+          });
+        }
+      } catch (emailErr) {
+        console.error("Non-blocking error sending comment email:", emailErr);
       }
 
     res.status(201).json(savedComment);
