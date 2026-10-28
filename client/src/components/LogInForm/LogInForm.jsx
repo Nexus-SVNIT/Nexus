@@ -6,12 +6,49 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import HeadTags from "../HeadTags/HeadTags";
 import Logo from "../../data/images/nexus.png";
 
-const LoginForm = () => {
+const LoginForm = ({ defaultResend = false }) => {
   const [admissionNumber, setAdmissionNumber] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [isUnverified, setIsUnverified] = useState(defaultResend);
+  const [isResending, setIsResending] = useState(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (searchParams.get("resend") === "true" || defaultResend) {
+      setIsUnverified(true);
+    }
+  }, [searchParams, defaultResend]);
+
+  const handleResendVerification = async () => {
+    const cleanAdmission = admissionNumber.trim();
+    if (!cleanAdmission) {
+      toast.error("Please enter your admission number first.");
+      return;
+    }
+
+    try {
+      setIsResending(true);
+      const toastId = toast.loading("Resending verification email...");
+      const response = await axios.post(
+        `${process.env.REACT_APP_BACKEND_BASE_URL}/auth/resend-verification`,
+        { admissionNumber: cleanAdmission }
+      );
+      toast.success(
+        response.data?.message || "Verification email sent! Check your inbox & spam folder.",
+        { id: toastId, duration: 6000 }
+      );
+    } catch (error) {
+      toast.remove();
+      const message =
+        error.response?.data?.message ||
+        "Failed to resend verification email. Please check your credentials or try again later.";
+      toast.error(message);
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -45,7 +82,8 @@ const LoginForm = () => {
         error.response?.data?.message ===
         "Please verify your email before logging in."
       ) {
-        toast.error("Please verify your email before logging in.");
+        setIsUnverified(true);
+        toast.error("Please verify your email before logging in. Click 'Resend Verification' below if needed.");
       } else {
         toast.error("An unexpected error occurred. Please try again later.");
       }
@@ -151,12 +189,63 @@ const LoginForm = () => {
                   )}
                 </button>
               </div>
-              <div className="flex justify-end">
-                <a href="/forgot-password" className="text-xs text-zinc-500 hover:text-blue-400 transition-colors">
+              <div className="flex items-center justify-between text-xs">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsUnverified(true);
+                    if (admissionNumber) {
+                      handleResendVerification();
+                    } else {
+                      toast("Enter your Admission Number above and click Resend", { icon: "ℹ️" });
+                    }
+                  }}
+                  className="text-zinc-500 hover:text-cyan-400 transition-colors cursor-pointer"
+                >
+                  Resend verification email
+                </button>
+                <a href="/forgot-password" className="text-zinc-500 hover:text-blue-400 transition-colors">
                   Forgot password?
                 </a>
               </div>
             </div>
+
+            {/* Unverified account banner */}
+            {isUnverified && (
+              <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 text-xs text-amber-200">
+                <div className="flex items-start gap-2.5">
+                  <svg className="h-5 w-5 flex-shrink-0 text-amber-400 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <div className="space-y-2 flex-1">
+                    <div>
+                      <p className="font-semibold text-amber-300">Email Not Verified</p>
+                      <p className="text-zinc-300 mt-0.5 leading-relaxed">
+                        Verification links are sent to your <strong>institute email</strong> (@coed/@aid.svnit.ac.in). Please check your <strong>Spam / Junk folder</strong> if you didn't see it.
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleResendVerification}
+                      disabled={isResending}
+                      className="inline-flex items-center gap-2 rounded-lg bg-amber-500/20 px-3 py-1.5 font-medium text-amber-300 hover:bg-amber-500/30 border border-amber-500/40 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      {isResending ? (
+                        <>
+                          <svg className="animate-spin h-3.5 w-3.5 text-amber-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          <span>Sending email...</span>
+                        </>
+                      ) : (
+                        <span>Resend Verification Email</span>
+                      )}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Submit */}
             <button
