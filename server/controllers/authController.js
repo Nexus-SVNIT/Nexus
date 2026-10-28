@@ -468,9 +468,17 @@ const resendVerificationEmail = async (req, res) => {
             return res.status(400).json({ message: 'Please provide your admission number or email' });
         }
 
-        const query = admissionNumber 
-            ? { admissionNumber } 
-            : { $or: [{ personalEmail: email }, { instituteEmail: email }] };
+        const cleanAdmissionNumber = admissionNumber?.trim();
+        const cleanEmail = email?.trim();
+
+        const query = cleanAdmissionNumber 
+            ? { admissionNumber: new RegExp(`^${cleanAdmissionNumber}$`, 'i') } 
+            : { 
+                $or: [
+                    { personalEmail: new RegExp(`^${cleanEmail}$`, 'i') }, 
+                    { instituteEmail: new RegExp(`^${cleanEmail}$`, 'i') }
+                ] 
+            };
 
         const foundUser = await user.findOne(query);
         if (!foundUser) {
