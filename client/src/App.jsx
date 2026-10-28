@@ -67,11 +67,7 @@ function App() {
             ) : (
               <>
                 <Route path="/login" element={<LoginForm />} />
-                
-                {/*<Route
-                  path="/profile"
-                  element={<Navigate to={"/login"}></Navigate>}
-                />*/}
+                <Route path="/resend-verification" element={<LoginForm defaultResend={true} />} />
                 <Route path="/signup" element={<SignUpForm />} />
                 <Route path="/alumni/signup" element={<AlumniSignUpForm />} />
                 <Route path="/auth/verify/:token" element={<VerifyEmail />} />
