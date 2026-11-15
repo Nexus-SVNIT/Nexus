@@ -10,10 +10,6 @@ const eventSchema = new Schema({
     eventType: {
         type: String,
     },
-    concatEventName: {
-        type: String,
-        required: true
-    },
     eventDate: {
         type: String,
         required: true,
@@ -30,6 +26,9 @@ const eventSchema = new Schema({
     },
     eventImages: {
         type: [String]
+    },
+    participants: {
+        type: Number
     }
 });
 
